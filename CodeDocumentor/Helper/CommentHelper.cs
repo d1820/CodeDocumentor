@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -107,13 +108,19 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> The method comment. </returns>
-        public static string CreateMethodComment(string name)
+        public static string CreateMethodComment(string name, TypeSyntax returnType)
         {
             List<string> parts = SpilitNameAndToLower(name, false);
+
+            if(parts.Count == 1 && CodeDocumentorPackage.Options.UseToDoCommentsForSingleWordMethods)
+            {
+                return "TODO: Add Summary";
+            }
             parts[0] = Pluralizer.Pluralize(parts[0]);
             parts.Insert(1, "the");
             return string.Join(" ", parts) + ".";
         }
+
 
         /// <summary>
         ///   Creates parameter comment.
@@ -201,7 +208,7 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Spilits name and make words lower.
+        ///   Splits name and make words lower.
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <param name="isFirstCharacterLower"> If true, the first character will be lower. </param>
@@ -215,7 +222,26 @@ namespace CodeDocumentor.Helper
             {
                 parts[i] = parts[i].ToLower();
             }
+            HandleAsyncKeyword(parts);
             return parts;
+        }
+
+
+        /// <summary>
+        /// Updates or removes the async keyword
+        /// </summary>
+        /// <param name="parts">The list of parts of the member name separated by uppercase letters</param>
+        private static void HandleAsyncKeyword(List<string> parts)
+        {
+            if (CodeDocumentorPackage.Options.IgnoreAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                parts.Remove(parts.Last());
+            }
+            var idx = parts.FindIndex(f => f.Equals("async", System.StringComparison.OrdinalIgnoreCase));
+            if (idx > -1)
+            {
+                parts[idx] = "asynchronously";
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -27,7 +28,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        public const string DiagnosticId = "EnumDocumentationHeader";
+        public const string DiagnosticId = "CD1602";
 
         /// <summary>
         ///   The message format.
@@ -66,6 +67,12 @@ namespace CodeDocumentor
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
+
+            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            if (excludeAnanlyzer)
+            {
+                return;
+            }
 
             if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
             {

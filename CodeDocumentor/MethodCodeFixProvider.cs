@@ -119,10 +119,19 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText);
+            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(methodComment));
 
-            if (declarationSyntax.ParameterList.Parameters.Any())
+            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
+            {
+                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
+                {
+                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
+                }
+            }
+
+
+            if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
                 foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
                 {

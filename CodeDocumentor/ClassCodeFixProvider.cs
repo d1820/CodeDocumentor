@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
-{
+{    
     /// <summary>
     ///   The class code fix provider.
     /// </summary>
@@ -60,6 +60,7 @@ namespace CodeDocumentor
             {
                 return;
             }
+
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
@@ -78,15 +79,34 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
             string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
-            DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment), cancellationToken);
+            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
+            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
+            {
+                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
+                {
+                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
+                }
+            }
+
+            DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+
+            //append to any existing leading trivia [attributes, decorators, etc)
+            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
             ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
-
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+
+            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
+            {
+                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
+                {
+                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
+                }
+            }
             return document.WithSyntaxRoot(newRoot);
         }
     }

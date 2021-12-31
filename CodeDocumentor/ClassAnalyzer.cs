@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Settings;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,7 +31,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        public const string DiagnosticId = "ClassDocumentationHeader";
+        public const string DiagnosticId = "CD1600";
 
         /// <summary>
         ///   The message format.
@@ -71,6 +72,11 @@ namespace CodeDocumentor
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
 
+            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            if (excludeAnanlyzer)
+            {
+                return;
+            }
             if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
             {
                 return;

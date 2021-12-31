@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,7 +14,12 @@ namespace CodeDocumentor.Helper
         /// <summary>
         ///   The category of the diagnostic.
         /// </summary>
-        public const string Category = "DocumentationHeader";
+        public const string Category = "CodeDocumentor";
+
+        /// <summary>
+        /// The category to check for when excluding analyzer actions
+        /// </summary>
+        public const string ExclusionCategory = "XMLDocumentation";
 
         /// <summary>
         ///   The summary.
@@ -34,6 +40,26 @@ namespace CodeDocumentor.Helper
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List(CreateSummaryPartNodes(content));
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+        }
+
+        /// <summary>
+        /// Checks if a node is attributed with <see cref="System.Diagnostics.CodeAnalysis.SuppressMessage"/> with a category of "XMLDocumentation"
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns>bool</returns>
+        public static bool HasAnalyzerExclusion(MemberDeclarationSyntax node, bool recursive = true)
+        {
+            if(node == null)
+            {
+                return false;
+            }
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            var hasExclusion =  attrs.Where(w=>w.ArgumentList != null).SelectMany(w => w.ArgumentList.Arguments).Any(w => w.Expression.IsKind(SyntaxKind.StringLiteralExpression) && w.Expression.ToString().Contains(ExclusionCategory));
+            if (!hasExclusion && recursive)
+            {
+                return HasAnalyzerExclusion(node.Parent as MemberDeclarationSyntax, recursive);
+            }
+            return hasExclusion;
         }
 
         /// <summary>
@@ -76,6 +102,27 @@ namespace CodeDocumentor.Helper
 
             // [1] -- parameter text
             XmlElementSyntax parameterText = CreateParameterElementSyntax(parameterName, parameterContent);
+
+            // [2] -- line end text
+            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+
+            return new XmlNodeSyntax[] { lineStartText, parameterText, lineEndText };
+        }
+
+        /// <summary>
+        /// Creates the type parameter part nodes.
+        /// </summary>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <returns>An array of XmlNodeSyntaxes.</returns>
+        public static XmlNodeSyntax[] CreateTypeParameterPartNodes(string parameterName)
+        {
+            ///[0] <param name="parameterName"></param>[1][2]
+
+            // [0] -- line start text
+            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+
+            // [1] -- parameter text
+            XmlElementSyntax parameterText = CreateTypeParameterElementSyntax(parameterName);
 
             // [2] -- line end text
             XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
@@ -162,6 +209,27 @@ namespace CodeDocumentor.Helper
             // [2] -- end tag
             XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<SyntaxNode>(content), endTag);
+        }
+
+        /// <summary>
+        /// Creates the type parameter element syntax.
+        /// </summary>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <returns>A XmlElementSyntax.</returns>
+        private static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
+        {
+            XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparam");
+
+            /// <typeparam name="parameterName"> [0][1] </param>
+            /// [2]
+
+            // [0] -- param start tag with attribute
+            XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
+            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
+
+            // [2] -- end tag
+            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            return SyntaxFactory.XmlElement(startTag, endTag);
         }
 
         /// <summary>

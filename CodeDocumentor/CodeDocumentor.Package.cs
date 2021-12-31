@@ -7,7 +7,11 @@ using System.ComponentModel;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio;
 using CodeDocumentor.Settings;
-using System.IO.Packaging;
+using Microsoft.CodeAnalysis;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
+
+// For definitions of XML nodes see: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
 
 namespace CodeDocumentor.Vsix2022
 {
@@ -67,7 +71,7 @@ namespace CodeDocumentor.Vsix2022
                     {
                         if (_options == null)
                         {
-                            LoadPackage();
+                            LoadPackage().GetAwaiter().GetResult();
                         }
                     }
 
@@ -82,14 +86,19 @@ namespace CodeDocumentor.Vsix2022
             }
         }
 
-        private static void LoadPackage()
+        private static async Task LoadPackage()
         {
             var shell = (IVsShell)GetGlobalService(typeof(SVsShell));
             var guid = new Guid(VsixOptions.PackageGuidString);
             if (shell != null)
             {
                 if (shell.IsPackageLoaded(ref guid, out IVsPackage package) != VSConstants.S_OK)
-                    ErrorHandler.Succeeded(shell.LoadPackage(ref guid, out package));
+                {
+                    await Task.Run(() => shell.LoadPackage(ref guid, out package)).ContinueWith(result => {
+                        ErrorHandler.Succeeded(result.Result);
+                    }, TaskScheduler.Default);
+                   
+                }
             }
             else
             {
@@ -106,26 +115,26 @@ namespace CodeDocumentor.Vsix2022
     //This has to live in this project so context thread is valid
     public class OptionPageGrid : DialogPage
     {
-        private bool _isEnabledForPublishMembersOnly;
-        private bool _useNaturalLanguageForReturnNode;
-
         [Category("CodeDocumentor")]
         [DisplayName("Enable Headers For Public Members Only")]
         [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public")]
-        public bool IsEnabledForPublishMembersOnly
-        {
-            get { return _isEnabledForPublishMembersOnly; }
-            set { _isEnabledForPublishMembersOnly = value; }
-        }
+        public bool IsEnabledForPublishMembersOnly { get; set; }
 
         [Category("CodeDocumentor")]
         [DisplayName("Use Natural Language For Return Nodes")]
         [Description("When documenting members if the return type contains a generic translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example: <retrun>A List of Strings</return>")]
-        public bool UseNaturalLanguageForReturnNode
-        {
-            get { return _useNaturalLanguageForReturnNode; }
-            set { _useNaturalLanguageForReturnNode = value; }
-        }
+        public bool UseNaturalLanguageForReturnNode { get; set; }
+
+        [Category("CodeDocumentor")]
+        [DisplayName("Exclude Async Wording From Comments")]
+        [Description("When documenting members skip adding asynchronously to the comment.")]
+        public bool IgnoreAsyncSuffix { get; set; }
+
+        [Category("CodeDocumentor")]
+        [DisplayName("Use TODO comment for single word methods")]
+        [Description("When documenting methods that are only a single word add a TODO comment for the summary node. Async is ignored")]
+        public bool UseToDoCommentsForSingleWordMethods { get; set; }
+
     }
 
 }

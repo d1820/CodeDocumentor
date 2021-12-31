@@ -128,12 +128,12 @@ namespace CodeDocumentor.Vsix2022
         [Category("CodeDocumentor")]
         [DisplayName("Exclude Async Wording From Comments")]
         [Description("When documenting members skip adding asynchronously to the comment.")]
-        public bool IgnoreAsyncSuffix { get; set; }
+        public bool ExcludeAsyncSuffix { get; set; }
 
         [Category("CodeDocumentor")]
-        [DisplayName("Use TODO comment for single word methods")]
-        [Description("When documenting methods that are only a single word add a TODO comment for the summary node. Async is ignored")]
-        public bool UseToDoCommentsForSingleWordMethods { get; set; }
+        [DisplayName("Use TODO comment When Summary Can Not Be Determined")]
+        [Description("When documenting methods that can not create a valid summary insert TODO instead. Async is ignored")]
+        public bool UseToDoCommentsOnSummaryError { get; set; }
 
     }
 

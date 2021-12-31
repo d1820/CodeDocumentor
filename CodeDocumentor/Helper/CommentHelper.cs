@@ -112,12 +112,48 @@ namespace CodeDocumentor.Helper
         {
             List<string> parts = SpilitNameAndToLower(name, false);
 
-            if(parts.Count == 1 && CodeDocumentorPackage.Options.UseToDoCommentsForSingleWordMethods)
-            {
-                return "TODO: Add Summary";
-            }
+
             parts[0] = Pluralizer.Pluralize(parts[0]);
-            parts.Insert(1, "the");
+            if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
+            {
+                parts.Insert(1, "the");
+
+                //try and use the return type for the value;
+                if (returnType.ToString() != "void")
+                {
+                    string returnComment = new SingleWorkMethodCommentConstruction(returnType).Comment;
+                    if (!string.IsNullOrEmpty(returnComment))
+                    {
+                        parts.Insert(2, returnComment);
+                    }
+                    else
+                    {
+                        if (CodeDocumentorPackage.Options.UseToDoCommentsOnSummaryError)
+                        {
+                            return "TODO: Add Summary";
+                        }
+                        else
+                        {
+                            return string.Empty;
+                        }
+                    }
+                }
+                else
+                {
+                    if (CodeDocumentorPackage.Options.UseToDoCommentsOnSummaryError)
+                    {
+                        return "TODO: Add Summary";
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+            }
+            else
+            {
+                parts.Insert(1, "the");
+            }
             return string.Join(" ", parts) + ".";
         }
 
@@ -233,7 +269,7 @@ namespace CodeDocumentor.Helper
         /// <param name="parts">The list of parts of the member name separated by uppercase letters</param>
         private static void HandleAsyncKeyword(List<string> parts)
         {
-            if (CodeDocumentorPackage.Options.IgnoreAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
+            if (CodeDocumentorPackage.Options.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
             {
                 parts.Remove(parts.Last());
             }

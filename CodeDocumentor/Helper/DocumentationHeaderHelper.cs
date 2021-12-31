@@ -216,11 +216,32 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="parameterName">The parameter name.</param>
         /// <returns>A XmlElementSyntax.</returns>
-        private static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
+        public static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
         {
             XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparam");
 
             /// <typeparam name="parameterName"> [0][1] </param>
+            /// [2]
+
+            // [0] -- param start tag with attribute
+            XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
+            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
+
+            // [2] -- end tag
+            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            return SyntaxFactory.XmlElement(startTag, endTag);
+        }
+
+        /// <summary>
+        /// Creates the type parameter ref element syntax.
+        /// </summary>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <returns>A XmlElementSyntax.</returns>
+        public static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
+        {
+            XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparamref");
+
+            /// <typeparamref name="parameterName"> [0][1] </param>
             /// [2]
 
             // [0] -- param start tag with attribute

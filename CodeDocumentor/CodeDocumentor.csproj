@@ -61,6 +61,7 @@
     <Compile Include="Helper\Pluralizer.cs" />
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
     <Compile Include="Helper\ReturnCommentConstruction.cs" />
+    <Compile Include="Helper\SingleWorkMethodCommentConstruction.cs" />
     <Compile Include="InterfaceAnalyzer.cs" />
     <Compile Include="InterfaceCodeFixProvider.cs" />
     <Compile Include="MethodAnalyzer.cs" />

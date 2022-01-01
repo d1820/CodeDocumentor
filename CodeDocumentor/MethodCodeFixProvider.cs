@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -16,7 +17,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-[assembly: InternalsVisibleTo("CodeDocumentor.Test")]
+
 namespace CodeDocumentor
 {
     /// <summary>
@@ -68,7 +69,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: c => this.AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
                     equivalenceKey: title),
                 diagnostic);
         }
@@ -119,7 +120,7 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
+            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText.AsSpan(), declarationSyntax.ReturnType);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(methodComment));
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
@@ -153,7 +154,8 @@ namespace CodeDocumentor
             string returnType = declarationSyntax.ReturnType.ToString();
             if (returnType != "void")
             {
-                string returnComment = new ReturnCommentConstruction(declarationSyntax.ReturnType).Comment;
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);
+                string returnComment = commentConstructor.Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateReturnPartNodes(returnComment));
             }
 

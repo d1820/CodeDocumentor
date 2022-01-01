@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -64,7 +65,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: c => this.AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
                     equivalenceKey: title),
                 diagnostic);
         }
@@ -81,7 +82,7 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
+            string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText.AsSpan());
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
@@ -100,13 +101,6 @@ namespace CodeDocumentor
             ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
 
-            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
-            {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
-                {
-                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
-                }
-            }
             return document.WithSyntaxRoot(newRoot);
         }
     }

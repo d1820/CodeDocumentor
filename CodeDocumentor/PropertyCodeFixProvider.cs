@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -61,7 +62,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: c => this.AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
                     equivalenceKey: title),
                 diagnostic);
         }
@@ -76,17 +77,19 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
+
+           
 
             bool isBoolean = false;
             if (declarationSyntax.Type.IsKind(SyntaxKind.PredefinedType))
             {
-                isBoolean = ((PredefinedTypeSyntax)declarationSyntax.Type).Keyword.Kind() == SyntaxKind.BoolKeyword;
+                isBoolean = ((PredefinedTypeSyntax)declarationSyntax.Type).Keyword.IsKind(SyntaxKind.BoolKeyword);
             }
             else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
             {
                 var retrunType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
-                isBoolean = retrunType?.Keyword.Kind() == SyntaxKind.BoolKeyword;
+                isBoolean = retrunType.IsKind(SyntaxKind.BoolKeyword);
             }
 
             bool hasSetter = false;
@@ -104,9 +107,18 @@ namespace CodeDocumentor
                 }
             }
 
-            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
-            DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(propertyComment), cancellationToken);
+            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText.AsSpan(), isBoolean, hasSetter);
+            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(propertyComment));
 
+            if (CodeDocumentorPackage.Options.IncludeValueNodeInProperties)
+            {
+                string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false).Translate();
+                list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
+            }
+
+            DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+
+            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
             PropertyDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
 

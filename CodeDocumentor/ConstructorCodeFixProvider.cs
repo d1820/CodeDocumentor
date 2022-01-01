@@ -61,7 +61,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: c => this.AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
                     equivalenceKey: title),
                 diagnostic);
         }

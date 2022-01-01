@@ -55,13 +55,15 @@
     <Compile Include="EnumCodeFixProvider.cs" />
     <Compile Include="FieldAnalyzer.cs" />
     <Compile Include="FieldCodeFixProvider.cs" />
+    <Compile Include="Helper\BaseReturnTypeCommentConstruction.cs" />
     <Compile Include="Helper\CommentHelper.cs" />
     <Compile Include="Helper\DocumentationHeaderHelper.cs" />
-    <Compile Include="Helper\NameSpliter.cs" />
+    <Compile Include="Helper\NameSplitter.cs" />
     <Compile Include="Helper\Pluralizer.cs" />
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
     <Compile Include="Helper\ReturnCommentConstruction.cs" />
-    <Compile Include="Helper\SingleWorkMethodCommentConstruction.cs" />
+    <Compile Include="Helper\SingleWordMethodCommentConstruction.cs" />
+    <Compile Include="Helper\Translator.cs" />
     <Compile Include="InterfaceAnalyzer.cs" />
     <Compile Include="InterfaceCodeFixProvider.cs" />
     <Compile Include="MethodAnalyzer.cs" />

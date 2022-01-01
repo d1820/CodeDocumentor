@@ -17,7 +17,7 @@ namespace CodeDocumentor.Helper
         public const string Category = "CodeDocumentor";
 
         /// <summary>
-        /// The category to check for when excluding analyzer actions
+        ///   The category to check for when excluding analyzer actions
         /// </summary>
         public const string ExclusionCategory = "XMLDocumentation";
 
@@ -43,18 +43,19 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Checks if a node is attributed with <see cref="System.Diagnostics.CodeAnalysis.SuppressMessage"/> with a category of "XMLDocumentation"
+        ///   Checks if a node is attributed with <see cref="System.Diagnostics.CodeAnalysis.SuppressMessage" /> with a
+        ///   category of "XMLDocumentation"
         /// </summary>
-        /// <param name="node"></param>
-        /// <returns>bool</returns>
+        /// <param name="node"> </param>
+        /// <returns> bool </returns>
         public static bool HasAnalyzerExclusion(MemberDeclarationSyntax node, bool recursive = true)
         {
-            if(node == null)
+            if (node == null)
             {
                 return false;
             }
             var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
-            var hasExclusion =  attrs.Where(w=>w.ArgumentList != null).SelectMany(w => w.ArgumentList.Arguments).Any(w => w.Expression.IsKind(SyntaxKind.StringLiteralExpression) && w.Expression.ToString().Contains(ExclusionCategory));
+            var hasExclusion = attrs.Where(w => w.ArgumentList != null).SelectMany(w => w.ArgumentList.Arguments).Any(w => w.Expression.IsKind(SyntaxKind.StringLiteralExpression) && w.Expression.ToString().Contains(ExclusionCategory));
             if (!hasExclusion && recursive)
             {
                 return HasAnalyzerExclusion(node.Parent as MemberDeclarationSyntax, recursive);
@@ -110,10 +111,10 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Creates the type parameter part nodes.
+        ///   Creates the type parameter part nodes.
         /// </summary>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <returns>An array of XmlNodeSyntaxes.</returns>
+        /// <param name="parameterName"> The parameter name. </param>
+        /// <returns> An array of XmlNodeSyntaxes. </returns>
         public static XmlNodeSyntax[] CreateTypeParameterPartNodes(string parameterName)
         {
             ///[0] <param name="parameterName"></param>[1][2]
@@ -162,7 +163,20 @@ namespace CodeDocumentor.Helper
 
             XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
 
-            XmlElementSyntax returnElement = CreateReturnElementSyntax(content);
+            var returnElement = CreateReturnElementSyntax(content);
+
+            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+
+            return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
+        }
+
+        public static XmlNodeSyntax[] CreateValuePartNodes(string content)
+        {
+            ///[0] <value></value>[1][2]
+
+            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+
+            var returnElement = CreateReturnElementSyntax(content, "value");
 
             XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
 
@@ -174,7 +188,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="content"> The content. </param>
         /// <returns> A XmlElementSyntax. </returns>
-        private static XmlElementSyntax CreateSummaryElementSyntax(string content)
+        internal static XmlElementSyntax CreateSummaryElementSyntax(string content)
         {
             XmlNameSyntax xmlName = SyntaxFactory.XmlName(SyntaxFactory.Identifier(DocumentationHeaderHelper.Summary));
             XmlElementStartTagSyntax summaryStartTag = SyntaxFactory.XmlElementStartTag(xmlName);
@@ -192,7 +206,7 @@ namespace CodeDocumentor.Helper
         /// <param name="parameterName"> The parameter name. </param>
         /// <param name="parameterContent"> The parameter content. </param>
         /// <returns> A XmlElementSyntax. </returns>
-        private static XmlElementSyntax CreateParameterElementSyntax(string parameterName, string parameterContent)
+        internal static XmlElementSyntax CreateParameterElementSyntax(string parameterName, string parameterContent)
         {
             XmlNameSyntax paramName = SyntaxFactory.XmlName("param");
 
@@ -212,16 +226,15 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Creates the type parameter element syntax.
+        ///   Creates the type parameter element syntax.
         /// </summary>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <returns>A XmlElementSyntax.</returns>
-        public static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
+        /// <param name="parameterName"> The parameter name. </param>
+        /// <returns> A XmlElementSyntax. </returns>
+        internal static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
         {
             XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparam");
 
-            /// <typeparam name="parameterName"> [0][1] </param>
-            /// [2]
+            /// <typeparam name="parameterName"> [0][1] </param> [2]
 
             // [0] -- param start tag with attribute
             XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
@@ -233,16 +246,15 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Creates the type parameter ref element syntax.
+        ///   Creates the type parameter ref element syntax.
         /// </summary>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <returns>A XmlElementSyntax.</returns>
-        public static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
+        /// <param name="parameterName"> The parameter name. </param>
+        /// <returns> A XmlElementSyntax. </returns>
+        internal static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
         {
             XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparamref");
 
-            /// <typeparamref name="parameterName"> [0][1] </param>
-            /// [2]
+            /// <typeparamref name="parameterName"> [0][1] </param> [2]
 
             // [0] -- param start tag with attribute
             XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
@@ -257,10 +269,11 @@ namespace CodeDocumentor.Helper
         ///   Creates return element syntax.
         /// </summary>
         /// <param name="content"> The content. </param>
+        /// <param name="xmlNodeName"> The xml node type to create </param>
         /// <returns> A XmlElementSyntax. </returns>
-        private static XmlElementSyntax CreateReturnElementSyntax(string content)
+        internal static XmlNodeSyntax CreateReturnElementSyntax(string content, string xmlNodeName = "returns")
         {
-            XmlNameSyntax xmlName = SyntaxFactory.XmlName("returns");
+            XmlNameSyntax xmlName = SyntaxFactory.XmlName(xmlNodeName);
             /// <returns> [0]xxx[1] </returns>
             /// [2]
 
@@ -268,16 +281,48 @@ namespace CodeDocumentor.Helper
             XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(xmlName);
 
             var cleanContent = content?.Trim();
-            if (cleanContent?.IndexOf("<", StringComparison.OrdinalIgnoreCase) > -1)
+            var xmlParseResponse = IsXML(cleanContent);
+            if (xmlParseResponse.isXml && !string.IsNullOrEmpty(cleanContent))
             {
-                SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
-                var tokens = SyntaxFactory.TokenList().Add(text1Token);
-                var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
+                if (xmlParseResponse.isTask)
+                {
+                    SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
+                    var tokens = SyntaxFactory.TokenList().Add(text1Token);
+                    var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
 
-                return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
+                    return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
+                }
+                else
+                {
+                    var text = SyntaxFactory.XmlText($"A ");
+                    //This is a hack fix to get the tags correct and not encoded in the XML output for embeded XML
+                    var emptyNode = SyntaxFactory.XmlEmptyElement(cleanContent.Replace("<", string.Empty).Replace("/>", string.Empty));
+                    var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
+                    list = list.Add(emptyNode);
+                    return SyntaxFactory.XmlElement(startTag, list, endTag);
+                }
             }
+
             XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(contentText), endTag);
+        }
+
+        /// <summary>
+        /// Checks if string is XML
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns>Tuple of bool and bool</returns>
+        internal static (bool isXml, bool isTask) IsXML(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return (false, false);
+            }
+            var checkStrs = new[] { "task<", "<typeparam" };
+
+            var match = checkStrs.FirstOrDefault(a => text.IndexOf(a, StringComparison.OrdinalIgnoreCase) > -1);
+
+            return (match != null, match == checkStrs[0]);
         }
 
         /// <summary>
@@ -285,7 +330,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="content"> The content. </param>
         /// <returns> A XmlTextSyntax. </returns>
-        private static XmlTextSyntax CreateSummaryTextSyntax(string content)
+        internal static XmlTextSyntax CreateSummaryTextSyntax(string content)
         {
             content = " " + content;
             /*

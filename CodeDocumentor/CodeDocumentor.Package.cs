@@ -10,9 +10,12 @@ using CodeDocumentor.Settings;
 using Microsoft.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 // For definitions of XML nodes see: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
-
+// see also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022
 {
     /// <summary>
@@ -94,10 +97,11 @@ namespace CodeDocumentor.Vsix2022
             {
                 if (shell.IsPackageLoaded(ref guid, out IVsPackage package) != VSConstants.S_OK)
                 {
-                    await Task.Run(() => shell.LoadPackage(ref guid, out package)).ContinueWith(result => {
+                    await Task.Run(() => shell.LoadPackage(ref guid, out package)).ContinueWith(result =>
+                    {
                         ErrorHandler.Succeeded(result.Result);
                     }, TaskScheduler.Default);
-                   
+
                 }
             }
             else
@@ -112,28 +116,48 @@ namespace CodeDocumentor.Vsix2022
 
     }
 
+    public class WordMap
+    {
+        public string Word { get; set; }
+        public string Translation { get; set; }
+    }
     //This has to live in this project so context thread is valid
     public class OptionPageGrid : DialogPage
     {
         [Category("CodeDocumentor")]
-        [DisplayName("Enable Headers For Public Members Only")]
+        [DisplayName("Enable comments for public members only")]
         [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public")]
         public bool IsEnabledForPublishMembersOnly { get; set; }
 
         [Category("CodeDocumentor")]
-        [DisplayName("Use Natural Language For Return Nodes")]
-        [Description("When documenting members if the return type contains a generic translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example: <retrun>A List of Strings</return>")]
+        [DisplayName("Use natural language for return comments")]
+        [Description("When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example: <retrun>A List of Strings</return>")]
         public bool UseNaturalLanguageForReturnNode { get; set; }
 
         [Category("CodeDocumentor")]
-        [DisplayName("Exclude Async Wording From Comments")]
+        [DisplayName("Exclude async wording from comments")]
         [Description("When documenting members skip adding asynchronously to the comment.")]
         public bool ExcludeAsyncSuffix { get; set; }
 
         [Category("CodeDocumentor")]
-        [DisplayName("Use TODO comment When Summary Can Not Be Determined")]
+        [DisplayName("Include <value> node in property comments")]
+        [Description("When documenting properties add the value node with the return type")]
+        public bool IncludeValueNodeInProperties { get; set; }
+
+        [Category("CodeDocumentor")]
+        [DisplayName("Use TODO comment when summary can not be determined")]
         [Description("When documenting methods that can not create a valid summary insert TODO instead. Async is ignored")]
         public bool UseToDoCommentsOnSummaryError { get; set; }
+
+        [Category("CodeDocumentor")]
+        [DisplayName("Word mappings for creating comments")]
+        [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
+        public List<WordMap> WordMaps { get; set; } = new List<WordMap> {
+            new WordMap { Word = "int", Translation = "integer" },
+            new WordMap { Word = "OfList", Translation = "OfLists" },
+            new WordMap { Word = "OfCollection", Translation = "OfCollections" },
+            new WordMap { Word = "OfEnumerable", Translation = "OfEnumerables" },
+        };
 
     }
 

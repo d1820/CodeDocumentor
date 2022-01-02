@@ -1,14 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
-using System.Xml.Linq;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Settings;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.Shell;
 
 namespace CodeDocumentor
 {
@@ -42,7 +38,6 @@ namespace CodeDocumentor
         ///   The diagnostic descriptor rule.
         /// </summary>
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
 
         /// <summary>
         ///   Gets the supported diagnostics.

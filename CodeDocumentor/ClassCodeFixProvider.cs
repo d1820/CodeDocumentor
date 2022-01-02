@@ -4,9 +4,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Settings;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -15,7 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
-{    
+{
     /// <summary>
     ///   The class code fix provider.
     /// </summary>
@@ -40,8 +38,6 @@ namespace CodeDocumentor
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
-
-       
 
         /// <summary>
         ///   Registers code fixes async.

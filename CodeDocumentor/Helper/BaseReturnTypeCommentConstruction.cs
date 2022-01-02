@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -88,6 +86,7 @@ namespace CodeDocumentor.Helper
             }
             return defaultValue;
         }
+
         private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, bool pluaralizeName = false)
         {
             bool shouldPluralize;
@@ -235,7 +234,7 @@ namespace CodeDocumentor.Helper
         ///   Determines specific object name.
         /// </summary>
         /// <param name="specificType"> The specific type. </param>
-        /// <param name="pluaralizeName">Flag determines if name should be pluralized</param>
+        /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
         /// <returns> The comment. </returns>
         protected string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false)
         {
@@ -295,6 +294,5 @@ namespace CodeDocumentor.Helper
             }
             return node as MethodDeclarationSyntax;
         }
-
     }
 }

@@ -1,9 +1,11 @@
-﻿using Microsoft.VisualStudio.Shell;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-// For definitions of XML nodes see: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
-// see also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
+using Microsoft.VisualStudio.Shell;
+
+// For definitions of XML nodes see:
+// https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
+// also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022
 {
     //This has to live in this project so context thread is valid
@@ -48,8 +50,6 @@ namespace CodeDocumentor.Vsix2022
         [DisplayName("Word mappings for creating comments")]
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
         public List<WordMap> WordMaps { get; set; }
-
-
 
         public override void LoadSettingsFromStorage()
         {

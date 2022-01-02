@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-// For definitions of XML nodes see: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
-// see also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
+
+// For definitions of XML nodes see:
+// https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
+// also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
@@ -17,9 +19,8 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "IReadOnlyList", Translation = "Read Only List" },
             new WordMap { Word = "ICollection", Translation = "Collection" },
             new WordMap { Word = "OfCollection", Translation = "OfCollections" },
-            new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },            
+            new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },
             new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" },
         };
     }
-
 }

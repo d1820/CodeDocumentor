@@ -5,7 +5,6 @@ using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CodeDocumentor.Helper
 {
@@ -40,6 +39,7 @@ namespace CodeDocumentor.Helper
         {
             return nameSyntax.Identifier.ValueText.Contains("ReadOnlyCollection");
         }
+
         public static bool IsList(this GenericNameSyntax nameSyntax)
         {
             var genericTypeStr = nameSyntax.Identifier.ValueText;
@@ -65,13 +65,13 @@ namespace CodeDocumentor.Helper
 
             return genericTypeStr.Contains("Dictionary");
         }
+
         public static bool IsTask(this GenericNameSyntax nameSyntax)
         {
             var genericTypeStr = nameSyntax.Identifier.ValueText;
 
             return genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
         }
-
 
         /// <summary>
         ///   Creates only summary documentation comment trivia.
@@ -354,7 +354,6 @@ namespace CodeDocumentor.Helper
                 var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
 
                 return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
-
             }
 
             XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
@@ -362,13 +361,12 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Checks if string is XML or GenericType
+        ///   Checks if string is XML or GenericType
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns>Tuple of bool and bool</returns>
+        /// <param name="text"> </param>
+        /// <returns> Tuple of bool and bool </returns>
         internal static (bool isXml, bool isGeneric, bool isTypeParam) IsXML(string text)
         {
-
             if (string.IsNullOrEmpty(text))
             {
                 return (false, false, false);

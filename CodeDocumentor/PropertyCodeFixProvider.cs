@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Settings;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -87,7 +86,7 @@ namespace CodeDocumentor
             else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
             {
                 var retrunType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
-                isBoolean = retrunType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase)  > -1;
+                isBoolean = retrunType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
             }
 
             bool hasSetter = false;

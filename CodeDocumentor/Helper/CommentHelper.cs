@@ -14,14 +14,15 @@ namespace CodeDocumentor.Helper
     public static class CommentHelper
     {
         /// <summary>
-        /// Adds period to text
+        ///   Adds period to text
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
+        /// <param name="text"> </param>
+        /// <returns> </returns>
         public static string WithPeriod(this string text)
         {
             return text + ".";
         }
+
         /// <summary>
         ///   Creates class comment.
         /// </summary>

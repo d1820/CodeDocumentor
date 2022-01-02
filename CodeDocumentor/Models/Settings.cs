@@ -1,22 +1,26 @@
-﻿using System.IO;
-using System;
-using EnvDTE;
-using System.Runtime.Serialization.Json;
+﻿using System;
 using System.Collections.Generic;
-// For definitions of XML nodes see: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
-// see also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
+using System.IO;
+
+// For definitions of XML nodes see:
+// https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
+// also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022
 {
     public class Settings : IOptionPageGrid
     {
         //This impl was adopted from https://github.com/mike-ward/VSColorOutput64/tree/db549b54709ca77ae5538c4046c332f1e51f90e7
 
-
         public bool ExcludeAsyncSuffix { get; set; }
+
         public bool IncludeValueNodeInProperties { get; set; }
+
         public bool IsEnabledForPublishMembersOnly { get; set; }
+
         public bool UseNaturalLanguageForReturnNode { get; set; }
+
         public bool UseToDoCommentsOnSummaryError { get; set; }
+
         public List<WordMap> WordMaps { get; set; } = Constants.WORD_MAPS;
 
         //public const string RegistryPath = @"DialogPage\BlueOnionSoftware.VsColorOutputOptions";
@@ -50,7 +54,7 @@ namespace CodeDocumentor.Vsix2022
         }
 
         public void Save()
-        {            
+        {
             if (Runtime.RunningUnitTests) return;
             Directory.CreateDirectory(ProgramDataFolder);
             SaveToFile(GetSettingsFilePath());

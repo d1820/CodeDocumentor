@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Settings;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 
 namespace CodeDocumentor
 {
@@ -75,10 +71,10 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        /// Gets the exceptions from the body
+        ///   Gets the exceptions from the body
         /// </summary>
-        /// <param name="textToSearch"></param>
-        /// <returns></returns>
+        /// <param name="textToSearch"> </param>
+        /// <returns> </returns>
         internal static IEnumerable<string> GetExceptions(string textToSearch)
         {
             if (string.IsNullOrEmpty(textToSearch))
@@ -130,7 +126,6 @@ namespace CodeDocumentor
                     list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
                 }
             }
-
 
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {

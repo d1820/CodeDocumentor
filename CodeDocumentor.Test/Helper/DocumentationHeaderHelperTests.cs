@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
@@ -34,8 +35,11 @@ namespace CodeDocumentor.Test.Helper
         public TranslatorTests()
         {
             CodeDocumentorPackage.Options = TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.WordMaps.Add(new WordMap { Word = "You're", Translation = "You Are" });
-            CodeDocumentorPackage.Options.WordMaps.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+
+            var temp = CodeDocumentorPackage.Options.WordMaps.ToList();
+            temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
+            temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+            CodeDocumentorPackage.Options.WordMaps = temp.ToArray();
         }
 
         [Theory]

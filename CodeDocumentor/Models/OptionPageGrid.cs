@@ -84,11 +84,11 @@ namespace CodeDocumentor.Vsix2022
         /// <summary>
         /// Gets or Sets the word maps.
         /// </summary>
-        /// <value>A list of wordmaps.</value>
+        /// <value>Aa array of wordmaps.</value>
         [Category(TranslationSubCategory)]
         [DisplayName("Word mappings for creating comments")]
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
-        public List<WordMap> WordMaps { get; set; }
+        public WordMap[] WordMaps { get; set; }
 
         /// <summary>
         /// Loads the settings from storage.

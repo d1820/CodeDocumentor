@@ -122,7 +122,7 @@ namespace CodeDocumentor.Helper
         /// <returns> The method comment. </returns>
         public static string CreateMethodComment(ReadOnlySpan<char> name, TypeSyntax returnType)
         {
-            List<string> parts = SpilitNameAndToLower(name, false);
+            List<string> parts = SpilitNameAndToLower(name, false, false);
 
             parts[0] = Pluralizer.Pluralize(parts[0]);
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
@@ -165,7 +165,8 @@ namespace CodeDocumentor.Helper
             {
                 parts.Insert(1, "the");
             }
-            return string.Join(" ", parts).WithPeriod();
+            
+            return string.Join(" ", parts).Translate().WithPeriod();
         }
 
         /// <summary>
@@ -258,10 +259,15 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <param name="isFirstCharacterLower"> If true, the first character will be lower. </param>
+        /// <param name="shouldTranslate">If true, the name will be translated</param>
         /// <returns> A list of words. </returns>
-        private static List<string> SpilitNameAndToLower(ReadOnlySpan<char> name, bool isFirstCharacterLower)
+        private static List<string> SpilitNameAndToLower(ReadOnlySpan<char> name, bool isFirstCharacterLower, bool shouldTranslate = true)
         {
-            List<string> parts = NameSplitter.Split(name.TranslateToSpan());
+            if (shouldTranslate)
+            {
+                name = name.TranslateToSpan();
+            }
+            List<string> parts = NameSplitter.Split(name);
 
             int i = isFirstCharacterLower ? 0 : 1;
             for (; i < parts.Count; i++)

@@ -151,6 +151,17 @@ namespace KbxtEcho.Controllers
         }
 
         /// <summary>
+        /// Should pluralize.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>A bool.</returns>
+        public bool ShouldPluralize(string name)
+        {
+            return default;
+        }
+
+
+        /// <summary>
         /// Getfives the <typeparamref name="TResult"></typeparamref>.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>

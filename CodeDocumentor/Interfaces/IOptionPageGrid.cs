@@ -41,6 +41,6 @@ namespace CodeDocumentor.Vsix2022
         /// Gets or Sets the word maps.
         /// </summary>
         /// <value>A list of wordmaps.</value>
-        List<WordMap> WordMaps { get; set; }
+        WordMap[] WordMaps { get; set; }
     }
 }

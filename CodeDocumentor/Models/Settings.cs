@@ -44,8 +44,8 @@ namespace CodeDocumentor.Vsix2022
         /// <summary>
         /// Gets or Sets the word maps.
         /// </summary>
-        /// <value>A list of wordmaps.</value>
-        public List<WordMap> WordMaps { get; set; } = Constants.WORD_MAPS;
+        /// <value>An array of wordmaps.</value>
+        public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
 
         //public const string RegistryPath = @"DialogPage\BlueOnionSoftware.VsColorOutputOptions";
 
@@ -91,7 +91,7 @@ namespace CodeDocumentor.Vsix2022
         }
 
         /// <summary>
-        /// TODO: Add Summary
+        /// Saves the settings
         /// </summary>
         public void Save()
         {
@@ -102,7 +102,7 @@ namespace CodeDocumentor.Vsix2022
         }
 
         /// <summary>
-        /// Saves the to file.
+        /// Saves the settings to file.
         /// </summary>
         /// <param name="path">The path.</param>
         public void SaveToFile(string path)

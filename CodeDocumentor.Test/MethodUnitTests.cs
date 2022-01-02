@@ -320,7 +320,7 @@ namespace ConsoleApp4
 }";
 
         /// <summary>
-        /// The method with int return test code.
+        /// The method with integer return test code.
         /// </summary>
         private const string MethodWithIntReturnTestCode = @"
 using System;
@@ -339,7 +339,7 @@ namespace ConsoleApp4
 }";
 
         /// <summary>
-        /// The method with int return test fix code.
+        /// The method with integer return test fix code.
         /// </summary>
         private const string MethodWithIntReturnTestFixCode = @"
 using System;
@@ -351,7 +351,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the method with int return tester.
+        /// Shows the method with integer return tester.
         /// </summary>
         /// <returns>An int.</returns>
         public int ShowMethodWithIntReturnTester()
@@ -393,7 +393,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the method with list int return tester.
+        /// Shows the method with list integer return tester.
         /// </summary>
         /// <returns><![CDATA[List<int>]]></returns>
         public List<int> ShowMethodWithListIntReturnTester()
@@ -404,7 +404,7 @@ namespace ConsoleApp4
 }";
 
         /// <summary>
-        /// The method with list list int return test code.
+        /// The method with list of list int return test code.
         /// </summary>
         private const string MethodWithListListIntReturnTestCode = @"
 using System;
@@ -423,7 +423,7 @@ namespace ConsoleApp4
 }";
 
         /// <summary>
-        /// The method with list list int return test fix code.
+        /// The method with list of list int return test fix code.
         /// </summary>
         private const string MethodWithListListIntReturnTestFixCode = @"
 using System;
@@ -435,7 +435,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the method with list list int return tester.
+        /// Shows the method with list list integer return tester.
         /// </summary>
         /// <returns><![CDATA[List<List<int>>]]></returns>
         public List<List<int>> ShowMethodWithListListIntReturnTester()

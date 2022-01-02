@@ -17,6 +17,6 @@ namespace CodeDocumentor.Test
 
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
-        public List<WordMap> WordMaps { get; set; } = Constants.WORD_MAPS;
+        public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
     }
 }

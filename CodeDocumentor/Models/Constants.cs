@@ -8,7 +8,7 @@ namespace CodeDocumentor.Vsix2022
     public static class Constants
     {
         //This has to be a static list, so it works properly with the settings dialog
-        public static List<WordMap> WORD_MAPS = new List<WordMap> {
+        public static WordMap[] WORD_MAPS = new [] {
             new WordMap { Word = "int", Translation = "integer" },
             new WordMap { Word = "Int32", Translation = "integer" },
             new WordMap { Word = "Int64", Translation = "integer" },

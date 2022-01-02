@@ -85,8 +85,8 @@ namespace CodeDocumentor
             }
             else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
             {
-                var retrunType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
-                isBoolean = retrunType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
+                var returnType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
+                isBoolean = returnType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
             }
 
             bool hasSetter = false;

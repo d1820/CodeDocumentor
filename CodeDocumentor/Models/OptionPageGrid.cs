@@ -28,7 +28,7 @@ namespace CodeDocumentor.Vsix2022
 
         [Category(ReturnsSubCategory)]
         [DisplayName("Use natural language for return comments")]
-        [Description("When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example: <retrun>A List of Strings</return>")]
+        [Description("When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example: <return>A List of Strings</return>")]
         public bool UseNaturalLanguageForReturnNode { get; set; }
 
         [Category(SummarySubCategory)]

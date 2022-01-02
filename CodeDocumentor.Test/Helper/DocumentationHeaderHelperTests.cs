@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
@@ -6,6 +7,7 @@ using Xunit;
 
 namespace CodeDocumentor.Test.Helper
 {
+    [SuppressMessage("XMLDocumentation", "")]
     public class DocumentationHeaderHelperTests
     {
         [Fact]
@@ -26,7 +28,7 @@ namespace CodeDocumentor.Test.Helper
             result.ToFullString().Should().Be(expected);
         }
     }
-
+    [SuppressMessage("XMLDocumentation", "")]
     public class TranslatorTests
     {
         public TranslatorTests()

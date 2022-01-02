@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -10,6 +11,7 @@ namespace CodeDocumentor.Test
     /// <summary>
     ///   Superclass of all Unit Tests for DiagnosticAnalyzers
     /// </summary>
+    [SuppressMessage("XMLDocumentation", "")]
     public abstract partial class DiagnosticVerifier
     {
         #region To be implemented by Test classes

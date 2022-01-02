@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Vsix2022;
+﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -6,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation", "")]
     public partial class ConstrcutorUnitTest {
 
         /// <summary>
@@ -150,7 +152,8 @@ namespace ConsoleApp4
     /// The constructor unit test.
     /// </summary>
     [TestClass]
-	public partial class ConstrcutorUnitTest : CodeFixVerifier
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class ConstrcutorUnitTest : CodeFixVerifier
 	{
 
         [TestInitialize]

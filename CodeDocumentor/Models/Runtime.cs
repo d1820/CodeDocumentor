@@ -5,6 +5,10 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Runtime
     {
+        /// <summary>
+        /// Gets or Sets a value indicating whether running unit tests.
+        /// </summary>
+        /// <value>A bool.</value>
         public static bool RunningUnitTests { get; set; }
     }
 }

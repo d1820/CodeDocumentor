@@ -5,9 +5,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation", "")]
     public partial class MethodUnitTest
     {
         /// <summary>
@@ -485,13 +487,72 @@ namespace ConsoleApp4
 	}
 }";
 
+        private const string MethodWithException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			throw new Exception(""test"");
+		}
+	}
+}";
+        private const string MethodWithNoException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			return null;
+		}
+	}
+}";
+        private const string MethodWithDuplicateException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			throw new Exception(""test"");
+            throw new Exception(""test"");
+		}
+	}
+}";
     }
 
     /// <summary>
     /// The method unit test.
     /// </summary>
     [TestClass]
-	public partial class MethodUnitTest : CodeFixVerifier
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class MethodUnitTest : CodeFixVerifier
 	{
 
 		/// <summary>
@@ -565,25 +626,7 @@ namespace ConsoleApp4
 
 
         #region GetExceptions
-        private const string MethodWithException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			throw new Exception(""test"");
-		}
-	}
-}";
+      
 
         [TestMethod]
         public async Task GetExceptions_ReturnsMatches()
@@ -593,26 +636,7 @@ namespace ConsoleApp4
         }
 
 
-        private const string MethodWithNoException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
+      
         [TestMethod]
         public async Task GetExceptions_ReturnsNoMatches_WhenNoExceptions()
         {
@@ -620,26 +644,7 @@ namespace ConsoleApp4
             Assert.AreEqual(0, exceptions.ToList().Count);
         }
 
-        private const string MethodWithDuplicateException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			throw new Exception(""test"");
-            throw new Exception(""test"");
-		}
-	}
-}";
+       
 
         [TestMethod]
         public async Task GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()

@@ -12,12 +12,28 @@ namespace CodeDocumentor.Helper
         protected readonly bool _useProperCasing;
         protected readonly bool _useStartingWords;
 
+        /// <summary>
+        /// Gets or Sets the read only collection comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public abstract string ReadOnlyCollectionCommentTemplate { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the list comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public abstract string ListCommentTemplate { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the dictionary comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public abstract string DictionaryCommentTemplate { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the array comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public abstract string ArrayCommentTemplate { get; set; }
 
         protected BaseReturnTypeCommentConstruction(bool useProperCasing, bool useStartingWords)
@@ -78,6 +94,12 @@ namespace CodeDocumentor.Helper
             return string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(arrayTypeSyntax.ElementType, true));
         }
 
+        /// <summary>
+        /// Shoulds the pluralize.
+        /// </summary>
+        /// <param name="argType">The arg type.</param>
+        /// <param name="defaultValue">If true, default value.</param>
+        /// <returns>A bool.</returns>
         private bool ShouldPluralize(TypeSyntax argType, bool defaultValue)
         {
             if (argType.IsList() || argType.IsReadOnlyCollection())
@@ -87,6 +109,12 @@ namespace CodeDocumentor.Helper
             return defaultValue;
         }
 
+        /// <summary>
+        /// Builds the children generic arg list.
+        /// </summary>
+        /// <param name="argType">The arg type.</param>
+        /// <param name="items">The items.</param>
+        /// <param name="pluaralizeName">If true, pluaralize name.</param>
         private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, bool pluaralizeName = false)
         {
             bool shouldPluralize;

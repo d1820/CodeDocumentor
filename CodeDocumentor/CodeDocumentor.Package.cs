@@ -66,6 +66,10 @@ namespace CodeDocumentor.Vsix2022
             _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
         }
 
+        /// <summary>
+        /// Gets the options.
+        /// </summary>
+        /// <value>An IOptionPageGrid.</value>
         public static IOptionPageGrid Options
         {
             get
@@ -90,6 +94,9 @@ namespace CodeDocumentor.Vsix2022
             }
         }
 
+        /// <summary>
+        /// Loads the package.
+        /// </summary>
         private static void LoadPackage()
         {
             var shell = (IVsShell)GetGlobalService(typeof(SVsShell));

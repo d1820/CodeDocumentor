@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Vsix2022;
+﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -6,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation","")]
     public partial class ClassUnitTest
     {
         /// <summary>

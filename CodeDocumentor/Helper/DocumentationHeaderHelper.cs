@@ -35,23 +35,43 @@ namespace CodeDocumentor.Helper
         /// </summary>
         public const string InheritDoc = "inheritdoc";
 
+        /// <summary>
+        /// Are the read only collection.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
         public static bool IsReadOnlyCollection(this GenericNameSyntax nameSyntax)
         {
             return nameSyntax.Identifier.ValueText.Contains("ReadOnlyCollection");
         }
 
-        public static bool IsList(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
-        }
-
+        /// <summary>
+        /// Are the read only collection.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
         public static bool IsReadOnlyCollection(this TypeSyntax nameSyntax)
         {
             return nameSyntax.ToString().Contains("ReadOnlyCollection");
         }
 
+        /// <summary>
+        /// Are the list.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
+        public static bool IsList(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
+
+        }
+        /// <summary>
+        /// Are the list.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
         public static bool IsList(this TypeSyntax nameSyntax)
         {
             var genericTypeStr = nameSyntax.ToString();
@@ -59,6 +79,11 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
         }
 
+        /// <summary>
+        /// Are the dictionary.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
         public static bool IsDictionary(this GenericNameSyntax nameSyntax)
         {
             var genericTypeStr = nameSyntax.Identifier.ValueText;
@@ -66,6 +91,11 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.Contains("Dictionary");
         }
 
+        /// <summary>
+        /// Are the task.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
         public static bool IsTask(this GenericNameSyntax nameSyntax)
         {
             var genericTypeStr = nameSyntax.Identifier.ValueText;
@@ -212,6 +242,11 @@ namespace CodeDocumentor.Helper
             return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
         }
 
+        /// <summary>
+        /// Creates the value part nodes.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <returns>An array of XmlNodeSyntaxes</returns>
         public static XmlNodeSyntax[] CreateValuePartNodes(string content)
         {
             ///[0] <value></value>[1][2]

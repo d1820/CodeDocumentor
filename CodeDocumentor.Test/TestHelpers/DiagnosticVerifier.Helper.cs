@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,6 +10,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation", "")]
     /// <summary>
     ///   Class for turning strings into documents and getting the diagnostics on them All methods are static
     /// </summary>

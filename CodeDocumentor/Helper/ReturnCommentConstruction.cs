@@ -21,12 +21,28 @@ namespace CodeDocumentor.Helper
             Comment = BuildComment(returnType, CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode != true);
         }
 
+        /// <summary>
+        /// Gets or Sets the read only collection comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public override string ReadOnlyCollectionCommentTemplate { get; set; } = "A read only collection of {0}";
 
+        /// <summary>
+        /// Gets or Sets the list comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public override string ListCommentTemplate { get; set; } = "A list of {0}";
 
+        /// <summary>
+        /// Gets or Sets the dictionary comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public override string DictionaryCommentTemplate { get; set; } = "A dictionary with a key of type {0} and a value of type {1}";
 
+        /// <summary>
+        /// Gets or Sets the array comment template.
+        /// </summary>
+        /// <value>A string.</value>
         public override string ArrayCommentTemplate { get; set; } = "An array of {0}";
 
         /// <summary>

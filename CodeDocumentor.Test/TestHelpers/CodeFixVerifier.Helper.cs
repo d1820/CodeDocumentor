@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -8,6 +9,7 @@ using Microsoft.CodeAnalysis.Simplification;
 
 namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation", "")]
     /// <summary>
     ///   Diagnostic Producer class with extra methods dealing with applying codefixes All methods are static
     /// </summary>

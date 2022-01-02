@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using CodeDocumentor.Vsix2022;
@@ -16,6 +17,7 @@ namespace CodeDocumentor.Test
     ///   Superclass of all Unit tests made for diagnostics with codefixes. Contains methods used to verify correctness
     ///   of codefixes
     /// </summary>
+    [SuppressMessage("XMLDocumentation", "")]
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
 

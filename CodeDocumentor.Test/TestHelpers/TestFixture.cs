@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -6,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation", "")]
     public static class TestFixture
     {
         public static IOptionPageGrid BuildOptionsPageGrid()
@@ -98,11 +100,4 @@ namespace CodeDocumentor.Test
         }
     }
 
-    public class MethodDeclarationParts
-    {
-        public IdentifierNameSyntax ReturnType { get; set; }
-        public SyntaxToken MethodName { get; set; }
-        public TypeParameterListSyntax TypeParameterList { get; set; }
-        public MethodDeclarationSyntax MethodDeclaration { get; set; }
-    }
 }

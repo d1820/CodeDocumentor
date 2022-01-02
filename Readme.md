@@ -53,7 +53,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 
 ### Word Translations
 
-As part of the settings WordMaps can be defined to help control how you want text displayed. There 12 default WordMaps defined.
+As part of the settings WordMaps can be defined to help control how you want text displayed. There are already a set of default WordMaps defined.
 
 ### Recommended Settings
 

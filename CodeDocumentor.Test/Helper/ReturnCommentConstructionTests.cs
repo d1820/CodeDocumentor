@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Helper;
+﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
@@ -6,6 +7,7 @@ using Xunit;
 
 namespace CodeDocumentor.Test.Helper
 {
+    [SuppressMessage("XMLDocumentation", "")]
     public class ReturnCommentConstructionTests
     {
         private ReturnCommentConstruction _returnCommentBuilder;

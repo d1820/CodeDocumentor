@@ -1,7 +1,7 @@
 # CodeDocumentor
 ---
 
-A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method.
+A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method. While VS2022 provides basic documentation capabilities this fills the gap in trying to populate the summary and return nodes. This also gives control over how the summaries are translated.
 
 ## Installation
 ---
@@ -12,10 +12,12 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 <!-- toc -->
 
+- [Instruction](#instruction)
 - [Settings](#settings)
   - [Word Translations](#word-translations)
   - [Recommended Settings](#recommended-settings)
   - [Example Options Screen](#example-options-screen)
+- [Also Supports](#also-supports)
 - [Excluding ErrorList Messages](#excluding-errorlist-messages)
   - [Available DiagnosticId Codes](#available-diagnosticid-codes)
   - [Supported Members](#supported-members)
@@ -25,8 +27,18 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 <!-- tocstop -->
 
+## Instruction
+---
+
+1. When you installed it successful to your Visual Studio. You can see the warning wave line below the members which don't have documentation on it.
+2. Then you can click the bulb to see the fix option. When you click the option, the documentation will be added.
+3. You can use shortcut(Alt+Enter or Ctrl+.) to quickly add the documentation. Documentation fixes can be implemented at the member, document, project, and solution levels.
+
+
 ## Settings
 ---
+
+To adjust these defaults go to Tools > Options > CodeDocumentor
 
 | Setting | Description |
 |--|--|
@@ -53,6 +65,16 @@ These are the recommended settings that create the best output experience
 ### Example Options Screen
 
 ![ExampleSettings](./GifInstruction/Settings.png)
+
+## Also Supports
+---
+
+- For method documenting it will scan the method code for any exceptions and automatically add them as exception nodes
+- For method generic return types it uses XML CDATA so the actual generic type is displayed
+- For method documenting where generics are used typeparam nodes are added.
+
+To adjust these defaults go to Tools > Options > CodeDocumentor
+
 
 ## Excluding ErrorList Messages
 ---

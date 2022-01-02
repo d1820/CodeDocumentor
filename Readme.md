@@ -59,12 +59,12 @@ As part of the settings WordMaps can be defined to help control how you want tex
 
 These are the recommended settings that create the best output experience
 
-![RecommenedSettings](./GifInstruction/RecomendedSettings.png)
+![RecommenedSettings](./GifInstruction/RecomendedSettings.PNG)
 
 
 ### Example Options Screen
 
-![ExampleSettings](./GifInstruction/Settings.png)
+![ExampleSettings](./GifInstruction/Settings.PNG)
 
 ## Also Supports
 ---

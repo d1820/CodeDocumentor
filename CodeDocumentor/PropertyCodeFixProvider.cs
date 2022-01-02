@@ -112,7 +112,7 @@ namespace CodeDocumentor
 
             if (CodeDocumentorPackage.Options.IncludeValueNodeInProperties)
             {
-                string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false).Translate();
+                string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false);
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
             }
 

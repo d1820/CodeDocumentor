@@ -31,6 +31,43 @@ namespace CodeDocumentor.Helper
         /// </summary>
         public const string InheritDoc = "inheritdoc";
 
+        public static bool IsReadOnlyCollection(this GenericNameSyntax nameSyntax)
+        {
+            return nameSyntax.Identifier.ValueText.Contains("ReadOnlyCollection");
+        }
+        public static bool IsList(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
+        }
+
+        public static bool IsReadOnlyCollection(this TypeSyntax nameSyntax)
+        {
+            return nameSyntax.ToString().Contains("ReadOnlyCollection");
+        }
+
+        public static bool IsList(this TypeSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.ToString();
+
+            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
+        }
+
+        public static bool IsDictionary(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.Contains("Dictionary");
+        }
+        public static bool IsTask(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
+
         /// <summary>
         ///   Creates only summary documentation comment trivia.
         /// </summary>

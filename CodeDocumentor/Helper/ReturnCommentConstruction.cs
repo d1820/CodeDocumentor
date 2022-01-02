@@ -18,7 +18,7 @@ namespace CodeDocumentor.Helper
         /// <param name="returnType"> The return type. </param>
         public ReturnCommentConstruction(TypeSyntax returnType) : base(true, true)
         {
-            Comment = BuildComment(returnType, CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode != true).Translate();
+            Comment = BuildComment(returnType, CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode != true);
         }
 
         public override string ReadOnlyCollectionCommentTemplate { get; set; } = "A read only collection of {0}";

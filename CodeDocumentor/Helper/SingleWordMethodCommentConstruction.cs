@@ -10,7 +10,7 @@ namespace CodeDocumentor.Helper
         /// <param name="returnType"> The return type. </param>
         public SingleWordMethodCommentConstruction(TypeSyntax returnType) : base(false, false)
         {
-            Comment = BuildComment(returnType, false).Translate();
+            Comment = BuildComment(returnType, false);
         }
 
         public override string ReadOnlyCollectionCommentTemplate { get; set; } = "read only collection of {0}";

@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
+﻿using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 using System.Linq;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The method unit test.
-	/// </summary>
-	[TestClass]
+    /// <summary>
+    /// The method unit test.
+    /// </summary>
+    [TestClass]
 	public class MethodUnitTest : CodeFixVerifier
 	{
 		/// <summary>

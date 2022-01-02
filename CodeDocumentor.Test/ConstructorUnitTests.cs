@@ -1,15 +1,14 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The constructor unit test.
-	/// </summary>
-	[TestClass]
+    /// <summary>
+    /// The constructor unit test.
+    /// </summary>
+    [TestClass]
 	public class ConstrcutorUnitTest : CodeFixVerifier
 	{
 		/// <summary>

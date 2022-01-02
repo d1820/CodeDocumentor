@@ -1,16 +1,14 @@
-﻿using CodeDocumentor.Vsix2022;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The class unit test.
-	/// </summary>
-	[TestClass]
+    /// <summary>
+    /// The class unit test.
+    /// </summary>
+    [TestClass]
 	public class ClassUnitTest : CodeFixVerifier
 	{
         [TestInitialize]

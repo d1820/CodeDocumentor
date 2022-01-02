@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.Text;
 
 namespace CodeDocumentor.Helper
 {
@@ -80,20 +79,24 @@ namespace CodeDocumentor.Helper
             return string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(arrayTypeSyntax.ElementType, true));
         }
 
+        private bool ShouldPluralize(TypeSyntax argType, bool defaultValue)
+        {
+            if (argType.IsList() || argType.IsReadOnlyCollection())
+            {
+                return true;
+            }
+            return defaultValue;
+        }
         private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, bool pluaralizeName = false)
         {
+            bool shouldPluralize;
             if (argType is GenericNameSyntax genericArgType)
             {
                 var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
                 if (childArg != null)
                 {
-                    var shouldPluralize = pluaralizeName;
-                    var argTypeStr = argType.ToString();
-                    if (argTypeStr == "IEnumerable" || argTypeStr.Contains("List") || argTypeStr.Contains("Collection") || argTypeStr.Contains("ReadOnlyCollection"))
-                    {
-                        shouldPluralize = true;
-                    }
-
+                    //we check the parent to see if the child needs to be pluralized
+                    shouldPluralize = ShouldPluralize(argType, pluaralizeName);
                     BuildChildrenGenericArgList(childArg, items, shouldPluralize);
                 }
             }
@@ -114,29 +117,29 @@ namespace CodeDocumentor.Helper
             }
 
             string genericTypeStr = returnType.Identifier.ValueText;
-            if (genericTypeStr.Contains("ReadOnlyCollection"))
+            if (returnType.IsReadOnlyCollection())
             {
                 var argType = returnType.TypeArgumentList.Arguments.First();
                 List<string> items = new List<string>();
                 BuildChildrenGenericArgList(argType, items, true);
                 items.Reverse();
-                
-                var resultStr = string.Join(ReadOnlyCollectionCommentTemplate, items).ToLowerInvariant();
-                return string.Format(ReadOnlyCollectionCommentTemplate, resultStr);
+
+                var resultStr = string.Join(" of ", items).ToLowerInvariant();
+                return string.Format(ReadOnlyCollectionCommentTemplate, resultStr).WithPeriod();
             }
 
             // IEnumerable IList List
-            if (genericTypeStr == "IEnumerable" || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection"))
+            if (returnType.IsList())
             {
                 var argType = returnType.TypeArgumentList.Arguments.First();
                 List<string> items = new List<string>();
                 BuildChildrenGenericArgList(argType, items, true);
                 items.Reverse();
                 var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                return string.Format(ListCommentTemplate, resultStr);
+                return string.Format(ListCommentTemplate, resultStr).WithPeriod();
             }
 
-            if (genericTypeStr.Contains("Dictionary"))
+            if (returnType.IsDictionary())
             {
                 if (returnType.TypeArgumentList.Arguments.Count == 2)
                 {
@@ -146,19 +149,19 @@ namespace CodeDocumentor.Helper
                     BuildChildrenGenericArgList(argType2, items);
                     items.Reverse();
                     var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                    return string.Format(DictionaryCommentTemplate, argType1, resultStr);
+                    return string.Format(DictionaryCommentTemplate, argType1.Translate(), resultStr).WithPeriod();
                 }
                 return GenerateGeneralComment(genericTypeStr.AsSpan(), _useStartingWords).WithPeriod();
             }
 
-            if (genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && returnType.TypeArgumentList?.Arguments.Any() == true)
+            if (returnType.IsTask())
             {
                 if (returnType.TypeArgumentList.Arguments.Count == 1)
                 {
                     var firstType = returnType.TypeArgumentList.Arguments.First();
                     return BuildComment(firstType, returnGenericTypeAsFullString);
                 }
-
+                //This should be impossible, but will handle just in case
                 var builder = new StringBuilder();
                 for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
                 {
@@ -174,10 +177,10 @@ namespace CodeDocumentor.Helper
                     }
                 }
 
-                return builder.ToString();
+                return builder.ToString().WithPeriod();
             }
 
-            return GenerateGeneralComment(genericTypeStr.AsSpan(), false).WithPeriod();
+            return GenerateGeneralComment(genericTypeStr.AsSpan(), _useStartingWords).WithPeriod();
         }
 
         /// <summary>
@@ -218,11 +221,13 @@ namespace CodeDocumentor.Helper
         /// <returns> The comment. </returns>
         public string GenerateGeneralComment(ReadOnlySpan<char> returnType, bool includeStartingWord)
         {
+            //We dont lowercase here cause its probably a type ie) Span, Custom<T>
+            var lowerReturnWord = returnType.ToString();
             if (includeStartingWord)
             {
-                return string.Format("{0} {1}", DetermineStartingWord(returnType), returnType.ToString());
+                return string.Format("{0} {1}", DetermineStartingWord(returnType), lowerReturnWord);
             }
-            return returnType.ToString();
+            return lowerReturnWord;
         }
 
         /// <summary>
@@ -233,22 +238,27 @@ namespace CodeDocumentor.Helper
         /// <returns> The comment. </returns>
         protected string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false)
         {
-            string result = null;
+            string value;
+            string result;
             if (specificType is IdentifierNameSyntax identifierNameSyntax)
             {
-                result = Pluralizer.Pluralize(identifierNameSyntax.Identifier.ValueText);
+                value = identifierNameSyntax.Identifier.ValueText.Translate();
+                result = Pluralizer.Pluralize(value);
             }
             else if (specificType is PredefinedTypeSyntax predefinedTypeSyntax)
             {
-                result = pluaralizeName ? Pluralizer.Pluralize(predefinedTypeSyntax.Keyword.ValueText) : predefinedTypeSyntax.Keyword.ValueText;
+                value = predefinedTypeSyntax.Keyword.ValueText.Translate();
+                result = pluaralizeName ? Pluralizer.Pluralize(value) : value;
             }
             else if (specificType is GenericNameSyntax genericNameSyntax)
             {
-                result = pluaralizeName ? Pluralizer.Pluralize(genericNameSyntax.Identifier.ValueText) : genericNameSyntax.Identifier.ValueText;
+                value = genericNameSyntax.Identifier.ValueText.Translate();
+
+                result = pluaralizeName ? Pluralizer.Pluralize(value) : value;
             }
             else
             {
-                result = specificType.ToFullString();
+                result = specificType.ToFullString().Translate();
             }
             return result;
         }
@@ -285,44 +295,5 @@ namespace CodeDocumentor.Helper
             return node as MethodDeclarationSyntax;
         }
 
-        //TODO: test this and implement. This would replace the above strings in GenerateGenericTypeComment, because that does not account for generics of generics
-        private string LookupNaturalStringByType(Type type)
-        {
-            if (type.IsAssignableFrom(typeof(IReadOnlyCollection<>)))
-            {
-                var baseStr = "A read only collection of ";
-                if (type.IsGenericType)
-                {
-                    foreach (var item in type.GenericTypeArguments)
-                    {
-                        baseStr += LookupNaturalStringByType(item);
-                    }
-                }
-                return baseStr += type.Name;
-            }
-
-            if (type.IsAssignableFrom(typeof(IDictionary)))
-            {
-                if (type.GenericTypeArguments.Count() == 2)
-                {
-                    var key = LookupNaturalStringByType(type.GetGenericArguments().First());
-                    var value = LookupNaturalStringByType(type.GetGenericArguments().Last());
-                    return $"A dictionary with a key of type {key} and a value of type {value}";
-                }
-            }
-            if (type.IsAssignableFrom(typeof(IEnumerable)))
-            {
-                var baseStr = "A list of ";
-                if (type.IsGenericType)
-                {
-                    foreach (var item in type.GenericTypeArguments)
-                    {
-                        baseStr += LookupNaturalStringByType(item);
-                    }
-                }
-                return baseStr += type.Name;
-            }
-            return DetermineStartingWord(type.Name.AsSpan());
-        }
     }
 }

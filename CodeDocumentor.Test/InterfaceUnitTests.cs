@@ -2,14 +2,13 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The interface unit test.
-	/// </summary>
-	[TestClass]
+    /// <summary>
+    /// The interface unit test.
+    /// </summary>
+    [TestClass]
 	public class InterfaceUnitTest : CodeFixVerifier
 	{
 		/// <summary>

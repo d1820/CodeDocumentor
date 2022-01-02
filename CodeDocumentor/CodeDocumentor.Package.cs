@@ -3,14 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
-using System.ComponentModel;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio;
 using CodeDocumentor.Settings;
 using Microsoft.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
@@ -42,7 +40,7 @@ namespace CodeDocumentor.Vsix2022
     [ProvideOptionPage(typeof(OptionPageGrid), "CodeDocumentor", "General", 0, 0, true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        private static OptionPageGrid _options;
+        private static IOptionPageGrid _options;
         private static readonly object _syncRoot = new object();
 
         #region Package Members
@@ -64,7 +62,7 @@ namespace CodeDocumentor.Vsix2022
 
         }
 
-        public static OptionPageGrid Options
+        public static IOptionPageGrid Options
         {
             get
             {
@@ -113,51 +111,6 @@ namespace CodeDocumentor.Vsix2022
         }
 
         #endregion
-
-    }
-
-    public class WordMap
-    {
-        public string Word { get; set; }
-        public string Translation { get; set; }
-    }
-    //This has to live in this project so context thread is valid
-    public class OptionPageGrid : DialogPage
-    {
-        [Category("CodeDocumentor")]
-        [DisplayName("Enable comments for public members only")]
-        [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public")]
-        public bool IsEnabledForPublishMembersOnly { get; set; }
-
-        [Category("CodeDocumentor")]
-        [DisplayName("Use natural language for return comments")]
-        [Description("When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example: <retrun>A List of Strings</return>")]
-        public bool UseNaturalLanguageForReturnNode { get; set; }
-
-        [Category("CodeDocumentor")]
-        [DisplayName("Exclude async wording from comments")]
-        [Description("When documenting members skip adding asynchronously to the comment.")]
-        public bool ExcludeAsyncSuffix { get; set; }
-
-        [Category("CodeDocumentor")]
-        [DisplayName("Include <value> node in property comments")]
-        [Description("When documenting properties add the value node with the return type")]
-        public bool IncludeValueNodeInProperties { get; set; }
-
-        [Category("CodeDocumentor")]
-        [DisplayName("Use TODO comment when summary can not be determined")]
-        [Description("When documenting methods that can not create a valid summary insert TODO instead. Async is ignored")]
-        public bool UseToDoCommentsOnSummaryError { get; set; }
-
-        [Category("CodeDocumentor")]
-        [DisplayName("Word mappings for creating comments")]
-        [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
-        public List<WordMap> WordMaps { get; set; } = new List<WordMap> {
-            new WordMap { Word = "int", Translation = "integer" },
-            new WordMap { Word = "OfList", Translation = "OfLists" },
-            new WordMap { Word = "OfCollection", Translation = "OfCollections" },
-            new WordMap { Word = "OfEnumerable", Translation = "OfEnumerables" },
-        };
 
     }
 

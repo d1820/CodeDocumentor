@@ -49,6 +49,7 @@
     <Compile Include="ClassAnalyzer.cs" />
     <Compile Include="ClassCodeFixProvider.cs" />
     <Compile Include="CodeDocumentor.Package.cs" />
+    <Compile Include="Models\Constants.cs" />
     <Compile Include="ConstructorAnalyzer.cs" />
     <Compile Include="ConstructorCodeFixProvider.cs" />
     <Compile Include="EnumAnalyzer.cs" />
@@ -66,12 +67,17 @@
     <Compile Include="Helper\Translator.cs" />
     <Compile Include="InterfaceAnalyzer.cs" />
     <Compile Include="InterfaceCodeFixProvider.cs" />
+    <Compile Include="Interfaces\IOptionPageGrid.cs" />
     <Compile Include="MethodAnalyzer.cs" />
     <Compile Include="MethodCodeFixProvider.cs" />
+    <Compile Include="Models\OptionPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyAnalyzer.cs" />
     <Compile Include="PropertyCodeFixProvider.cs" />
     <Compile Include="Settings\VsixOptions.cs" />
+    <Compile Include="Models\WordMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

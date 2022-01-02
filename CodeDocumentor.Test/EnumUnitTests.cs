@@ -1,21 +1,18 @@
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The enum unit test.
-	/// </summary>
-	[TestClass]
-	public class EnumUnitTest : CodeFixVerifier
-	{
-		/// <summary>
-		/// The test code.
-		/// </summary>
-		private const string TestCode = @"
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class EnumUnitTest
+    {
+        /// <summary>
+        /// The test code.
+        /// </summary>
+        private const string TestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,10 +24,10 @@ namespace Test
 	}
 }";
 
-		/// <summary>
-		/// The test fix code.
-		/// </summary>
-		private const string TestFixCode = @"
+        /// <summary>
+        /// The test fix code.
+        /// </summary>
+        private const string TestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,6 +41,14 @@ namespace Test
 	{
 	}
 }";
+
+    }
+    /// <summary>
+    /// The enum unit test.
+    /// </summary>
+    [TestClass]
+	public partial class EnumUnitTest : CodeFixVerifier
+	{
 
 		/// <summary>
 		/// Nos diagnostics show.

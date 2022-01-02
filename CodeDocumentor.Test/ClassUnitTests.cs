@@ -1,23 +1,16 @@
-﻿using CodeDocumentor.Vsix2022;
+﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The class unit test.
-	/// </summary>
-	[TestClass]
-	public class ClassUnitTest : CodeFixVerifier
-	{
-        [TestInitialize]
-        public void Init()
-        {
-        }
-		/// <summary>
+    [SuppressMessage("XMLDocumentation","")]
+    public partial class ClassUnitTest
+    {
+        /// <summary>
 		/// The inherit doc test code.
 		/// </summary>
 		private const string InheritDocTestCode = @"
@@ -33,10 +26,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The test code.
-		/// </summary>
-		private const string TestCode = @"
+        /// <summary>
+        /// The test code.
+        /// </summary>
+        private const string TestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -48,10 +41,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The test fix code.
-		/// </summary>
-		private const string TestFixCode = @"
+        /// <summary>
+        /// The test fix code.
+        /// </summary>
+        private const string TestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -65,7 +58,14 @@ namespace ConsoleApp4
 	{
 	}
 }";
-
+    }
+    /// <summary>
+    /// The class unit test.
+    /// </summary>
+    [TestClass]
+	public partial class ClassUnitTest : CodeFixVerifier
+	{
+        
 		/// <summary>
 		/// Nos diagnostics show.
 		/// </summary>

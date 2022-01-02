@@ -1,25 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
+﻿using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 using System.Linq;
+using CodeDocumentor.Vsix2022;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The method unit test.
-	/// </summary>
-	[TestClass]
-	public class MethodUnitTest : CodeFixVerifier
-	{
-		/// <summary>
-		/// The inherit doc test code.
-		/// </summary>
-		private const string InheritDocTestCode = @"
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class MethodUnitTest
+    {
+        /// <summary>
+        /// The inherit doc test code.
+        /// </summary>
+        private const string InheritDocTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,10 +31,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The basic test code.
-		/// </summary>
-		private const string BasicTestCode = @"
+        /// <summary>
+        /// The basic test code.
+        /// </summary>
+        private const string BasicTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,10 +49,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The basic test fix code.
-		/// </summary>
-		private const string BasicTestFixCode = @"
+        /// <summary>
+        /// The basic test fix code.
+        /// </summary>
+        private const string BasicTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -74,10 +70,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with parameter test code.
-		/// </summary>
-		private const string MethodWithParameterTestCode = @"
+        /// <summary>
+        /// The method with parameter test code.
+        /// </summary>
+        private const string MethodWithParameterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -91,10 +87,10 @@ namespace ConsoleApp4
 		}
 	}
 }";
-		/// <summary>
-		/// The method with parameter test fix code.
-		/// </summary>
-		private const string MethodWithParameterTestFixCode = @"
+        /// <summary>
+        /// The method with parameter test fix code.
+        /// </summary>
+        private const string MethodWithParameterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -115,10 +111,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with parameter test code.
-		/// </summary>
-		private const string MethodWithBooleanParameterTestCode = @"
+        /// <summary>
+        /// The method with parameter test code.
+        /// </summary>
+        private const string MethodWithBooleanParameterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -132,10 +128,10 @@ namespace ConsoleApp4
 		}
 	}
 }";
-		/// <summary>
-		/// The method with parameter test fix code.
-		/// </summary>
-		private const string MethodWithBooleanParameterTestFixCode = @"
+        /// <summary>
+        /// The method with parameter test fix code.
+        /// </summary>
+        private const string MethodWithBooleanParameterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -155,10 +151,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with parameter test code.
-		/// </summary>
-		private const string MethodWithNullableStructParameterTestCode = @"
+        /// <summary>
+        /// The method with parameter test code.
+        /// </summary>
+        private const string MethodWithNullableStructParameterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -173,10 +169,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with parameter test fix code.
-		/// </summary>
-		private const string MethodWithNullableStructParameterTestFixCode = @"
+        /// <summary>
+        /// The method with parameter test fix code.
+        /// </summary>
+        private const string MethodWithNullableStructParameterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -186,7 +182,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the.
+        /// 
         /// </summary>
         /// <param name=""param1"">The param1.</param>
         /// <param name=""param2"">The param2.</param>
@@ -197,10 +193,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with return test code.
-		/// </summary>
-		private const string MethodWithReturnTestCode = @"
+        /// <summary>
+        /// The method with return test code.
+        /// </summary>
+        private const string MethodWithReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -216,10 +212,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with return test fix code.
-		/// </summary>
-		private const string MethodWithReturnTestFixCode = @"
+        /// <summary>
+        /// The method with return test fix code.
+        /// </summary>
+        private const string MethodWithReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -239,10 +235,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with string return test code.
-		/// </summary>
-		private const string MethodWithStringReturnTestCode = @"
+        /// <summary>
+        /// The method with string return test code.
+        /// </summary>
+        private const string MethodWithStringReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -258,10 +254,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with string return test fix code.
-		/// </summary>
-		private const string MethodWithStringReturnTestFixCode = @"
+        /// <summary>
+        /// The method with string return test fix code.
+        /// </summary>
+        private const string MethodWithStringReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -281,10 +277,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with object return test code.
-		/// </summary>
-		private const string MethodWithObjectReturnTestCode = @"
+        /// <summary>
+        /// The method with object return test code.
+        /// </summary>
+        private const string MethodWithObjectReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -300,10 +296,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with object return test fix code.
-		/// </summary>
-		private const string MethodWithObjectReturnTestFixCode = @"
+        /// <summary>
+        /// The method with object return test fix code.
+        /// </summary>
+        private const string MethodWithObjectReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -323,10 +319,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with int return test code.
-		/// </summary>
-		private const string MethodWithIntReturnTestCode = @"
+        /// <summary>
+        /// The method with integer return test code.
+        /// </summary>
+        private const string MethodWithIntReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -342,10 +338,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with int return test fix code.
-		/// </summary>
-		private const string MethodWithIntReturnTestFixCode = @"
+        /// <summary>
+        /// The method with integer return test fix code.
+        /// </summary>
+        private const string MethodWithIntReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -355,7 +351,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the method with int return tester.
+        /// Shows the method with integer return tester.
         /// </summary>
         /// <returns>An int.</returns>
         public int ShowMethodWithIntReturnTester()
@@ -365,10 +361,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with list int return test code.
-		/// </summary>
-		private const string MethodWithListIntReturnTestCode = @"
+        /// <summary>
+        /// The method with list int return test code.
+        /// </summary>
+        private const string MethodWithListIntReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -384,10 +380,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with list int return test fix code.
-		/// </summary>
-		private const string MethodWithListIntReturnTestFixCode = @"
+        /// <summary>
+        /// The method with list int return test fix code.
+        /// </summary>
+        private const string MethodWithListIntReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -397,7 +393,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the method with list int return tester.
+        /// Shows the method with list integer return tester.
         /// </summary>
         /// <returns><![CDATA[List<int>]]></returns>
         public List<int> ShowMethodWithListIntReturnTester()
@@ -407,10 +403,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with list list int return test code.
-		/// </summary>
-		private const string MethodWithListListIntReturnTestCode = @"
+        /// <summary>
+        /// The method with list of list int return test code.
+        /// </summary>
+        private const string MethodWithListListIntReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -426,10 +422,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with list list int return test fix code.
-		/// </summary>
-		private const string MethodWithListListIntReturnTestFixCode = @"
+        /// <summary>
+        /// The method with list of list int return test fix code.
+        /// </summary>
+        private const string MethodWithListListIntReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -439,7 +435,7 @@ namespace ConsoleApp4
 	public class MethodTester
 	{
         /// <summary>
-        /// Shows the method with list list int return tester.
+        /// Shows the method with list list integer return tester.
         /// </summary>
         /// <returns><![CDATA[List<List<int>>]]></returns>
         public List<List<int>> ShowMethodWithListListIntReturnTester()
@@ -449,10 +445,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with list qualified name return test code.
-		/// </summary>
-		private const string MethodWithListQualifiedNameReturnTestCode = @"
+        /// <summary>
+        /// The method with list qualified name return test code.
+        /// </summary>
+        private const string MethodWithListQualifiedNameReturnTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -468,10 +464,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The method with list qualified name return test fix code.
-		/// </summary>
-		private const string MethodWithListQualifiedNameReturnTestFixCode = @"
+        /// <summary>
+        /// The method with list qualified name return test fix code.
+        /// </summary>
+        private const string MethodWithListQualifiedNameReturnTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -490,6 +486,74 @@ namespace ConsoleApp4
 		}
 	}
 }";
+
+        private const string MethodWithException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			throw new Exception(""test"");
+		}
+	}
+}";
+        private const string MethodWithNoException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			return null;
+		}
+	}
+}";
+        private const string MethodWithDuplicateException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			throw new Exception(""test"");
+            throw new Exception(""test"");
+		}
+	}
+}";
+    }
+
+    /// <summary>
+    /// The method unit test.
+    /// </summary>
+    [TestClass]
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class MethodUnitTest : CodeFixVerifier
+	{
 
 		/// <summary>
 		/// Nos diagnostics show.
@@ -524,7 +588,8 @@ namespace ConsoleApp4
 		[DataRow(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
 		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
 		{
-			var expected = new DiagnosticResult
+            CodeDocumentorPackage.Options.UseNaturalLanguageForReturnNode = false;
+            var expected = new DiagnosticResult
 			{
 				Id = MethodAnalyzer.DiagnosticId,
 				Message = MethodAnalyzer.MessageFormat,
@@ -561,25 +626,7 @@ namespace ConsoleApp4
 
 
         #region GetExceptions
-        private const string MethodWithException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			throw new Exception(""test"");
-		}
-	}
-}";
+      
 
         [TestMethod]
         public async Task GetExceptions_ReturnsMatches()
@@ -589,26 +636,7 @@ namespace ConsoleApp4
         }
 
 
-        private const string MethodWithNoException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
+      
         [TestMethod]
         public async Task GetExceptions_ReturnsNoMatches_WhenNoExceptions()
         {
@@ -616,26 +644,7 @@ namespace ConsoleApp4
             Assert.AreEqual(0, exceptions.ToList().Count);
         }
 
-        private const string MethodWithDuplicateException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			throw new Exception(""test"");
-            throw new Exception(""test"");
-		}
-	}
-}";
+       
 
         [TestMethod]
         public async Task GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()

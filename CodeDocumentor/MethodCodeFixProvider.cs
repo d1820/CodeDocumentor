@@ -1,14 +1,12 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Settings;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -16,7 +14,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-[assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 namespace CodeDocumentor
 {
     /// <summary>
@@ -68,16 +65,16 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: c => this.AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
                     equivalenceKey: title),
                 diagnostic);
         }
 
         /// <summary>
-        /// Gets the exceptions from the body
+        ///   Gets the exceptions from the body
         /// </summary>
-        /// <param name="textToSearch"></param>
-        /// <returns></returns>
+        /// <param name="textToSearch"> </param>
+        /// <returns> </returns>
         internal static IEnumerable<string> GetExceptions(string textToSearch)
         {
             if (string.IsNullOrEmpty(textToSearch))
@@ -119,10 +116,18 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText);
+            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText.AsSpan(), declarationSyntax.ReturnType);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(methodComment));
 
-            if (declarationSyntax.ParameterList.Parameters.Any())
+            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
+            {
+                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
+                {
+                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
+                }
+            }
+
+            if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
                 foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
                 {
@@ -144,7 +149,8 @@ namespace CodeDocumentor
             string returnType = declarationSyntax.ReturnType.ToString();
             if (returnType != "void")
             {
-                string returnComment = new ReturnCommentConstruction(declarationSyntax.ReturnType).Comment;
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);
+                string returnComment = commentConstructor.Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateReturnPartNodes(returnComment));
             }
 

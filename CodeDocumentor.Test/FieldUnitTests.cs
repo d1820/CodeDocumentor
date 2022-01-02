@@ -1,21 +1,18 @@
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The field unit test.
-	/// </summary>
-	[TestClass]
-	public class FieldUnitTest : CodeFixVerifier
-	{
-		/// <summary>
-		/// The inherit doc test code.
-		/// </summary>
-		private const string InheritDocTestCode = @"
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class FieldUnitTest
+    {
+        /// <summary>
+        /// The inherit doc test code.
+        /// </summary>
+        private const string InheritDocTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,10 +30,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The const field test code.
-		/// </summary>
-		private const string ConstFieldTestCode = @"
+        /// <summary>
+        /// The const field test code.
+        /// </summary>
+        private const string ConstFieldTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,10 +50,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The const field test fix code.
-		/// </summary>
-		private const string ConstFieldTestFixCode = @"
+        /// <summary>
+        /// The const field test fix code.
+        /// </summary>
+        private const string ConstFieldTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -76,6 +73,14 @@ namespace ConsoleApp4
 	}
 }";
 
+    }
+    /// <summary>
+    /// The field unit test.
+    /// </summary>
+    [TestClass]
+	public partial class FieldUnitTest : CodeFixVerifier
+	{
+	
 		/// <summary>
 		/// Nos diagnostics show.
 		/// </summary>

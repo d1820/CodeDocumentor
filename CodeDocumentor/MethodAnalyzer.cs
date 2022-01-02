@@ -27,7 +27,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        public const string DiagnosticId = "MethodDocumentationHeader";
+        public const string DiagnosticId = "CD1605";
 
         /// <summary>
         ///   The message format.
@@ -66,6 +66,12 @@ namespace CodeDocumentor
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
+
+            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            if (excludeAnanlyzer)
+            {
+                return;
+            }
 
             if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
             {

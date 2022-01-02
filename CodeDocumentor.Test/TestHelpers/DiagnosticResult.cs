@@ -1,10 +1,12 @@
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
-using System;
 
-namespace TestHelper
+namespace CodeDocumentor.Test
 {
+    [SuppressMessage("XMLDocumentation", "")]
     /// <summary>
-    /// Location where the diagnostic appears, as determined by path, line number, and column number.
+    ///   Location where the diagnostic appears, as determined by path, line number, and column number.
     /// </summary>
     public struct DiagnosticResultLocation
     {
@@ -26,12 +28,15 @@ namespace TestHelper
         }
 
         public string Path { get; }
+
         public int Line { get; }
+
         public int Column { get; }
     }
 
+    [SuppressMessage("XMLDocumentation", "")]
     /// <summary>
-    /// Struct that stores information about a Diagnostic appearing in a source
+    ///   Struct that stores information about a Diagnostic appearing in a source
     /// </summary>
     public struct DiagnosticResult
     {

@@ -1,21 +1,19 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 
 namespace CodeDocumentor.Test
 {
-	/// <summary>
-	/// The constructor unit test.
-	/// </summary>
-	[TestClass]
-	public class ConstrcutorUnitTest : CodeFixVerifier
-	{
-		/// <summary>
-		/// The inherit doc test code.
-		/// </summary>
-		private const string InheritDocTestCode = @"
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class ConstrcutorUnitTest {
+
+        /// <summary>
+        /// The inherit doc test code.
+        /// </summary>
+        private const string InheritDocTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -31,10 +29,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The public constructor test code.
-		/// </summary>
-		private const string PublicConstructorTestCode = @"
+        /// <summary>
+        /// The public constructor test code.
+        /// </summary>
+        private const string PublicConstructorTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,10 +47,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The public contructor test fix code.
-		/// </summary>
-		private const string PublicContructorTestFixCode = @"
+        /// <summary>
+        /// The public constructor test fix code.
+        /// </summary>
+        private const string PublicContructorTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -70,10 +68,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The private constructor test code.
-		/// </summary>
-		private const string PrivateConstructorTestCode = @"
+        /// <summary>
+        /// The private constructor test code.
+        /// </summary>
+        private const string PrivateConstructorTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -88,10 +86,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The private contructor test fix code.
-		/// </summary>
-		private const string PrivateContructorTestFixCode = @"
+        /// <summary>
+        /// The private constructor test fix code.
+        /// </summary>
+        private const string PrivateContructorTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -109,10 +107,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The public constructor test code.
-		/// </summary>
-		private const string PublicConstructorWithBooleanParameterTestCode = @"
+        /// <summary>
+        /// The public constructor test code.
+        /// </summary>
+        private const string PublicConstructorWithBooleanParameterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -127,10 +125,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The public contructor test fix code.
-		/// </summary>
-		private const string PublicContructorWithBooleanParameterTestFixCode = @"
+        /// <summary>
+        /// The public contructor test fix code.
+        /// </summary>
+        private const string PublicContructorWithBooleanParameterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -149,6 +147,21 @@ namespace ConsoleApp4
 		}
 	}
 }";
+    }
+    /// <summary>
+    /// The constructor unit test.
+    /// </summary>
+    [TestClass]
+    [SuppressMessage("XMLDocumentation", "")]
+    public partial class ConstrcutorUnitTest : CodeFixVerifier
+	{
+
+        [TestInitialize]
+        public void Init()
+        {
+            CodeDocumentorPackage.Options = TestFixture.BuildOptionsPageGrid();
+        }
+
 		/// <summary>
 		/// Nos diagnostics show.
 		/// </summary>

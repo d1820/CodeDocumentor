@@ -57,10 +57,38 @@ namespace CodeDocumentor.Test
             return item;
         }
 
-        public static MethodDeclarationSyntax BuildIdentifierNameSyntax(string typeName)
+        public static MethodDeclarationSyntax BuildMethodDeclarationSyntax(string typeName, string methodName)
         {
-            var item = SyntaxFactory.MethodDeclaration()
+            var seperatedSyntaxList = SyntaxFactory.List<AttributeListSyntax>();
+
+            var access = SyntaxFactory.Token(SyntaxKind.PublicKeyword);
+            var accessTokenList = SyntaxFactory.TokenList(access);
+
+            var returnType = SyntaxFactory.IdentifierName(typeName);
+            var method = SyntaxFactory.Identifier(methodName);
+            var genericType = SyntaxFactory.TypeParameter(typeName);
+
+            var nodes = new List<TypeParameterSyntax> { genericType };
+            var tplSyntaxList = SyntaxFactory.SeparatedList(nodes);
+            var tpl = SyntaxFactory.TypeParameterList(tplSyntaxList);
+            var parameterList = SyntaxFactory.ParameterList();
+            var constraints = SyntaxFactory.List<TypeParameterConstraintClauseSyntax>();
+
+            var body = SyntaxFactory.Block();
+            var semi = SyntaxFactory.Token(SyntaxKind.SemicolonToken);
+            var item = SyntaxFactory.MethodDeclaration(seperatedSyntaxList, accessTokenList, returnType, null, method, tpl, parameterList, constraints, body, semi);
             return item;
+        }
+
+        public static IdentifierNameSyntax GetReturnType(this MethodDeclarationSyntax methodDeclaration)
+        {
+            foreach (var childNode in methodDeclaration.ChildNodes())
+            {
+                if (childNode.IsKind(SyntaxKind.IdentifierName)){
+                    return childNode as IdentifierNameSyntax;
+                }
+            }
+            return null;
         }
 
         public static IdentifierNameSyntax BuildIdentifierNameSyntax(string typeName)
@@ -68,5 +96,13 @@ namespace CodeDocumentor.Test
             var item = SyntaxFactory.IdentifierName(typeName);
             return item;
         }
+    }
+
+    public class MethodDeclarationParts
+    {
+        public IdentifierNameSyntax ReturnType { get; set; }
+        public SyntaxToken MethodName { get; set; }
+        public TypeParameterListSyntax TypeParameterList { get; set; }
+        public MethodDeclarationSyntax MethodDeclaration { get; set; }
     }
 }

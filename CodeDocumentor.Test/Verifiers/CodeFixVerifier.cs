@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -10,12 +11,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeDocumentor.Test
 {
+
     /// <summary>
     ///   Superclass of all Unit tests made for diagnostics with codefixes. Contains methods used to verify correctness
     ///   of codefixes
     /// </summary>
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
+
+        [TestInitialize]
+        public void Init()
+        {
+            CodeDocumentorPackage.Options = TestFixture.BuildOptionsPageGrid();
+        }
         /// <summary>
         ///   Returns the codefix being tested (C#) - to be implemented in non-abstract class
         /// </summary>

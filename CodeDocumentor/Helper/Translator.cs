@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp;
 using static System.Net.Mime.MediaTypeNames;
@@ -7,6 +8,7 @@ namespace CodeDocumentor.Helper
 {
     public static class Translator
     {
+        private static string wordMatchRegexTemplate = @"\b({0})\b";
         /// <summary>
         /// Translates text replacing words from the WordMap settings
         /// </summary>
@@ -75,9 +77,10 @@ namespace CodeDocumentor.Helper
                 return text;
             }
             string converted = text;
+            
             foreach (var wordMap in CodeDocumentorPackage.Options.WordMaps)
             {
-                converted = converted.Replace(wordMap.Word, wordMap.Translation);
+                converted = Regex.Replace(converted, string.Format(wordMatchRegexTemplate, wordMap.Word), wordMap.Translation);
             }
             return converted;
         }

@@ -1,20 +1,16 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeDocumentor.Test
 {
-    /// <summary>
-    /// The interface unit test.
-    /// </summary>
-    [TestClass]
-	public class InterfaceUnitTest : CodeFixVerifier
-	{
-		/// <summary>
-		/// The test code.
-		/// </summary>
-		private const string TestCode = @"
+    public partial class InterfaceUnitTest
+    {
+        /// <summary>
+        /// The test code.
+        /// </summary>
+        private const string TestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,10 +22,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The test fix code.
-		/// </summary>
-		private const string TestFixCode = @"
+        /// <summary>
+        /// The test fix code.
+        /// </summary>
+        private const string TestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,12 +33,21 @@ using System.Text;
 namespace ConsoleApp4
 {
     /// <summary>
-    /// The interface tester.
+    /// The interface tester interface.
     /// </summary>
     interface IInterfaceTester
 	{
 	}
 }";
+    }
+
+    /// <summary>
+    /// The interface unit test.
+    /// </summary>
+    [TestClass]
+	public partial class InterfaceUnitTest : CodeFixVerifier
+	{
+	
 
 		/// <summary>
 		/// Nos diagnostics show.

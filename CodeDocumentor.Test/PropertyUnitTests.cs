@@ -1,20 +1,16 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeDocumentor.Test
 {
-    /// <summary>
-    /// The property unit test.
-    /// </summary>
-    [TestClass]
-	public class PropertyUnitTest : CodeFixVerifier
-	{
-		/// <summary>
-		/// The inherit doc test code.
-		/// </summary>
-		private const string InheritDocTestCode = @"
+    public partial class PropertyUnitTest
+    {
+        /// <summary>
+        /// The inherit doc test code.
+        /// </summary>
+        private const string InheritDocTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,10 +24,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property with getter setter test code.
-		/// </summary>
-		private const string PropertyWithGetterSetterTestCode = @"
+        /// <summary>
+        /// The property with getter setter test code.
+        /// </summary>
+        private const string PropertyWithGetterSetterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,10 +40,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property with getter setter test fix code.
-		/// </summary>
-		private const string PropertyWithGetterSetterTestFixCode = @"
+        /// <summary>
+        /// The property with getter setter test fix code.
+        /// </summary>
+        private const string PropertyWithGetterSetterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -57,16 +53,16 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or sets the person name.
+        /// Gets or Sets the person name.
         /// </summary>
         public string PersonName { get; set; }
 	}
 }";
 
-		/// <summary>
-		/// The property only getter test code.
-		/// </summary>
-		private const string PropertyOnlyGetterTestCode = @"
+        /// <summary>
+        /// The property only getter test code.
+        /// </summary>
+        private const string PropertyOnlyGetterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -79,10 +75,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property only getter test fix code.
-		/// </summary>
-		private const string PropertyOnlyGetterTestFixCode = @"
+        /// <summary>
+        /// The property only getter test fix code.
+        /// </summary>
+        private const string PropertyOnlyGetterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -98,10 +94,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property private getter test fix code.
-		/// </summary>
-		private const string PropertyPrivateGetterTestCode = @"
+        /// <summary>
+        /// The property private getter test fix code.
+        /// </summary>
+        private const string PropertyPrivateGetterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -114,10 +110,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property private getter test fix code.
-		/// </summary>
-		private const string PropertyPrivateGetterTestFixCode = @"
+        /// <summary>
+        /// The property private getter test fix code.
+        /// </summary>
+        private const string PropertyPrivateGetterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -133,10 +129,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property internal getter test fix code.
-		/// </summary>
-		private const string PropertyInternalGetterTestCode = @"
+        /// <summary>
+        /// The property internal getter test fix code.
+        /// </summary>
+        private const string PropertyInternalGetterTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -149,10 +145,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The property internal getter test fix code.
-		/// </summary>
-		private const string PropertyInternalGetterTestFixCode = @"
+        /// <summary>
+        /// The property internal getter test fix code.
+        /// </summary>
+        private const string PropertyInternalGetterTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -168,10 +164,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The boolean property test code.
-		/// </summary>
-		private const string BooleanPropertyTestCode = @"
+        /// <summary>
+        /// The boolean property test code.
+        /// </summary>
+        private const string BooleanPropertyTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -184,10 +180,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The boolean property test fix code.
-		/// </summary>
-		private const string BooleanPropertyTestFixCode = @"
+        /// <summary>
+        /// The boolean property test fix code.
+        /// </summary>
+        private const string BooleanPropertyTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -197,16 +193,16 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or sets a value indicating whether tester is started.
+        /// Gets or Sets a value indicating whether tester is started.
         /// </summary>
         public bool IsTesterStarted { get; set; }
 	}
 }";
 
-		/// <summary>
-		/// The nullable boolean property test code.
-		/// </summary>
-		private const string NullableBooleanPropertyTestCode = @"
+        /// <summary>
+        /// The nullable boolean property test code.
+        /// </summary>
+        private const string NullableBooleanPropertyTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -219,10 +215,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The nullable boolean property test fix code.
-		/// </summary>
-		private const string NullableBooleanPropertyTestFixCode = @"
+        /// <summary>
+        /// The nullable boolean property test fix code.
+        /// </summary>
+        private const string NullableBooleanPropertyTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -232,16 +228,16 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or sets a value indicating whether tester is started.
+        /// Gets or Sets a value indicating whether tester is started.
         /// </summary>
         public bool? IsTesterStarted { get; set; }
 	}
 }";
 
-		/// <summary>
-		/// The expression body property test code.
-		/// </summary>
-		private const string ExpressionBodyPropertyTestCode = @"
+        /// <summary>
+        /// The expression body property test code.
+        /// </summary>
+        private const string ExpressionBodyPropertyTestCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -254,10 +250,10 @@ namespace ConsoleApp4
 	}
 }";
 
-		/// <summary>
-		/// The expression body property test fix code.
-		/// </summary>
-		private const string ExpressionBodyPropertyTestFixCode = @"
+        /// <summary>
+        /// The expression body property test fix code.
+        /// </summary>
+        private const string ExpressionBodyPropertyTestFixCode = @"
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -273,6 +269,15 @@ namespace ConsoleApp4
 	}
 }";
 
+
+    }
+    /// <summary>
+    /// The property unit test.
+    /// </summary>
+    [TestClass]
+	public partial class PropertyUnitTest : CodeFixVerifier
+	{
+	
 		/// <summary>
 		/// Nos diagnostics show.
 		/// </summary>

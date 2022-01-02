@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 // For definitions of XML nodes see: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
@@ -37,7 +38,7 @@ namespace CodeDocumentor.Vsix2022
     [Guid(VsixOptions.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", VsixOptions.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideOptionPage(typeof(OptionPageGrid), "CodeDocumentor", "General", 0, 0, true)]
+    [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
         private static IOptionPageGrid _options;
@@ -59,8 +60,8 @@ namespace CodeDocumentor.Vsix2022
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-
         }
+
 
         public static IOptionPageGrid Options
         {
@@ -72,7 +73,7 @@ namespace CodeDocumentor.Vsix2022
                     {
                         if (_options == null)
                         {
-                            LoadPackage().GetAwaiter().GetResult();
+                            LoadPackage();
                         }
                     }
 
@@ -87,7 +88,7 @@ namespace CodeDocumentor.Vsix2022
             }
         }
 
-        private static async Task LoadPackage()
+        private static void LoadPackage()
         {
             var shell = (IVsShell)GetGlobalService(typeof(SVsShell));
             var guid = new Guid(VsixOptions.PackageGuidString);
@@ -95,11 +96,7 @@ namespace CodeDocumentor.Vsix2022
             {
                 if (shell.IsPackageLoaded(ref guid, out IVsPackage package) != VSConstants.S_OK)
                 {
-                    await Task.Run(() => shell.LoadPackage(ref guid, out package)).ContinueWith(result =>
-                    {
-                        ErrorHandler.Succeeded(result.Result);
-                    }, TaskScheduler.Default);
-
+                    ErrorHandler.Succeeded(shell.LoadPackage(ref guid, out package));
                 }
             }
             else

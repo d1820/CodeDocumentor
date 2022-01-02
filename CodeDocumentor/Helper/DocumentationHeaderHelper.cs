@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CodeDocumentor.Helper
 {
@@ -11,6 +14,8 @@ namespace CodeDocumentor.Helper
     /// </summary>
     public static class DocumentationHeaderHelper
     {
+        private static Regex typeParamRegex = new Regex(@"""\w+""");
+
         /// <summary>
         ///   The category of the diagnostic.
         /// </summary>
@@ -319,25 +324,37 @@ namespace CodeDocumentor.Helper
 
             var cleanContent = content?.Trim();
             var xmlParseResponse = IsXML(cleanContent);
-            if (xmlParseResponse.isXml && !string.IsNullOrEmpty(cleanContent))
-            {
-                if (xmlParseResponse.isTask)
-                {
-                    SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
-                    var tokens = SyntaxFactory.TokenList().Add(text1Token);
-                    var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
 
-                    return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
-                }
-                else
+            if (xmlParseResponse.isTypeParam)
+            {
+                try
                 {
                     var text = SyntaxFactory.XmlText($"A ");
-                    //This is a hack fix to get the tags correct and not encoded in the XML output for embeded XML
-                    var emptyNode = SyntaxFactory.XmlEmptyElement(cleanContent.Replace("<", string.Empty).Replace("/>", string.Empty));
+                    var name = typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
+                    var typeParamNode = CreateTypeParameterRefElementSyntax(name);
+
                     var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
-                    list = list.Add(emptyNode);
+                    list = list.Add(typeParamNode);
                     return SyntaxFactory.XmlElement(startTag, list, endTag);
                 }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex.ToString());
+                    //If we fail then create empty return
+                    var text = SyntaxFactory.XmlText("");
+                    var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
+                    return SyntaxFactory.XmlElement(startTag, list, endTag);
+                }
+            }
+            if (xmlParseResponse.isGeneric || xmlParseResponse.isXml)
+            {
+                //Wrap any xml thats not a typeParamRef to CDATA
+                SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
+                var tokens = SyntaxFactory.TokenList().Add(text1Token);
+                var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
+
+                return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
+
             }
 
             XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
@@ -345,21 +362,22 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Checks if string is XML
+        /// Checks if string is XML or GenericType
         /// </summary>
         /// <param name="text"></param>
         /// <returns>Tuple of bool and bool</returns>
-        internal static (bool isXml, bool isTask) IsXML(string text)
+        internal static (bool isXml, bool isGeneric, bool isTypeParam) IsXML(string text)
         {
+
             if (string.IsNullOrEmpty(text))
             {
-                return (false, false);
+                return (false, false, false);
             }
-            var checkStrs = new[] { "task<", "<typeparam" };
+            var isXml = Regex.IsMatch(text, @"(\<\w+\s)");
+            var isGeneric = Regex.IsMatch(text, @"(\w+\<)");
+            var isTypeParam = Regex.IsMatch(text, @"(<typeparam)");
 
-            var match = checkStrs.FirstOrDefault(a => text.IndexOf(a, StringComparison.OrdinalIgnoreCase) > -1);
-
-            return (match != null, match == checkStrs[0]);
+            return (isXml, isGeneric, isTypeParam);
         }
 
         /// <summary>

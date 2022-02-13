@@ -183,6 +183,22 @@ namespace ConsoleApp4
 }";
 
         /// <summary>
+        /// The nullable datetime property test code.
+        /// </summary>
+        private const string NullableDateTimePropertyTestCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class PropertyTester
+	{
+		public DateTime? TestDateTime { get; set; }
+	}
+}";
+
+        /// <summary>
         /// The boolean property test fix code.
         /// </summary>
         private const string BooleanPropertyTestFixCode = @"
@@ -214,6 +230,25 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
 		public bool? IsTesterStarted { get; set; }
+	}
+}";
+
+        /// <summary>
+        /// The nullable date time property test fix code.
+        /// </summary>
+        private const string NullableDateTimePropertyTestFixCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class PropertyTester
+	{
+        /// <summary>
+        /// Gets or Sets a test date time
+        /// </summary>
+        public DateTime? TestDateTime { get; set; }
 	}
 }";
 
@@ -307,7 +342,8 @@ namespace ConsoleApp4
 		[DataRow(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15)]
 		[DataRow(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16)]
 		[DataRow(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17)]
-		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        [DataRow(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20)]
+        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
 		{
 			var expected = new DiagnosticResult
 			{

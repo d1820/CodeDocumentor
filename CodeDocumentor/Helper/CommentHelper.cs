@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -20,6 +21,10 @@ namespace CodeDocumentor.Helper
         /// <returns> </returns>
         public static string WithPeriod(this string text)
         {
+            if (text.EndsWith("."))
+            {
+                return text;
+            }
             return text + ".";
         }
 
@@ -123,8 +128,11 @@ namespace CodeDocumentor.Helper
         public static string CreateMethodComment(ReadOnlySpan<char> name, TypeSyntax returnType)
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
-
-            parts[0] = Pluralizer.Pluralize(parts[0]);
+            var isBool2part = parts.Count == 2 && returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
+            if (!isBool2part)
+            {
+                parts[0] = Pluralizer.Pluralize(parts[0]);
+            }
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
             {
                 parts.Insert(1, "the");
@@ -163,9 +171,13 @@ namespace CodeDocumentor.Helper
             }
             else
             {
-                parts.Insert(1, "the");
+                var skipThe = Constants.INTERNAL_SPECIAL_WORD_LIST.Any(w => w.Equals(parts[0]));
+                if (!skipThe && !isBool2part)
+                {
+                    parts.Insert(1, "the");
+                }
             }
-            
+
             return string.Join(" ", parts).Translate().WithPeriod();
         }
 

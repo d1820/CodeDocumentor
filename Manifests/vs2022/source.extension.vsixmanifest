@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="CodeDocumentor.2022.88F29096-CA4C-4F88-A260-705D8BBFCF2A" Version="1.1" Language="en-US" Publisher="Dan Turco"/>
+        <Identity Id="CodeDocumentor.2022.88F29096-CA4C-4F88-A260-705D8BBFCF2A" Version="1.1.2" Language="en-US" Publisher="Dan Turco"/>
         <DisplayName>CodeDocumentor</DisplayName>
         <Description xml:space="preserve">An Extension to generate XML documentation automatically using IntelliSense for interface,class,enum, field, constructor, property and method.</Description>
         <Icon>logo.png</Icon>

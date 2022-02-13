@@ -21,7 +21,9 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "OfCollection", Translation = "OfCollections" },
             new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },
             new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" },
-            new WordMap { Word = "Shoulds the", Translation = "Should" },
         };
+
+        public static string[] INTERNAL_SPECIAL_WORD_LIST = new[] { "Should", "Would", "Could", 
+                                                                    "Ensure", "Can", "Why", "Welcome" };
     }
 }

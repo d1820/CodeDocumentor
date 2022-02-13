@@ -5,6 +5,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Classes\ClassTester.cs" />
+    <Compile Remove="Classes\ClassTesterFix.cs" />
+    <Compile Remove="Classes\ClassTesterInheritDoc.cs" />
+    <Compile Remove="Classes\PublicClassTester.cs" />
+    <Compile Remove="Classes\PublicClassTesterFix.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Classes\ClassTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\ClassTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\ClassTesterInheritDoc.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\PublicClassTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\PublicClassTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.3.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>

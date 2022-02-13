@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
+using Microsoft.Build.Framework.XamlTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,49 +9,32 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
+
     /// <summary>
-    ///   The enum analyzer.
+    ///   The field analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class EnumAnalyzer : DiagnosticAnalyzer
+    public class FieldAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
-        private const string Title = "The enum must have a documentation header.";
-
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        private const string Category = DocumentationHeaderHelper.Category;
-
-        /// <summary>
-        ///   The diagnostic id.
-        /// </summary>
-        public const string DiagnosticId = "CD1602";
-
-        /// <summary>
-        ///   The message format.
-        /// </summary>
-        public const string MessageFormat = Title;
-
-        /// <summary>
-        ///   The diagnostic descriptor rule.
-        /// </summary>
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
+       
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
+            }
+        }
 
         /// <summary>
-        ///   Initializes action.
+        ///   Initializes.
         /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.FieldDeclaration);
         }
 
         /// <summary>
@@ -59,13 +43,26 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            EnumDeclarationSyntax node = context.Node as EnumDeclarationSyntax;
+            FieldDeclarationSyntax node = context.Node as FieldDeclarationSyntax;
+
+            if (PrivateMemberVerifier.IsPrivateMember(node))
+            {
+                return;
+            }
+
+            // Only const field.
+            if (!node.Modifiers.Any(SyntaxKind.ConstKeyword))
+            {
+                return;
+            }
+          
 
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
+
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
@@ -78,7 +75,8 @@ namespace CodeDocumentor
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Rule, node.Identifier.GetLocation()));
+            VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
+            context.ReportDiagnostic(Diagnostic.Create(FieldAnalyzerSettings.GetRule(), field.GetLocation()));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Vsix2022;
+using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Test
 {
@@ -18,5 +19,7 @@ namespace CodeDocumentor.Test
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
         public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
+
+        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
     }
 }

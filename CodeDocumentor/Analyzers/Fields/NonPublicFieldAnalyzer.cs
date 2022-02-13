@@ -1,6 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,41 +10,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    /// <summary>
-    ///   The field analyzer.
-    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class FieldAnalyzer : DiagnosticAnalyzer
+    public class NonPublicFieldAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
-        private const string Title = "The field must have a documentation header.";
-
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        private const string Category = DocumentationHeaderHelper.Category;
-
-        /// <summary>
-        ///   The diagnostic id.
-        /// </summary>
-        public const string DiagnosticId = "CD1603";
-
-        /// <summary>
-        ///   The message format.
-        /// </summary>
-        public const string MessageFormat = Title;
-
-        /// <summary>
-        ///   The diagnostic descriptor rule.
-        /// </summary>
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+                {
+                    return new List<DiagnosticDescriptor>().ToImmutableArray();
+                }
+                return ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
+            }
+        }
 
         /// <summary>
         ///   Initializes.
@@ -61,6 +45,11 @@ namespace CodeDocumentor
         {
             FieldDeclarationSyntax node = context.Node as FieldDeclarationSyntax;
 
+            if (!PrivateMemberVerifier.IsPrivateMember(node))
+            {
+                return;
+            }
+
             // Only const field.
             if (!node.Modifiers.Any(SyntaxKind.ConstKeyword))
             {
@@ -72,6 +61,11 @@ namespace CodeDocumentor
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
+
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+            {
+                return;
+            }
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
@@ -85,7 +79,7 @@ namespace CodeDocumentor
             }
 
             VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.ReportDiagnostic(Diagnostic.Create(Rule, field.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(FieldAnalyzerSettings.GetRule(), field.GetLocation()));
         }
     }
 }

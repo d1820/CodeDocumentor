@@ -1,56 +1,40 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
+using Microsoft.Build.Framework.XamlTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.VisualStudio.Package;
 
 namespace CodeDocumentor
 {
+
     /// <summary>
-    ///   The constructor analyzer.
+    ///   The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ConstructorAnalyzer : DiagnosticAnalyzer
+    public class ClassAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
-        private const string Title = "The constructor must have a documentation header.";
-
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        private const string Category = DocumentationHeaderHelper.Category;
-
-        /// <summary>
-        ///   The diagnostic id.
-        /// </summary>
-        public const string DiagnosticId = "CD1601";
-
-        /// <summary>
-        ///   The message format.
-        /// </summary>
-        public const string MessageFormat = Title;
-
-        /// <summary>
-        ///   The diagnostic descriptor rule.
-        /// </summary>
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(ClassAnalyzerSettings.GetRule());
+            }
+        }
 
         /// <summary>
-        ///   Initializes.
+        ///   Initializes action.
         /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ClassDeclaration);
         }
 
         /// <summary>
@@ -59,7 +43,11 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            ConstructorDeclarationSyntax node = context.Node as ConstructorDeclarationSyntax;
+            ClassDeclarationSyntax node = context.Node as ClassDeclarationSyntax;
+            if (PrivateMemberVerifier.IsPrivateMember(node))
+            {
+                return;
+            }
 
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
@@ -76,8 +64,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-
-            context.ReportDiagnostic(Diagnostic.Create(Rule, node.Identifier.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(ClassAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
         }
     }
 }

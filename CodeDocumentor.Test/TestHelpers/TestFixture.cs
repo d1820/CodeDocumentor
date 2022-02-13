@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,7 +13,15 @@ namespace CodeDocumentor.Test
     {
         public static IOptionPageGrid BuildOptionsPageGrid()
         {
-            return new TestOptionsPageGrid();
+            CodeDocumentorPackage.Options = new TestOptionsPageGrid();
+
+            //FieldInfo field = typeof(CodeDocumentorPackage).GetField("_options", BindingFlags.NonPublic | BindingFlags.Static);
+            //var opts = (TestOptionsPageGrid)field.GetValue(null);
+            //if (opts == null)
+            //{
+            //    CodeDocumentorPackage.Options = options;
+            //}
+            return CodeDocumentorPackage.Options;
         }
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, SyntaxKind innerKindValue)

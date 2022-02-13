@@ -34,7 +34,7 @@ namespace CodeDocumentor.Test.Helper
     {
         public TranslatorTests()
         {
-            CodeDocumentorPackage.Options = TestFixture.BuildOptionsPageGrid();
+            TestFixture.BuildOptionsPageGrid();
 
             var temp = CodeDocumentorPackage.Options.WordMaps.ToList();
             temp.Add(new WordMap { Word = "You're", Translation = "You Are" });

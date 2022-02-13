@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -8,67 +9,32 @@ using Xunit;
 
 namespace CodeDocumentor.Test
 {
-    [SuppressMessage("XMLDocumentation", "")]
-    public partial class InterfaceUnitTest
-    {
-        /// <summary>
-        /// The test code.
-        /// </summary>
-        private const string TestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public interface IInterfaceTester
-	{
-	}
-}";
-
-        /// <summary>
-        /// The test fix code.
-        /// </summary>
-        private const string TestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
     /// <summary>
-    /// The interface tester interface.
+    /// The class unit test.
     /// </summary>
-    public interface IInterfaceTester
-	{
-	}
-}";
-    }
 
-    /// <summary>
-    /// The interface unit test.
-    /// </summary>
-    
-    public partial class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class ClassUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
     {
-
         private readonly TestFixure _fixture;
 
-        public InterfaceUnitTest(TestFixure fixture)
+        public ClassUnitTest(TestFixure fixture)
         {
             _fixture = fixture;
             TestFixture.BuildOptionsPageGrid();
             CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
+
         /// <summary>
         /// Nos diagnostics show.
         /// </summary>
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
+        [InlineData("ClassTesterInheritDoc.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
-            this.VerifyCSharpDiagnostic(testCode);
+            var file = string.IsNullOrEmpty(testCode)? testCode : _fixture.LoadTestFile($@"./Classes/{testCode}");
+            this.VerifyCSharpDiagnostic(file);
         }
 
         /// <summary>
@@ -79,13 +45,17 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(TestCode, TestFixCode, 8, 19)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        [InlineData("ClassTester.cs", "ClassTesterFix.cs", 7, 19, TestFixure.DIAG_TYPE_PRIVATE)]
+        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixure.DIAG_TYPE_PUBLIC)]
+        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
+            var fix = _fixture.LoadTestFile($@"./Classes/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Classes/{testCode}");
+
             var expected = new DiagnosticResult
             {
-                Id = InterfaceAnalyzer.DiagnosticId,
-                Message = InterfaceAnalyzer.MessageFormat,
+                Id = ClassAnalyzerSettings.DiagnosticId,
+                Message = ClassAnalyzerSettings.MessageFormat,
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {
@@ -93,9 +63,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
+            this.VerifyCSharpDiagnostic(test, diagType, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
+            this.VerifyCSharpFix(test, fix, diagType);
         }
 
         /// <summary>
@@ -104,7 +74,7 @@ namespace ConsoleApp4
         /// <returns>A CodeFixProvider.</returns>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new InterfaceCodeFixProvider();
+            return new ClassCodeFixProvider();
         }
 
         /// <summary>
@@ -113,7 +83,13 @@ namespace ConsoleApp4
         /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
-            return new InterfaceAnalyzer();
+            if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                return new NonPublicClassAnalyzer();
+            }
+            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            return new ClassAnalyzer();
         }
     }
 }

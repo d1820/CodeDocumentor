@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Xunit;
 
 namespace CodeDocumentor.Test
 {
@@ -246,7 +248,7 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or Sets a test date time
+        /// Gets or Sets the test date time.
         /// </summary>
         public DateTime? TestDateTime { get; set; }
 	}
@@ -311,72 +313,85 @@ namespace ConsoleApp4
     /// <summary>
     /// The property unit test.
     /// </summary>
-    [TestClass]
-	public partial class PropertyUnitTest : CodeFixVerifier
-	{
-	
-		/// <summary>
-		/// Nos diagnostics show.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		[DataTestMethod]
-		[DataRow("")]
-		[DataRow(InheritDocTestCode)]
-		public void NoDiagnosticsShow(string testCode)
-		{
-			this.VerifyCSharpDiagnostic(testCode);
-		}
 
-		/// <summary>
-		/// Shows diagnostic and fix.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		/// <param name="fixCode">The fix code.</param>
-		/// <param name="line">The line.</param>
-		/// <param name="column">The column.</param>
-		[DataTestMethod]
-		[DataRow(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17)]
-		[DataRow(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17)]
-		[DataRow(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23)]
-		[DataRow(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23)]
-		[DataRow(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15)]
-		[DataRow(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16)]
-		[DataRow(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17)]
-        [DataRow(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20)]
+    public partial class PropertyUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    {
+        private readonly TestFixure _fixture;
+
+        public PropertyUnitTest(TestFixure fixture)
+        {
+            _fixture = fixture;
+            TestFixture.BuildOptionsPageGrid();
+            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+        }
+        /// <summary>
+        /// Nos diagnostics show.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        [Theory]
+        [InlineData("")]
+        [InlineData(InheritDocTestCode)]
+        public void NoDiagnosticsShow(string testCode)
+        {
+            this.VerifyCSharpDiagnostic(testCode);
+        }
+
+        /// <summary>
+        /// Shows diagnostic and fix.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        /// <param name="fixCode">The fix code.</param>
+        /// <param name="line">The line.</param>
+        /// <param name="column">The column.</param>
+        [Theory]
+        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17)]
+        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17)]
+        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23)]
+        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23)]
+        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15)]
+        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16)]
+        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17)]
+        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
-		{
-			var expected = new DiagnosticResult
-			{
-				Id = PropertyAnalyzer.DiagnosticId,
-				Message = PropertyAnalyzer.MessageFormat,
-				Severity = DiagnosticSeverity.Warning,
-				Locations =
-					new[] {
-							new DiagnosticResultLocation("Test0.cs", line, column)
-						}
-			};
+        {
+            var expected = new DiagnosticResult
+            {
+                Id = PropertyAnalyzerSettings.DiagnosticId,
+                Message = PropertyAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
 
-			this.VerifyCSharpDiagnostic(testCode, expected);
+            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode);
-		}
+            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
+        }
 
-		/// <summary>
-		/// Gets c sharp code fix provider.
-		/// </summary>
-		/// <returns>A CodeFixProvider.</returns>
-		protected override CodeFixProvider GetCSharpCodeFixProvider()
-		{
-			return new PropertyCodeFixProvider();
-		}
+        /// <summary>
+        /// Gets c sharp code fix provider.
+        /// </summary>
+        /// <returns>A CodeFixProvider.</returns>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new PropertyCodeFixProvider();
+        }
 
-		/// <summary>
-		/// Gets c sharp diagnostic analyzer.
-		/// </summary>
-		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-		{
-			return new PropertyAnalyzer();
-		}
-	}
+        /// <summary>
+        /// Gets c sharp diagnostic analyzer.
+        /// </summary>
+        /// <returns>A DiagnosticAnalyzer.</returns>
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
+        {
+            if (diagType == "private")
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                return new NonPublicPropertyAnalyzer();
+            }
+            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            return new PropertyAnalyzer();
+        }
+    }
 }

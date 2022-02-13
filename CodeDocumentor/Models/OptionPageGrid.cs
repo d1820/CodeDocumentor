@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 
 // For definitions of XML nodes see:
@@ -33,6 +34,10 @@ namespace CodeDocumentor.Vsix2022
         /// The translation sub category.
         /// </summary>
         private const string TranslationSubCategory = "Translation Options";
+        /// <summary>
+        /// The analyzer sub category.
+        /// </summary>
+        private const string AnalyzerSubCategory = "Analyzer Options";
 
         //Any properties that need defaults should be mnanaged in the Settings Class. This is only a pass through for VS
 
@@ -42,7 +47,7 @@ namespace CodeDocumentor.Vsix2022
         /// <value>A bool.</value>
         [Category(SubCategory)]
         [DisplayName("Enable comments for public members only")]
-        [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public")]
+        [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public. Visual Studio must be restarted to fully take affect.")]
         public bool IsEnabledForPublishMembersOnly { get; set; }
 
         /// <summary>
@@ -90,6 +95,11 @@ namespace CodeDocumentor.Vsix2022
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
         public WordMap[] WordMaps { get; set; }
 
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Default Diagnostic Severity")]
+        [Description("When highlighting missing comments this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
+
         /// <summary>
         /// Loads the settings from storage.
         /// </summary>
@@ -101,7 +111,8 @@ namespace CodeDocumentor.Vsix2022
             ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
             IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
-            WordMaps = settings.WordMaps;
+            WordMaps = settings.WordMaps ?? Constants.WORD_MAPS; //if we dont have anything need to use defaults
+            DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
         }
 
         /// <summary>
@@ -116,7 +127,8 @@ namespace CodeDocumentor.Vsix2022
                 ExcludeAsyncSuffix = this.ExcludeAsyncSuffix,
                 IncludeValueNodeInProperties = this.IncludeValueNodeInProperties,
                 UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
-                WordMaps = this.WordMaps
+                WordMaps = this.WordMaps,
+                DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity
             };
             settings.Save();
         }

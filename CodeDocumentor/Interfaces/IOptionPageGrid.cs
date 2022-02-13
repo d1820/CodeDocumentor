@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
@@ -36,6 +37,12 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         /// <value>A bool.</value>
         bool UseToDoCommentsOnSummaryError { get; set; }
+
+        /// <summary>
+        /// Gets or Sets a value indicating the default severity for the code analyzer.
+        /// </summary>
+        /// <value>A DiagnosticSeverity.</value>
+        DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
 
         /// <summary>
         /// Gets or Sets the word maps.

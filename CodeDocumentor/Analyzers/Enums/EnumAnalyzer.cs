@@ -10,15 +10,15 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor
 {
     /// <summary>
-    ///   The interface analyzer.
+    ///   The enum analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class InterfaceAnalyzer : DiagnosticAnalyzer
+    public class EnumAnalyzer : DiagnosticAnalyzer
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string Title = "The interface must have a documentation header.";
+        private const string Title = "The enum must have a documentation header.";
 
         /// <summary>
         ///   The category.
@@ -28,7 +28,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        public const string DiagnosticId = "CD1604";
+        public const string DiagnosticId = "CD1602";
 
         /// <summary>
         ///   The message format.
@@ -51,7 +51,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.EnumDeclaration);
         }
 
         /// <summary>
@@ -60,18 +60,13 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            InterfaceDeclarationSyntax node = context.Node as InterfaceDeclarationSyntax;
+            EnumDeclarationSyntax node = context.Node as EnumDeclarationSyntax;
 
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
-
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(node))
-            {
-                return;
-            }
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)

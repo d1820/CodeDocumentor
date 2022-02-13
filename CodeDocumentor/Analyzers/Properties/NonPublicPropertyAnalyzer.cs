@@ -1,6 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,40 +11,25 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor
 {
     /// <summary>
-    ///   The method analyzer.
+    ///   The property analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MethodAnalyzer : DiagnosticAnalyzer
+    public class NonPublicPropertyAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
-        private const string Title = "The method must have a documentation header.";
-
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        private const string Category = DocumentationHeaderHelper.Category;
-
-        /// <summary>
-        ///   The diagnostic id.
-        /// </summary>
-        public const string DiagnosticId = "CD1605";
-
-        /// <summary>
-        ///   The message format.
-        /// </summary>
-        public const string MessageFormat = Title;
-
-        /// <summary>
-        ///   The diagnostic descriptor rule.
-        /// </summary>
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+                {
+                    return new List<DiagnosticDescriptor>().ToImmutableArray();
+                }
+                return ImmutableArray.Create(PropertyAnalyzerSettings.GetRule());
+            }
+        }
 
         /// <summary>
         ///   Initializes.
@@ -50,7 +37,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.PropertyDeclaration);
         }
 
         /// <summary>
@@ -59,13 +46,21 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            MethodDeclarationSyntax node = context.Node as MethodDeclarationSyntax;
-
+            PropertyDeclarationSyntax node = context.Node as PropertyDeclarationSyntax;
+            if (!PrivateMemberVerifier.IsPrivateMember(node))
+            {
+                return;
+            }
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
+
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+            {
+                return;
+            }
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
@@ -78,7 +73,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Rule, node.Identifier.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(PropertyAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
         }
     }
 }

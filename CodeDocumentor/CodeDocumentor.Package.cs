@@ -40,7 +40,7 @@ namespace CodeDocumentor.Vsix2022
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        private static IOptionPageGrid _options;
+        protected static IOptionPageGrid _options;
         private static readonly object _syncRoot = new object();
 
         #region Package Members

@@ -28,7 +28,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PropertyAnalyzer.DiagnosticId);
+        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PropertyAnalyzerSettings.DiagnosticId);
 
         /// <summary>
         ///   Gets fix all provider.

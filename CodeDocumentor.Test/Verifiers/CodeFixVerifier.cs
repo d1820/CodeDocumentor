@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace CodeDocumentor.Test
 {
@@ -20,12 +20,11 @@ namespace CodeDocumentor.Test
     [SuppressMessage("XMLDocumentation", "")]
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
-
-        [TestInitialize]
-        public void Init()
+        protected CodeFixVerifier()
         {
-            CodeDocumentorPackage.Options = TestFixture.BuildOptionsPageGrid();
+            TestFixture.BuildOptionsPageGrid();
         }
+
         /// <summary>
         ///   Returns the codefix being tested (C#) - to be implemented in non-abstract class
         /// </summary>
@@ -53,9 +52,9 @@ namespace CodeDocumentor.Test
         /// <param name="allowNewCompilerDiagnostics">
         ///   A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied
         /// </param>
-        protected void VerifyCSharpFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected void VerifyCSharpFix(string oldSource, string newSource, string diagType = "public", int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
         {
-            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
+            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
         }
 
         /// <summary>
@@ -127,7 +126,7 @@ namespace CodeDocumentor.Test
                     document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace));
                     newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
 
-                    Assert.IsTrue(false,
+                    Assert.True(false,
                         string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                             string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
                             document.GetSyntaxRootAsync().Result.ToFullString()));
@@ -142,7 +141,7 @@ namespace CodeDocumentor.Test
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = GetStringFromDocument(document);
-            Assert.AreEqual(newSource, actual);
+            Assert.Equal(newSource, actual);
         }
     }
 }

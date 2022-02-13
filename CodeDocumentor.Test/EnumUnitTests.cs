@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Xunit;
 
 namespace CodeDocumentor.Test
 {
@@ -19,7 +21,7 @@ using System.Text;
 
 namespace Test
 {
-	enum EnumTester
+	public enum EnumTester
 	{
 	}
 }";
@@ -37,7 +39,7 @@ namespace Test
     /// <summary>
     /// The enum tester.
     /// </summary>
-    enum EnumTester
+    public enum EnumTester
 	{
 	}
 }";
@@ -46,16 +48,24 @@ namespace Test
     /// <summary>
     /// The enum unit test.
     /// </summary>
-    [TestClass]
-	public partial class EnumUnitTest : CodeFixVerifier
-	{
+    
+	public partial class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    {
+        private readonly TestFixure _fixture;
 
-		/// <summary>
-		/// Nos diagnostics show.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		[DataTestMethod]
-		[DataRow("")]
+        public EnumUnitTest(TestFixure fixture)
+        {
+            _fixture = fixture;
+            TestFixture.BuildOptionsPageGrid();
+            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+        }
+
+        /// <summary>
+        /// Nos diagnostics show.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        [Theory]
+		[InlineData("")]
 		public void NoDiagnosticsShow(string testCode)
 		{
 			this.VerifyCSharpDiagnostic(testCode);
@@ -68,8 +78,8 @@ namespace Test
 		/// <param name="fixCode">The fix code.</param>
 		/// <param name="line">The line.</param>
 		/// <param name="column">The column.</param>
-		[DataTestMethod]
-		[DataRow(TestCode, TestFixCode, 8, 7)]
+		[Theory]
+		[InlineData(TestCode, TestFixCode, 8, 14)]
 		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
 		{
 			DiagnosticResult expected = new DiagnosticResult
@@ -83,9 +93,9 @@ namespace Test
 						}
 			};
 
-			this.VerifyCSharpDiagnostic(testCode, expected);
+			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode);
+			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
 		}
 
 		/// <summary>
@@ -101,7 +111,7 @@ namespace Test
 		/// Gets c sharp diagnostic analyzer.
 		/// </summary>
 		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
 		{
 			return new EnumAnalyzer();
 		}

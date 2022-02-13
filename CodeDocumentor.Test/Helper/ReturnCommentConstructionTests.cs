@@ -14,7 +14,7 @@ namespace CodeDocumentor.Test.Helper
 
         public ReturnCommentConstructionTests()
         {
-            CodeDocumentorPackage.Options = TestFixture.BuildOptionsPageGrid();
+            TestFixture.BuildOptionsPageGrid();
             _returnCommentBuilder = new ReturnCommentConstruction();
         }
         #region ReadOnlyCollection

@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Xunit;
 
 namespace CodeDocumentor.Test
 {
@@ -19,7 +21,7 @@ using System.Text;
 
 namespace ConsoleApp4
 {
-	class FieldTester
+	public class FieldTester
 	{
 		/// <inheritdoc/>
 		const int ConstFieldTester = 666;
@@ -40,9 +42,9 @@ using System.Text;
 
 namespace ConsoleApp4
 {
-	class FieldTester
+	public class FieldTester
 	{
-		const int ConstFieldTester = 666;
+		public const int ConstFieldTester = 666;
 
 		public FieldTester()
 		{
@@ -60,12 +62,12 @@ using System.Text;
 
 namespace ConsoleApp4
 {
-	class FieldTester
+	public class FieldTester
 	{
         /// <summary>
         /// The const field tester.
         /// </summary>
-        const int ConstFieldTester = 666;
+        public const int ConstFieldTester = 666;
 
 		public FieldTester()
 		{
@@ -77,17 +79,26 @@ namespace ConsoleApp4
     /// <summary>
     /// The field unit test.
     /// </summary>
-    [TestClass]
-	public partial class FieldUnitTest : CodeFixVerifier
-	{
-	
-		/// <summary>
-		/// Nos diagnostics show.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		[DataTestMethod]
-		[DataRow("")]
-		[DataRow(InheritDocTestCode)]
+    
+	public partial class FieldUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    {
+
+        private readonly TestFixure _fixture;
+
+        public FieldUnitTest(TestFixure fixture)
+        {
+            _fixture = fixture;
+            TestFixture.BuildOptionsPageGrid();
+            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+        }
+
+        /// <summary>
+        /// Nos diagnostics show.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        [Theory]
+		[InlineData("")]
+		[InlineData(InheritDocTestCode)]
 		public void NoDiagnosticsShow(string testCode)
 		{
 			this.VerifyCSharpDiagnostic(testCode);
@@ -100,14 +111,14 @@ namespace ConsoleApp4
 		/// <param name="fixCode">The fix code.</param>
 		/// <param name="line">The line.</param>
 		/// <param name="column">The column.</param>
-		[DataTestMethod]
-		[DataRow(ConstFieldTestCode, ConstFieldTestFixCode, 10, 13)]
+		[Theory]
+		[InlineData(ConstFieldTestCode, ConstFieldTestFixCode, 10, 20)]
 		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
 		{
 			var expected = new DiagnosticResult
 			{
-				Id = FieldAnalyzer.DiagnosticId,
-				Message = FieldAnalyzer.MessageFormat,
+				Id = FieldAnalyzerSettings.DiagnosticId,
+				Message = FieldAnalyzerSettings.MessageFormat,
 				Severity = DiagnosticSeverity.Warning,
 				Locations =
 					new[] {
@@ -115,9 +126,9 @@ namespace ConsoleApp4
 						}
 			};
 
-			this.VerifyCSharpDiagnostic(testCode, expected);
+			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode);
+            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
 		}
 
 		/// <summary>
@@ -133,9 +144,15 @@ namespace ConsoleApp4
 		/// Gets c sharp diagnostic analyzer.
 		/// </summary>
 		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
 		{
-			return new FieldAnalyzer();
+            if(diagType == "private")
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                return new NonPublicFieldAnalyzer();
+            }
+            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            return new FieldAnalyzer();
 		}
 	}
 }

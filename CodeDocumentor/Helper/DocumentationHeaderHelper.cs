@@ -126,6 +126,7 @@ namespace CodeDocumentor.Helper
             {
                 return false;
             }
+
             var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
             var hasExclusion = attrs.Where(w => w.ArgumentList != null).SelectMany(w => w.ArgumentList.Arguments).Any(w => w.Expression.IsKind(SyntaxKind.StringLiteralExpression) && w.Expression.ToString().Contains(ExclusionCategory));
             if (!hasExclusion && recursive)

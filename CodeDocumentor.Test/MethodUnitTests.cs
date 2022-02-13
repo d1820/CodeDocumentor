@@ -2,10 +2,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
 using System.Diagnostics.CodeAnalysis;
+using Xunit;
 
 namespace CodeDocumentor.Test
 {
@@ -550,18 +550,24 @@ namespace ConsoleApp4
     /// <summary>
     /// The method unit test.
     /// </summary>
-    [TestClass]
     [SuppressMessage("XMLDocumentation", "")]
-    public partial class MethodUnitTest : CodeFixVerifier
-	{
+    public partial class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    {
+        private readonly TestFixure _fixture;
 
-		/// <summary>
-		/// Nos diagnostics show.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		[DataTestMethod]
-		[DataRow("")]
-		[DataRow(InheritDocTestCode)]
+        public MethodUnitTest(TestFixure fixture)
+        {
+            _fixture = fixture;
+            TestFixture.BuildOptionsPageGrid();
+            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+        }
+        /// <summary>
+        /// Nos diagnostics show.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        [Theory]
+		[InlineData("")]
+		[InlineData(InheritDocTestCode)]
 		public void NoDiagnosticsShow(string testCode)
 		{
 			this.VerifyCSharpDiagnostic(testCode);
@@ -574,25 +580,25 @@ namespace ConsoleApp4
 		/// <param name="fixCode">The fix code.</param>
 		/// <param name="line">The line.</param>
 		/// <param name="column">The column.</param>
-		[DataTestMethod]
-		[DataRow(BasicTestCode, BasicTestFixCode, 10, 15)]
-		[DataRow(MethodWithParameterTestCode, MethodWithParameterTestFixCode, 10, 15)]
-		[DataRow(MethodWithBooleanParameterTestCode, MethodWithBooleanParameterTestFixCode, 10, 15)]
-		[DataRow(MethodWithNullableStructParameterTestCode, MethodWithNullableStructParameterTestFixCode, 10, 15)]
-		[DataRow(MethodWithReturnTestCode, MethodWithReturnTestFixCode, 10, 23)]
-		[DataRow(MethodWithStringReturnTestCode, MethodWithStringReturnTestFixCode, 10, 17)]
-		[DataRow(MethodWithObjectReturnTestCode, MethodWithObjectReturnTestFixCode, 10, 17)]
-		[DataRow(MethodWithIntReturnTestCode, MethodWithIntReturnTestFixCode, 10, 14)]
-		[DataRow(MethodWithListIntReturnTestCode, MethodWithListIntReturnTestFixCode, 10, 20)]
-		[DataRow(MethodWithListListIntReturnTestCode, MethodWithListListIntReturnTestFixCode, 10, 26)]
-		[DataRow(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
+		[Theory]
+		[InlineData(BasicTestCode, BasicTestFixCode, 10, 15)]
+		[InlineData(MethodWithParameterTestCode, MethodWithParameterTestFixCode, 10, 15)]
+		[InlineData(MethodWithBooleanParameterTestCode, MethodWithBooleanParameterTestFixCode, 10, 15)]
+		[InlineData(MethodWithNullableStructParameterTestCode, MethodWithNullableStructParameterTestFixCode, 10, 15)]
+		[InlineData(MethodWithReturnTestCode, MethodWithReturnTestFixCode, 10, 23)]
+		[InlineData(MethodWithStringReturnTestCode, MethodWithStringReturnTestFixCode, 10, 17)]
+		[InlineData(MethodWithObjectReturnTestCode, MethodWithObjectReturnTestFixCode, 10, 17)]
+		[InlineData(MethodWithIntReturnTestCode, MethodWithIntReturnTestFixCode, 10, 14)]
+		[InlineData(MethodWithListIntReturnTestCode, MethodWithListIntReturnTestFixCode, 10, 20)]
+		[InlineData(MethodWithListListIntReturnTestCode, MethodWithListListIntReturnTestFixCode, 10, 26)]
+		[InlineData(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
 		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
 		{
             CodeDocumentorPackage.Options.UseNaturalLanguageForReturnNode = false;
             var expected = new DiagnosticResult
 			{
-				Id = MethodAnalyzer.DiagnosticId,
-				Message = MethodAnalyzer.MessageFormat,
+				Id = MethodAnalyzerSettings.DiagnosticId,
+				Message = MethodAnalyzerSettings.MessageFormat,
 				Severity = DiagnosticSeverity.Warning,
 				Locations =
 					new[] {
@@ -600,9 +606,9 @@ namespace ConsoleApp4
 						}
 			};
 
-			this.VerifyCSharpDiagnostic(testCode, expected);
+			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode);
+			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
 		}
 
 		/// <summary>
@@ -618,9 +624,15 @@ namespace ConsoleApp4
 		/// Gets c sharp diagnostic analyzer.
 		/// </summary>
 		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
 		{
-			return new MethodAnalyzer();
+            if (diagType == "private")
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                return new NonPublicMethodAnalyzer();
+            }
+            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            return new MethodAnalyzer();
 		}
 
 
@@ -628,29 +640,30 @@ namespace ConsoleApp4
         #region GetExceptions
       
 
-        [TestMethod]
+        [Fact]
         public async Task GetExceptions_ReturnsMatches()
         {
             var exceptions = MethodCodeFixProvider.GetExceptions(MethodWithException);
-            Assert.AreEqual(1, exceptions.ToList().Count);
+
+            Assert.Single(exceptions.ToList());
         }
 
 
       
-        [TestMethod]
+        [Fact]
         public async Task GetExceptions_ReturnsNoMatches_WhenNoExceptions()
         {
             var exceptions = MethodCodeFixProvider.GetExceptions(MethodWithNoException);
-            Assert.AreEqual(0, exceptions.ToList().Count);
+            Assert.Empty(exceptions.ToList());
         }
 
        
 
-        [TestMethod]
+        [Fact]
         public async Task GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()
         {
             var exceptions = MethodCodeFixProvider.GetExceptions(MethodWithDuplicateException);
-            Assert.AreEqual(1, exceptions.ToList().Count);
+            Assert.Single(exceptions.ToList());
         }
         #endregion
     }

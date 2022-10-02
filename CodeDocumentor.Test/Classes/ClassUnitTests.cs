@@ -46,7 +46,7 @@ namespace CodeDocumentor.Test
         /// <param name="column">The column.</param>
         [Theory]
         [InlineData("ClassTester.cs", "ClassTesterFix.cs", 7, 19, TestFixure.DIAG_TYPE_PRIVATE)]
-        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixure.DIAG_TYPE_PUBLIC)]
+        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($@"./Classes/{fixCode}");
@@ -88,7 +88,10 @@ namespace CodeDocumentor.Test
                 CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
                 return new NonPublicClassAnalyzer();
             }
-            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            }
             return new ClassAnalyzer();
         }
     }

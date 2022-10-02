@@ -53,7 +53,15 @@ namespace CodeDocumentor.Helper
 
             // If the member is public, we still need to verify whether its parent class is a private class. Since we
             // don't want show warnings for public members within a private class.
-            return IsPrivateMember(node.Parent as ClassDeclarationSyntax);
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            if (node.Parent is InterfaceDeclarationSyntax ids)
+            {
+                return IsPrivateMember(ids);
+            }
+            return false;
         }
 
         /// <summary>
@@ -70,7 +78,15 @@ namespace CodeDocumentor.Helper
 
             // If the member is public, we still need to verify whether its parent class is a private class. Since we
             // don't want show warnings for public members within a private class.
-            return IsPrivateMember(node.Parent as ClassDeclarationSyntax);
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            if (node.Parent is InterfaceDeclarationSyntax ids)
+            {
+                return IsPrivateMember(ids);
+            }
+            return false;
         }
 
         /// <summary>
@@ -87,7 +103,15 @@ namespace CodeDocumentor.Helper
 
             // If the member is public, we still need to verify whether its parent class is a private class. Since we
             // don't want show warnings for public members within a private class.
-            return IsPrivateMember(node.Parent as ClassDeclarationSyntax);
+            if (node.Parent is ClassDeclarationSyntax cds) 
+            {
+                return IsPrivateMember(cds);
+            }
+            if (node.Parent is InterfaceDeclarationSyntax ids)
+            {
+                return IsPrivateMember(ids);
+            }
+            return false;
         }
 
         /// <summary>
@@ -104,7 +128,15 @@ namespace CodeDocumentor.Helper
 
             // If the member is public, we still need to verify whether its parent class is a private class. Since we
             // don't want show warnings for public members within a private class.
-            return IsPrivateMember(node.Parent as ClassDeclarationSyntax);
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            if (node.Parent is InterfaceDeclarationSyntax ids)
+            {
+                return IsPrivateMember(ids);
+            }
+            return false;
         }
     }
 }

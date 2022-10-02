@@ -2,6 +2,7 @@
 using ProtoBuf;
 namespace Sample;
 
+
 [ProtoContract]
 public class protoTester
 {
@@ -24,6 +25,9 @@ public class protoTester
     private string ManWorker() { return ""; }
 }
 
+/// <summary>
+/// The field tester.
+/// </summary>
 public class FieldTester
 {
 
@@ -32,6 +36,48 @@ public class FieldTester
     public FieldTester()
     {
     }
+}
+
+
+private class PrivateClass
+{
+
+    const int ConstFieldTester = 666;
+
+    private PrivateClass()
+    {
+    }
+}
+
+/// <summary>
+/// The Test integer interface.
+/// </summary>
+public interface TestInt
+{
+    /// <summary>
+    /// Gets or Sets the my property public.
+    /// </summary>
+    public int MyPropertyPublic { get; set; }
+
+    /// <summary>
+    /// Gets or Sets the my property internal.
+    /// </summary>
+    internal int MyPropertyInternal { get; set; }
+
+    /// <summary>
+    /// Gets or Sets the my property protected.
+    /// </summary>
+    protected int MyPropertyProtected { get; set; }
+
+    /// <summary>
+    /// Gets or Sets the my property.
+    /// </summary>
+    int MyProperty { get; set; }
+
+    /// <summary>
+    /// Tests the method.
+    /// </summary>
+    void TestMethod();
 }
 class privteTester
 {

@@ -309,6 +309,80 @@ namespace ConsoleApp4
 }";
 
 
+
+        /// <summary>
+        /// The public property test code.
+        /// </summary>
+        private const string PublicPropertyInterfaceTestCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public interface PropertyTester
+	{
+		public string PersonName => ""Person Name"";
+	}
+}";
+
+        /// <summary>
+        /// The public property test fix code.
+        /// </summary>
+        private const string PublicPropertyInterfaceTestFixCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public interface PropertyTester
+	{
+        /// <summary>
+        /// Gets the person name.
+        /// </summary>
+        public string PersonName => ""Person Name"";
+	}
+}";
+
+
+
+
+        /// <summary>
+        /// The public property test code.
+        /// </summary>
+        private const string PrivatePropertyInterfaceTestCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public interface PropertyTester
+	{
+		string PersonName => ""Person Name"";
+	}
+}";
+
+        /// <summary>
+        /// The public property test fix code.
+        /// </summary>
+        private const string PrivatePropertyInterfaceTestFixCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public interface PropertyTester
+	{
+        /// <summary>
+        /// Gets the person name.
+        /// </summary>
+        string PersonName => ""Person Name"";
+	}
+}";
+
     }
     /// <summary>
     /// The property unit test.
@@ -344,15 +418,17 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17)]
-        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17)]
-        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23)]
-        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23)]
-        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15)]
-        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16)]
-        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17)]
-        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC)]
+        [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PRIVATE)]
+        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var expected = new DiagnosticResult
             {
@@ -365,9 +441,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
+            this.VerifyCSharpDiagnostic(testCode, diagType, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
+            this.VerifyCSharpFix(testCode, fixCode, diagType);
         }
 
         /// <summary>
@@ -385,12 +461,15 @@ namespace ConsoleApp4
         /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
-            if (diagType == "private")
+            if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
             {
                 CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
                 return new NonPublicPropertyAnalyzer();
             }
-            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            }
             return new PropertyAnalyzer();
         }
     }

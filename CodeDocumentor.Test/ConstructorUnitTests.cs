@@ -186,9 +186,9 @@ namespace ConsoleApp4
 		/// <param name="line">The line.</param>
 		/// <param name="column">The column.</param>
 		[Theory]
-		[InlineData(PublicConstructorTestCode, PublicContructorTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC)]
+		[InlineData(PublicConstructorTestCode, PublicContructorTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
 		[InlineData(PrivateConstructorTestCode, PrivateContructorTestFixCode, 10, 11, TestFixure.DIAG_TYPE_PRIVATE)]
-		[InlineData(PublicConstructorWithBooleanParameterTestCode, PublicContructorWithBooleanParameterTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC)]
+		[InlineData(PublicConstructorWithBooleanParameterTestCode, PublicContructorWithBooleanParameterTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
 		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
 		{
 			var expected = new DiagnosticResult
@@ -227,7 +227,10 @@ namespace ConsoleApp4
                 CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
                 return new NonPublicConstructorAnalyzer();
             }
-            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            }
             return new ConstructorAnalyzer();
 		}
 	}

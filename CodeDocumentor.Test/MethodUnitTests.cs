@@ -606,9 +606,9 @@ namespace ConsoleApp4
 						}
 			};
 
-			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
+			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
+			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
 		}
 
 		/// <summary>
@@ -631,7 +631,10 @@ namespace ConsoleApp4
                 CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
                 return new NonPublicMethodAnalyzer();
             }
-            CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            {
+                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+            }
             return new MethodAnalyzer();
 		}
 

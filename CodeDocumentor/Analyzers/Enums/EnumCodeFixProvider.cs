@@ -75,7 +75,7 @@ namespace CodeDocumentor
             string comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText.AsSpan());
             DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment), cancellationToken);
 
-            SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
+            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             EnumDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
 
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);

@@ -9,6 +9,7 @@ namespace CodeDocumentor.Test
     public class TestFixure
     {
         public const string DIAG_TYPE_PUBLIC = "public";
+        public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
         public const string DIAG_TYPE_PRIVATE = "private";
 
         public TestFixure()

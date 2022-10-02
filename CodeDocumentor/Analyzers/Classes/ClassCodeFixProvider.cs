@@ -93,7 +93,8 @@ namespace CodeDocumentor
 
             //append to any existing leading trivia [attributes, decorators, etc)
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
+
+            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
 

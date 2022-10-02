@@ -93,9 +93,9 @@ namespace Test
 						}
 			};
 
-			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC, expected);
+			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC);
+			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
 		}
 
 		/// <summary>

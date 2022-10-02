@@ -446,6 +446,26 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
+        /// Builds the leading trivia.
+        /// </summary>
+        /// <param name="leadingTrivia">The leading trivia.</param>
+        /// <param name="commentTrivia">The comment trivia.</param>
+        /// <returns>A SyntaxTriviaList.</returns>
+        internal static SyntaxTriviaList BuildLeadingTrivia(SyntaxTriviaList leadingTrivia, DocumentationCommentTriviaSyntax commentTrivia)
+        {
+            SyntaxTriviaList newLeadingTrivia;
+            if (leadingTrivia.All(a=> a.IsKind(SyntaxKind.EndOfLineTrivia)))
+            {
+                newLeadingTrivia = leadingTrivia.Add(SyntaxFactory.Trivia(commentTrivia));
+            }
+            else
+            {
+                newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
+            }
+            return newLeadingTrivia;
+        }
+
+        /// <summary>
         ///   Creates line start text syntax.
         /// </summary>
         /// <returns> A XmlTextSyntax. </returns>

@@ -77,7 +77,7 @@ namespace CodeDocumentor
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => CreateDocumentationCommentTriviaSyntax(declarationSyntax), cancellationToken);
 
-            SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
+            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             ConstructorDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
 
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);

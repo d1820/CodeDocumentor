@@ -70,8 +70,8 @@
     <Compile Include="Helper\ReturnCommentConstruction.cs" />
     <Compile Include="Helper\SingleWordMethodCommentConstruction.cs" />
     <Compile Include="Helper\Translator.cs" />
-    <Compile Include="InterfaceAnalyzer.cs" />
-    <Compile Include="InterfaceCodeFixProvider.cs" />
+    <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
+    <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />
     <Compile Include="Interfaces\IOptionPageGrid.cs" />
     <Compile Include="Analyzers\Methods\MethodAnalyzer.cs" />
     <Compile Include="Analyzers\Methods\MethodCodeFixProvider.cs" />

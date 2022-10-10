@@ -22,7 +22,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Add documentation header to this interface";
+        private const string title = "Code Documentor this interface";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.

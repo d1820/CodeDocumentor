@@ -23,7 +23,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Add documentation header to this property";
+        private const string title = "Code Documentor this property";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.

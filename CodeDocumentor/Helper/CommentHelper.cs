@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+[assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 namespace CodeDocumentor.Helper
 {
     /// <summary>
@@ -131,7 +133,15 @@ namespace CodeDocumentor.Helper
             var isBool2part = parts.Count == 2 && returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
             if (!isBool2part)
             {
-                parts[0] = Pluralizer.Pluralize(parts[0]);
+                if(parts.Count >= 2)
+                {
+                    parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+                }
+                else
+                {
+                    parts[0] = Pluralizer.Pluralize(parts[0]);
+                }
+                
             }
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
             {
@@ -171,7 +181,7 @@ namespace CodeDocumentor.Helper
             }
             else
             {
-                var skipThe = Constants.INTERNAL_SPECIAL_WORD_LIST.Any(w => w.Equals(parts[0]));
+                var skipThe = parts[0].IsVerbCombo();
                 if (!skipThe && !isBool2part)
                 {
                     parts.Insert(1, "the");
@@ -273,7 +283,7 @@ namespace CodeDocumentor.Helper
         /// <param name="isFirstCharacterLower"> If true, the first character will be lower. </param>
         /// <param name="shouldTranslate">If true, the name will be translated</param>
         /// <returns> A list of words. </returns>
-        private static List<string> SpilitNameAndToLower(ReadOnlySpan<char> name, bool isFirstCharacterLower, bool shouldTranslate = true)
+        internal static List<string> SpilitNameAndToLower(ReadOnlySpan<char> name, bool isFirstCharacterLower, bool shouldTranslate = true)
         {
             if (shouldTranslate)
             {
@@ -284,7 +294,10 @@ namespace CodeDocumentor.Helper
             int i = isFirstCharacterLower ? 0 : 1;
             for (; i < parts.Count; i++)
             {
-                parts[i] = parts[i].ToLower();
+                if (!parts[i].All(a => char.IsUpper(a)))
+                {
+                    parts[i] = parts[i].ToLower();
+                }
             }
             HandleAsyncKeyword(parts);
             return parts;

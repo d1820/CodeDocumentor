@@ -25,15 +25,51 @@ public class protoTester
     private string ManWorker() { return ""; }
 }
 
-/// <summary>
-/// The field tester.
-/// </summary>
-public class FieldTester
+public class Field_Tester_Spacer
 {
 
     const int ConstFieldTester = 666;
 
-    public FieldTester()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FieldOCRTester"/> class.
+    /// </summary>
+    public Field_Tester_Spacer()
+    {
+    }
+
+    public string Check_On_The_User_OCR()
+    {
+        return "";
+    }
+
+    public string EnsureActions()
+    {
+        return "";
+    }
+
+    public string CouldSaveFile()
+    {
+        return "";
+    }
+
+    public string BeActionTimer()
+    {
+        return "";
+    }
+}
+
+/// <summary>
+/// The field OCR tester.
+/// </summary>
+public class FieldOCRTester
+{
+
+    const int ConstFieldTester = 666;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FieldOCRTester"/> class.
+    /// </summary>
+    public FieldOCRTester()
     {
     }
 }

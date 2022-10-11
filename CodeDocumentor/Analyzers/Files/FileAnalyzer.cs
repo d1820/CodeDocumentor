@@ -26,8 +26,7 @@ namespace CodeDocumentor
             get
             {
                 return ImmutableArray.CreateRange(new List<DiagnosticDescriptor> {
-                    FileAnalyzerSettings.GetRule(),
-                    ClassAnalyzerSettings.GetRule() }
+                    FileAnalyzerSettings.GetRule() }
                 );
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Add documentation header to this interface";
+        private const string title = "Code Documentor this interface";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -70,6 +71,13 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, InterfaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
+            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
+        {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
             string comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText.AsSpan());
@@ -88,9 +96,27 @@ namespace CodeDocumentor
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             InterfaceDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
+            return newDeclaration;
+        }
 
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+        /// <summary>
+        /// Builds the headers.
+        /// </summary>
+        /// <param name="root">The root.</param>
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.InterfaceDeclaration)).OfType<InterfaceDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in declarations)
+            {
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Add documentation header to this constructor";
+        private const string title = "Code Documentor this constructor";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -64,6 +65,36 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
+        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ConstructorDeclaration)).OfType<ConstructorDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in declarations)
+            {
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                {
+                    continue;
+                }
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+            }
+        }
+
+        private static ConstructorDeclarationSyntax BuildNewDeclaration(ConstructorDeclarationSyntax declarationSyntax)
+        {
+            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            DocumentationCommentTriviaSyntax commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
+
+            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
+            ConstructorDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
+            return newDeclaration;
+
+        }
+
         /// <summary>
         ///   Adds documentation header async.
         /// </summary>
@@ -74,12 +105,7 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ConstructorDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => CreateDocumentationCommentTriviaSyntax(declarationSyntax), cancellationToken);
-
-            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
-            ConstructorDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
-
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
             return document.WithSyntaxRoot(newRoot);
         }

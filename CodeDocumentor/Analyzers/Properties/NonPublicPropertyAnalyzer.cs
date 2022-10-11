@@ -44,9 +44,13 @@ namespace CodeDocumentor
         ///   Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             PropertyDeclarationSyntax node = context.Node as PropertyDeclarationSyntax;
+            if (node == null)
+            {
+                return;
+            }
             if (!PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;

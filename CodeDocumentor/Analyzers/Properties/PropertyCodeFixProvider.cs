@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Add documentation header to this property";
+        private const string title = "Code Documentor this property";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -66,15 +67,33 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
+
         /// <summary>
-        ///   Adds documentation header async.
+        /// Builds the headers.
         /// </summary>
-        /// <param name="document"> The document. </param>
-        /// <param name="root"> The root. </param>
-        /// <param name="declarationSyntax"> The declaration syntax. </param>
-        /// <param name="cancellationToken"> The cancellation token. </param>
-        /// <returns> A Document. </returns>
-        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        /// <param name="root">The root.</param>
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.PropertyDeclaration)).OfType<PropertyDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in declarations)
+            {
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                {
+                    continue;
+                }
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+            }
+        }
+
+
+        private static PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax)
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
@@ -86,10 +105,10 @@ namespace CodeDocumentor
             else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
             {
                 var returnType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
-                if(returnType != null)
+                if (returnType != null)
                 {
                     isBoolean = returnType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
-                }               
+                }
             }
 
             bool hasSetter = false;
@@ -121,7 +140,20 @@ namespace CodeDocumentor
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
             PropertyDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
+            return newDeclaration;
 
+        }
+        /// <summary>
+        ///   Adds documentation header async.
+        /// </summary>
+        /// <param name="document"> The document. </param>
+        /// <param name="root"> The root. </param>
+        /// <param name="declarationSyntax"> The declaration syntax. </param>
+        /// <param name="cancellationToken"> The cancellation token. </param>
+        /// <returns> A Document. </returns>
+        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        {
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
             SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
             return document.WithSyntaxRoot(newRoot);
         }

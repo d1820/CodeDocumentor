@@ -4,27 +4,81 @@ using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace KbxtEcho.Controllers
+namespace Welcom.Test
 {
+    /// <summary>
+    /// The record.
+    /// That Comes
+    /// </summary>
+    /// <remarks>
+    /// Testing Remarks
+    /// </remarks>
     public class Record
     {
 
     }
 
 
+    public class Field_Tester_Spacer
+    {
+
+        const int ConstFieldTester = 666;
+
+        public Field_Tester_Spacer()
+        {
+        }
+
+        public string Check_On_The_User_OCR()
+        {
+            return "";
+        }
+
+        public string EnsureActions()
+        {
+            return "";
+        }
+
+        public string CouldSaveFile()
+        {
+            return "";
+        }
+
+        public string BeActionTimer()
+        {
+            return "";
+        }
+    }
+
+
+    public class FieldOCRTester
+    {
+
+        const int ConstFieldTester = 666;
+
+        public int MyPropertyPublic { get; set; }
+
+ 
+        public FieldOCRTester()
+        {
+        }
+    }
+
+
+    internal class PrivateClass
+    {
+
+        const int ConstFieldTester = 666;
+
+        private PrivateClass()
+        {
+        }
+    }
 
     public interface IRecordController<TIn, Tout>
     {
-
-        /// <summary>
-        /// Gets the items.
-        /// </summary>
-        /// <typeparam name="TOther"></typeparam>
-        /// <param name="request">The request.</param>
-        /// <param name="newReq">The new req.</param>
-        /// <returns><![CDATA[IRecordController<TIn, Tout>]]></returns>
         IRecordController<TIn, Tout> GetItems<TOther>(TIn request, TOther newReq);
     }
+
     //[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
     public class Test<T>
     {
@@ -37,10 +91,6 @@ namespace KbxtEcho.Controllers
         }
 
 
-        /// <summary>
-        /// Gets or Sets the my property.
-        /// </summary>
-        /// <value>An int.</value>
         public int MyProperty { get; set; }
 
 
@@ -50,21 +100,12 @@ namespace KbxtEcho.Controllers
         /// <value>A bool.</value>
         public bool IsValid { get; set; }
 
-        /// <summary>
-        /// Gets or Sets a value indicating whether has exception.
-        /// </summary>
-        /// <value>A bool.</value>
+     
         public bool HasException { get; set; }
-        /// <summary>
-        /// Gets the shipping address.
-        /// </summary>
-        /// <value>An int.</value>
+
         public int ShippingAddress => 12;
 
-        /// <summary>
-        /// Gets or Sets the shipping address asynchronously.
-        /// </summary>
-        /// <value>An int.</value>
+  
         public Task<int> ShippingAddressAsync { get; set; }
 
         /// <summary>
@@ -115,104 +156,82 @@ namespace KbxtEcho.Controllers
         /// <value>A read only collection of read only collections of strings.</value>
         public IReadOnlyCollection<IReadOnlyCollection<string>> ShippingAddressReadOnlyCollectionOfCollection { get; set; }
 
-
-        /// <summary>
-        /// Gets the <see cref="Record"/> asynchronously.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns><![CDATA[Task<Record>]]></returns>
         public Task<Record> GetAsync(string name)
         {
             return Task.FromResult(new Record());
         }
 
-
-        /// <summary>
-        /// TODO: Add Summary
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns><![CDATA[Task<int>]]></returns>
         public Task<int> GetoneAsync(string name)
         {
             return Task.FromResult(1);
         }
 
 
-
-        /// <summary>
-        /// Getthrees the <typeparamref name="TResult"></typeparamref>.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="name">The name.</param>
-        /// <returns>A <typeparamref name="TResult"></typeparamref></returns>
         public TResult Getthree<TResult>(string name)
         {
             return default;
         }
 
-        /// <summary>
-        /// Should pluralize.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A bool.</returns>
         public bool ShouldPluralize(string name)
         {
             return default;
         }
 
-
-        /// <summary>
-        /// Getfives the <typeparamref name="TResult"></typeparamref>.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="name">The name.</param>
-        /// <returns><![CDATA[Task<TResult>]]></returns>
         public Task<TResult> Getfive<TResult>(string name)
         {
             return default;
         }
 
-        /// <summary>
-        /// Getfours the <see cref="KbxtEcho.Controllers.Record"/>.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A KbxtEcho.Controllers.Record.</returns>
-        public KbxtEcho.Controllers.Record Getfour(string name)
+        public Record Getfour(string name)
         {
             return new Record();
         }
-        /// <summary>
-        /// Getones the <see cref="Record"/>.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A Record.</returns>
+
         public Record Getone(string name)
         {
             return new Record();
         }
 
-        /// <summary>
-        /// TODO: Add Summary
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
+
         public string Gettwo(string name)
         {
             return name;
         }
 
-
-        /// <summary>
-        /// Testers the <typeparamref name="TResult"></typeparamref>.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>A <typeparamref name="TResult"></typeparamref></returns>
         public TResult Tester<TResult>()
         {
             throw new ArgumentNullException(nameof(Tester));
             return default;
         }
+    }
+
+    public interface TestInt
+    {
+        public int MyPropertyPublic { get; set; }
+
+        internal int MyPropertyInternal { get; set; }
+
+        protected int MyPropertyProtected { get; set; }
+
+        int MyProperty { get; set; }
+
+        void TestMethod();
+    }
+    class privteTester
+    {
+        public int MyProperty { get; set; }
+
+        public int MyProperty1 { get; set; }
+
+        public DateTime? NullDateTime { get; set; }
+
+        public int? NullInt { get; set; }
+
+        public int?[] NullIntArray { get; set; }
+
+        public bool ExecuteWelcome() { ManWorker(); return true; }
+
+        private string ManWorker() { return ""; }
     }
 
 }

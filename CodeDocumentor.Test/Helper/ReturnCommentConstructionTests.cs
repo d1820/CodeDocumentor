@@ -36,7 +36,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A read only collection of lists of strings.");
+            comment.Should().Be("A read only collection of list of strings.");
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("List", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of lists of strings.");
+            comment.Should().Be("A list of list of strings.");
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("List", list2);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of lists of lists of strings.");
+            comment.Should().Be("A list of list of list of strings.");
         }
 
 
@@ -105,7 +105,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of lists of strings.");
+            comment.Should().Be("A list of list of strings.");
         }
 
 
@@ -124,7 +124,7 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of lists of integers.");
+            comment.Should().Be("A list of list of integers.");
         }
         #endregion
 
@@ -145,7 +145,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of lists of strings.");
+            comment.Should().Be("A list of list of strings.");
         }
         #endregion
 
@@ -218,7 +218,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list2);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of lists of strings.");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of list of strings.");
         }
         #endregion
 

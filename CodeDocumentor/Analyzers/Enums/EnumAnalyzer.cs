@@ -28,7 +28,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        public const string DiagnosticId = "CD1602";
+        public const string DiagnosticId = Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
@@ -58,10 +58,13 @@ namespace CodeDocumentor
         ///   Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             EnumDeclarationSyntax node = context.Node as EnumDeclarationSyntax;
-
+            if (node == null)
+            {
+                return;
+            }
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
                 .Select(o => o.GetStructure())

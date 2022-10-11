@@ -24,8 +24,6 @@ namespace CodeDocumentor
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FileCodeFixProvider)), Shared]
     public class FileCodeFixProvider : CodeFixProvider
     {
-
-
         /// <summary>
         ///   The title.
         /// </summary>
@@ -36,7 +34,8 @@ namespace CodeDocumentor
         /// </summary>
         public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
             FileAnalyzerSettings.DiagnosticId,
-            ClassAnalyzerSettings.DiagnosticId
+            ClassAnalyzerSettings.DiagnosticId,
+            PropertyAnalyzerSettings.DiagnosticId,
         });
 
         /// <summary>
@@ -84,8 +83,8 @@ namespace CodeDocumentor
                         var _nodesToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
                         Document d = context.Document;
                         SyntaxNode root = await d.GetSyntaxRootAsync(context.CancellationToken);
-                        ClassCodeFixProvider.BuildHeaders(root, _nodesToReplace);
-
+                        ClassCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        PropertyCodeFixProvider.BuildComments(root, _nodesToReplace);
                         root = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
                         {
                             return _nodesToReplace[n1];

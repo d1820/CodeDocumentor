@@ -84,6 +84,7 @@ namespace Welcom.Test
         /// <returns><![CDATA[IRecordController<TIn, Tout>]]></returns>
         IRecordController<TIn, Tout> GetItems<TOther>(TIn request, TOther newReq);
     }
+
     //[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
     public class Test<T>
     {

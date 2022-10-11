@@ -4,12 +4,12 @@ using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal class ClassAnalyzerSettings
+    internal class FileAnalyzerSettings
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        internal const string Title = "The class must have a documentation header.";
+        internal const string Title = "The file needs documentation headers.";
 
         /// <summary>
         ///   The category.
@@ -19,7 +19,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        internal const string DiagnosticId = Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID;
+        internal const string DiagnosticId = Constants.DiagnosticIds.FILE_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
@@ -28,9 +28,8 @@ namespace CodeDocumentor
 
         internal static DiagnosticDescriptor GetRule()
         {
-            return new DiagnosticDescriptor(ClassAnalyzerSettings.DiagnosticId, ClassAnalyzerSettings.Title, 
-                ClassAnalyzerSettings.MessageFormat, ClassAnalyzerSettings.Category, 
-                CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+            return new DiagnosticDescriptor(FileAnalyzerSettings.DiagnosticId, FileAnalyzerSettings.Title,
+                FileAnalyzerSettings.MessageFormat, FileAnalyzerSettings.Category, DiagnosticSeverity.Info, true);
         }
 
     }

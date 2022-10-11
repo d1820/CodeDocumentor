@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
@@ -11,6 +13,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.Package;
 
 namespace CodeDocumentor
 {
@@ -67,6 +70,29 @@ namespace CodeDocumentor
         }
 
         /// <summary>
+        /// Adds the documentation headers asynchronously.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="root">The root.</param>
+        /// <param name="declarationSyntaxes">The declaration syntaxes.</param>
+        /// <returns><![CDATA[Task<Document>]]></returns>
+        internal static async Task<Document> AddDocumentationHeadersAsync(Document document, SyntaxNode root, IEnumerable<ClassDeclarationSyntax> declarationSyntaxes)
+        {
+            var nodesToReplace = new Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax>();
+            foreach (var declarationSyntax in declarationSyntaxes)
+            {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.Add(declarationSyntax, newDeclaration);
+            }
+
+            root = root.ReplaceNodes(nodesToReplace.Keys, (n1, n2) =>
+            {
+                return nodesToReplace[n1];
+            });
+            return document.WithSyntaxRoot(root);
+        }
+
+        /// <summary>
         ///   Adds documentation header async.
         /// </summary>
         /// <param name="document"> The document. </param>
@@ -74,7 +100,15 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        internal static async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        {
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
+            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
@@ -96,9 +130,7 @@ namespace CodeDocumentor
 
             var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-
-            return document.WithSyntaxRoot(newRoot);
+            return newDeclaration;
         }
     }
 }

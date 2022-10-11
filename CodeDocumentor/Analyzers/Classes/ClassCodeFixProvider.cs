@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.Package;
 
 namespace CodeDocumentor
 {
+   
     /// <summary>
     ///   The class code fix provider.
     /// </summary>
@@ -69,27 +70,21 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
+
         /// <summary>
-        /// Adds the documentation headers asynchronously.
+        /// Builds the headers.
         /// </summary>
-        /// <param name="document">The document.</param>
         /// <param name="root">The root.</param>
-        /// <param name="declarationSyntaxes">The declaration syntaxes.</param>
-        /// <returns><![CDATA[Task<Document>]]></returns>
-        internal static async Task<Document> AddDocumentationHeadersAsync(Document document, SyntaxNode root, IEnumerable<ClassDeclarationSyntax> declarationSyntaxes)
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        internal static void BuildHeaders(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
-            var nodesToReplace = new Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax>();
-            foreach (var declarationSyntax in declarationSyntaxes)
+            var classes = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in classes)
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                nodesToReplace.Add(declarationSyntax, newDeclaration);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
             }
-
-            root = root.ReplaceNodes(nodesToReplace.Keys, (n1, n2) =>
-            {
-                return nodesToReplace[n1];
-            });
-            return document.WithSyntaxRoot(root);
         }
 
         /// <summary>

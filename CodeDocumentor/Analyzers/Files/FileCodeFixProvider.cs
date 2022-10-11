@@ -24,6 +24,8 @@ namespace CodeDocumentor
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FileCodeFixProvider)), Shared]
     public class FileCodeFixProvider : CodeFixProvider
     {
+
+
         /// <summary>
         ///   The title.
         /// </summary>
@@ -32,9 +34,9 @@ namespace CodeDocumentor
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> { 
+        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
             FileAnalyzerSettings.DiagnosticId,
-            ClassAnalyzerSettings.DiagnosticId 
+            ClassAnalyzerSettings.DiagnosticId
         });
 
         /// <summary>
@@ -43,17 +45,26 @@ namespace CodeDocumentor
         /// <returns> A FixAllProvider. </returns>
         public override sealed FixAllProvider GetFixAllProvider()
         {
-            return FixAllProvider.Create(async (context, doc, codes) =>
-            {
-                Document d = context.Document;
-                SyntaxNode root = await doc.GetSyntaxRootAsync(context.CancellationToken);          
-                var classes = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
+            return null;
+            //return FixAllProvider.Create(async (context, doc, codes) =>
+            //{
+            //    if (context.Document != null)
+            //    {
+            //        Document d = context.Document;
+            //        SyntaxNode root = await doc.GetSyntaxRootAsync(context.CancellationToken);
+            //        ClassCodeFixProvider.BuildHeaders(root, _nodesToReplace);
 
-                d = await ClassCodeFixProvider.AddDocumentationHeadersAsync(d, root, classes);
 
-                SyntaxNode root1 = await d.GetSyntaxRootAsync(context.CancellationToken);
-                return d.WithSyntaxRoot(root1);
-            });
+            //        root = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
+            //        {
+            //            return _nodesToReplace[n1];
+            //        });
+            //        return d.WithSyntaxRoot(root);
+            //    }
+
+            //    //SyntaxNode root1 = await d.GetSyntaxRootAsync(context.CancellationToken);
+            //    //return d.WithSyntaxRoot(root1);
+            //});
         }
 
         /// <summary>
@@ -70,14 +81,16 @@ namespace CodeDocumentor
                     title: title,
                     createChangedDocument: async (c) =>
                     {
+                        var _nodesToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
                         Document d = context.Document;
                         SyntaxNode root = await d.GetSyntaxRootAsync(context.CancellationToken);
-                        var classes = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
+                        ClassCodeFixProvider.BuildHeaders(root, _nodesToReplace);
 
-                        d = await ClassCodeFixProvider.AddDocumentationHeadersAsync(d, root, classes);
-
-                        SyntaxNode root1 = await d.GetSyntaxRootAsync(context.CancellationToken);
-                        return d.WithSyntaxRoot(root1);
+                        root = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
+                        {
+                            return _nodesToReplace[n1];
+                        });
+                        return d.WithSyntaxRoot(root);
                     },
                     equivalenceKey: title),
                 diagnostic);

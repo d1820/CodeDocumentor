@@ -19,7 +19,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        internal const string DiagnosticId = "CD1603";
+        internal const string DiagnosticId = Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.

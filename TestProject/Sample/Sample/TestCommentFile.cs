@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace KbxtEcho.Controllers
+namespace Welcom.Test
 {
     public class Record
     {
@@ -12,6 +12,65 @@ namespace KbxtEcho.Controllers
     }
 
 
+    public class Field_Tester_Spacer
+    {
+
+        const int ConstFieldTester = 666;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FieldOCRTester"/> class.
+        /// </summary>
+        public Field_Tester_Spacer()
+        {
+        }
+
+        public string Check_On_The_User_OCR()
+        {
+            return "";
+        }
+
+        public string EnsureActions()
+        {
+            return "";
+        }
+
+        public string CouldSaveFile()
+        {
+            return "";
+        }
+
+        public string BeActionTimer()
+        {
+            return "";
+        }
+    }
+
+
+    public class FieldOCRTester
+    {
+
+        const int ConstFieldTester = 666;
+
+        public int MyPropertyPublic { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FieldOCRTester"/> class.
+        /// </summary>
+        public FieldOCRTester()
+        {
+        }
+    }
+
+
+    internal class PrivateClass
+    {
+
+        const int ConstFieldTester = 666;
+
+        private PrivateClass()
+        {
+        }
+    }
 
     public interface IRecordController<TIn, Tout>
     {
@@ -173,11 +232,11 @@ namespace KbxtEcho.Controllers
         }
 
         /// <summary>
-        /// Getfours the <see cref="KbxtEcho.Controllers.Record"/>.
+        /// Getfours the <see cref="Sample.Record"/>.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A KbxtEcho.Controllers.Record.</returns>
-        public KbxtEcho.Controllers.Record Getfour(string name)
+        public Sample.Record Getfour(string name)
         {
             return new Record();
         }
@@ -213,6 +272,54 @@ namespace KbxtEcho.Controllers
             throw new ArgumentNullException(nameof(Tester));
             return default;
         }
+    }
+
+
+    /// <summary>
+    /// The Test integer interface.
+    /// </summary>
+    public interface TestInt
+    {
+        /// <summary>
+        /// Gets or Sets the my property public.
+        /// </summary>
+        public int MyPropertyPublic { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the my property internal.
+        /// </summary>
+        internal int MyPropertyInternal { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the my property protected.
+        /// </summary>
+        protected int MyPropertyProtected { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the my property.
+        /// </summary>
+        int MyProperty { get; set; }
+
+        /// <summary>
+        /// Tests the method.
+        /// </summary>
+        void TestMethod();
+    }
+    class privteTester
+    {
+        public int MyProperty { get; set; }
+
+        public int MyProperty1 { get; set; }
+
+        public DateTime? NullDateTime { get; set; }
+
+        public int? NullInt { get; set; }
+
+        public int?[] NullIntArray { get; set; }
+
+        public bool ExecuteWelcome() { ManWorker(); return true; }
+
+        private string ManWorker() { return ""; }
     }
 
 }

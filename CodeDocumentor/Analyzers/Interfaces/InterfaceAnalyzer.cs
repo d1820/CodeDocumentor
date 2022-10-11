@@ -28,7 +28,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        public const string DiagnosticId = "CD1604";
+        public const string DiagnosticId = Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
@@ -58,10 +58,13 @@ namespace CodeDocumentor
         ///   Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             InterfaceDeclarationSyntax node = context.Node as InterfaceDeclarationSyntax;
-
+            if (node == null)
+            {
+                return;
+            }
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
                 .Select(o => o.GetStructure())

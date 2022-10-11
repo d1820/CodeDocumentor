@@ -12,6 +12,18 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
+        public static class DiagnosticIds
+        {
+            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
+            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
+            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
+            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
+            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
+            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
+            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
+            public const string FILE_DIAGNOSTIC_ID = "CD1607";
+        }
+
         //This has to be a static list, so it works properly with the settings dialog
         public static WordMap[] WORD_MAPS = new[] {
             new WordMap { Word = "int", Translation = "integer" },

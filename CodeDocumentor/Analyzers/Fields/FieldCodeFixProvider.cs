@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -76,17 +77,39 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, FieldDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
+            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax)
+        {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
             VariableDeclaratorSyntax field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
             string comment = CommentHelper.CreateFieldComment(field.Identifier.ValueText.AsSpan());
-            DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment), cancellationToken);
+            DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
 
             var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             FieldDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
 
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return newDeclaration;
+        }
+
+        /// <summary>
+        /// Builds the headers.
+        /// </summary>
+        /// <param name="root">The root.</param>
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.FieldDeclaration)).OfType<FieldDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in declarations)
+            {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+            }
         }
     }
 }

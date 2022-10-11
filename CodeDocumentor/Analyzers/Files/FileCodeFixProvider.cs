@@ -36,6 +36,11 @@ namespace CodeDocumentor
             FileAnalyzerSettings.DiagnosticId,
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
+            ConstructorAnalyzerSettings.DiagnosticId,
+            EnumAnalyzer.DiagnosticId,
+            InterfaceAnalyzer.DiagnosticId,
+            MethodAnalyzerSettings.DiagnosticId,
+            FieldAnalyzerSettings.DiagnosticId
         });
 
         /// <summary>
@@ -45,25 +50,6 @@ namespace CodeDocumentor
         public override sealed FixAllProvider GetFixAllProvider()
         {
             return null;
-            //return FixAllProvider.Create(async (context, doc, codes) =>
-            //{
-            //    if (context.Document != null)
-            //    {
-            //        Document d = context.Document;
-            //        SyntaxNode root = await doc.GetSyntaxRootAsync(context.CancellationToken);
-            //        ClassCodeFixProvider.BuildHeaders(root, _nodesToReplace);
-
-
-            //        root = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
-            //        {
-            //            return _nodesToReplace[n1];
-            //        });
-            //        return d.WithSyntaxRoot(root);
-            //    }
-
-            //    //SyntaxNode root1 = await d.GetSyntaxRootAsync(context.CancellationToken);
-            //    //return d.WithSyntaxRoot(root1);
-            //});
         }
 
         /// <summary>
@@ -85,11 +71,17 @@ namespace CodeDocumentor
                         SyntaxNode root = await d.GetSyntaxRootAsync(context.CancellationToken);
                         ClassCodeFixProvider.BuildComments(root, _nodesToReplace);
                         PropertyCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        root = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
+                        ConstructorCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        EnumCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        FieldCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        InterfaceCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        MethodCodeFixProvider.BuildComments(root, _nodesToReplace);
+
+                        var newroot = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
                         {
                             return _nodesToReplace[n1];
                         });
-                        return d.WithSyntaxRoot(root);
+                        return d.WithSyntaxRoot(newroot);
                     },
                     equivalenceKey: title),
                 diagnostic);

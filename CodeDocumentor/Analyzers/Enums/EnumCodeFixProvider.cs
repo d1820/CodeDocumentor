@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -70,16 +71,38 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, EnumDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
+            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax)
+        {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
             string comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText.AsSpan());
-            DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment), cancellationToken);
+            DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
 
             var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
             EnumDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
 
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return newDeclaration;
+        }
+
+        /// <summary>
+        /// Builds the headers.
+        /// </summary>
+        /// <param name="root">The root.</param>
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.EnumDeclaration)).OfType<EnumDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in declarations)
+            {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+            }
         }
     }
 }

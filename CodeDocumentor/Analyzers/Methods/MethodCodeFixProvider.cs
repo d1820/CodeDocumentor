@@ -97,14 +97,37 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
+            var newDeclaration = BuildNewDeclaration(declarationSyntax);
+            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+
+        private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
+        {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            DocumentationCommentTriviaSyntax commentTrivia = await Task.Run(() => CreateDocumentationCommentTriviaSyntax(declarationSyntax), cancellationToken);
+            DocumentationCommentTriviaSyntax commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
 
             SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
             MethodDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
 
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return newDeclaration;
+        }
+
+        /// <summary>
+        /// Builds the headers.
+        /// </summary>
+        /// <param name="root">The root.</param>
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
+
+            foreach (var declarationSyntax in declarations)
+            {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+            }
         }
 
         /// <summary>

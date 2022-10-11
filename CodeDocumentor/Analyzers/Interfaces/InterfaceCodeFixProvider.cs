@@ -110,6 +110,10 @@ namespace CodeDocumentor
 
             foreach (var declarationSyntax in declarations)
             {
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
             }

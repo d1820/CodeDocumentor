@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -100,6 +101,10 @@ namespace CodeDocumentor
 
             foreach (var declarationSyntax in declarations)
             {
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
             }

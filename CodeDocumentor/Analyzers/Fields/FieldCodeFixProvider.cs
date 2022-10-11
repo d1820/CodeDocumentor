@@ -107,6 +107,14 @@ namespace CodeDocumentor
 
             foreach (var declarationSyntax in declarations)
             {
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                {
+                    continue;
+                }
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
             }

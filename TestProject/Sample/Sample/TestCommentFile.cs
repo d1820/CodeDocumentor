@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace Welcom.Test
 {
+    /// <summary>
+    /// The record.
+    /// That Comes
+    /// </summary>
+    /// <remarks>
+    /// Testing Remarks
+    /// </remarks>
     public class Record
     {
 

@@ -445,6 +445,19 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlText(newLine0Token, text1Token, newLine2Token, text2Token);
         }
 
+
+        /// <summary>
+        /// Has summary.
+        /// </summary>
+        /// <param name="leadingTrivia">The leading trivia.</param>
+        /// <returns>A bool.</returns>
+        internal static bool HasSummary(this CSharpSyntaxNode syntax)
+        {
+            return syntax.HasLeadingTrivia && syntax.GetLeadingTrivia().Any(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
+            || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+            || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
+        }
+
         /// <summary>
         /// Builds the leading trivia.
         /// </summary>

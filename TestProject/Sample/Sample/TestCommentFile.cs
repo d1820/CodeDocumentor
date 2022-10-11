@@ -68,7 +68,7 @@ namespace Welcom.Test
     }
 
     public interface IRecordController<TIn, Tout>
-    {s>
+    {
         IRecordController<TIn, Tout> GetItems<TOther>(TIn request, TOther newReq);
     }
 

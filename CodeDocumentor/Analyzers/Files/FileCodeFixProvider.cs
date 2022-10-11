@@ -68,20 +68,26 @@ namespace CodeDocumentor
                     {
                         var _nodesToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
                         Document d = context.Document;
-                        SyntaxNode root = await d.GetSyntaxRootAsync(context.CancellationToken);
-                        ClassCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        SyntaxNode root = await d.GetSyntaxRootAsync(context.CancellationToken);   
+                        //Order Matters
                         PropertyCodeFixProvider.BuildComments(root, _nodesToReplace);
                         ConstructorCodeFixProvider.BuildComments(root, _nodesToReplace);
                         EnumCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        FieldCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        InterfaceCodeFixProvider.BuildComments(root, _nodesToReplace);
+                        FieldCodeFixProvider.BuildComments(root, _nodesToReplace);                       
                         MethodCodeFixProvider.BuildComments(root, _nodesToReplace);
-
                         var newroot = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
                         {
                             return _nodesToReplace[n1];
                         });
-                        return d.WithSyntaxRoot(newroot);
+                        _nodesToReplace.Clear();
+                        InterfaceCodeFixProvider.BuildComments(newroot, _nodesToReplace);
+                        ClassCodeFixProvider.BuildComments(newroot, _nodesToReplace);
+                        var newroot2 = newroot.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
+                        {
+                            return _nodesToReplace[n1];
+                        });
+                
+                        return d.WithSyntaxRoot(newroot2);
                     },
                     equivalenceKey: title),
                 diagnostic);

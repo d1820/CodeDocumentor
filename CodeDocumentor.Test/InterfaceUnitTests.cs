@@ -84,8 +84,8 @@ namespace ConsoleApp4
         {
             var expected = new DiagnosticResult
             {
-                Id = InterfaceAnalyzer.DiagnosticId,
-                Message = InterfaceAnalyzer.MessageFormat,
+                Id = InterfaceAnalyzerSettings.DiagnosticId,
+                Message = InterfaceAnalyzerSettings.MessageFormat,
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {

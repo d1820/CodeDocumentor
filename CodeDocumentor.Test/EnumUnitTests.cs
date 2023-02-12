@@ -84,8 +84,8 @@ namespace Test
 		{
 			DiagnosticResult expected = new DiagnosticResult
 			{
-				Id = EnumAnalyzer.DiagnosticId,
-				Message = EnumAnalyzer.MessageFormat,
+				Id = EnumAnalyzerSettings.DiagnosticId,
+				Message = EnumAnalyzerSettings.MessageFormat,
 				Severity = DiagnosticSeverity.Warning,
 				Locations =
 					new[] {

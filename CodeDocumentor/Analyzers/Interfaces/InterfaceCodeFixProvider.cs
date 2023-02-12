@@ -20,15 +20,13 @@ namespace CodeDocumentor
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InterfaceCodeFixProvider)), Shared]
     public class InterfaceCodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
         private const string title = "Code Documentor this interface";
+        private const string titleRebuild = "Code Documentor update this interface";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzer.DiagnosticId);
+        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzerSettings.DiagnosticId);
 
         /// <summary>
         ///   Gets fix all provider.
@@ -55,9 +53,9 @@ namespace CodeDocumentor
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: declaration.HasSummary() ? titleRebuild : title,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
                 diagnostic);
         }
 

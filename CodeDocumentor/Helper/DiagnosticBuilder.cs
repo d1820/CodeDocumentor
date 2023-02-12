@@ -30,6 +30,7 @@ namespace CodeDocumentor.Helper
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
 
+
             var alreadyHasComment = commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax);
 
             context.ReportDiagnostic(Diagnostic.Create(getRuleCallback.Invoke(alreadyHasComment), identifier.GetLocation()));

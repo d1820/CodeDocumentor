@@ -30,8 +30,8 @@ namespace CodeDocumentor
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
             ConstructorAnalyzerSettings.DiagnosticId,
-            EnumAnalyzer.DiagnosticId,
-            InterfaceAnalyzer.DiagnosticId,
+            EnumAnalyzerSettings.DiagnosticId,
+            InterfaceAnalyzerSettings.DiagnosticId,
             MethodAnalyzerSettings.DiagnosticId,
             FieldAnalyzerSettings.DiagnosticId
         });

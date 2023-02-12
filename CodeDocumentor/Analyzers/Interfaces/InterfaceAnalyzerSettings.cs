@@ -1,16 +1,15 @@
-﻿using System;
-using CodeDocumentor.Helper;
+﻿using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal class FieldAnalyzerSettings
+    internal static class InterfaceAnalyzerSettings
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        internal const string Title = "The field must have a documentation header.";
+        internal const string Title = "The interface must have a documentation header.";
 
         /// <summary>
         ///   The category.
@@ -20,7 +19,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        internal const string DiagnosticId = Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID;
+        internal const string DiagnosticId = Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
@@ -32,10 +31,9 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            Console.WriteLine("FIELD SETTING: " + hideDiagnosticSeverity);
-            return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat, 
-                FieldAnalyzerSettings.Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+            return new DiagnosticDescriptor(MethodAnalyzerSettings.DiagnosticId, MethodAnalyzerSettings.Title, 
+                MethodAnalyzerSettings.MessageFormat, MethodAnalyzerSettings.Category,
+                hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }
     }
 }

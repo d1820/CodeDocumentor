@@ -68,7 +68,7 @@ namespace CodeDocumentor
             }
 
             VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.BuildDiagnostic(field, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

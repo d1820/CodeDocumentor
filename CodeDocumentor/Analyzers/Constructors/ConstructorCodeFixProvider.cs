@@ -20,10 +20,8 @@ namespace CodeDocumentor
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorCodeFixProvider)), Shared]
     public class ConstructorCodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
         private const string title = "Code Documentor this constructor";
+        private const string titleRebuild = "Code Documentor update this constructor";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -59,9 +57,9 @@ namespace CodeDocumentor
             }
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: declaration.HasSummary() ? titleRebuild : title,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
                 diagnostic);
         }
 

@@ -57,27 +57,15 @@ namespace CodeDocumentor
             {
                 return;
             }
-          
+
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
 
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
-
-
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-
             VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.BuildDiagnostic(field, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

@@ -358,7 +358,17 @@ namespace CodeDocumentor.Helper
             XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(xmlName);
             XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(xmlName);
 
+            var regex = $@"<{xmlNodeName}>(.+)<\/{xmlNodeName}>";
+
             var cleanContent = content?.Trim();
+            var plueckedReturnElemement = Regex.Match(cleanContent, regex);
+            if(plueckedReturnElemement == null || plueckedReturnElemement.Groups.Count == 0)
+            {
+                XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
+                return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(contentText), endTag);
+            }
+            cleanContent = plueckedReturnElemement.Success ? plueckedReturnElemement.Groups[0].Value : cleanContent;
+
             var xmlParseResponse = IsXML(cleanContent);
 
             if (xmlParseResponse.isTypeParam)
@@ -392,8 +402,7 @@ namespace CodeDocumentor.Helper
                 return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
             }
 
-            XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
-            return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(contentText), endTag);
+            return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(SyntaxFactory.XmlText(cleanContent)), endTag);
         }
 
         /// <summary>
@@ -407,7 +416,7 @@ namespace CodeDocumentor.Helper
             {
                 return (false, false, false);
             }
-            var isXml = Regex.IsMatch(text, @"(\<\w+\s)");
+            var isXml = Regex.IsMatch(text, @"CDATA");
             var isGeneric = Regex.IsMatch(text, @"(\w+\<)");
             var isTypeParam = Regex.IsMatch(text, @"(<typeparam)");
 

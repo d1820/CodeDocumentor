@@ -141,7 +141,7 @@ namespace CodeDocumentor.Helper
             // this will return the full generic Ex. Task<Request>- which then will get added to a CDATA
             if (returnGenericTypeAsFullString)
             {
-                return returnType.ToFullString();
+                return returnType.ToString();
             }
 
             string genericTypeStr = returnType.Identifier.ValueText;

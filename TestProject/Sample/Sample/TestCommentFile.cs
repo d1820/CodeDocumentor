@@ -154,6 +154,7 @@ namespace Welcom.Test
     /// <typeparam name="Tout"></typeparam>
     public interface IRecordController<TIn, Tout>
     {
+
         /// <summary>
         /// Gets the items.
         /// </summary>
@@ -162,6 +163,13 @@ namespace Welcom.Test
         /// <param name="newReq">The new req.</param>
         /// <returns><![CDATA[IRecordController<TIn, Tout>]]></returns>
         IRecordController<TIn, Tout> GetItems<TOther>(TIn request, TOther newReq);
+
+        /// <summary>
+        /// Test string.
+        /// </summary>
+        /// <param name="go">The go.</param>
+        /// <returns><![CDATA[Task<string>]]></returns>
+        Task<string> TestString(string go);
     }
 
     //[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]

@@ -65,8 +65,8 @@ namespace CodeDocumentor.Helper
             var genericTypeStr = nameSyntax.Identifier.ValueText;
 
             return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
-
         }
+
         /// <summary>
         /// Are the list.
         /// </summary>
@@ -362,7 +362,7 @@ namespace CodeDocumentor.Helper
 
             var cleanContent = content?.Trim();
             var plueckedReturnElemement = Regex.Match(cleanContent, regex);
-            if(plueckedReturnElemement == null || plueckedReturnElemement.Groups.Count == 0)
+            if (plueckedReturnElemement == null || plueckedReturnElemement.Groups.Count == 0)
             {
                 XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
                 return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(contentText), endTag);
@@ -534,7 +534,6 @@ namespace CodeDocumentor.Helper
         {
             return SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///"));
         }
-
 
         /// <summary>
         /// Upserts the leading trivia.

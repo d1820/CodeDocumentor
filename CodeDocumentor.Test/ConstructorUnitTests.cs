@@ -9,8 +9,8 @@ using Xunit;
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public partial class ConstrcutorUnitTest {
-
+    public partial class ConstrcutorUnitTest
+    {
         /// <summary>
         /// The inherit doc test code.
         /// </summary>
@@ -149,10 +149,11 @@ namespace ConsoleApp4
 	}
 }";
     }
+
     /// <summary>
     /// The constructor unit test.
     /// </summary>
-    
+
     [SuppressMessage("XMLDocumentation", "")]
     public partial class ConstrcutorUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
     {
@@ -164,17 +165,16 @@ namespace ConsoleApp4
             TestFixture.BuildOptionsPageGrid();
             CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
-   
 
-		/// <summary>
-		/// Nos diagnostics show.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		[Theory]
-		[InlineData("")]
-		[InlineData(InheritDocTestCode)]
-		public void NoDiagnosticsShow(string testCode)
-		{
+        /// <summary>
+        /// Nos diagnostics show.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        [Theory]
+        [InlineData("")]
+        [InlineData(InheritDocTestCode)]
+        public void NoDiagnosticsShow(string testCode)
+        {
             if (testCode == string.Empty)
             {
                 this.VerifyCSharpDiagnostic(testCode, "public");
@@ -196,50 +196,50 @@ namespace ConsoleApp4
             }
         }
 
-		/// <summary>
-		/// Shows diagnostic and fix.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		/// <param name="fixCode">The fix code.</param>
-		/// <param name="line">The line.</param>
-		/// <param name="column">The column.</param>
-		[Theory]
-		[InlineData(PublicConstructorTestCode, PublicContructorTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-		[InlineData(PrivateConstructorTestCode, PrivateContructorTestFixCode, 10, 11, TestFixure.DIAG_TYPE_PRIVATE)]
-		[InlineData(PublicConstructorWithBooleanParameterTestCode, PublicContructorWithBooleanParameterTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
-		{
-			var expected = new DiagnosticResult
-			{
-				Id = ConstructorAnalyzerSettings.DiagnosticId,
-				Message = ConstructorAnalyzerSettings.MessageFormat,
-				Severity = DiagnosticSeverity.Warning,
-				Locations =
-					new[] {
-							new DiagnosticResultLocation("Test0.cs", line, column)
-						}
-			};
+        /// <summary>
+        /// Shows diagnostic and fix.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        /// <param name="fixCode">The fix code.</param>
+        /// <param name="line">The line.</param>
+        /// <param name="column">The column.</param>
+        [Theory]
+        [InlineData(PublicConstructorTestCode, PublicContructorTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PrivateConstructorTestCode, PrivateContructorTestFixCode, 10, 11, TestFixure.DIAG_TYPE_PRIVATE)]
+        [InlineData(PublicConstructorWithBooleanParameterTestCode, PublicContructorWithBooleanParameterTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
+        {
+            var expected = new DiagnosticResult
+            {
+                Id = ConstructorAnalyzerSettings.DiagnosticId,
+                Message = ConstructorAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
 
-			this.VerifyCSharpDiagnostic(testCode, diagType, expected);
+            this.VerifyCSharpDiagnostic(testCode, diagType, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode, diagType);
-		}
+            this.VerifyCSharpFix(testCode, fixCode, diagType);
+        }
 
-		/// <summary>
-		/// Gets c sharp code fix provider.
-		/// </summary>
-		/// <returns>A CodeFixProvider.</returns>
-		protected override CodeFixProvider GetCSharpCodeFixProvider()
-		{
-			return new ConstructorCodeFixProvider();
-		}
+        /// <summary>
+        /// Gets c sharp code fix provider.
+        /// </summary>
+        /// <returns>A CodeFixProvider.</returns>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new ConstructorCodeFixProvider();
+        }
 
-		/// <summary>
-		/// Gets c sharp diagnostic analyzer.
-		/// </summary>
-		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
-		{
+        /// <summary>
+        /// Gets c sharp diagnostic analyzer.
+        /// </summary>
+        /// <returns>A DiagnosticAnalyzer.</returns>
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
+        {
             if (diagType == "private")
             {
                 CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
@@ -250,6 +250,6 @@ namespace ConsoleApp4
                 CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new ConstructorAnalyzer();
-		}
-	}
+        }
+    }
 }

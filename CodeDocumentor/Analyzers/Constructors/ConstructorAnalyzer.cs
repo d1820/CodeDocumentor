@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -9,8 +8,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-
-
     /// <summary>
     ///   The constructor analyzer.
     /// </summary>
@@ -63,7 +60,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-  
+
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ConstructorAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }

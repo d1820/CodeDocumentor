@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 

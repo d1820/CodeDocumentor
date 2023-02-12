@@ -101,7 +101,6 @@ namespace CodeDocumentor
             return document.WithSyntaxRoot(newRoot);
         }
 
-
         private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
         {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();

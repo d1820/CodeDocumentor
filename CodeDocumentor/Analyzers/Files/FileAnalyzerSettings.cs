@@ -32,6 +32,5 @@ namespace CodeDocumentor
             return new DiagnosticDescriptor(FileAnalyzerSettings.DiagnosticId, FileAnalyzerSettings.Title,
                 FileAnalyzerSettings.MessageFormat, FileAnalyzerSettings.Category, DiagnosticSeverity.Hidden, true);
         }
-
     }
 }

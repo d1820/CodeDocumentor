@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-
     /// <summary>
     ///   The class analyzer.
     /// </summary>
@@ -48,7 +47,6 @@ namespace CodeDocumentor
             }
 
             context.ReportDiagnostic(Diagnostic.Create(FileAnalyzerSettings.GetRule(), node.GetLocation()));
-
         }
     }
 }

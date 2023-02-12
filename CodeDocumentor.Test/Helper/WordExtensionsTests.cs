@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
+﻿using CodeDocumentor.Helper;
 using FluentAssertions;
 using Xunit;
 

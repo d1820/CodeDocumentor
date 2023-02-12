@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -17,6 +16,7 @@ namespace CodeDocumentor.Test.Helper
             TestFixture.BuildOptionsPageGrid();
             _returnCommentBuilder = new ReturnCommentConstruction();
         }
+
         #region ReadOnlyCollection
 
         [Fact]
@@ -49,10 +49,10 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A read only collection of read only collections of strings.");
         }
+
         #endregion
 
         #region List
-
 
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromList()
@@ -87,7 +87,6 @@ namespace CodeDocumentor.Test.Helper
             comment.Should().Be("A list of list of list of strings.");
         }
 
-
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromIList()
         {
@@ -96,7 +95,6 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A list of strings.");
         }
-
 
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromIListOfIList()
@@ -107,7 +105,6 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A list of list of strings.");
         }
-
 
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromListOfInt()
@@ -126,9 +123,11 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A list of list of integers.");
         }
+
         #endregion
 
         #region IEnumerable
+
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromIEnumerable()
         {
@@ -147,6 +146,7 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A list of list of strings.");
         }
+
         #endregion
 
         #region ICollection
@@ -168,6 +168,7 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A list of strings.");
         }
+
         #endregion
 
         #region Dictionary
@@ -199,7 +200,6 @@ namespace CodeDocumentor.Test.Helper
             comment.Should().Be("A dictionary with a key of type string and a value of type string.");
         }
 
-
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromDictionaryWithListValue()
         {
@@ -220,6 +220,7 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A dictionary with a key of type string and a value of type list of list of strings.");
         }
+
         #endregion
 
         #region Task
@@ -263,6 +264,7 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A CustomClass.");
         }
+
         #endregion
 
         #region Unknown
@@ -270,8 +272,10 @@ namespace CodeDocumentor.Test.Helper
         public class CustomClass<TIn, TOut>
         {
             public TIn InProp { get; set; }
+
             public TOut MyProperty { get; set; }
         }
+
         [Fact]
         public void GenerateGenericTypeComment_CreatesValidStringFromUnknown()
         {
@@ -289,9 +293,11 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, false);
             comment.Should().Be("A CustomClass.");
         }
+
         #endregion
 
         #region IdentifierNameSyntax
+
         [Fact]
         public void IdentifierNameSyntaxComment_CreatesValidTypeParamRef()
         {
@@ -302,6 +308,7 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(returnType, false);
             comment.Should().Be("<typeparamref name=\"CustomClass\"></typeparamref>");
         }
+
         #endregion
     }
 }

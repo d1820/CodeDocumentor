@@ -33,7 +33,7 @@ namespace CodeDocumentor
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             Console.WriteLine("FIELD SETTING: " + hideDiagnosticSeverity);
-            return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat, 
+            return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat,
                 FieldAnalyzerSettings.Category,
                  hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }

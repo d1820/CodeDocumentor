@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-
     /// <summary>
     ///   The class code fix provider.
     /// </summary>
@@ -67,7 +66,6 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
-
         /// <summary>
         /// Builds the headers.
         /// </summary>
@@ -79,7 +77,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true 
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true
                     && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                 {
                     continue;

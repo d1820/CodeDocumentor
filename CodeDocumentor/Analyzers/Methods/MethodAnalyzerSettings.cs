@@ -31,7 +31,7 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            return new DiagnosticDescriptor(MethodAnalyzerSettings.DiagnosticId, MethodAnalyzerSettings.Title, 
+            return new DiagnosticDescriptor(MethodAnalyzerSettings.DiagnosticId, MethodAnalyzerSettings.Title,
                 MethodAnalyzerSettings.MessageFormat, MethodAnalyzerSettings.Category,
                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }

@@ -157,7 +157,7 @@ namespace CodeDocumentor.Vsix2022
                                                                     "contain",
                                                                     "continue",
                                                                     "convert",
-                                                                    "converts",                                                                    
+                                                                    "converts",
                                                                     "copy",
                                                                     "correct",
                                                                     "cough",
@@ -685,13 +685,12 @@ namespace CodeDocumentor.Vsix2022
                                                                     "zip",
                                                                     "zoom",
                                                                     //Auxillary verbs
-                                                                    "is", "am", "are", "was", "were", "been", "being", "have", "does", 
+                                                                    "is", "am", "are", "was", "were", "been", "being", "have", "does",
                                                                     "has", "had", "having", "to", "do",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
                                                                     "dare", "need", "used", "ought", "goes",
                                                                     //pluralization conversions
                                                                     "converts to",
-
         };
     }
 }

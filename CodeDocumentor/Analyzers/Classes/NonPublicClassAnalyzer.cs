@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -51,7 +50,6 @@ namespace CodeDocumentor
             {
                 return;
             }
-
 
             if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
             {

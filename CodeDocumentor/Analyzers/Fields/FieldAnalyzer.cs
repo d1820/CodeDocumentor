@@ -8,14 +8,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-
     /// <summary>
     ///   The field analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class FieldAnalyzer : DiagnosticAnalyzer
     {
-       
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>

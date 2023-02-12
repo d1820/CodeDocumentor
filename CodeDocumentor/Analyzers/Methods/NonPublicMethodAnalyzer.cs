@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -12,7 +11,7 @@ namespace CodeDocumentor
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicMethodAnalyzer : DiagnosticAnalyzer
-    {       
+    {
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
@@ -61,7 +60,6 @@ namespace CodeDocumentor
                 return;
             }
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => MethodAnalyzerSettings.GetRule(alreadyHasComment));
-
         }
     }
 }

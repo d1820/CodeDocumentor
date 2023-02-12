@@ -65,7 +65,6 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
-
         /// <summary>
         /// Builds the headers.
         /// </summary>
@@ -91,7 +90,6 @@ namespace CodeDocumentor
             }
             return neededCommentCount;
         }
-
 
         private static PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax)
         {
@@ -140,8 +138,8 @@ namespace CodeDocumentor
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             PropertyDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
-
         }
+
         /// <summary>
         ///   Adds documentation header async.
         /// </summary>

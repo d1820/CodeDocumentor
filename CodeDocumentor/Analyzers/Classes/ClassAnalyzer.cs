@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,7 +7,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-
     /// <summary>
     ///   The class analyzer.
     /// </summary>
@@ -42,7 +40,7 @@ namespace CodeDocumentor
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             ClassDeclarationSyntax node = context.Node as ClassDeclarationSyntax;
-            if(node == null)
+            if (node == null)
             {
                 return;
             }
@@ -57,7 +55,6 @@ namespace CodeDocumentor
             }
 
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
-
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
+
 namespace CodeDocumentor.Helper
 {
     /// <summary>
@@ -140,7 +141,6 @@ namespace CodeDocumentor.Helper
                 {
                     parts[0] = Pluralizer.Pluralize(parts[0]);
                 }
-
             }
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
             {

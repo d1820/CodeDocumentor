@@ -82,7 +82,7 @@ namespace CodeDocumentor.Helper
                     converted = Regex.Replace(converted, string.Format(wordMatchRegexTemplate, wordMap.Word), wordMap.Translation);
                 }
                 return converted;
-            }         
+            }
 
             var mergedWorkMaps = new List<WordMap>(CodeDocumentorPackage.Options.WordMaps);
             //Some stuff just needs to be handled for the user

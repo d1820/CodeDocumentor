@@ -29,7 +29,7 @@ namespace CodeDocumentor.Helper
                 while (char.IsUpper(nextChar))
                 {
                     upperGroup.Add(nextChar);
-                    if(lookahead >= name.Length)
+                    if (lookahead >= name.Length)
                     {
                         break;
                     }
@@ -60,13 +60,10 @@ namespace CodeDocumentor.Helper
                 {
                     ProcessChar(i, name, ref singleWord, ref words);
                 }
-
             }
             words.TryAddSingleWord(singleWord);
             return words;
         }
-
-      
 
         /// <summary>
         /// Processes the char.

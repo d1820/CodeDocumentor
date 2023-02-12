@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

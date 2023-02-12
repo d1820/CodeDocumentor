@@ -196,7 +196,7 @@ namespace CodeDocumentor.Helper
                     var item = returnType.TypeArgumentList.Arguments[i];
                     if (i > 0)
                     {
-                        builder.Append($"{DetermineStartingWord(item.ToString().AsSpan()) }");
+                        builder.Append($"{DetermineStartingWord(item.ToString().AsSpan())}");
                     }
                     builder.Append($"{BuildComment(item, returnGenericTypeAsFullString)}");
                     if (i + 1 < returnType.TypeArgumentList.Arguments.Count)

@@ -308,8 +308,6 @@ namespace ConsoleApp4
 	}
 }";
 
-
-
         /// <summary>
         /// The public property test code.
         /// </summary>
@@ -345,9 +343,6 @@ namespace ConsoleApp4
 	}
 }";
 
-
-
-
         /// <summary>
         /// The public property test code.
         /// </summary>
@@ -382,8 +377,8 @@ namespace ConsoleApp4
         string PersonName => ""Person Name"";
 	}
 }";
-
     }
+
     /// <summary>
     /// The property unit test.
     /// </summary>
@@ -398,6 +393,7 @@ namespace ConsoleApp4
             TestFixture.BuildOptionsPageGrid();
             CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
+
         /// <summary>
         /// Nos diagnostics show.
         /// </summary>

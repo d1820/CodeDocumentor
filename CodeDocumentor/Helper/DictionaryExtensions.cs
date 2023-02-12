@@ -13,6 +13,5 @@ namespace CodeDocumentor.Helper
             }
             return false;
         }
-
     }
 }

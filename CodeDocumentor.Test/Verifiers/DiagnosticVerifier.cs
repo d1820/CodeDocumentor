@@ -126,7 +126,7 @@ namespace CodeDocumentor.Test
                 var actual = actualResults.ElementAt(i);
                 var expected = expectedResults[i];
 
-                if(expected.Severity != actual.Severity)
+                if (expected.Severity != actual.Severity)
                 {
                     Assert.True(false,
                            string.Format("Expected:\nA project diagnostic with severity {0}\nActual:\n{1}",

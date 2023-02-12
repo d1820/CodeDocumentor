@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using CodeDocumentor.Vsix2022;
+﻿using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -39,7 +37,7 @@ namespace CodeDocumentor.Test
             }
             else
             {
-                var file =  _fixture.LoadTestFile($@"./Classes/{testCode}");
+                var file = _fixture.LoadTestFile($@"./Classes/{testCode}");
 
                 var expected = new DiagnosticResult
                 {
@@ -54,8 +52,6 @@ namespace CodeDocumentor.Test
 
                 this.VerifyCSharpDiagnostic(file, "public", expected);
             }
-
-           
         }
 
         /// <summary>

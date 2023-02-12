@@ -5,9 +5,6 @@ using Microsoft.CodeAnalysis;
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    /// <summary>
-    ///   Location where the diagnostic appears, as determined by path, line number, and column number.
-    /// </summary>
     public struct DiagnosticResultLocation
     {
         public DiagnosticResultLocation(string path, int line, int column)
@@ -35,9 +32,6 @@ namespace CodeDocumentor.Test
     }
 
     [SuppressMessage("XMLDocumentation", "")]
-    /// <summary>
-    ///   Struct that stores information about a Diagnostic appearing in a source
-    /// </summary>
     public struct DiagnosticResult
     {
         private DiagnosticResultLocation[] locations;

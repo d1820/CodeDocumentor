@@ -9,7 +9,7 @@ namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
     public class NameSplitterTests
-    {        
+    {
         [Fact]
         public void Split_ReturnsWordsSplitByUpperCaseLetter()
         {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -95,7 +94,8 @@ namespace CodeDocumentor.Test
         {
             foreach (var childNode in methodDeclaration.ChildNodes())
             {
-                if (childNode.IsKind(SyntaxKind.IdentifierName)){
+                if (childNode.IsKind(SyntaxKind.IdentifierName))
+                {
                     return childNode as IdentifierNameSyntax;
                 }
             }
@@ -108,5 +108,4 @@ namespace CodeDocumentor.Test
             return item;
         }
     }
-
 }

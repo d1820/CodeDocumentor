@@ -16,8 +16,8 @@ namespace CodeDocumentor.Helper
         {
             pl.AddIrregularRule("Do", "Does");
             pl.AddIrregularRule("To", "Converts to");
-
         }
+
         /// <summary>
         ///   Pluralizes word.
         /// </summary>
@@ -43,7 +43,6 @@ namespace CodeDocumentor.Helper
                 return pl.Pluralize(word);
             }
             return word;
-
         }
     }
 }

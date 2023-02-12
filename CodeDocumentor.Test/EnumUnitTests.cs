@@ -43,13 +43,13 @@ namespace Test
 	{
 	}
 }";
-
     }
+
     /// <summary>
     /// The enum unit test.
     /// </summary>
-    
-	public partial class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+
+    public partial class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
     {
         private readonly TestFixure _fixture;
 
@@ -65,55 +65,55 @@ namespace Test
         /// </summary>
         /// <param name="testCode">The test code.</param>
         [Theory]
-		[InlineData("")]
-		public void NoDiagnosticsShow(string testCode)
-		{
-			this.VerifyCSharpDiagnostic(testCode);
-		}
+        [InlineData("")]
+        public void NoDiagnosticsShow(string testCode)
+        {
+            this.VerifyCSharpDiagnostic(testCode);
+        }
 
-		/// <summary>
-		/// Shows diagnostic and fix.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		/// <param name="fixCode">The fix code.</param>
-		/// <param name="line">The line.</param>
-		/// <param name="column">The column.</param>
-		[Theory]
-		[InlineData(TestCode, TestFixCode, 8, 14)]
-		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
-		{
-			DiagnosticResult expected = new DiagnosticResult
-			{
-				Id = EnumAnalyzerSettings.DiagnosticId,
-				Message = EnumAnalyzerSettings.MessageFormat,
-				Severity = DiagnosticSeverity.Warning,
-				Locations =
-					new[] {
-							new DiagnosticResultLocation("Test0.cs", line, column)
-						}
-			};
+        /// <summary>
+        /// Shows diagnostic and fix.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        /// <param name="fixCode">The fix code.</param>
+        /// <param name="line">The line.</param>
+        /// <param name="column">The column.</param>
+        [Theory]
+        [InlineData(TestCode, TestFixCode, 8, 14)]
+        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        {
+            DiagnosticResult expected = new DiagnosticResult
+            {
+                Id = EnumAnalyzerSettings.DiagnosticId,
+                Message = EnumAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
 
-			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
-		}
+            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+        }
 
-		/// <summary>
-		/// Gets c sharp code fix provider.
-		/// </summary>
-		/// <returns>A CodeFixProvider.</returns>
-		protected override CodeFixProvider GetCSharpCodeFixProvider()
-		{
-			return new EnumCodeFixProvider();
-		}
+        /// <summary>
+        /// Gets c sharp code fix provider.
+        /// </summary>
+        /// <returns>A CodeFixProvider.</returns>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new EnumCodeFixProvider();
+        }
 
-		/// <summary>
-		/// Gets c sharp diagnostic analyzer.
-		/// </summary>
-		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
-		{
-			return new EnumAnalyzer();
-		}
-	}
+        /// <summary>
+        /// Gets c sharp diagnostic analyzer.
+        /// </summary>
+        /// <returns>A DiagnosticAnalyzer.</returns>
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
+        {
+            return new EnumAnalyzer();
+        }
+    }
 }

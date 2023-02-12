@@ -41,10 +41,8 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            
             var translated = input.Translate();
             translated.Should().Be(output);
-
         }
     }
 }

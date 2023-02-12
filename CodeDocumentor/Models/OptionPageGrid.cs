@@ -16,6 +16,7 @@ namespace CodeDocumentor.Vsix2022
         /// The category.
         /// </summary>
         public const string Category = "CodeDocumentor";
+
         /// <summary>
         /// The sub category.
         /// </summary>
@@ -25,14 +26,17 @@ namespace CodeDocumentor.Vsix2022
         /// The summary sub category.
         /// </summary>
         private const string SummarySubCategory = "Summary Options";
+
         /// <summary>
         /// The returns sub category.
         /// </summary>
         private const string ReturnsSubCategory = "Return Options";
+
         /// <summary>
         /// The translation sub category.
         /// </summary>
         private const string TranslationSubCategory = "Translation Options";
+
         /// <summary>
         /// The analyzer sub category.
         /// </summary>

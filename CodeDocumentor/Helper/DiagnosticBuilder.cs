@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,8 +16,8 @@ namespace CodeDocumentor.Helper
         /// <param name="node">The node.</param>
         /// <param name="identifier">The identifier.</param>
         /// <param name="getRuleCallback">The get rule callback.</param>
-        public static void BuildDiagnostic(this SyntaxNodeAnalysisContext context, CSharpSyntaxNode node, 
-                                            SyntaxToken identifier, 
+        public static void BuildDiagnostic(this SyntaxNodeAnalysisContext context, CSharpSyntaxNode node,
+                                            SyntaxToken identifier,
                                             Func<bool, DiagnosticDescriptor> getRuleCallback)
         {
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
@@ -29,7 +25,6 @@ namespace CodeDocumentor.Helper
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
-
 
             var alreadyHasComment = commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax);
 

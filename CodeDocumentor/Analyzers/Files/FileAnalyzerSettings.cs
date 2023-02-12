@@ -28,8 +28,9 @@ namespace CodeDocumentor
 
         internal static DiagnosticDescriptor GetRule()
         {
+            //we dont need to show this to still show the option to decorate the whole file. Setting DiagnosticSeverity.Hidden
             return new DiagnosticDescriptor(FileAnalyzerSettings.DiagnosticId, FileAnalyzerSettings.Title,
-                FileAnalyzerSettings.MessageFormat, FileAnalyzerSettings.Category, DiagnosticSeverity.Info, true);
+                FileAnalyzerSettings.MessageFormat, FileAnalyzerSettings.Category, DiagnosticSeverity.Hidden, true);
         }
 
     }

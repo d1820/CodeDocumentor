@@ -76,10 +76,10 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
-        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
-
+            var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
                 if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true 
@@ -94,7 +94,9 @@ namespace CodeDocumentor
                 }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                neededCommentCount++;
             }
+            return neededCommentCount;
         }
 
         /// <summary>

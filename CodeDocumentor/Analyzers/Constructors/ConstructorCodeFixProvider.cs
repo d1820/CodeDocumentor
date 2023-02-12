@@ -65,10 +65,10 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
-        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ConstructorDeclaration)).OfType<ConstructorDeclarationSyntax>().ToArray();
-
+            var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
                 if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -81,7 +81,9 @@ namespace CodeDocumentor
                 }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                neededCommentCount++;
             }
+            return neededCommentCount;
         }
 
         private static ConstructorDeclarationSyntax BuildNewDeclaration(ConstructorDeclarationSyntax declarationSyntax)

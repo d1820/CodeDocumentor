@@ -52,6 +52,8 @@ namespace CodeDocumentor
                 return;
             }
 
+       
+
             context.ReportDiagnostic(Diagnostic.Create(FileAnalyzerSettings.GetRule(), node.GetLocation()));
 
         }

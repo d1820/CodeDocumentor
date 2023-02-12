@@ -61,6 +61,16 @@ namespace Welcom.Test
         public FieldOCRTester()
         {
         }
+
+        public string DoWork()
+        {
+            return "";
+        }
+
+        public string ToUpperCase()
+        {
+            return "";
+        }
     }
 
 

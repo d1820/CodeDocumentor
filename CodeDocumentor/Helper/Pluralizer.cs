@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
@@ -11,6 +12,14 @@ namespace CodeDocumentor.Helper
     /// </summary>
     public static class Pluralizer
     {
+        internal static ThirdPartPluralizer.Pluralizer pl = new ThirdPartPluralizer.Pluralizer();
+
+        static Pluralizer()
+        {
+            pl.AddIrregularRule("Do", "Does");
+            pl.AddIrregularRule("To", "Converts to");
+
+        }
         /// <summary>
         ///   Pluralizes word.
         /// </summary>
@@ -19,9 +28,9 @@ namespace CodeDocumentor.Helper
         public static string Pluralize(string word)
         {
             var skipPlural = word.IsVerbCombo();
-            if (!skipPlural)
+            var pluarlizeAnyway = Constants.PLURALIZE_EXCLUSION_LIST.Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
+            if (!skipPlural || pluarlizeAnyway)
             {
-                var pl = new ThirdPartPluralizer.Pluralizer();
                 return pl.Pluralize(word);
             }
             return word;
@@ -30,10 +39,9 @@ namespace CodeDocumentor.Helper
         public static string Pluralize(string word, string nextWord)
         {
             var skipPlural = word.IsVerbCombo(nextWord);
-            if (!skipPlural)
+            var pluarlizeAnyway = Constants.PLURALIZE_EXCLUSION_LIST.Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
+            if (!skipPlural || pluarlizeAnyway)
             {
-
-                var pl = new ThirdPartPluralizer.Pluralizer();
                 return pl.Pluralize(word);
             }
             return word;

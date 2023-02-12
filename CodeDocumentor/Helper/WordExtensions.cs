@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
 
@@ -20,7 +21,7 @@ namespace CodeDocumentor.Helper
 
 
         public static bool IsVerbCombo(this string word, string nextWord = null)
-        {
+        {            
             var skipWord = Constants.INTERNAL_SPECIAL_WORD_LIST.Any(w => w.Equals(word, System.StringComparison.InvariantCultureIgnoreCase) || (w + "ed").Equals(word, System.StringComparison.InvariantCultureIgnoreCase));
             var skipNextWord = false;
             if (!string.IsNullOrEmpty(nextWord))

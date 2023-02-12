@@ -61,33 +61,39 @@ namespace CodeDocumentor
         {
             Diagnostic diagnostic = context.Diagnostics.First();
 
+            //build it up, but check for counts if anything actually needs to be shown
+            var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
+            Document tempDoc = context.Document;
+            SyntaxNode root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
+            //Order Matters
+            var neededCommentCount = 0;
+            neededCommentCount += PropertyCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += ConstructorCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += EnumCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += FieldCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += MethodCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
+            {
+                return _nodesTempToReplace[n1];
+            });
+            _nodesTempToReplace.Clear();
+            neededCommentCount += InterfaceCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += ClassCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
+            {
+                return _nodesTempToReplace[n1];
+            });
+            if(neededCommentCount == 0)
+            {
+                return;
+            }
+
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
                     createChangedDocument: async (c) =>
                     {
-                        var _nodesToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
-                        Document d = context.Document;
-                        SyntaxNode root = await d.GetSyntaxRootAsync(context.CancellationToken);   
-                        //Order Matters
-                        PropertyCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        ConstructorCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        EnumCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        FieldCodeFixProvider.BuildComments(root, _nodesToReplace);                       
-                        MethodCodeFixProvider.BuildComments(root, _nodesToReplace);
-                        var newroot = root.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
-                        {
-                            return _nodesToReplace[n1];
-                        });
-                        _nodesToReplace.Clear();
-                        InterfaceCodeFixProvider.BuildComments(newroot, _nodesToReplace);
-                        ClassCodeFixProvider.BuildComments(newroot, _nodesToReplace);
-                        var newroot2 = newroot.ReplaceNodes(_nodesToReplace.Keys, (n1, n2) =>
-                        {
-                            return _nodesToReplace[n1];
-                        });
-                
-                        return d.WithSyntaxRoot(newroot2);
+                        return context.Document.WithSyntaxRoot(newRoot);
                     },
                     equivalenceKey: title),
                 diagnostic);

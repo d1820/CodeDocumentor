@@ -33,8 +33,29 @@ namespace CodeDocumentor.Test
         [InlineData("ClassTesterInheritDoc.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
-            var file = string.IsNullOrEmpty(testCode)? testCode : _fixture.LoadTestFile($@"./Classes/{testCode}");
-            this.VerifyCSharpDiagnostic(file);
+            if (testCode == string.Empty)
+            {
+                this.VerifyCSharpDiagnostic(testCode, "public");
+            }
+            else
+            {
+                var file =  _fixture.LoadTestFile($@"./Classes/{testCode}");
+
+                var expected = new DiagnosticResult
+                {
+                    Id = ClassAnalyzerSettings.DiagnosticId,
+                    Message = ClassAnalyzerSettings.MessageFormat,
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                         new[] {
+                                new DiagnosticResultLocation("Test0.cs", 8, 18)
+                               }
+                };
+
+                this.VerifyCSharpDiagnostic(file, "public", expected);
+            }
+
+           
         }
 
         /// <summary>
@@ -85,12 +106,12 @@ namespace CodeDocumentor.Test
         {
             if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicClassAnalyzer();
             }
             if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new ClassAnalyzer();
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.CodeAnalysis;
 
@@ -28,7 +27,7 @@ namespace CodeDocumentor.Vsix2022
         /// Gets or Sets a value indicating whether enabled for publish members is only.
         /// </summary>
         /// <value>A bool.</value>
-        public bool IsEnabledForPublishMembersOnly { get; set; }
+        public bool IsEnabledForPublicMembersOnly { get; set; }
 
         /// <summary>
         /// Gets or Sets a value indicating whether use natural language for return node.

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
 using ThirdPartPluralizer = Pluralize.NET;

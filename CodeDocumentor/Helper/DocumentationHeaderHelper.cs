@@ -445,7 +445,6 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlText(newLine0Token, text1Token, newLine2Token, text2Token);
         }
 
-
         /// <summary>
         /// Has summary.
         /// </summary>
@@ -458,25 +457,18 @@ namespace CodeDocumentor.Helper
             || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
         }
 
-        /// <summary>
-        /// Builds the leading trivia.
-        /// </summary>
-        /// <param name="leadingTrivia">The leading trivia.</param>
-        /// <param name="commentTrivia">The comment trivia.</param>
-        /// <returns>A SyntaxTriviaList.</returns>
-        internal static SyntaxTriviaList BuildLeadingTrivia(SyntaxTriviaList leadingTrivia, DocumentationCommentTriviaSyntax commentTrivia)
-        {
-            SyntaxTriviaList newLeadingTrivia;
-            if (leadingTrivia.All(a=> a.IsKind(SyntaxKind.EndOfLineTrivia)))
-            {
-                newLeadingTrivia = leadingTrivia.Add(SyntaxFactory.Trivia(commentTrivia));
-            }
-            else
-            {
-                newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
-            }
-            return newLeadingTrivia;
-        }
+        ///// <summary>
+        ///// Builds the leading trivia.
+        ///// </summary>
+        ///// <param name="leadingTrivia">The leading trivia.</param>
+        ///// <param name="commentTrivia">The comment trivia.</param>
+        ///// <returns>A SyntaxTriviaList.</returns>
+        //internal static SyntaxTriviaList BuildLeadingTrivia(SyntaxTriviaList leadingTrivia, DocumentationCommentTriviaSyntax commentTrivia)
+        //{
+        //    SyntaxTriviaList newLeadingTrivia;
+        //    newLeadingTrivia = leadingTrivia.UpsertLeadingTrivia(commentTrivia);
+        //    return newLeadingTrivia;
+        //}
 
         /// <summary>
         ///   Creates line start text syntax.
@@ -532,6 +524,36 @@ namespace CodeDocumentor.Helper
         private static SyntaxTriviaList CreateCommentExterior()
         {
             return SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///"));
+        }
+
+
+        /// <summary>
+        /// Upserts the leading trivia.
+        /// </summary>
+        /// <param name="leadingTrivia">The leading trivia.</param>
+        /// <param name="commentTrivia">The comment trivia.</param>
+        /// <returns>A CSharpSyntaxNode.</returns>
+        internal static SyntaxTriviaList UpsertLeadingTrivia(this SyntaxTriviaList leadingTrivia, DocumentationCommentTriviaSyntax commentTrivia)
+        {
+            if (leadingTrivia.All(a => a.IsKind(SyntaxKind.EndOfLineTrivia)))
+            {
+                return leadingTrivia.Add(SyntaxFactory.Trivia(commentTrivia));
+            }
+
+            var existingIndex = leadingTrivia.Select((node, index) => new { node, index }).FirstOrDefault(
+                        f =>
+                         f.node.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
+                            || f.node.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+                            || f.node.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia)
+                        )?.index ?? -1;
+            if (existingIndex < 0)
+            {
+                return leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
+            }
+            else
+            {
+                return leadingTrivia.Replace(leadingTrivia[existingIndex], SyntaxFactory.Trivia(commentTrivia));
+            }
         }
     }
 }

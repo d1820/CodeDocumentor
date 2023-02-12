@@ -26,11 +26,11 @@ namespace CodeDocumentor
         /// </summary>
         internal const string MessageFormat = Title;
 
-        internal static DiagnosticDescriptor GetRule()
+        internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             return new DiagnosticDescriptor(ConstructorAnalyzerSettings.DiagnosticId, ConstructorAnalyzerSettings.Title,
                 ConstructorAnalyzerSettings.MessageFormat, ConstructorAnalyzerSettings.Category,
-                CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }
     }
 }

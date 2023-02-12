@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
-using Microsoft.Build.Framework.XamlTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -59,6 +58,11 @@ namespace CodeDocumentor
                 return;
             }
           
+            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            if (excludeAnanlyzer)
+            {
+                return;
+            }
 
             DocumentationCommentTriviaSyntax commentTriviaSyntax = node
                 .GetLeadingTrivia()
@@ -67,19 +71,13 @@ namespace CodeDocumentor
                 .FirstOrDefault();
 
 
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
-            if (excludeAnanlyzer)
-            {
-                return;
-            }
-
             if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
             {
                 return;
             }
 
             VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.ReportDiagnostic(Diagnostic.Create(FieldAnalyzerSettings.GetRule(), field.GetLocation()));
+            context.BuildDiagnostic(field, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

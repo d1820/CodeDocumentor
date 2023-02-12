@@ -53,7 +53,7 @@ namespace CodeDocumentor
 
             ConstructorDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ConstructorDeclarationSyntax>().First();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -71,7 +71,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                 {
                     continue;
                 }
@@ -90,9 +90,7 @@ namespace CodeDocumentor
         {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             DocumentationCommentTriviaSyntax commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
-
-            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
-            ConstructorDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
+            ConstructorDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
 
         }

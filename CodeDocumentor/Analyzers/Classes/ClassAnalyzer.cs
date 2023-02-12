@@ -1,12 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
-using Microsoft.Build.Framework.XamlTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.Package;
 
 namespace CodeDocumentor
 {
@@ -52,23 +50,14 @@ namespace CodeDocumentor
             {
                 return;
             }
-
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-            context.ReportDiagnostic(Diagnostic.Create(ClassAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
+
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
+
         }
     }
 }

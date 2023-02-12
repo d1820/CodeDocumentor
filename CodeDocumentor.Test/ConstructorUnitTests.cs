@@ -175,8 +175,26 @@ namespace ConsoleApp4
 		[InlineData(InheritDocTestCode)]
 		public void NoDiagnosticsShow(string testCode)
 		{
-			this.VerifyCSharpDiagnostic(testCode);
-		}
+            if (testCode == string.Empty)
+            {
+                this.VerifyCSharpDiagnostic(testCode, "public");
+            }
+            else
+            {
+                var expected = new DiagnosticResult
+                {
+                    Id = ConstructorAnalyzerSettings.DiagnosticId,
+                    Message = ConstructorAnalyzerSettings.MessageFormat,
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                         new[] {
+                                new DiagnosticResultLocation("Test0.cs", 11, 10)
+                               }
+                };
+
+                this.VerifyCSharpDiagnostic(testCode, "public", expected);
+            }
+        }
 
 		/// <summary>
 		/// Shows diagnostic and fix.
@@ -224,12 +242,12 @@ namespace ConsoleApp4
 		{
             if (diagType == "private")
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicConstructorAnalyzer();
             }
             if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new ConstructorAnalyzer();
 		}

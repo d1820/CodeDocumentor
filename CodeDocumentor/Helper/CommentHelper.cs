@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime;
 using System.Runtime.CompilerServices;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;

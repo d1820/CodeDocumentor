@@ -65,13 +65,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(node))
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
@@ -81,6 +76,12 @@ namespace CodeDocumentor
             {
                 return;
             }
+
+            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
+                .GetLeadingTrivia()
+                .Select(o => o.GetStructure())
+                .OfType<DocumentationCommentTriviaSyntax>()
+                .FirstOrDefault();
 
             if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
             {

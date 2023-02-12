@@ -62,7 +62,21 @@ namespace Welcom.Test
         {
         }
 
+        /// <summary>
+        /// Does the work.
+        /// </summary>
+        /// <returns>A string.</returns>
         public string DoWork()
+        {
+            return "";
+        }
+
+        /// <summary>
+        /// Does the work with params.
+        /// </summary>
+        /// <param name="test">The test.</param>
+        /// <returns>A string.</returns>
+        public string DoWorkWithParams(string test)
         {
             return "";
         }

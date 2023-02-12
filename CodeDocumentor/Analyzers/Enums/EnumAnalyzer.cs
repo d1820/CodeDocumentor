@@ -65,17 +65,17 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
+            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
+                .GetLeadingTrivia()
+                .Select(o => o.GetStructure())
+                .OfType<DocumentationCommentTriviaSyntax>()
+                .FirstOrDefault();
 
             if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
             {

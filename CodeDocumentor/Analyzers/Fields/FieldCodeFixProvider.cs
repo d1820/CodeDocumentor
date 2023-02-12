@@ -54,7 +54,7 @@ namespace CodeDocumentor
 
             FieldDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -90,9 +90,7 @@ namespace CodeDocumentor
             string comment = CommentHelper.CreateFieldComment(field.Identifier.ValueText.AsSpan());
             DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
 
-            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
-            FieldDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
-
+            FieldDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
 
@@ -107,7 +105,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                 {
                     continue;
                 }

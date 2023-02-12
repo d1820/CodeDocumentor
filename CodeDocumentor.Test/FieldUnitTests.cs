@@ -148,12 +148,12 @@ namespace ConsoleApp4
 		{
             if(diagType == "private")
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicFieldAnalyzer();
             }
             if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new FieldAnalyzer();
 		}

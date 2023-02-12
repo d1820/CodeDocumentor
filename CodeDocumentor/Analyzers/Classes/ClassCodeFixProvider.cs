@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
@@ -13,21 +12,19 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.Package;
 
 namespace CodeDocumentor
 {
-   
+
     /// <summary>
     ///   The class code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ClassCodeFixProvider)), Shared]
     public class ClassCodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
         private const string title = "Code Documentor this class";
+
+        private const string titleRebuild = "Code Documentor update this class";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -57,16 +54,16 @@ namespace CodeDocumentor
 
             ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: declaration.HasSummary() ? titleRebuild : title,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
                 diagnostic);
         }
 
@@ -82,13 +79,8 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true 
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true 
                     && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
-                {
-                    continue;
-                }
-
-                if (declarationSyntax.HasSummary())
                 {
                     continue;
                 }
@@ -135,8 +127,7 @@ namespace CodeDocumentor
             //append to any existing leading trivia [attributes, decorators, etc)
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
-            ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
+            ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
     }

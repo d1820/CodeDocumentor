@@ -1,11 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.OLE.Interop;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Windows.Forms;
-
-// For definitions of XML nodes see:
+﻿// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022

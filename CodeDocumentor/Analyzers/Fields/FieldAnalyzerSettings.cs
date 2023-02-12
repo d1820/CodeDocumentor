@@ -29,10 +29,11 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic descriptor rule.
         /// </summary>
-        internal static DiagnosticDescriptor GetRule()
+        internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat, 
-                FieldAnalyzerSettings.Category, CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+                FieldAnalyzerSettings.Category,
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }
     }
 }

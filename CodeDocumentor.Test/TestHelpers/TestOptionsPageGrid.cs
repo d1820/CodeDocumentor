@@ -12,7 +12,7 @@ namespace CodeDocumentor.Test
 
         public bool IncludeValueNodeInProperties { get; set; }
 
-        public bool IsEnabledForPublishMembersOnly { get; set; }
+        public bool IsEnabledForPublicMembersOnly { get; set; }
 
         public bool UseNaturalLanguageForReturnNode { get; set; }
 

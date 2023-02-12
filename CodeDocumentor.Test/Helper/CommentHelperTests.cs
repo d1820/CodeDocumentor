@@ -15,6 +15,7 @@ namespace CodeDocumentor.Test.Helper
         {
             TestFixture.BuildOptionsPageGrid();
 
+            //sometimes these test fail locally cause of the clash of using this static setting. Dont run tests in parallel
             CodeDocumentorPackage.Options.ExcludeAsyncSuffix = true;
         }
 

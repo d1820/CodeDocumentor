@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
-using Microsoft.Build.Framework.XamlTypes;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,7 +32,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.MethodDeclaration);           
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.MethodDeclaration);
         }
 
         /// <summary>
@@ -50,11 +50,6 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
@@ -62,11 +57,8 @@ namespace CodeDocumentor
                 return;
             }
 
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-            context.ReportDiagnostic(Diagnostic.Create(MethodAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => MethodAnalyzerSettings.GetRule(alreadyHasComment));
+
         }
     }
 }

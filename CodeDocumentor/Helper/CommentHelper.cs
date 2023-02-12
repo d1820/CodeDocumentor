@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime;
 using System.Runtime.CompilerServices;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -9,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
+
 namespace CodeDocumentor.Helper
 {
     /// <summary>
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Helper
             var isBool2part = parts.Count == 2 && returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
             if (!isBool2part)
             {
-                if(parts.Count >= 2)
+                if (parts.Count >= 2)
                 {
                     parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
                 }
@@ -141,7 +141,6 @@ namespace CodeDocumentor.Helper
                 {
                     parts[0] = Pluralizer.Pluralize(parts[0]);
                 }
-                
             }
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
             {
@@ -181,8 +180,10 @@ namespace CodeDocumentor.Helper
             }
             else
             {
+                //At this point we have already pluralized and converted
                 var skipThe = parts[0].IsVerbCombo();
-                if (!skipThe && !isBool2part)
+                var addTheAnyway = Constants.ADD_THE_EXCLUSION_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+                if ((!skipThe && !isBool2part) || addTheAnyway)
                 {
                     parts.Insert(1, "the");
                 }

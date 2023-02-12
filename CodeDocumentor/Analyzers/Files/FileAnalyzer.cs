@@ -1,17 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using CodeDocumentor.Helper;
-using Microsoft.Build.Framework.XamlTypes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.Package;
 
 namespace CodeDocumentor
 {
-
     /// <summary>
     ///   The class analyzer.
     /// </summary>
@@ -53,7 +47,6 @@ namespace CodeDocumentor
             }
 
             context.ReportDiagnostic(Diagnostic.Create(FileAnalyzerSettings.GetRule(), node.GetLocation()));
-
         }
     }
 }

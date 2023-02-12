@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Helper;
+﻿using System;
+using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
@@ -29,10 +30,12 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic descriptor rule.
         /// </summary>
-        internal static DiagnosticDescriptor GetRule()
+        internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat, 
-                FieldAnalyzerSettings.Category, CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+            Console.WriteLine("FIELD SETTING: " + hideDiagnosticSeverity);
+            return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat,
+                FieldAnalyzerSettings.Category,
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }
     }
 }

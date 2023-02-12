@@ -141,7 +141,7 @@ namespace CodeDocumentor.Helper
             // this will return the full generic Ex. Task<Request>- which then will get added to a CDATA
             if (returnGenericTypeAsFullString)
             {
-                return returnType.ToFullString();
+                return returnType.ToString();
             }
 
             string genericTypeStr = returnType.Identifier.ValueText;
@@ -196,7 +196,7 @@ namespace CodeDocumentor.Helper
                     var item = returnType.TypeArgumentList.Arguments[i];
                     if (i > 0)
                     {
-                        builder.Append($"{DetermineStartingWord(item.ToString().AsSpan()) }");
+                        builder.Append($"{DetermineStartingWord(item.ToString().AsSpan())}");
                     }
                     builder.Append($"{BuildComment(item, returnGenericTypeAsFullString)}");
                     if (i + 1 < returnType.TypeArgumentList.Arguments.Count)

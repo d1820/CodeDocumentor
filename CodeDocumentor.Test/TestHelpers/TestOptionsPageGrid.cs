@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
@@ -12,7 +11,7 @@ namespace CodeDocumentor.Test
 
         public bool IncludeValueNodeInProperties { get; set; }
 
-        public bool IsEnabledForPublishMembersOnly { get; set; }
+        public bool IsEnabledForPublicMembersOnly { get; set; }
 
         public bool UseNaturalLanguageForReturnNode { get; set; }
 

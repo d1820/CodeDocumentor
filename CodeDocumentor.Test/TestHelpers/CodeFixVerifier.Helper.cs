@@ -10,9 +10,6 @@ using Microsoft.CodeAnalysis.Simplification;
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    /// <summary>
-    ///   Diagnostic Producer class with extra methods dealing with applying codefixes All methods are static
-    /// </summary>
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
         /// <summary>

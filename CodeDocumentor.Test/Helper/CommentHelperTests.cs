@@ -15,6 +15,7 @@ namespace CodeDocumentor.Test.Helper
         {
             TestFixture.BuildOptionsPageGrid();
 
+            //sometimes these test fail locally cause of the clash of using this static setting. Dont run tests in parallel
             CodeDocumentorPackage.Options.ExcludeAsyncSuffix = true;
         }
 
@@ -32,7 +33,7 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionTrue()
         {
-            CodeDocumentorPackage.Options.ExcludeAsyncSuffix =false;
+            CodeDocumentorPackage.Options.ExcludeAsyncSuffix = false;
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
             result.Count.Should().Be(4);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();

@@ -1,11 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.OLE.Interop;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Windows.Forms;
-
-// For definitions of XML nodes see:
+﻿// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022
@@ -24,8 +17,7 @@ namespace CodeDocumentor.Vsix2022
             public const string FILE_DIAGNOSTIC_ID = "CD1607";
         }
 
-        //This has to be a static list, so it works properly with the settings dialog
-        public static WordMap[] WORD_MAPS = new[] {
+        public static WordMap[] WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
             new WordMap { Word = "Int32", Translation = "integer" },
             new WordMap { Word = "Int64", Translation = "integer" },
@@ -37,10 +29,19 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "ICollection", Translation = "Collection" },
             new WordMap { Word = "OfCollection", Translation = "OfCollections" },
             new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },
-            new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" },
+            new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" }
         };
 
-        public static string[] INTERNAL_SPECIAL_WORD_LIST = new[] { "accept",
+        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
+            new WordMap { Word = "To", Translation = "Converts to" },
+            new WordMap { Word = "Do", Translation = "Does" },
+        };
+
+        public static string[] PLURALIZE_EXCLUSION_LIST { get; set; } = new[] { "to", "do" };
+
+        public static string[] ADD_THE_EXCLUSION_LIST { get; set; } = new[] { "does" };
+
+        public static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] { "accept",
                                                                     "add",
                                                                     "admire",
                                                                     "admit",
@@ -155,6 +156,8 @@ namespace CodeDocumentor.Vsix2022
                                                                     "consist",
                                                                     "contain",
                                                                     "continue",
+                                                                    "convert",
+                                                                    "converts",
                                                                     "copy",
                                                                     "correct",
                                                                     "cough",
@@ -612,6 +615,7 @@ namespace CodeDocumentor.Vsix2022
                                                                     "time",
                                                                     "tip",
                                                                     "tire",
+                                                                    "to",
                                                                     "touch",
                                                                     "tour",
                                                                     "tow",
@@ -681,8 +685,12 @@ namespace CodeDocumentor.Vsix2022
                                                                     "zip",
                                                                     "zoom",
                                                                     //Auxillary verbs
-                                                                    "is", "am", "are", "was", "were", "been", "being", "have", "has", "had", "having", "do", "does", "did", "can", "shall", "will", "may", "might", "must", "dare", "need", "used", "ought"
-
+                                                                    "is", "am", "are", "was", "were", "been", "being", "have", "does",
+                                                                    "has", "had", "having", "to", "do",
+                                                                    "did", "can", "shall", "will", "may", "might", "must",
+                                                                    "dare", "need", "used", "ought", "goes",
+                                                                    //pluralization conversions
+                                                                    "converts to",
         };
     }
 }

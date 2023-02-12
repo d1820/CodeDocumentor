@@ -20,7 +20,7 @@ namespace CodeDocumentor
         {
             get
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
                 {
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
                 }
@@ -56,13 +56,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
-
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
             {
                 return;
             }
@@ -73,13 +67,8 @@ namespace CodeDocumentor
                 return;
             }
 
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-
             VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.ReportDiagnostic(Diagnostic.Create(FieldAnalyzerSettings.GetRule(), field.GetLocation()));
+            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,34 +14,9 @@ namespace CodeDocumentor
     public class EnumAnalyzer : DiagnosticAnalyzer
     {
         /// <summary>
-        ///   The title.
-        /// </summary>
-        private const string Title = "The enum must have a documentation header.";
-
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        private const string Category = DocumentationHeaderHelper.Category;
-
-        /// <summary>
-        ///   The diagnostic id.
-        /// </summary>
-        public const string DiagnosticId = Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID;
-
-        /// <summary>
-        ///   The message format.
-        /// </summary>
-        public const string MessageFormat = Title;
-
-        /// <summary>
-        ///   The diagnostic descriptor rule.
-        /// </summary>
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
-        /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EnumAnalyzerSettings.GetRule());
 
         /// <summary>
         ///   Initializes action.
@@ -65,11 +38,6 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
 
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
@@ -77,12 +45,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-
-            context.ReportDiagnostic(Diagnostic.Create(Rule, node.Identifier.GetLocation()));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => EnumAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

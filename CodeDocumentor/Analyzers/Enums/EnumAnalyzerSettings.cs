@@ -4,12 +4,12 @@ using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal class ClassAnalyzerSettings
+    internal static class EnumAnalyzerSettings
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        internal const string Title = "The class must have a documentation header.";
+        internal const string Title = "The enum must have a documentation header.";
 
         /// <summary>
         ///   The category.
@@ -19,18 +19,21 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        internal const string DiagnosticId = Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID;
+        internal const string DiagnosticId = Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
         /// </summary>
         internal const string MessageFormat = Title;
 
+        /// <summary>
+        ///   The diagnostic descriptor rule.
+        /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            return new DiagnosticDescriptor(ClassAnalyzerSettings.DiagnosticId, ClassAnalyzerSettings.Title,
-                ClassAnalyzerSettings.MessageFormat, ClassAnalyzerSettings.Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+            return new DiagnosticDescriptor(EnumAnalyzerSettings.DiagnosticId, EnumAnalyzerSettings.Title,
+                EnumAnalyzerSettings.MessageFormat, EnumAnalyzerSettings.Category,
+                hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }
     }
 }

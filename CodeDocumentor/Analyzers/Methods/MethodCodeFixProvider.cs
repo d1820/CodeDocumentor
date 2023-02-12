@@ -24,10 +24,9 @@ namespace CodeDocumentor
     {
         private static Regex regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-        /// <summary>
-        ///   The title.
-        /// </summary>
         private const string title = "Code Documentor this method";
+
+        private const string titleRebuild = "Code Documentor update this method";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -57,16 +56,16 @@ namespace CodeDocumentor
 
             MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: declaration.HasSummary() ? titleRebuild : title,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
                 diagnostic);
         }
 
@@ -102,16 +101,11 @@ namespace CodeDocumentor
             return document.WithSyntaxRoot(newRoot);
         }
 
-
         private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
         {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
             DocumentationCommentTriviaSyntax commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
-
-            SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
-            MethodDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
-
-            return newDeclaration;
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
         }
 
         /// <summary>
@@ -119,23 +113,21 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
-        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
-
+            var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
-                {
-                    continue;
-                }
-                if (declarationSyntax.HasSummary())
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                 {
                     continue;
                 }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                neededCommentCount++;
             }
+            return neededCommentCount;
         }
 
         /// <summary>

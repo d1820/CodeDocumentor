@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -21,15 +20,13 @@ namespace CodeDocumentor
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(EnumCodeFixProvider)), Shared]
     public class EnumCodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
         private const string title = "Code Documentor this enum";
+        private const string titleRebuild = "Code Documentor update this enum";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumAnalyzer.DiagnosticId);
+        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumAnalyzerSettings.DiagnosticId);
 
         /// <summary>
         ///   Gets fix all provider.
@@ -56,9 +53,9 @@ namespace CodeDocumentor
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: declaration.HasSummary() ? titleRebuild : title,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
                 diagnostic);
         }
 
@@ -83,10 +80,7 @@ namespace CodeDocumentor
 
             string comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText.AsSpan());
             DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
-
-            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
-            EnumDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
-
+            EnumDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
 
@@ -95,10 +89,10 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
-        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.EnumDeclaration)).OfType<EnumDeclarationSyntax>().ToArray();
-
+            var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
                 if (declarationSyntax.HasSummary())
@@ -107,7 +101,9 @@ namespace CodeDocumentor
                 }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                neededCommentCount++;
             }
+            return neededCommentCount;
         }
     }
 }

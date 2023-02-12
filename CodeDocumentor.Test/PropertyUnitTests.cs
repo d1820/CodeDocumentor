@@ -308,8 +308,6 @@ namespace ConsoleApp4
 	}
 }";
 
-
-
         /// <summary>
         /// The public property test code.
         /// </summary>
@@ -345,9 +343,6 @@ namespace ConsoleApp4
 	}
 }";
 
-
-
-
         /// <summary>
         /// The public property test code.
         /// </summary>
@@ -382,8 +377,8 @@ namespace ConsoleApp4
         string PersonName => ""Person Name"";
 	}
 }";
-
     }
+
     /// <summary>
     /// The property unit test.
     /// </summary>
@@ -398,6 +393,7 @@ namespace ConsoleApp4
             TestFixture.BuildOptionsPageGrid();
             CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
+
         /// <summary>
         /// Nos diagnostics show.
         /// </summary>
@@ -407,7 +403,25 @@ namespace ConsoleApp4
         [InlineData(InheritDocTestCode)]
         public void NoDiagnosticsShow(string testCode)
         {
-            this.VerifyCSharpDiagnostic(testCode);
+            if (testCode == string.Empty)
+            {
+                this.VerifyCSharpDiagnostic(testCode, "public");
+            }
+            else
+            {
+                var expected = new DiagnosticResult
+                {
+                    Id = PropertyAnalyzerSettings.DiagnosticId,
+                    Message = PropertyAnalyzerSettings.MessageFormat,
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                         new[] {
+                                new DiagnosticResultLocation("Test0.cs", 11, 17)
+                               }
+                };
+
+                this.VerifyCSharpDiagnostic(testCode, "public", expected);
+            }
         }
 
         /// <summary>
@@ -463,12 +477,12 @@ namespace ConsoleApp4
         {
             if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicPropertyAnalyzer();
             }
             if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new PropertyAnalyzer();
         }

@@ -20,15 +20,13 @@ namespace CodeDocumentor
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InterfaceCodeFixProvider)), Shared]
     public class InterfaceCodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
         private const string title = "Code Documentor this interface";
+        private const string titleRebuild = "Code Documentor update this interface";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzer.DiagnosticId);
+        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzerSettings.DiagnosticId);
 
         /// <summary>
         ///   Gets fix all provider.
@@ -55,9 +53,9 @@ namespace CodeDocumentor
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: declaration.HasSummary() ? titleRebuild : title,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
                 diagnostic);
         }
 
@@ -94,8 +92,7 @@ namespace CodeDocumentor
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var newLeadingTrivia = DocumentationHeaderHelper.BuildLeadingTrivia(leadingTrivia, commentTrivia);
-            InterfaceDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(newLeadingTrivia);
+            InterfaceDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
 
@@ -104,10 +101,10 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
-        internal static void BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.InterfaceDeclaration)).OfType<InterfaceDeclarationSyntax>().ToArray();
-
+            var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
                 if (declarationSyntax.HasSummary())
@@ -116,7 +113,9 @@ namespace CodeDocumentor
                 }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                neededCommentCount++;
             }
+            return neededCommentCount;
         }
     }
 }

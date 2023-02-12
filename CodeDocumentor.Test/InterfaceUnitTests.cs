@@ -48,10 +48,9 @@ namespace ConsoleApp4
     /// <summary>
     /// The interface unit test.
     /// </summary>
-    
+
     public partial class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
     {
-
         private readonly TestFixure _fixture;
 
         public InterfaceUnitTest(TestFixure fixture)
@@ -60,6 +59,7 @@ namespace ConsoleApp4
             TestFixture.BuildOptionsPageGrid();
             CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
+
         /// <summary>
         /// Nos diagnostics show.
         /// </summary>
@@ -84,8 +84,8 @@ namespace ConsoleApp4
         {
             var expected = new DiagnosticResult
             {
-                Id = InterfaceAnalyzer.DiagnosticId,
-                Message = InterfaceAnalyzer.MessageFormat,
+                Id = InterfaceAnalyzerSettings.DiagnosticId,
+                Message = InterfaceAnalyzerSettings.MessageFormat,
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -23,7 +22,7 @@ namespace CodeDocumentor
         {
             get
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
                 {
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
                 }
@@ -52,13 +51,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
-
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
             {
                 return;
             }
@@ -68,11 +61,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-            context.ReportDiagnostic(Diagnostic.Create(ClassAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

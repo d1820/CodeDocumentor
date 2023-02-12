@@ -103,7 +103,7 @@ namespace CodeDocumentor.Helper
 
             // If the member is public, we still need to verify whether its parent class is a private class. Since we
             // don't want show warnings for public members within a private class.
-            if (node.Parent is ClassDeclarationSyntax cds) 
+            if (node.Parent is ClassDeclarationSyntax cds)
             {
                 return IsPrivateMember(cds);
             }

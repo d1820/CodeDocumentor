@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -9,8 +8,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-
-
     /// <summary>
     ///   The constructor analyzer.
     /// </summary>
@@ -52,12 +49,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(node))
+
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
@@ -67,12 +60,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
 
-            context.ReportDiagnostic(Diagnostic.Create(ConstructorAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ConstructorAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

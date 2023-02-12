@@ -4,12 +4,12 @@ using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal static class MethodAnalyzerSettings
+    internal static class InterfaceAnalyzerSettings
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        internal const string Title = "The method must have a documentation header.";
+        internal const string Title = "The interface must have a documentation header.";
 
         /// <summary>
         ///   The category.
@@ -19,7 +19,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        internal const string DiagnosticId = Constants.DiagnosticIds.METHOD_DIAGNOSTIC_ID;
+        internal const string DiagnosticId = Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
@@ -31,8 +31,8 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            return new DiagnosticDescriptor(MethodAnalyzerSettings.DiagnosticId, MethodAnalyzerSettings.Title,
-                MethodAnalyzerSettings.MessageFormat, MethodAnalyzerSettings.Category,
+            return new DiagnosticDescriptor(InterfaceAnalyzerSettings.DiagnosticId, InterfaceAnalyzerSettings.Title,
+                InterfaceAnalyzerSettings.MessageFormat, InterfaceAnalyzerSettings.Category,
                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
         }
     }

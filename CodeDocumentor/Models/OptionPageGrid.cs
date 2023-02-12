@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
@@ -17,6 +16,7 @@ namespace CodeDocumentor.Vsix2022
         /// The category.
         /// </summary>
         public const string Category = "CodeDocumentor";
+
         /// <summary>
         /// The sub category.
         /// </summary>
@@ -26,14 +26,17 @@ namespace CodeDocumentor.Vsix2022
         /// The summary sub category.
         /// </summary>
         private const string SummarySubCategory = "Summary Options";
+
         /// <summary>
         /// The returns sub category.
         /// </summary>
         private const string ReturnsSubCategory = "Return Options";
+
         /// <summary>
         /// The translation sub category.
         /// </summary>
         private const string TranslationSubCategory = "Translation Options";
+
         /// <summary>
         /// The analyzer sub category.
         /// </summary>
@@ -48,7 +51,7 @@ namespace CodeDocumentor.Vsix2022
         [Category(SubCategory)]
         [DisplayName("Enable comments for public members only")]
         [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public. Visual Studio must be restarted to fully take affect.")]
-        public bool IsEnabledForPublishMembersOnly { get; set; }
+        public bool IsEnabledForPublicMembersOnly { get; set; }
 
         /// <summary>
         /// Gets or Sets a value indicating whether use natural language for return node.
@@ -106,7 +109,7 @@ namespace CodeDocumentor.Vsix2022
         public override void LoadSettingsFromStorage()
         {
             var settings = Settings.Load();
-            IsEnabledForPublishMembersOnly = settings.IsEnabledForPublishMembersOnly;
+            IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
             ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
             IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
@@ -122,7 +125,7 @@ namespace CodeDocumentor.Vsix2022
         {
             var settings = new Settings
             {
-                IsEnabledForPublishMembersOnly = this.IsEnabledForPublishMembersOnly,
+                IsEnabledForPublicMembersOnly = this.IsEnabledForPublicMembersOnly,
                 UseNaturalLanguageForReturnNode = this.UseNaturalLanguageForReturnNode,
                 ExcludeAsyncSuffix = this.ExcludeAsyncSuffix,
                 IncludeValueNodeInProperties = this.IncludeValueNodeInProperties,

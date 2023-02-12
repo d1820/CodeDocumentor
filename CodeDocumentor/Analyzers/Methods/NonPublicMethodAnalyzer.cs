@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -13,8 +12,6 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicMethodAnalyzer : DiagnosticAnalyzer
     {
-        
-
         /// <summary>
         ///   Gets the supported diagnostics.
         /// </summary>
@@ -22,7 +19,7 @@ namespace CodeDocumentor
         {
             get
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
                 {
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
                 }
@@ -51,13 +48,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
-                .GetLeadingTrivia()
-                .Select(o => o.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublishMembersOnly == true)
+            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
             {
                 return;
             }
@@ -67,12 +59,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-
-            if (commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax))
-            {
-                return;
-            }
-            context.ReportDiagnostic(Diagnostic.Create(MethodAnalyzerSettings.GetRule(), node.Identifier.GetLocation()));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => MethodAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

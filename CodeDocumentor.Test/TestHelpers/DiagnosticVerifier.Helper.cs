@@ -11,9 +11,6 @@ using Microsoft.CodeAnalysis.Text;
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    /// <summary>
-    ///   Class for turning strings into documents and getting the diagnostics on them All methods are static
-    /// </summary>
     public abstract partial class DiagnosticVerifier
     {
         private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);

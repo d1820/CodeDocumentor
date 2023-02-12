@@ -6,6 +6,8 @@ using System.Linq;
 using CodeDocumentor.Vsix2022;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
+using System.Data.Common;
+using System.Windows.Shapes;
 
 namespace CodeDocumentor.Test
 {
@@ -566,82 +568,102 @@ namespace ConsoleApp4
         /// </summary>
         /// <param name="testCode">The test code.</param>
         [Theory]
-		[InlineData("")]
-		[InlineData(InheritDocTestCode)]
-		public void NoDiagnosticsShow(string testCode)
-		{
-			this.VerifyCSharpDiagnostic(testCode);
-		}
+        [InlineData("")]
+        [InlineData(InheritDocTestCode)]
+        public void NoDiagnosticsShow(string testCode)
+        {
+            if (testCode == string.Empty)
+            {
+                this.VerifyCSharpDiagnostic(testCode, "public");
+            }
+            else
+            {
+                var expected = new DiagnosticResult
+                {
+                    Id = MethodAnalyzerSettings.DiagnosticId,
+                    Message = MethodAnalyzerSettings.MessageFormat,
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                         new[] {
+                                new DiagnosticResultLocation("Test0.cs", 11, 15)
+                               }
+                };
 
-		/// <summary>
-		/// Shows diagnostic and fix.
-		/// </summary>
-		/// <param name="testCode">The test code.</param>
-		/// <param name="fixCode">The fix code.</param>
-		/// <param name="line">The line.</param>
-		/// <param name="column">The column.</param>
-		[Theory]
-		[InlineData(BasicTestCode, BasicTestFixCode, 10, 15)]
-		[InlineData(MethodWithParameterTestCode, MethodWithParameterTestFixCode, 10, 15)]
-		[InlineData(MethodWithBooleanParameterTestCode, MethodWithBooleanParameterTestFixCode, 10, 15)]
-		[InlineData(MethodWithNullableStructParameterTestCode, MethodWithNullableStructParameterTestFixCode, 10, 15)]
-		[InlineData(MethodWithReturnTestCode, MethodWithReturnTestFixCode, 10, 23)]
-		[InlineData(MethodWithStringReturnTestCode, MethodWithStringReturnTestFixCode, 10, 17)]
-		[InlineData(MethodWithObjectReturnTestCode, MethodWithObjectReturnTestFixCode, 10, 17)]
-		[InlineData(MethodWithIntReturnTestCode, MethodWithIntReturnTestFixCode, 10, 14)]
-		[InlineData(MethodWithListIntReturnTestCode, MethodWithListIntReturnTestFixCode, 10, 20)]
-		[InlineData(MethodWithListListIntReturnTestCode, MethodWithListListIntReturnTestFixCode, 10, 26)]
-		[InlineData(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
-		public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
-		{
+                this.VerifyCSharpDiagnostic(testCode, "public", expected);
+            }
+
+
+        }
+
+        /// <summary>
+        /// Shows diagnostic and fix.
+        /// </summary>
+        /// <param name="testCode">The test code.</param>
+        /// <param name="fixCode">The fix code.</param>
+        /// <param name="line">The line.</param>
+        /// <param name="column">The column.</param>
+        [Theory]
+        [InlineData(BasicTestCode, BasicTestFixCode, 10, 15)]
+        [InlineData(MethodWithParameterTestCode, MethodWithParameterTestFixCode, 10, 15)]
+        [InlineData(MethodWithBooleanParameterTestCode, MethodWithBooleanParameterTestFixCode, 10, 15)]
+        [InlineData(MethodWithNullableStructParameterTestCode, MethodWithNullableStructParameterTestFixCode, 10, 15)]
+        [InlineData(MethodWithReturnTestCode, MethodWithReturnTestFixCode, 10, 23)]
+        [InlineData(MethodWithStringReturnTestCode, MethodWithStringReturnTestFixCode, 10, 17)]
+        [InlineData(MethodWithObjectReturnTestCode, MethodWithObjectReturnTestFixCode, 10, 17)]
+        [InlineData(MethodWithIntReturnTestCode, MethodWithIntReturnTestFixCode, 10, 14)]
+        [InlineData(MethodWithListIntReturnTestCode, MethodWithListIntReturnTestFixCode, 10, 20)]
+        [InlineData(MethodWithListListIntReturnTestCode, MethodWithListListIntReturnTestFixCode, 10, 26)]
+        [InlineData(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
+        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        {
             CodeDocumentorPackage.Options.UseNaturalLanguageForReturnNode = false;
             var expected = new DiagnosticResult
-			{
-				Id = MethodAnalyzerSettings.DiagnosticId,
-				Message = MethodAnalyzerSettings.MessageFormat,
-				Severity = DiagnosticSeverity.Warning,
-				Locations =
-					new[] {
-							new DiagnosticResultLocation("Test0.cs", line, column)
-						}
-			};
+            {
+                Id = MethodAnalyzerSettings.DiagnosticId,
+                Message = MethodAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
 
-			this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-			this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
-		}
+            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+        }
 
-		/// <summary>
-		/// Gets c sharp code fix provider.
-		/// </summary>
-		/// <returns>A CodeFixProvider.</returns>
-		protected override CodeFixProvider GetCSharpCodeFixProvider()
-		{
-			return new MethodCodeFixProvider();
-		}
+        /// <summary>
+        /// Gets c sharp code fix provider.
+        /// </summary>
+        /// <returns>A CodeFixProvider.</returns>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new MethodCodeFixProvider();
+        }
 
-		/// <summary>
-		/// Gets c sharp diagnostic analyzer.
-		/// </summary>
-		/// <returns>A DiagnosticAnalyzer.</returns>
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
-		{
+        /// <summary>
+        /// Gets c sharp diagnostic analyzer.
+        /// </summary>
+        /// <returns>A DiagnosticAnalyzer.</returns>
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
+        {
             if (diagType == "private")
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = false;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicMethodAnalyzer();
             }
             if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublishMembersOnly = true;
+                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new MethodAnalyzer();
-		}
+        }
 
 
 
         #region GetExceptions
-      
+
 
         [Fact]
         public async Task GetExceptions_ReturnsMatches()
@@ -652,7 +674,7 @@ namespace ConsoleApp4
         }
 
 
-      
+
         [Fact]
         public async Task GetExceptions_ReturnsNoMatches_WhenNoExceptions()
         {
@@ -660,7 +682,7 @@ namespace ConsoleApp4
             Assert.Empty(exceptions.ToList());
         }
 
-       
+
 
         [Fact]
         public async Task GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()

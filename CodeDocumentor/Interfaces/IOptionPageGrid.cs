@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
@@ -21,10 +20,10 @@ namespace CodeDocumentor.Vsix2022
         bool IncludeValueNodeInProperties { get; set; }
 
         /// <summary>
-        /// Gets or Sets a value indicating whether enabled for publish members is only.
+        /// Gets or Sets a value indicating whether enabled for public members is only.
         /// </summary>
         /// <value>A bool.</value>
-        bool IsEnabledForPublishMembersOnly { get; set; }
+        bool IsEnabledForPublicMembersOnly { get; set; }
 
         /// <summary>
         /// Gets or Sets a value indicating whether use natural language for return node.

@@ -16,6 +16,7 @@ namespace CodeDocumentor.Test
         {
             Runtime.RunningUnitTests = true;
         }
+
         public string LoadTestFile(string relativePath)
         {
             return File.ReadAllText(relativePath);

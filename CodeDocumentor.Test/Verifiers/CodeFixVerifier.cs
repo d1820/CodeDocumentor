@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -12,7 +11,6 @@ using Xunit;
 
 namespace CodeDocumentor.Test
 {
-
     /// <summary>
     ///   Superclass of all Unit tests made for diagnostics with codefixes. Contains methods used to verify correctness
     ///   of codefixes

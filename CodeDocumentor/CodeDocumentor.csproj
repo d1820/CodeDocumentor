@@ -54,6 +54,7 @@
     <Compile Include="Analyzers\Enums\EnumAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Files\FileAnalyzer.cs" />
     <Compile Include="Analyzers\Files\FileAnalyzerSettings.cs" />
+    <Compile Include="Analyzers\Files\FileCodeFixProvider.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzerSettings.cs" />
     <Compile Include="CodeDocumentor.Package.cs" />
     <Compile Include="Analyzers\Fields\FieldAnalyzerSettings.cs" />

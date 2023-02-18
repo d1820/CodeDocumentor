@@ -5,12 +5,12 @@ using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal class ClassAnalyzerSettings
+    internal class RecordAnalyzerSettings
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        internal const string Title = "The class must have a documentation header.";
+        internal const string Title = "The record must have a documentation header.";
 
         /// <summary>
         ///   The category.
@@ -20,7 +20,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The diagnostic id.
         /// </summary>
-        internal const string DiagnosticId = Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID;
+        internal const string DiagnosticId = Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID;
 
         /// <summary>
         ///   The message format.
@@ -30,8 +30,8 @@ namespace CodeDocumentor
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
-            return new DiagnosticDescriptor(ClassAnalyzerSettings.DiagnosticId, ClassAnalyzerSettings.Title,
-                ClassAnalyzerSettings.MessageFormat, ClassAnalyzerSettings.Category,
+            return new DiagnosticDescriptor(RecordAnalyzerSettings.DiagnosticId, RecordAnalyzerSettings.Title,
+                RecordAnalyzerSettings.MessageFormat, RecordAnalyzerSettings.Category,
                  hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.DefaultDiagnosticSeverity, true);
         }
     }

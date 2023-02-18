@@ -42,6 +42,11 @@ namespace CodeDocumentor.Vsix2022
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
         /// <summary>
+        /// Gets or Sets a value indicating whether ignore all uppercase names.
+        /// </summary>
+        public bool IgnoreAllUppercaseNames { get; set; } = true;
+
+        /// <summary>
         /// Gets or Sets the default diagnostic severity.
         /// </summary>
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;

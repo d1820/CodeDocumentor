@@ -46,6 +46,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Analyzers\Records\RecordAnalyzer.cs" />
+    <Compile Include="Analyzers\Records\RecordAnalyzerSettings.cs" />
+    <Compile Include="Analyzers\Records\RecordCodeFixProvider.cs" />
+    <Compile Include="Analyzers\Records\NonPublicRecordAnalyzer.cs" />
     <Compile Include="Analyzers\Classes\ClassAnalyzer.cs" />
     <Compile Include="Analyzers\Classes\ClassAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Classes\ClassCodeFixProvider.cs" />
@@ -56,6 +60,7 @@
     <Compile Include="Analyzers\Files\FileAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Files\FileCodeFixProvider.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzerSettings.cs" />
+    <Compile Include="ApplicationRegistrations.cs" />
     <Compile Include="CodeDocumentor.Package.cs" />
     <Compile Include="Analyzers\Fields\FieldAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Methods\MethodAnalyzerSettings.cs" />
@@ -97,6 +102,7 @@
     <Compile Include="Analyzers\Properties\PropertyAnalyzer.cs" />
     <Compile Include="Analyzers\Properties\PropertyAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Properties\PropertyCodeFixProvider.cs" />
+    <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Settings\VsixOptions.cs" />
     <Compile Include="Models\WordMap.cs" />
   </ItemGroup>
@@ -112,6 +118,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="SimpleInjector">
+      <Version>5.4.1</Version>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Composition">
       <Version>7.0.0</Version>

@@ -11,15 +11,13 @@ namespace CodeDocumentor.Test
     /// <summary>
     /// The class unit test.
     /// </summary>
-    public class ClassUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public class RecordUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
     {
         private readonly TestFixure _fixture;
         
-        public ClassUnitTest(TestFixure fixture)
+        public RecordUnitTest(TestFixure fixture)
         {
             _fixture = fixture;
-            DIContainer = fixture.DIContainer;
-            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -28,7 +26,7 @@ namespace CodeDocumentor.Test
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        [InlineData("ClassTesterInheritDoc.cs")]
+        [InlineData("RecordTesterInheritDoc.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
@@ -37,16 +35,16 @@ namespace CodeDocumentor.Test
             }
             else
             {
-                var file = _fixture.LoadTestFile($@"./Classes/TestFiles/{testCode}");
+                var file = _fixture.LoadTestFile($@"./Records/TestFiles/{testCode}");
 
                 var expected = new DiagnosticResult
                 {
-                    Id = ClassAnalyzerSettings.DiagnosticId,
-                    Message = ClassAnalyzerSettings.MessageFormat,
+                    Id = RecordAnalyzerSettings.DiagnosticId,
+                    Message = RecordAnalyzerSettings.MessageFormat,
                     Severity = DiagnosticSeverity.Hidden,
                     Locations =
                          new[] {
-                                new DiagnosticResultLocation("Test0.cs", 8, 18)
+                                new DiagnosticResultLocation("Test0.cs", 8, 19)
                                }
                 };
 
@@ -62,17 +60,17 @@ namespace CodeDocumentor.Test
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData("ClassTester.cs", "ClassTesterFix.cs", 7, 19, TestFixure.DIAG_TYPE_PRIVATE)]
-        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("RecordTester.cs", "RecordTesterFix.cs", 7, 20, TestFixure.DIAG_TYPE_PRIVATE)]
+        [InlineData("PublicRecordTester.cs", "PublicRecordTesterFix.cs", 7, 27, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
-            var fix = _fixture.LoadTestFile($@"./Classes/TestFiles/{fixCode}");
-            var test = _fixture.LoadTestFile($@"./Classes/TestFiles/{testCode}");
+            var fix = _fixture.LoadTestFile($@"./Records/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Records/TestFiles/{testCode}");
 
             var expected = new DiagnosticResult
             {
-                Id = ClassAnalyzerSettings.DiagnosticId,
-                Message = ClassAnalyzerSettings.MessageFormat,
+                Id = RecordAnalyzerSettings.DiagnosticId,
+                Message = RecordAnalyzerSettings.MessageFormat,
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {
@@ -88,8 +86,8 @@ namespace CodeDocumentor.Test
         [Fact]
         public void SkipsDiagnosticAndFixWhenPublicOnlyTrue()
         {
-            var fix = _fixture.LoadTestFile($@"./Classes/TestFiles/ClassTester.cs");
-            var test = _fixture.LoadTestFile($@"./Classes/TestFiles/ClassTester.cs");
+            var fix = _fixture.LoadTestFile($@"./Records/TestFiles/RecordTester.cs");
+            var test = _fixture.LoadTestFile($@"./Records/TestFiles/RecordTester.cs");
             _optionsService.IsEnabledForPublicMembersOnly = true;
             BypassSettingPublicMembersOnly = true;
 
@@ -104,7 +102,7 @@ namespace CodeDocumentor.Test
         /// <returns>A CodeFixProvider.</returns>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new ClassCodeFixProvider();
+            return new RecordCodeFixProvider();
         }
 
         /// <summary>
@@ -119,13 +117,13 @@ namespace CodeDocumentor.Test
                 {
                     _optionsService.IsEnabledForPublicMembersOnly = false;
                 }
-                return new NonPublicClassAnalyzer();
+                return new NonPublicRecordAnalyzer();
             }
             if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
             {
                 _optionsService.IsEnabledForPublicMembersOnly = true;
             }
-            return new ClassAnalyzer();
+            return new RecordAnalyzer();
         }
     }
 }

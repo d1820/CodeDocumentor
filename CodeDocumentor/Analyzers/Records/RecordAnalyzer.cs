@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,7 +11,7 @@ namespace CodeDocumentor
     ///   The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicClassAnalyzer : DiagnosticAnalyzer
+    public class RecordAnalyzer : DiagnosticAnalyzer
     {
         /// <summary>
         ///   Gets the supported diagnostics.
@@ -23,12 +20,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
-                if (optionsService.IsEnabledForPublicMembersOnly)
-                {
-                    return new List<DiagnosticDescriptor>().ToImmutableArray();
-                }
-                return ImmutableArray.Create(ClassAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(RecordAnalyzerSettings.GetRule());
             }
         }
 
@@ -38,33 +30,31 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.RecordDeclaration);
         }
 
         /// <summary>
         ///   Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            ClassDeclarationSyntax node = context.Node as ClassDeclarationSyntax;
-            if (!PrivateMemberVerifier.IsPrivateMember(node))
+            RecordDeclarationSyntax node = context.Node as RecordDeclarationSyntax;
+            if (node == null)
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
-
-            if (optionsService.IsEnabledForPublicMembersOnly)
+            if (PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
+
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => RecordAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

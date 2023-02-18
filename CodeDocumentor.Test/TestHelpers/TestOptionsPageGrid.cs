@@ -20,5 +20,7 @@ namespace CodeDocumentor.Test
         public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
 
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
+
+        public bool IgnoreAllUppercaseNames { get; set; }
     }
 }

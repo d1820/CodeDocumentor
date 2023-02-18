@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -10,16 +11,10 @@ namespace CodeDocumentor.Test
     [SuppressMessage("XMLDocumentation", "")]
     public static class TestFixture
     {
+        [Obsolete]
         public static IOptionPageGrid BuildOptionsPageGrid()
         {
             CodeDocumentorPackage.Options = new TestOptionsPageGrid();
-
-            //FieldInfo field = typeof(CodeDocumentorPackage).GetField("_options", BindingFlags.NonPublic | BindingFlags.Static);
-            //var opts = (TestOptionsPageGrid)field.GetValue(null);
-            //if (opts == null)
-            //{
-            //    CodeDocumentorPackage.Options = options;
-            //}
             return CodeDocumentorPackage.Options;
         }
 

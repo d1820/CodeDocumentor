@@ -15,6 +15,7 @@ namespace CodeDocumentor.Vsix2022
             public const string METHOD_DIAGNOSTIC_ID = "CD1605";
             public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
             public const string FILE_DIAGNOSTIC_ID = "CD1607";
+            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
         }
 
         public static WordMap[] WORD_MAPS { get; set; } = new[] {

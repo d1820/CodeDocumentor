@@ -9,20 +9,20 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class CommentHelperTests
+    public class CommentHelperTests : IClassFixture<TestFixure>
     {
-        public CommentHelperTests()
-        {
-            TestFixture.BuildOptionsPageGrid();
+        private readonly TestFixure fixture;
 
-            //sometimes these test fail locally cause of the clash of using this static setting. Dont run tests in parallel
-            CodeDocumentorPackage.Options.ExcludeAsyncSuffix = true;
+        public CommentHelperTests(TestFixure fixture)
+        {
+            this.fixture = fixture;
         }
 
         //SpilitNameAndToLower
         [Fact]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
         {
+            fixture.OptionsService.ExcludeAsyncSuffix = true;
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
             result.Count.Should().Be(3);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();
@@ -31,9 +31,9 @@ namespace CodeDocumentor.Test.Helper
         }
 
         [Fact]
-        public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionTrue()
+        public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse()
         {
-            CodeDocumentorPackage.Options.ExcludeAsyncSuffix = false;
+            fixture.OptionsService.ExcludeAsyncSuffix = false;
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
             result.Count.Should().Be(4);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();

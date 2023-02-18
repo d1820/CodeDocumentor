@@ -10,22 +10,42 @@
     <Compile Remove="Classes\ClassTesterInheritDoc.cs" />
     <Compile Remove="Classes\PublicClassTester.cs" />
     <Compile Remove="Classes\PublicClassTesterFix.cs" />
+    <Compile Remove="Records\TestFiles\PublicRecordTester.cs" />
+    <Compile Remove="Records\TestFiles\PublicRecordTesterFix.cs" />
+    <Compile Remove="Records\TestFiles\RecordTester.cs" />
+    <Compile Remove="Records\TestFiles\RecordTesterFix.cs" />
+    <Compile Remove="Records\TestFiles\RecordTesterInheritDoc.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Classes\ClassTester.cs">
+    <None Include="Records\TestFiles\RecordTester.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\ClassTesterFix.cs">
+    <None Include="Records\TestFiles\RecordTesterFix.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\ClassTesterInheritDoc.cs">
+    <None Include="Records\TestFiles\RecordTesterInheritDoc.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\PublicClassTester.cs">
+    <None Include="Records\TestFiles\PublicRecordTester.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\PublicClassTesterFix.cs">
+    <None Include="Records\TestFiles\PublicRecordTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassTesterInheritDoc.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\PublicClassTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\PublicClassTesterFix.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -7,6 +7,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using SimpleInjector;
 using Task = System.Threading.Tasks.Task;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
@@ -42,6 +43,8 @@ namespace CodeDocumentor.Vsix2022
     {
         protected static IOptionPageGrid _options;
         private static readonly object _syncRoot = new object();
+        public static Container DIContainer;
+
 
         #region Package Members
 
@@ -64,6 +67,10 @@ namespace CodeDocumentor.Vsix2022
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+
+            DIContainer = new SimpleInjector.Container();
+            DIContainer.RegisterServices();
+            DIContainer.Verify();
         }
 
         /// <summary>

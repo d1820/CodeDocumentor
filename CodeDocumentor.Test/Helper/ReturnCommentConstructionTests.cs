@@ -7,13 +7,12 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class ReturnCommentConstructionTests
+    public class ReturnCommentConstructionTests : IClassFixture<TestFixure>
     {
         private ReturnCommentConstruction _returnCommentBuilder;
 
-        public ReturnCommentConstructionTests()
+        public ReturnCommentConstructionTests(TestFixure testFixure)
         {
-            TestFixture.BuildOptionsPageGrid();
             _returnCommentBuilder = new ReturnCommentConstruction();
         }
 

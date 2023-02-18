@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,15 +13,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace CodeDocumentor.Helper
 {
     /// <summary>
-    ///   The comment helper.
+    /// The comment helper.
     /// </summary>
     public static class CommentHelper
     {
         /// <summary>
-        ///   Adds period to text
+        /// Withs the period.
         /// </summary>
-        /// <param name="text"> </param>
-        /// <returns> </returns>
+        /// <param name="text">The text.</param>
+        /// <returns>A string.</returns>
         public static string WithPeriod(this string text)
         {
             if (text.EndsWith("."))
@@ -31,31 +32,42 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates class comment.
+        /// Creates the class comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The class comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
         public static string CreateClassComment(ReadOnlySpan<char> name)
         {
             return CreateCommonComment(name);
         }
 
         /// <summary>
-        ///   Creates field comment.
+        /// Create the record comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The field comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
+        public static string CreateRecordComment(ReadOnlySpan<char> name)
+        {
+            return CreateCommonComment(name);
+        }
+
+
+        /// <summary>
+        /// Creates the field comment.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
         public static string CreateFieldComment(ReadOnlySpan<char> name)
         {
             return CreateCommonComment(name);
         }
 
         /// <summary>
-        ///   Creates constructor comment.
+        /// Creates the constructor comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <param name="isPrivate"> If true, the constructor accessibility is private. </param>
-        /// <returns> The contructor comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <param name="isPrivate">If true, is private.</param>
+        /// <returns>A string.</returns>
         public static string CreateConstructorComment(string name, bool isPrivate)
         {
             if (isPrivate)
@@ -69,10 +81,10 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates the interface comment.
+        /// Creates the interface comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The class comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
         public static string CreateInterfaceComment(ReadOnlySpan<char> name)
         {
             List<string> parts = SpilitNameAndToLower(name, false);
@@ -87,22 +99,22 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates the enum comment.
+        /// Creates the enum comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> A string. </returns>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
         public static string CreateEnumComment(ReadOnlySpan<char> name)
         {
             return CreateCommonComment(name);
         }
 
         /// <summary>
-        ///   Creates property comment.
+        /// Creates the property comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <param name="isBoolean"> If ture, the property type is boolean. </param>
-        /// <param name="hasSetter"> If ture, the property has setter. </param>
-        /// <returns> The property comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <param name="isBoolean">If true, is boolean.</param>
+        /// <param name="hasSetter">If true, has setter.</param>
+        /// <returns>A string.</returns>
         public static string CreatePropertyComment(ReadOnlySpan<char> name, bool isBoolean, bool hasSetter)
         {
             string comment = "Gets";
@@ -123,10 +135,11 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates method comment.
+        /// Creates the method comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The method comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <param name="returnType">The return type.</param>
+        /// <returns>A string.</returns>
         public static string CreateMethodComment(ReadOnlySpan<char> name, TypeSyntax returnType)
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
@@ -146,6 +159,7 @@ namespace CodeDocumentor.Helper
             {
                 parts.Insert(1, "the");
 
+                var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
                 //try and use the return type for the value;
                 if (returnType.ToString() != "void")
                 {
@@ -156,7 +170,7 @@ namespace CodeDocumentor.Helper
                     }
                     else
                     {
-                        if (CodeDocumentorPackage.Options.UseToDoCommentsOnSummaryError)
+                        if (optionsService.UseToDoCommentsOnSummaryError)
                         {
                             return "TODO: Add Summary";
                         }
@@ -168,7 +182,7 @@ namespace CodeDocumentor.Helper
                 }
                 else
                 {
-                    if (CodeDocumentorPackage.Options.UseToDoCommentsOnSummaryError)
+                    if (optionsService.UseToDoCommentsOnSummaryError)
                     {
                         return "TODO: Add Summary";
                     }
@@ -193,10 +207,10 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates parameter comment.
+        /// Creates the parameter comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The parameter comment. </returns>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns>A string.</returns>
         public static string CreateParameterComment(ParameterSyntax parameter)
         {
             bool isBoolean = false;
@@ -226,10 +240,10 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Have the comment.
+        /// Has comment.
         /// </summary>
-        /// <param name="commentTriviaSyntax"> The comment trivia syntax. </param>
-        /// <returns> A bool. </returns>
+        /// <param name="commentTriviaSyntax">The comment trivia syntax.</param>
+        /// <returns>A bool.</returns>
         public static bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
         {
             bool hasSummary = commentTriviaSyntax
@@ -246,10 +260,10 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates property boolean part.
+        /// Creates the property boolean part.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The property comment boolean part. </returns>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
         private static string CreatePropertyBooleanPart(ReadOnlySpan<char> name)
         {
             string booleanPart = " a value indicating whether ";
@@ -268,22 +282,22 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates common comment.
+        /// Creates the common comment.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> The common comment. </returns>
+        /// <param name="name">The name.</param>
+        /// <returns>A string.</returns>
         private static string CreateCommonComment(ReadOnlySpan<char> name)
         {
             return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}.";
         }
 
         /// <summary>
-        ///   Splits name and make words lower.
+        /// Spilit the name and to lower.
         /// </summary>
-        /// <param name="name"> The name. </param>
-        /// <param name="isFirstCharacterLower"> If true, the first character will be lower. </param>
-        /// <param name="shouldTranslate">If true, the name will be translated</param>
-        /// <returns> A list of words. </returns>
+        /// <param name="name">The name.</param>
+        /// <param name="isFirstCharacterLower">If true, is first character lower.</param>
+        /// <param name="shouldTranslate">If true, should translate.</param>
+        /// <returns><![CDATA[List<string>]]></returns>
         internal static List<string> SpilitNameAndToLower(ReadOnlySpan<char> name, bool isFirstCharacterLower, bool shouldTranslate = true)
         {
             if (shouldTranslate)
@@ -305,12 +319,14 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Updates or removes the async keyword
+        /// Handle asynchronously keyword.
         /// </summary>
-        /// <param name="parts"> The list of parts of the member name separated by uppercase letters </param>
+        /// <param name="parts">The parts.</param>
         private static void HandleAsyncKeyword(List<string> parts)
         {
-            if (CodeDocumentorPackage.Options.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
+            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+
+            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
             {
                 parts.Remove(parts.Last());
             }

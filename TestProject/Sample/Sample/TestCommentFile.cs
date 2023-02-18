@@ -148,6 +148,34 @@ namespace Welcom.Test
     }
 
     /// <summary>
+    /// The private record.
+    /// </summary>
+    internal record PrivateRecord
+    {
+
+        const int ConstFieldTester = 666;
+
+
+        private PrivateRecord(string test)
+        {
+        }
+    }
+
+    /// <summary>
+    /// The public record.
+    /// </summary>
+    public record PublicRecord
+    {
+
+        const int ConstFieldTester = 666;
+
+
+        private PublicRecord()
+        {
+        }
+    }
+
+    /// <summary>
     /// The record controller interface.
     /// </summary>
     /// <typeparam name="TIn"></typeparam>

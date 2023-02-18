@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Vsix2022;
+﻿using CodeDocumentor.Services;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
@@ -18,7 +19,8 @@ namespace CodeDocumentor.Helper
         /// <param name="returnType"> The return type. </param>
         public ReturnCommentConstruction(TypeSyntax returnType) : base(true, true)
         {
-            Comment = BuildComment(returnType, CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode != true);
+            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            Comment = BuildComment(returnType, !optionsService.UseNaturalLanguageForReturnNode);
         }
 
         /// <summary>

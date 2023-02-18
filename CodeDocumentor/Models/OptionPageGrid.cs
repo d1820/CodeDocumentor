@@ -9,6 +9,9 @@ using Microsoft.VisualStudio.Shell;
 namespace CodeDocumentor.Vsix2022
 {
     //This has to live in this project so context thread is valid
+    /// <summary>
+    /// The option page grid.
+    /// </summary>
     [Guid("BE905985-26BB-492B-9453-743E26F4E8BB")]
     public class OptionPageGrid : DialogPage, IOptionPageGrid
     {
@@ -98,13 +101,24 @@ namespace CodeDocumentor.Vsix2022
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
         public WordMap[] WordMaps { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the default diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Default Diagnostic Severity")]
         [Description("When highlighting missing comments this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
         /// <summary>
-        /// Loads the settings from storage.
+        /// Gets or Sets a value indicating whether ignore all uppercase names.
+        /// </summary>
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Ignore All Uppercase Names")]
+        [Description("When documenting if the name of a member is all uppercase then it is ignored from analyzing.")]
+        public bool IgnoreAllUppercaseNames { get; set; } = true;
+
+        /// <summary>
+        /// Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
@@ -116,10 +130,11 @@ namespace CodeDocumentor.Vsix2022
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
             WordMaps = settings.WordMaps ?? Constants.WORD_MAPS; //if we dont have anything need to use defaults
             DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
+            IgnoreAllUppercaseNames = settings.IgnoreAllUppercaseNames;
         }
 
         /// <summary>
-        /// Saves the settings to storage.
+        /// Save settings to storage.
         /// </summary>
         public override void SaveSettingsToStorage()
         {
@@ -131,7 +146,8 @@ namespace CodeDocumentor.Vsix2022
                 IncludeValueNodeInProperties = this.IncludeValueNodeInProperties,
                 UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
                 WordMaps = this.WordMaps,
-                DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity
+                DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity,
+                 IgnoreAllUppercaseNames = this.IgnoreAllUppercaseNames
             };
             settings.Save();
         }

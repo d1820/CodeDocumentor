@@ -14,7 +14,7 @@ namespace CodeDocumentor
     ///   The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicClassAnalyzer : DiagnosticAnalyzer
+    public class NonPublicRecordAnalyzer : DiagnosticAnalyzer
     {
         /// <summary>
         ///   Gets the supported diagnostics.
@@ -28,7 +28,7 @@ namespace CodeDocumentor
                 {
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
                 }
-                return ImmutableArray.Create(ClassAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(RecordAnalyzerSettings.GetRule());
             }
         }
 
@@ -38,7 +38,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.RecordDeclaration);
         }
 
         /// <summary>
@@ -47,13 +47,12 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            ClassDeclarationSyntax node = context.Node as ClassDeclarationSyntax;
+            RecordDeclarationSyntax node = context.Node as RecordDeclarationSyntax;
             if (!PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
             var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
-
             if (optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;
@@ -64,7 +63,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => RecordAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

@@ -8,16 +8,14 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TranslatorTests
+    public class TranslatorTests : IClassFixture<TestFixure>
     {
-        public TranslatorTests()
+        public TranslatorTests(TestFixure testFixure)
         {
-            TestFixture.BuildOptionsPageGrid();
-
-            var temp = CodeDocumentorPackage.Options.WordMaps.ToList();
+            var temp = testFixure.OptionsService.WordMaps.ToList();
             temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
             temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
-            CodeDocumentorPackage.Options.WordMaps = temp.ToArray();
+            testFixure.OptionsService.WordMaps = temp.ToArray();
         }
 
         [Theory]

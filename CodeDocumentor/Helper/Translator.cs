@@ -10,7 +10,7 @@ namespace CodeDocumentor.Helper
     public static class Translator
     {
         private static string wordMatchRegexTemplate = @"\b({0})\b";
-     
+
         /// <summary>
         ///   Translates text replacing words from the WordMap settings
         /// </summary>
@@ -45,7 +45,8 @@ namespace CodeDocumentor.Helper
                 //Some stuff just needs to be handled for the user
                 foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
                 {
-                    converted = Regex.Replace(converted, string.Format(wordMatchRegexTemplate, wordMap.Word), wordMap.Translation);
+                    var wordToLookFor = string.Format(wordMatchRegexTemplate, wordMap.Word);
+                    converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
                 }
                 return converted;
             }
@@ -58,7 +59,8 @@ namespace CodeDocumentor.Helper
             }
             foreach (var wordMap in mergedWorkMaps)
             {
-                converted = Regex.Replace(converted, string.Format(wordMatchRegexTemplate, wordMap.Word), wordMap.Translation);
+                var wordToLookFor = string.Format(wordMatchRegexTemplate, wordMap.Word);
+                converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
             }
             return converted;
         }

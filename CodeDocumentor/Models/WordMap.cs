@@ -29,7 +29,7 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         /// <param name="nextWord">The next word.</param>
         /// <returns>A string.</returns>
-        public string GetTranslation(string nextWord)
+        public string GetTranslation(string nextWord = null)
         {
             if(WordEvaluator != null)
             {

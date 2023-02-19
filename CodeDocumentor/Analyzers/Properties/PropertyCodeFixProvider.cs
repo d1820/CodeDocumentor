@@ -53,7 +53,7 @@ namespace CodeDocumentor
 
             PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
 
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -76,7 +76,7 @@ namespace CodeDocumentor
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.PropertyDeclaration)).OfType<PropertyDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             foreach (var declarationSyntax in declarations)
             {
                 if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -127,9 +127,9 @@ namespace CodeDocumentor
                 }
             }
 
-            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText.AsSpan(), isBoolean, hasSetter);
+            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(propertyComment));
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IncludeValueNodeInProperties)
             {
                 string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false);

@@ -14,8 +14,16 @@ namespace CodeDocumentor.Helper
 
         static Pluralizer()
         {
-            pl.AddIrregularRule("Do", "Does");
-            pl.AddIrregularRule("To", "Converts to");
+            foreach (var item in Constants.INTERNAL_WORD_MAPS)
+            {
+                try
+                {
+                    pl.AddIrregularRule(item.Word, item.Translation);
+                }
+                catch (Exception)
+                {
+                }
+            }           
         }
 
         /// <summary>

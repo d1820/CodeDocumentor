@@ -32,7 +32,7 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             return new DiagnosticDescriptor(MethodAnalyzerSettings.DiagnosticId, MethodAnalyzerSettings.Title,
                 MethodAnalyzerSettings.MessageFormat, MethodAnalyzerSettings.Category,
                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.DefaultDiagnosticSeverity, true);

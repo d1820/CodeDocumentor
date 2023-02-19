@@ -19,7 +19,7 @@ namespace CodeDocumentor.Helper
         /// <param name="returnType"> The return type. </param>
         public ReturnCommentConstruction(TypeSyntax returnType) : base(true, true)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             Comment = BuildComment(returnType, !optionsService.UseNaturalLanguageForReturnNode);
         }
 

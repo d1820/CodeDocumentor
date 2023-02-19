@@ -56,7 +56,7 @@ namespace CodeDocumentor
             Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
 
             MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -118,7 +118,7 @@ namespace CodeDocumentor
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             foreach (var declarationSyntax in declarations)
             {
                 if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -141,7 +141,7 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText.AsSpan(), declarationSyntax.ReturnType);
+            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(methodComment));
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)

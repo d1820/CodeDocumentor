@@ -78,7 +78,9 @@ namespace Welcom.Test
     /// </summary>
     public class FieldOCRTester
     {
+        public const bool IS_CONTAINER = true;
 
+        const string SERVER_ORG_CODE = "test";
 
         /// <summary>
         /// The const field tester.
@@ -98,29 +100,52 @@ namespace Welcom.Test
         {
         }
 
-        /// <summary>
-        /// Does the work.
-        /// </summary>
-        /// <returns>A string.</returns>
+        public string AtTime()
+        {
+            return "";
+        }
+
+        public string OfTime()
+        {
+            return "";
+        }
+
+        public string AnTime()
+        {
+            return "";
+        }
+
+        public string ByTime()
+        {
+            return "";
+        }
+
+        public string InTime()
+        {
+            return "";
+        }
+
+        public bool IsValid()
+        {
+            return true;
+        }
+
+        public string OnExecuteAsync()
+        {
+            return "";
+        }
+
         public string DoWork()
         {
             return "";
         }
 
-        /// <summary>
-        /// Does the work with params.
-        /// </summary>
-        /// <param name="test">The test.</param>
-        /// <returns>A string.</returns>
+
         public string DoWorkWithParams(string test)
         {
             return "";
         }
 
-        /// <summary>
-        /// Converts to upper case.
-        /// </summary>
-        /// <returns>A string.</returns>
         public string ToUpperCase()
         {
             return "";

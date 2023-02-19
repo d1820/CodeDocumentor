@@ -21,7 +21,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 if (optionsService.IsEnabledForPublicMembersOnly)
                 {
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
@@ -57,7 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;

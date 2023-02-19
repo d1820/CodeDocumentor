@@ -10,7 +10,7 @@ namespace CodeDocumentor.Helper
     public static class Translator
     {
         private static string wordMatchRegexTemplate = @"\b({0})\b";
-
+     
         /// <summary>
         ///   Translates text replacing words from the WordMap settings
         /// </summary>
@@ -32,42 +32,6 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Translates a span of text replacing words from the WordMap settings
-        /// </summary>
-        /// <param name="text"> </param>
-        /// <returns> A string </returns>
-        public static string Translate(this ReadOnlySpan<char> text)
-        {
-            return TranslateText(text).ToString();
-        }
-
-        /// <summary>
-        ///   Translates a span of text replacing words from the WordMap settings
-        /// </summary>
-        /// <param name="text"> </param>
-        /// <returns> A ReadOnlySpan of char </returns>
-        public static ReadOnlySpan<char> TranslateToSpan(this ReadOnlySpan<char> text)
-        {
-            return TranslateText(text);
-        }
-
-        /// <summary>
-        ///   Translates a span of text replacing words from the WordMap settings
-        /// </summary>
-        /// <param name="text"> </param>
-        /// <returns> A ReadOnlySpan of char </returns>
-        public static ReadOnlySpan<char> TranslateText(ReadOnlySpan<char> text)
-        {
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
-            if (optionsService.WordMaps == null)
-            {
-                return text;
-            }
-            string converted = text.ToString();
-            return TranslateText(converted).AsSpan();
-        }
-
-        /// <summary>
         ///   Translates text replacing words from the WordMap settings
         /// </summary>
         /// <param name="text"> </param>
@@ -75,7 +39,7 @@ namespace CodeDocumentor.Helper
         public static string TranslateText(string text)
         {
             string converted = text;
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.WordMaps == null)
             {
                 //Some stuff just needs to be handled for the user

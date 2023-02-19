@@ -36,7 +36,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        public static string CreateClassComment(ReadOnlySpan<char> name)
+        public static string CreateClassComment(string name)
         {
             return CreateCommonComment(name);
         }
@@ -46,7 +46,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        public static string CreateRecordComment(ReadOnlySpan<char> name)
+        public static string CreateRecordComment(string name)
         {
             return CreateCommonComment(name);
         }
@@ -57,9 +57,37 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        public static string CreateFieldComment(ReadOnlySpan<char> name)
+        public static string CreateFieldComment(string name)
         {
-            return CreateCommonComment(name);
+            List<string> parts = SpilitNameAndToLower(name, false, false);
+            if (parts.Count >= 2)
+            {
+                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+            }
+            else
+            {
+                parts[0] = Pluralizer.Pluralize(parts[0]);
+            }
+            if (parts.Count == 1)
+            {
+                return $"The {string.Join(" ", parts)}.";
+            }
+            else
+            {
+                //At this point we have already pluralized and converted
+                var skipThe = parts[0].IsVerbCombo();
+                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+                if (!skipThe || addTheAnyway)
+                {
+                    return $"The {string.Join(" ", parts)}.";
+                }
+                else
+                {
+                    return $"{string.Join(" ", parts)}.";
+                }
+            }
+          
+
         }
 
         /// <summary>
@@ -85,7 +113,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        public static string CreateInterfaceComment(ReadOnlySpan<char> name)
+        public static string CreateInterfaceComment(string name)
         {
             List<string> parts = SpilitNameAndToLower(name, false);
             if (parts[0] == "I")
@@ -103,7 +131,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        public static string CreateEnumComment(ReadOnlySpan<char> name)
+        public static string CreateEnumComment(string name)
         {
             return CreateCommonComment(name);
         }
@@ -115,7 +143,7 @@ namespace CodeDocumentor.Helper
         /// <param name="isBoolean">If true, is boolean.</param>
         /// <param name="hasSetter">If true, has setter.</param>
         /// <returns>A string.</returns>
-        public static string CreatePropertyComment(ReadOnlySpan<char> name, bool isBoolean, bool hasSetter)
+        public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter)
         {
             string comment = "Gets";
             if (hasSetter)
@@ -140,10 +168,10 @@ namespace CodeDocumentor.Helper
         /// <param name="name">The name.</param>
         /// <param name="returnType">The return type.</param>
         /// <returns>A string.</returns>
-        public static string CreateMethodComment(ReadOnlySpan<char> name, TypeSyntax returnType)
+        public static string CreateMethodComment(string name, TypeSyntax returnType)
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
-            var isBool2part = parts.Count == 2 && returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
+            var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
             if (!isBool2part)
             {
                 if (parts.Count >= 2)
@@ -159,7 +187,7 @@ namespace CodeDocumentor.Helper
             {
                 parts.Insert(1, "the");
 
-                var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 //try and use the return type for the value;
                 if (returnType.ToString() != "void")
                 {
@@ -196,7 +224,7 @@ namespace CodeDocumentor.Helper
             {
                 //At this point we have already pluralized and converted
                 var skipThe = parts[0].IsVerbCombo();
-                var addTheAnyway = Constants.ADD_THE_EXCLUSION_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
                 if ((!skipThe && !isBool2part) || addTheAnyway)
                 {
                     parts.Insert(1, "the");
@@ -231,11 +259,11 @@ namespace CodeDocumentor.Helper
 
             if (isBoolean)
             {
-                return "If true, " + string.Join(" ", SpilitNameAndToLower(parameter.Identifier.ValueText.AsSpan(), true)).WithPeriod();
+                return "If true, " + string.Join(" ", SpilitNameAndToLower(parameter.Identifier.ValueText, true)).WithPeriod();
             }
             else
             {
-                return CreateCommonComment(parameter.Identifier.ValueText.AsSpan());
+                return CreateCommonComment(parameter.Identifier.ValueText);
             }
         }
 
@@ -264,7 +292,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        private static string CreatePropertyBooleanPart(ReadOnlySpan<char> name)
+        private static string CreatePropertyBooleanPart(string name)
         {
             string booleanPart = " a value indicating whether ";
 
@@ -286,7 +314,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string.</returns>
-        private static string CreateCommonComment(ReadOnlySpan<char> name)
+        private static string CreateCommonComment(string name)
         {
             return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}.";
         }
@@ -298,11 +326,11 @@ namespace CodeDocumentor.Helper
         /// <param name="isFirstCharacterLower">If true, is first character lower.</param>
         /// <param name="shouldTranslate">If true, should translate.</param>
         /// <returns><![CDATA[List<string>]]></returns>
-        internal static List<string> SpilitNameAndToLower(ReadOnlySpan<char> name, bool isFirstCharacterLower, bool shouldTranslate = true)
+        internal static List<string> SpilitNameAndToLower(string name, bool isFirstCharacterLower, bool shouldTranslate = true)
         {
             if (shouldTranslate)
             {
-                name = name.TranslateToSpan();
+                name = name.Translate();
             }
             List<string> parts = NameSplitter.Split(name);
 
@@ -324,7 +352,7 @@ namespace CodeDocumentor.Helper
         /// <param name="parts">The parts.</param>
         private static void HandleAsyncKeyword(List<string> parts)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
 
             if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
             {

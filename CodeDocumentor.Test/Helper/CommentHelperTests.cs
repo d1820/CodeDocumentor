@@ -23,7 +23,7 @@ namespace CodeDocumentor.Test.Helper
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
         {
             fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = true;
-            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
+            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
             result.Count.Should().Be(3);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();
             result[1].All(a => char.IsUpper(a)).Should().BeTrue();
@@ -34,7 +34,7 @@ namespace CodeDocumentor.Test.Helper
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse()
         {
             fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = false;
-            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
+            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
             result.Count.Should().Be(4);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();
             result[1].All(a => char.IsUpper(a)).Should().BeTrue();

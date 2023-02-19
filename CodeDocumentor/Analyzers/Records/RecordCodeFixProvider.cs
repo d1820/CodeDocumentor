@@ -53,7 +53,7 @@ namespace CodeDocumentor
             Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
 
             RecordDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<RecordDeclarationSyntax>().First();
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -76,7 +76,7 @@ namespace CodeDocumentor
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.RecordDeclaration)).OfType<RecordDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
-            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             foreach (var declarationSyntax in declarations)
             {
                 if (optionsService.IsEnabledForPublicMembersOnly
@@ -111,7 +111,7 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText.AsSpan());
+            string comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)

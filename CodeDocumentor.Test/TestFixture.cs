@@ -26,9 +26,9 @@ namespace CodeDocumentor.Test
         public TestFixture()
         {
             Runtime.RunningUnitTests = true;
-            
-            if(CodeDocumentorPackage.DIContainer == null)
-            {      
+
+            if (CodeDocumentorPackage.DIContainer() == null)
+            {
                 var DIContainer = new Container();
                 DIContainer.Register<IOptionsService>(() =>
                 {
@@ -37,8 +37,8 @@ namespace CodeDocumentor.Test
                     return os;
                 }, Lifestyle.Transient);
 
-                CodeDocumentorPackage.DIContainer = DIContainer;
-            }          
+                CodeDocumentorPackage.DIContainer(DIContainer);
+            }
         }
 
         public void SetPublicProcessingOption(IOptionsService o, string diagType)

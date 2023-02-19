@@ -23,9 +23,7 @@ namespace Welcom.Test
     public class Field_Tester_Spacer
     {
 
-        /// <summary>
-        /// The const field tester.
-        /// </summary>
+
         const int ConstFieldTester = 666;
 
         /// <summary>
@@ -34,6 +32,7 @@ namespace Welcom.Test
         public Field_Tester_Spacer()
         {
         }
+
 
         /// <summary>
         /// Check on the user OCR.
@@ -44,19 +43,17 @@ namespace Welcom.Test
             return "";
         }
 
-        /// <summary>
-        /// Ensure actions.
-        /// </summary>
-        /// <returns>A string.</returns>
-        public string EnsureActions()
+        public string EnsureActionsInvoked()
         {
             return "";
         }
 
-        /// <summary>
-        /// Could save file.
-        /// </summary>
-        /// <returns>A string.</returns>
+        public bool EnsureValid()
+        {
+            return true;
+
+        }
+
         public string CouldSaveFile()
         {
             return "";

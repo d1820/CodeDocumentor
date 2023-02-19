@@ -51,7 +51,6 @@ namespace CodeDocumentor.Helper
             return CreateCommonComment(name);
         }
 
-
         /// <summary>
         /// Creates the field comment.
         /// </summary>
@@ -60,33 +59,32 @@ namespace CodeDocumentor.Helper
         public static string CreateFieldComment(string name)
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
-            if (parts.Count >= 2)
-            {
-                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-            }
-            else
-            {
-                parts[0] = Pluralizer.Pluralize(parts[0]);
-            }
             if (parts.Count == 1)
             {
-                return $"The {string.Join(" ", parts)}.";
+                return $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}.";
             }
             else
             {
                 //At this point we have already pluralized and converted
                 var skipThe = parts[0].IsVerbCombo();
-                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
-                if (!skipThe || addTheAnyway)
+                if (!skipThe)
                 {
-                    return $"The {string.Join(" ", parts)}.";
+                    return $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}.";
                 }
                 else
                 {
+                    if (parts.Count >= 2)
+                    {
+                        parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+                    }
+                    else
+                    {
+                        parts[0] = Pluralizer.Pluralize(parts[0]);
+                    }
                     return $"{string.Join(" ", parts)}.";
                 }
             }
-          
+
 
         }
 
@@ -172,17 +170,15 @@ namespace CodeDocumentor.Helper
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
             var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
-            if (!isBool2part)
+            if (parts.Count >= 2)
             {
-                if (parts.Count >= 2)
-                {
-                    parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-                }
-                else
-                {
-                    parts[0] = Pluralizer.Pluralize(parts[0]);
-                }
+                parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0], parts[1]), parts[1]);
             }
+            else
+            {
+                parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0]));
+            }
+
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
             {
                 parts.Insert(1, "the");

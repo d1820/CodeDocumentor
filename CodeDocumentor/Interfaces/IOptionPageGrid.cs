@@ -44,11 +44,6 @@ namespace CodeDocumentor.Vsix2022
         DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
 
         /// <summary>
-        /// Gets or Sets a value indicating whether ignore all uppercase names.
-        /// </summary>
-        bool IgnoreAllUppercaseNames { get; set; }
-
-        /// <summary>
         /// Gets or Sets the word maps.
         /// </summary>
         /// <value>A list of wordmaps.</value>

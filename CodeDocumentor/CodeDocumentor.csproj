@@ -64,6 +64,7 @@
     <Compile Include="CodeDocumentor.Package.cs" />
     <Compile Include="Analyzers\Fields\FieldAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Methods\MethodAnalyzerSettings.cs" />
+    <Compile Include="Helper\CustomPluralizer.cs" />
     <Compile Include="Helper\DiagnosticBuilder.cs" />
     <Compile Include="Helper\DictionaryExtensions.cs" />
     <Compile Include="Helper\WordExtensions.cs" />

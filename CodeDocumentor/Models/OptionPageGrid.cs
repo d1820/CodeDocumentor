@@ -110,14 +110,6 @@ namespace CodeDocumentor.Vsix2022
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
         /// <summary>
-        /// Gets or Sets a value indicating whether ignore all uppercase names.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Ignore All Uppercase Names")]
-        [Description("When documenting if the name of a member is all uppercase then it is ignored from analyzing.")]
-        public bool IgnoreAllUppercaseNames { get; set; } = true;
-
-        /// <summary>
         /// Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
@@ -130,7 +122,6 @@ namespace CodeDocumentor.Vsix2022
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
             WordMaps = settings.WordMaps ?? Constants.WORD_MAPS; //if we dont have anything need to use defaults
             DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
-            IgnoreAllUppercaseNames = settings.IgnoreAllUppercaseNames;
         }
 
         /// <summary>
@@ -147,7 +138,6 @@ namespace CodeDocumentor.Vsix2022
                 UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
                 WordMaps = this.WordMaps,
                 DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity,
-                 IgnoreAllUppercaseNames = this.IgnoreAllUppercaseNames
             };
             settings.Save();
         }

@@ -48,6 +48,8 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Use natural language for return comments|When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example Enabled: ```<return>A List of Strings</return>``` Example Disabled: ``` <returns><![CDATA[Task<int>]]></returns>```|
 | Use TODO comment when summary can not be determined|When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated. |
 | Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |
+| Default Diagnostics | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change. |
+
 
 
 
@@ -93,6 +95,7 @@ There are 2 ways to exclude analyzer messaging. Defauly level is set to **Warnin
 - CD1604: Interface
 - CD1605: Method
 - CD1606: Property
+- CD1608: Record
 
 ### Supported Members
 
@@ -103,6 +106,7 @@ There are 2 ways to exclude analyzer messaging. Defauly level is set to **Warnin
 - Field
 - Constructor
 - Enum
+- Record
 
 ### Attribute
 

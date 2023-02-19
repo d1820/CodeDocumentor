@@ -53,10 +53,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            if (CodeDocumentorPackage.IsDebugMode)
-            {
-                return;
-            }
+            //if (CodeDocumentorPackage.IsDebugMode)
+            //{
+            //    return;
+            //}
             Diagnostic diagnostic = context.Diagnostics.First();
 
             //build it up, but check for counts if anything actually needs to be shown

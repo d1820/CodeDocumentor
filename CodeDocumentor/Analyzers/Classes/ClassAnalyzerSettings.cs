@@ -1,4 +1,5 @@
 ﻿using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
@@ -28,9 +29,10 @@ namespace CodeDocumentor
 
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             return new DiagnosticDescriptor(ClassAnalyzerSettings.DiagnosticId, ClassAnalyzerSettings.Title,
                 ClassAnalyzerSettings.MessageFormat, ClassAnalyzerSettings.Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning, true);
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.DefaultDiagnosticSeverity, true);
         }
     }
 }

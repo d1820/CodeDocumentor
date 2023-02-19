@@ -10,22 +10,112 @@
     <Compile Remove="Classes\ClassTesterInheritDoc.cs" />
     <Compile Remove="Classes\PublicClassTester.cs" />
     <Compile Remove="Classes\PublicClassTesterFix.cs" />
+    <Compile Remove="Constructors\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Constructors\TestFiles\PrivateConstructorTestCode.cs" />
+    <Compile Remove="Constructors\TestFiles\PrivateContructorTestFixCode.cs" />
+    <Compile Remove="Constructors\TestFiles\PublicConstructorTestCode.cs" />
+    <Compile Remove="Constructors\TestFiles\PublicConstructorWithBooleanParameterTestCode.cs" />
+    <Compile Remove="Constructors\TestFiles\PublicContructorTestFixCode.cs" />
+    <Compile Remove="Constructors\TestFiles\PublicContructorWithBooleanParameterTestFixCode.cs" />
+    <Compile Remove="Enums\TestFiles\TestCode.cs" />
+    <Compile Remove="Enums\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Fields\TestFiles\ConstFieldTestCode.cs" />
+    <Compile Remove="Fields\TestFiles\ConstFieldTestFixCode.cs" />
+    <Compile Remove="Fields\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Interfaces\TestFiles\TestCode.cs" />
+    <Compile Remove="Interfaces\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Records\TestFiles\PublicRecordTester.cs" />
+    <Compile Remove="Records\TestFiles\PublicRecordTesterFix.cs" />
+    <Compile Remove="Records\TestFiles\RecordTester.cs" />
+    <Compile Remove="Records\TestFiles\RecordTesterFix.cs" />
+    <Compile Remove="Records\TestFiles\RecordTesterInheritDoc.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Classes\ClassTester.cs">
+    <None Include="Methods\TestFiles\InheritDocTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\ClassTesterFix.cs">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Constructors\TestFiles\InheritDocTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\ClassTesterInheritDoc.cs">
+    <None Include="Constructors\TestFiles\PrivateConstructorTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\PublicClassTester.cs">
+    <None Include="Constructors\TestFiles\PrivateContructorTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Classes\PublicClassTesterFix.cs">
+    <None Include="Constructors\TestFiles\PublicConstructorTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Constructors\TestFiles\PublicConstructorWithBooleanParameterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Constructors\TestFiles\PublicContructorTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Constructors\TestFiles\PublicContructorWithBooleanParameterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Enums\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Enums\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fields\TestFiles\ConstFieldTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fields\TestFiles\ConstFieldTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fields\TestFiles\InheritDocTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Interfaces\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Interfaces\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\TestFiles\InheritDocTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Records\TestFiles\RecordTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Records\TestFiles\RecordTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Records\TestFiles\RecordTesterInheritDoc.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Records\TestFiles\PublicRecordTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Records\TestFiles\PublicRecordTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassTesterInheritDoc.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\PublicClassTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\PublicClassTesterFix.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

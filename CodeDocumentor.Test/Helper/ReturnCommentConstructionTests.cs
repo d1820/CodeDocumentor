@@ -7,13 +7,12 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class ReturnCommentConstructionTests
+    public class ReturnCommentConstructionTests : IClassFixture<TestFixture>
     {
         private ReturnCommentConstruction _returnCommentBuilder;
 
-        public ReturnCommentConstructionTests()
+        public ReturnCommentConstructionTests(TestFixture testFixure)
         {
-            TestFixture.BuildOptionsPageGrid();
             _returnCommentBuilder = new ReturnCommentConstruction();
         }
 
@@ -302,7 +301,7 @@ namespace CodeDocumentor.Test.Helper
         public void IdentifierNameSyntaxComment_CreatesValidTypeParamRef()
         {
             var roc = TestFixture.BuildMethodDeclarationSyntax("CustomClass", "TestMethod");
-            var returnType = roc.GetReturnType();
+            var returnType = TestFixture.GetReturnType(roc);
 
             returnType.Should().NotBeNull();
             var comment = _returnCommentBuilder.BuildComment(returnType, false);

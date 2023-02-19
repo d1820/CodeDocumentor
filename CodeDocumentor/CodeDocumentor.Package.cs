@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -7,6 +8,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using SimpleInjector;
 using Task = System.Threading.Tasks.Task;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
@@ -40,8 +42,22 @@ namespace CodeDocumentor.Vsix2022
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
+        public static bool IsDebugMode = Debugger.IsAttached;
+
         protected static IOptionPageGrid _options;
+        private static Container _DIContainer;
         private static readonly object _syncRoot = new object();
+        public static Container DIContainer(Container overrideContainer = null)
+        {
+            if (_DIContainer == null)
+            {
+                _DIContainer = overrideContainer ?? new Container();
+                _DIContainer.RegisterServices();
+                _DIContainer.Verify();
+            }
+            return _DIContainer;
+        }
+
 
         #region Package Members
 

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,58 +7,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Enums
 {
-    [SuppressMessage("XMLDocumentation", "")]
-    public partial class EnumUnitTest
-    {
-        /// <summary>
-        /// The test code.
-        /// </summary>
-        private const string TestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Test
-{
-	public enum EnumTester
-	{
-	}
-}";
-
-        /// <summary>
-        /// The test fix code.
-        /// </summary>
-        private const string TestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Test
-{
-    /// <summary>
-    /// The enum tester.
-    /// </summary>
-    public enum EnumTester
-	{
-	}
-}";
-    }
-
     /// <summary>
     /// The enum unit test.
     /// </summary>
 
-    public partial class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public EnumUnitTest(TestFixure fixture)
+        public EnumUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
 
         /// <summary>
@@ -68,7 +30,7 @@ namespace Test
         [InlineData("")]
         public void NoDiagnosticsShow(string testCode)
         {
-            this.VerifyCSharpDiagnostic(testCode);
+            VerifyCSharpDiagnostic(testCode);
         }
 
         /// <summary>
@@ -79,10 +41,12 @@ namespace Test
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(TestCode, TestFixCode, 8, 14)]
+        [InlineData("TestCode.cs", "TestFixCode.cs", 7, 17)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
-            DiagnosticResult expected = new DiagnosticResult
+            var fix = _fixture.LoadTestFile($@"./Enums/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Enums/TestFiles/{testCode}");
+            var expected = new DiagnosticResult
             {
                 Id = EnumAnalyzerSettings.DiagnosticId,
                 Message = EnumAnalyzerSettings.MessageFormat,
@@ -93,9 +57,9 @@ namespace Test
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

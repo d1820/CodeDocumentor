@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
@@ -27,6 +29,11 @@ namespace CodeDocumentor.Helper
                 skipNextWord = Constants.INTERNAL_SPECIAL_WORD_LIST.Any(w => w.Equals(nextWord, System.StringComparison.InvariantCultureIgnoreCase) || (w + "ed").Equals(nextWord, System.StringComparison.InvariantCultureIgnoreCase));
             }
             return skipWord || skipNextWord;
+        }
+
+        public static bool IsBoolReturnType(this TypeSyntax returnType)
+        {
+            return returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
         }
     }
 }

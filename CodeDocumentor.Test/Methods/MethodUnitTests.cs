@@ -8,30 +8,13 @@ using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using System.Data.Common;
 using System.Windows.Shapes;
+using CodeDocumentor.Test.TestHelpers;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Methods
 {
     [SuppressMessage("XMLDocumentation", "")]
     public partial class MethodUnitTest
     {
-        /// <summary>
-        /// The inherit doc test code.
-        /// </summary>
-        private const string InheritDocTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		/// <inheritdoc/>
-		public void ShowBasicMethodTester()
-		{
-		}
-	}
-}";
 
         /// <summary>
         /// The basic test code.
@@ -553,15 +536,13 @@ namespace ConsoleApp4
     /// The method unit test.
     /// </summary>
     [SuppressMessage("XMLDocumentation", "")]
-    public partial class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public MethodUnitTest(TestFixure fixture)
+        public MethodUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
         /// <summary>
         /// Nos diagnostics show.
@@ -569,15 +550,16 @@ namespace ConsoleApp4
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        [InlineData(InheritDocTestCode)]
+        [InlineData("InheritDocTestCode.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
             {
-                this.VerifyCSharpDiagnostic(testCode, "public");
+                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
+                var file = _fixture.LoadTestFile($@"./Methods/TestFiles/{testCode}");
                 var expected = new DiagnosticResult
                 {
                     Id = MethodAnalyzerSettings.DiagnosticId,
@@ -585,11 +567,11 @@ namespace ConsoleApp4
                     Severity = DiagnosticSeverity.Hidden,
                     Locations =
                          new[] {
-                                new DiagnosticResultLocation("Test0.cs", 11, 15)
+                                new DiagnosticResultLocation("Test0.cs", 10, 21)
                                }
                 };
 
-                this.VerifyCSharpDiagnostic(testCode, "public", expected);
+                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
 
 
@@ -616,7 +598,9 @@ namespace ConsoleApp4
         [InlineData(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
-            CodeDocumentorPackage.Options.UseNaturalLanguageForReturnNode = false;
+            _fixture.OptionsPropertyCallback = (o) => {
+                o.UseNaturalLanguageForReturnNode = false;
+            };
             var expected = new DiagnosticResult
             {
                 Id = MethodAnalyzerSettings.DiagnosticId,
@@ -628,9 +612,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+            VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>
@@ -650,12 +634,7 @@ namespace ConsoleApp4
         {
             if (diagType == "private")
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicMethodAnalyzer();
-            }
-            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
-            {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new MethodAnalyzer();
         }

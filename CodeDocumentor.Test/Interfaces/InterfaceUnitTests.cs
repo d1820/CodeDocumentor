@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,58 +7,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Interfaces
 {
-    [SuppressMessage("XMLDocumentation", "")]
-    public partial class InterfaceUnitTest
-    {
-        /// <summary>
-        /// The test code.
-        /// </summary>
-        private const string TestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public interface IInterfaceTester
-	{
-	}
-}";
-
-        /// <summary>
-        /// The test fix code.
-        /// </summary>
-        private const string TestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-    /// <summary>
-    /// The interface tester interface.
-    /// </summary>
-    public interface IInterfaceTester
-	{
-	}
-}";
-    }
 
     /// <summary>
     /// The interface unit test.
     /// </summary>
-
-    public partial class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public InterfaceUnitTest(TestFixure fixture)
+        public InterfaceUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
 
         /// <summary>
@@ -68,7 +30,7 @@ namespace ConsoleApp4
         [InlineData("")]
         public void NoDiagnosticsShow(string testCode)
         {
-            this.VerifyCSharpDiagnostic(testCode);
+            VerifyCSharpDiagnostic(testCode);
         }
 
         /// <summary>
@@ -79,9 +41,11 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(TestCode, TestFixCode, 8, 19)]
+        [InlineData("TestCode.cs", "TestFixCode.cs", 7, 22)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
+            var fix = _fixture.LoadTestFile($@"./Interfaces/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Interfaces/TestFiles/{testCode}");
             var expected = new DiagnosticResult
             {
                 Id = InterfaceAnalyzerSettings.DiagnosticId,
@@ -93,9 +57,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

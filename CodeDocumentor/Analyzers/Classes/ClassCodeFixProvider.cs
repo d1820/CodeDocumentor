@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -52,8 +53,9 @@ namespace CodeDocumentor
             Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
 
             ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -73,11 +75,12 @@ namespace CodeDocumentor
         /// <param name="nodesToReplace">The nodes to replace.</param>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true
+                if (optionsService.IsEnabledForPublicMembersOnly
                     && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                 {
                     continue;
@@ -109,7 +112,7 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText.AsSpan());
+            string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)

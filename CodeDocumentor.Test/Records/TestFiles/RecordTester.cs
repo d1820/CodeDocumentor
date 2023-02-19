@@ -4,8 +4,7 @@ using System.Text;
 
 namespace ConsoleApp4
 {
-    /// <inheritdoc/>
-    public class ClassTesterInherit
+    partial record RecordTester
     {
     }
 }

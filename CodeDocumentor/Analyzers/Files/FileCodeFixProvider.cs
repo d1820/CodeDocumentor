@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -52,6 +53,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            //if (CodeDocumentorPackage.IsDebugMode)
+            //{
+            //    return;
+            //}
             Diagnostic diagnostic = context.Diagnostics.First();
 
             //build it up, but check for counts if anything actually needs to be shown

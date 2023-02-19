@@ -23,9 +23,7 @@ namespace Welcom.Test
     public class Field_Tester_Spacer
     {
 
-        /// <summary>
-        /// The const field tester.
-        /// </summary>
+
         const int ConstFieldTester = 666;
 
         /// <summary>
@@ -34,6 +32,7 @@ namespace Welcom.Test
         public Field_Tester_Spacer()
         {
         }
+
 
         /// <summary>
         /// Check on the user OCR.
@@ -44,19 +43,17 @@ namespace Welcom.Test
             return "";
         }
 
-        /// <summary>
-        /// Ensure actions.
-        /// </summary>
-        /// <returns>A string.</returns>
-        public string EnsureActions()
+        public string EnsureActionsInvoked()
         {
             return "";
         }
 
-        /// <summary>
-        /// Could save file.
-        /// </summary>
-        /// <returns>A string.</returns>
+        public bool EnsureValid()
+        {
+            return true;
+
+        }
+
         public string CouldSaveFile()
         {
             return "";
@@ -78,7 +75,9 @@ namespace Welcom.Test
     /// </summary>
     public class FieldOCRTester
     {
+        public const bool IS_CONTAINER = true;
 
+        const string SERVER_ORG_CODE = "test";
 
         /// <summary>
         /// The const field tester.
@@ -98,29 +97,52 @@ namespace Welcom.Test
         {
         }
 
-        /// <summary>
-        /// Does the work.
-        /// </summary>
-        /// <returns>A string.</returns>
+        public string AtTime()
+        {
+            return "";
+        }
+
+        public string OfTime()
+        {
+            return "";
+        }
+
+        public string AnTime()
+        {
+            return "";
+        }
+
+        public string ByTime()
+        {
+            return "";
+        }
+
+        public string InTime()
+        {
+            return "";
+        }
+
+        public bool IsValid()
+        {
+            return true;
+        }
+
+        public string OnExecuteAsync()
+        {
+            return "";
+        }
+
         public string DoWork()
         {
             return "";
         }
 
-        /// <summary>
-        /// Does the work with params.
-        /// </summary>
-        /// <param name="test">The test.</param>
-        /// <returns>A string.</returns>
+
         public string DoWorkWithParams(string test)
         {
             return "";
         }
 
-        /// <summary>
-        /// Converts to upper case.
-        /// </summary>
-        /// <returns>A string.</returns>
         public string ToUpperCase()
         {
             return "";
@@ -143,6 +165,34 @@ namespace Welcom.Test
         /// Prevents a default instance of the <see cref="PrivateClass"/> class from being created.
         /// </summary>
         private PrivateClass()
+        {
+        }
+    }
+
+    /// <summary>
+    /// The private record.
+    /// </summary>
+    internal record PrivateRecord
+    {
+
+        const int ConstFieldTester = 666;
+
+
+        private PrivateRecord(string test)
+        {
+        }
+    }
+
+    /// <summary>
+    /// The public record.
+    /// </summary>
+    public record PublicRecord
+    {
+
+        const int ConstFieldTester = 666;
+
+
+        private PublicRecord()
         {
         }
     }

@@ -1,6 +1,9 @@
 ﻿// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
+using System.Linq;
+using CodeDocumentor.Helper;
+
 namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
@@ -15,6 +18,7 @@ namespace CodeDocumentor.Vsix2022
             public const string METHOD_DIAGNOSTIC_ID = "CD1605";
             public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
             public const string FILE_DIAGNOSTIC_ID = "CD1607";
+            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
         }
 
         public static WordMap[] WORD_MAPS { get; set; } = new[] {
@@ -34,12 +38,27 @@ namespace CodeDocumentor.Vsix2022
 
         public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "To", Translation = "Converts to" },
-            new WordMap { Word = "Do", Translation = "Does" },
+            new WordMap { Word = "Do", Translation = "Does" }
         };
 
-        public static string[] PLURALIZE_EXCLUSION_LIST { get; set; } = new[] { "to", "do" };
+        //These should match the 
+        public static string[] PLURALIZE_ANYWAY_LIST()
+        {
+            return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
+        }
 
-        public static string[] ADD_THE_EXCLUSION_LIST { get; set; } = new[] { "does" };
+        public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
+            new WordMap { Word = "Is", Translation = "Checks if is" },
+            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
+                    if(!string.IsNullOrEmpty( nextWord) && Pluralizer.IsPlural(nextWord)){
+                        return "Checks if";
+                    }
+                    return translation;
+                }
+            }
+        };
+
+        public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
         public static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] { "accept",
                                                                     "add",
@@ -686,11 +705,14 @@ namespace CodeDocumentor.Vsix2022
                                                                     "zoom",
                                                                     //Auxillary verbs
                                                                     "is", "am", "are", "was", "were", "been", "being", "have", "does",
-                                                                    "has", "had", "having", "to", "do",
+                                                                    "has", "had", "having",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
-                                                                    "dare", "need", "used", "ought", "goes",
+                                                                    "dare", "need", "used", "ought", "goes", 
                                                                     //pluralization conversions
                                                                     "converts to",
+                                                                    "checks if is",
+                                                                    //Other types
+                                                                    "on", "by", "an", "in", "at", "of",
         };
     }
 }

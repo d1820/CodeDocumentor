@@ -78,7 +78,7 @@ namespace CodeDocumentor
         {
             SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
 
-            string comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText.AsSpan());
+            string comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -52,7 +53,8 @@ namespace CodeDocumentor
 
             PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declaration))
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -74,9 +76,10 @@ namespace CodeDocumentor
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.PropertyDeclaration)).OfType<PropertyDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             foreach (var declarationSyntax in declarations)
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                 {
                     continue;
                 }
@@ -124,10 +127,10 @@ namespace CodeDocumentor
                 }
             }
 
-            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText.AsSpan(), isBoolean, hasSetter);
+            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(propertyComment));
-
-            if (CodeDocumentorPackage.Options.IncludeValueNodeInProperties)
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            if (optionsService.IncludeValueNodeInProperties)
             {
                 string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false);
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));

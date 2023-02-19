@@ -1,26 +1,70 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using SimpleInjector;
+using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public static class TestFixture
+    public class TestFixture
     {
-        public static IOptionPageGrid BuildOptionsPageGrid()
-        {
-            CodeDocumentorPackage.Options = new TestOptionsPageGrid();
+        public const string DIAG_TYPE_PUBLIC = "public";
+        public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
+        public const string DIAG_TYPE_PRIVATE = "private";
 
-            //FieldInfo field = typeof(CodeDocumentorPackage).GetField("_options", BindingFlags.NonPublic | BindingFlags.Static);
-            //var opts = (TestOptionsPageGrid)field.GetValue(null);
-            //if (opts == null)
-            //{
-            //    CodeDocumentorPackage.Options = options;
-            //}
-            return CodeDocumentorPackage.Options;
+        public Action<IOptionsService> OptionsPropertyCallback { get; set; }
+
+        public TestFixture()
+        {
+            Runtime.RunningUnitTests = true;
+
+            if (CodeDocumentorPackage.DIContainer() == null)
+            {
+                var DIContainer = new Container();
+                DIContainer.Register<IOptionsService>(() =>
+                {
+                    var os = new TestOptionsService();
+                    OptionsPropertyCallback?.Invoke(os);
+                    return os;
+                }, Lifestyle.Transient);
+
+                CodeDocumentorPackage.DIContainer(DIContainer);
+            }
+        }
+
+        public void SetPublicProcessingOption(IOptionsService o, string diagType)
+        {
+            if (diagType == DIAG_TYPE_PRIVATE)
+            {
+                o.IsEnabledForPublicMembersOnly = false;
+            }
+            if (diagType == DIAG_TYPE_PUBLIC_ONLY)
+            {
+                o.IsEnabledForPublicMembersOnly = true;
+            }
+        }
+
+        public string LoadTestFile(string relativePath)
+        {
+            return File.ReadAllText(relativePath);
+        }
+
+        public void AssertOutputContainsCount(string[] source, string searchTerm, int numOfTimes)
+        {
+            var matchQuery = from word in source
+                             where word.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) > -1
+                             select word;
+
+            matchQuery.Count().Should().Be(numOfTimes);
         }
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, SyntaxKind innerKindValue)
@@ -90,7 +134,7 @@ namespace CodeDocumentor.Test
             return item;
         }
 
-        public static IdentifierNameSyntax GetReturnType(this MethodDeclarationSyntax methodDeclaration)
+        public static IdentifierNameSyntax GetReturnType(MethodDeclarationSyntax methodDeclaration)
         {
             foreach (var childNode in methodDeclaration.ChildNodes())
             {

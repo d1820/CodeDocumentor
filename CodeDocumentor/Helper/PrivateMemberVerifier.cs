@@ -25,6 +25,21 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
+        /// Is private member.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        /// <returns>A bool.</returns>
+        public static bool IsPrivateMember(RecordDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Are the private member.
         /// </summary>
         /// <param name="node">The node.</param>

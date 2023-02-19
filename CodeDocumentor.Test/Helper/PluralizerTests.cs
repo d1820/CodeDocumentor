@@ -9,6 +9,7 @@ namespace CodeDocumentor.Test.Helper
         [Theory]
         [InlineData("Do", "Does")]
         [InlineData("To", "Converts to")]
+        [InlineData("Is", "Checks if is")]
         public void Pluralizer_ConvertsDoCorrectly(string word, string converted)
         {
             var result = Pluralizer.Pluralize(word);

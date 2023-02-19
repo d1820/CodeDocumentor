@@ -2,11 +2,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using CodeDocumentor.Services;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
+using SimpleInjector;
 using Xunit;
 
 namespace CodeDocumentor.Test
@@ -20,7 +23,7 @@ namespace CodeDocumentor.Test
     {
         protected CodeFixVerifier()
         {
-            TestFixture.BuildOptionsPageGrid();
+           
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -22,7 +23,8 @@ namespace CodeDocumentor
         {
             get
             {
-                if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                if (optionsService.IsEnabledForPublicMembersOnly)
                 {
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
                 }
@@ -50,8 +52,9 @@ namespace CodeDocumentor
             {
                 return;
             }
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
 
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true)
+            if (optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;
             }

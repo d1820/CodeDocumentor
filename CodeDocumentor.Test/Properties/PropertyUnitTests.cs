@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,27 +7,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Properties
 {
     [SuppressMessage("XMLDocumentation", "")]
     public partial class PropertyUnitTest
     {
-        /// <summary>
-        /// The inherit doc test code.
-        /// </summary>
-        private const string InheritDocTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class PropertyTester
-	{
-		/// <inheritdoc/>
-		public string PersonName { get; set; }
-	}
-}";
 
         /// <summary>
         /// The property with getter setter test code.
@@ -383,15 +368,13 @@ namespace ConsoleApp4
     /// The property unit test.
     /// </summary>
 
-    public partial class PropertyUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class PropertyUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public PropertyUnitTest(TestFixure fixture)
+        public PropertyUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
         }
 
         /// <summary>
@@ -400,15 +383,16 @@ namespace ConsoleApp4
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        [InlineData(InheritDocTestCode)]
+        [InlineData("InheritDocTestCode.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
             {
-                this.VerifyCSharpDiagnostic(testCode, "public");
+                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
+                var file = _fixture.LoadTestFile($@"./Properties/TestFiles/{testCode}");
                 var expected = new DiagnosticResult
                 {
                     Id = PropertyAnalyzerSettings.DiagnosticId,
@@ -416,11 +400,11 @@ namespace ConsoleApp4
                     Severity = DiagnosticSeverity.Hidden,
                     Locations =
                          new[] {
-                                new DiagnosticResultLocation("Test0.cs", 11, 17)
+                                new DiagnosticResultLocation("Test0.cs", 10, 23)
                                }
                 };
 
-                this.VerifyCSharpDiagnostic(testCode, "public", expected);
+                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
         }
 
@@ -432,18 +416,21 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC)]
-        [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PRIVATE)]
+        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC)]
+        [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
+            _fixture.OptionsPropertyCallback = (o) => {
+                _fixture.SetPublicProcessingOption(o, diagType);
+            };
             var expected = new DiagnosticResult
             {
                 Id = PropertyAnalyzerSettings.DiagnosticId,
@@ -455,9 +442,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, diagType, expected);
+            VerifyCSharpDiagnostic(testCode, diagType, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, diagType);
+            VerifyCSharpFix(testCode, fixCode, diagType);
         }
 
         /// <summary>
@@ -475,14 +462,9 @@ namespace ConsoleApp4
         /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
-            if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
+            if (diagType == TestFixture.DIAG_TYPE_PRIVATE)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
                 return new NonPublicPropertyAnalyzer();
-            }
-            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
-            {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
             }
             return new PropertyAnalyzer();
         }

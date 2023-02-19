@@ -10,14 +10,11 @@ namespace CodeDocumentor.Test.Helper
     [SuppressMessage("XMLDocumentation", "")]
     public class TranslatorTests
     {
+        private readonly TestFixture _testFixure;
+
         public TranslatorTests()
         {
-            TestFixture.BuildOptionsPageGrid();
-
-            var temp = CodeDocumentorPackage.Options.WordMaps.ToList();
-            temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
-            temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
-            CodeDocumentorPackage.Options.WordMaps = temp.ToArray();
+            _testFixure = new TestFixture();
         }
 
         [Theory]
@@ -41,6 +38,12 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
+            _testFixure.OptionsPropertyCallback = (o) => {
+                var temp = o.WordMaps.ToList();
+                temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
+                temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+                o.WordMaps = temp.ToArray();
+            };
             var translated = input.Translate();
             translated.Should().Be(output);
         }

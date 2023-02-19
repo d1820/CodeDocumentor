@@ -1,22 +1,31 @@
 ﻿using System;
 using System.Linq;
 using CodeDocumentor.Vsix2022;
-using ThirdPartPluralizer = Pluralize.NET;
 
 namespace CodeDocumentor.Helper
 {
+
     /// <summary>
     ///   The pluralizer to pluralize word.
     /// </summary>
     public static class Pluralizer
     {
-        internal static ThirdPartPluralizer.Pluralizer pl = new ThirdPartPluralizer.Pluralizer();
+        internal static CustomPluralizer pl = new CustomPluralizer();
 
         static Pluralizer()
         {
-            pl.AddIrregularRule("Do", "Does");
-            pl.AddIrregularRule("To", "Converts to");
+            foreach (var item in Constants.INTERNAL_WORD_MAPS)
+            {
+                pl.UpsertIrregularRule(item.Word, item.Translation);
+            }
         }
+
+        /// <summary>
+        /// Is plural.
+        /// </summary>
+        /// <param name="word">The word.</param>
+        /// <returns>A bool.</returns>
+        public static bool IsPlural(string word) => pl.IsPlural(word);
 
         /// <summary>
         ///   Pluralizes word.
@@ -25,8 +34,13 @@ namespace CodeDocumentor.Helper
         /// <returns> A plural word. </returns>
         public static string Pluralize(string word)
         {
-            var skipPlural = word.IsVerbCombo();
-            var pluarlizeAnyway = Constants.PLURALIZE_EXCLUSION_LIST.Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
+            return Pluralize(word, null);
+        }
+
+        public static string Pluralize(string word, string nextWord)
+        {
+            var skipPlural = word.IsVerbCombo(nextWord);
+            var pluarlizeAnyway = Constants.PLURALIZE_ANYWAY_LIST().Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
             if (!skipPlural || pluarlizeAnyway)
             {
                 return pl.Pluralize(word);
@@ -34,15 +48,14 @@ namespace CodeDocumentor.Helper
             return word;
         }
 
-        public static string Pluralize(string word, string nextWord)
+        public static string PluralizeCustom(string word, string nextWord = null)
         {
-            var skipPlural = word.IsVerbCombo(nextWord);
-            var pluarlizeAnyway = Constants.PLURALIZE_EXCLUSION_LIST.Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
-            if (!skipPlural || pluarlizeAnyway)
+            var convertCustom = Constants.PLURALIZE_CUSTOM_LIST.FirstOrDefault(f => f.Word.Equals(word, StringComparison.InvariantCultureIgnoreCase));
+            if(convertCustom == null)
             {
-                return pl.Pluralize(word);
+                return word;
             }
-            return word;
+            return convertCustom.GetTranslation(nextWord);
         }
     }
 }

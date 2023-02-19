@@ -9,11 +9,11 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class CommentHelperTests : IClassFixture<TestFixure>
+    public class CommentHelperTests : IClassFixture<TestFixture>
     {
-        private readonly TestFixure fixture;
+        private readonly TestFixture fixture;
 
-        public CommentHelperTests(TestFixure fixture)
+        public CommentHelperTests(TestFixture fixture)
         {
             this.fixture = fixture;
         }

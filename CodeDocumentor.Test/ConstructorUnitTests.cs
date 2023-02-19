@@ -155,15 +155,15 @@ namespace ConsoleApp4
     /// </summary>
 
     [SuppressMessage("XMLDocumentation", "")]
-    public partial class ConstrcutorUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class ConstrcutorUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public ConstrcutorUnitTest(TestFixure fixture)
+        public ConstrcutorUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+            DIContainer = fixture.DIContainer;
+            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -204,9 +204,9 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(PublicConstructorTestCode, PublicContructorTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PrivateConstructorTestCode, PrivateContructorTestFixCode, 10, 11, TestFixure.DIAG_TYPE_PRIVATE)]
-        [InlineData(PublicConstructorWithBooleanParameterTestCode, PublicContructorWithBooleanParameterTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PublicConstructorTestCode, PublicContructorTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PrivateConstructorTestCode, PrivateContructorTestFixCode, 10, 11, TestFixture.DIAG_TYPE_PRIVATE)]
+        [InlineData(PublicConstructorWithBooleanParameterTestCode, PublicContructorWithBooleanParameterTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var expected = new DiagnosticResult
@@ -242,12 +242,15 @@ namespace ConsoleApp4
         {
             if (diagType == "private")
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
+                if (!BypassSettingPublicMembersOnly)
+                {
+                    _optionsService.IsEnabledForPublicMembersOnly = false;
+                }
                 return new NonPublicConstructorAnalyzer();
             }
-            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
+                _optionsService.IsEnabledForPublicMembersOnly = true;
             }
             return new ConstructorAnalyzer();
         }

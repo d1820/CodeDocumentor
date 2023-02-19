@@ -49,15 +49,15 @@ namespace Test
     /// The enum unit test.
     /// </summary>
 
-    public partial class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public EnumUnitTest(TestFixure fixture)
+        public EnumUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+            DIContainer = fixture.DIContainer;
+            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace Test
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            this.VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+            this.VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

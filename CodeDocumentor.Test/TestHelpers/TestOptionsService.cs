@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TestOptionsPageGrid : IOptionPageGrid
+    public class TestOptionsService : IOptionsService
     {
         public bool ExcludeAsyncSuffix { get; set; }
 
@@ -19,7 +20,7 @@ namespace CodeDocumentor.Test
 
         public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
 
-        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
+        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
         public bool IgnoreAllUppercaseNames { get; set; }
     }

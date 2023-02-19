@@ -4,14 +4,14 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
-namespace CodeDocumentor.Test.Helper
+namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class ReturnCommentConstructionTests : IClassFixture<TestFixure>
+    public class ReturnCommentConstructionTests : IClassFixture<TestFixture>
     {
         private ReturnCommentConstruction _returnCommentBuilder;
 
-        public ReturnCommentConstructionTests(TestFixure testFixure)
+        public ReturnCommentConstructionTests(TestFixture testFixure)
         {
             _returnCommentBuilder = new ReturnCommentConstruction();
         }
@@ -301,7 +301,7 @@ namespace CodeDocumentor.Test.Helper
         public void IdentifierNameSyntaxComment_CreatesValidTypeParamRef()
         {
             var roc = TestFixture.BuildMethodDeclarationSyntax("CustomClass", "TestMethod");
-            var returnType = roc.GetReturnType();
+            var returnType = TestFixture.GetReturnType(roc);
 
             returnType.Should().NotBeNull();
             var comment = _returnCommentBuilder.BuildComment(returnType, false);

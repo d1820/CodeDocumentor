@@ -5,12 +5,12 @@ using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
 
-namespace CodeDocumentor.Test.Helper
+namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TranslatorTests : IClassFixture<TestFixure>
+    public class TranslatorTests : IClassFixture<TestFixture>
     {
-        public TranslatorTests(TestFixure testFixure)
+        public TranslatorTests(TestFixture testFixure)
         {
             var temp = testFixure.OptionsService.WordMaps.ToList();
             temp.Add(new WordMap { Word = "You're", Translation = "You Are" });

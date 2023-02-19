@@ -11,11 +11,11 @@ namespace CodeDocumentor.Test
     /// <summary>
     /// The class unit test.
     /// </summary>
-    public class ClassUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public class ClassUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
         
-        public ClassUnitTest(TestFixure fixture)
+        public ClassUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
             DIContainer = fixture.DIContainer;
@@ -62,8 +62,8 @@ namespace CodeDocumentor.Test
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData("ClassTester.cs", "ClassTesterFix.cs", 7, 19, TestFixure.DIAG_TYPE_PRIVATE)]
-        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("ClassTester.cs", "ClassTesterFix.cs", 7, 19, TestFixture.DIAG_TYPE_PRIVATE)]
+        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($@"./Classes/TestFiles/{fixCode}");
@@ -93,9 +93,9 @@ namespace CodeDocumentor.Test
             _optionsService.IsEnabledForPublicMembersOnly = true;
             BypassSettingPublicMembersOnly = true;
 
-            this.VerifyCSharpDiagnostic(test, TestFixure.DIAG_TYPE_PRIVATE);
+            this.VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PRIVATE);
 
-            this.VerifyCSharpFix(test, fix, TestFixure.DIAG_TYPE_PRIVATE);
+            this.VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PRIVATE);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace CodeDocumentor.Test
         /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
-            if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
+            if (diagType == TestFixture.DIAG_TYPE_PRIVATE)
             {
                 if (!BypassSettingPublicMembersOnly)
                 {
@@ -121,7 +121,7 @@ namespace CodeDocumentor.Test
                 }
                 return new NonPublicClassAnalyzer();
             }
-            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
+            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
             {
                 _optionsService.IsEnabledForPublicMembersOnly = true;
             }

@@ -49,15 +49,15 @@ namespace ConsoleApp4
     /// The interface unit test.
     /// </summary>
 
-    public partial class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public InterfaceUnitTest(TestFixure fixture)
+        public InterfaceUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+            DIContainer = fixture.DIContainer;
+            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            this.VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+            this.VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

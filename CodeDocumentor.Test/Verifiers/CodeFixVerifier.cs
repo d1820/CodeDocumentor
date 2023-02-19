@@ -23,7 +23,7 @@ namespace CodeDocumentor.Test
     {
         protected Container DIContainer;
         protected bool BypassSettingPublicMembersOnly;
-        protected OptionsService _optionsService;
+        protected IOptionsService _optionsService;
 
         protected CodeFixVerifier()
         {

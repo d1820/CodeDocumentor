@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -39,8 +40,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-
-            if (CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly == true && PrivateMemberVerifier.IsPrivateMember(node))
+            var optionsService = CodeDocumentorPackage.DIContainer.GetInstance<IOptionsService>();
+            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }

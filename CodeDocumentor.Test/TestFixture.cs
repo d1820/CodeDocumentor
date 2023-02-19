@@ -1,21 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using SimpleInjector;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeDocumentor.Test
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public static class TestFixture
+    public class TestFixture
     {
-        [Obsolete]
-        public static IOptionPageGrid BuildOptionsPageGrid()
+        public const string DIAG_TYPE_PUBLIC = "public";
+        public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
+        public const string DIAG_TYPE_PRIVATE = "private";
+
+        public Container DIContainer;
+        public IOptionsService OptionsService;
+
+        public TestFixture()
         {
-            CodeDocumentorPackage.Options = new TestOptionsPageGrid();
-            return CodeDocumentorPackage.Options;
+            Runtime.RunningUnitTests = true;
+
+            CodeDocumentorPackage.DIContainer = DIContainer = new Container();
+            OptionsService = new TestOptionsService();
+            DIContainer.Register(() =>
+            {
+                OptionsService = new TestOptionsService();
+                return OptionsService;
+            }, Lifestyle.Transient);
+        }
+
+        public string LoadTestFile(string relativePath)
+        {
+            return File.ReadAllText(relativePath);
+        }
+
+        public void AssertOutputContainsCount(string[] source, string searchTerm, int numOfTimes)
+        {
+            var matchQuery = from word in source
+                             where word.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) > -1
+                             select word;
+
+            matchQuery.Count().Should().Be(numOfTimes);
         }
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, SyntaxKind innerKindValue)
@@ -85,7 +117,7 @@ namespace CodeDocumentor.Test
             return item;
         }
 
-        public static IdentifierNameSyntax GetReturnType(this MethodDeclarationSyntax methodDeclaration)
+        public static IdentifierNameSyntax GetReturnType(MethodDeclarationSyntax methodDeclaration)
         {
             foreach (var childNode in methodDeclaration.ChildNodes())
             {

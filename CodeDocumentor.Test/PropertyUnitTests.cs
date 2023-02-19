@@ -383,15 +383,15 @@ namespace ConsoleApp4
     /// The property unit test.
     /// </summary>
 
-    public partial class PropertyUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class PropertyUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public PropertyUnitTest(TestFixure fixture)
+        public PropertyUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+            DIContainer = fixture.DIContainer;
+            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -432,16 +432,16 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixure.DIAG_TYPE_PUBLIC_ONLY)]
-        [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixure.DIAG_TYPE_PUBLIC)]
-        [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixure.DIAG_TYPE_PRIVATE)]
+        [InlineData(PropertyWithGetterSetterTestCode, PropertyWithGetterSetterTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyOnlyGetterTestCode, PropertyOnlyGetterTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC)]
+        [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var expected = new DiagnosticResult
@@ -475,14 +475,17 @@ namespace ConsoleApp4
         /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
-            if (diagType == TestFixure.DIAG_TYPE_PRIVATE)
+            if (diagType == TestFixture.DIAG_TYPE_PRIVATE)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
+                if (!BypassSettingPublicMembersOnly)
+                {
+                    _optionsService.IsEnabledForPublicMembersOnly = false;
+                }
                 return new NonPublicPropertyAnalyzer();
             }
-            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
+                _optionsService.IsEnabledForPublicMembersOnly = true;
             }
             return new PropertyAnalyzer();
         }

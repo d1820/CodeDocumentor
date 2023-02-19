@@ -80,15 +80,15 @@ namespace ConsoleApp4
     /// The field unit test.
     /// </summary>
 
-    public partial class FieldUnitTest : CodeFixVerifier, IClassFixture<TestFixure>
+    public partial class FieldUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
-        private readonly TestFixure _fixture;
+        private readonly TestFixture _fixture;
 
-        public FieldUnitTest(TestFixure fixture)
+        public FieldUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            TestFixture.BuildOptionsPageGrid();
-            CodeDocumentorPackage.Options.DefaultDiagnosticSeverity = DiagnosticSeverity.Warning;
+            DIContainer = fixture.DIContainer;
+            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -125,9 +125,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY, expected);
+            this.VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixure.DIAG_TYPE_PUBLIC_ONLY);
+            this.VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>
@@ -147,12 +147,15 @@ namespace ConsoleApp4
         {
             if (diagType == "private")
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = false;
+                if (!BypassSettingPublicMembersOnly)
+                {
+                    _optionsService.IsEnabledForPublicMembersOnly = false;
+                }
                 return new NonPublicFieldAnalyzer();
             }
-            if (diagType == TestFixure.DIAG_TYPE_PUBLIC_ONLY)
+            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
             {
-                CodeDocumentorPackage.Options.IsEnabledForPublicMembersOnly = true;
+                _optionsService.IsEnabledForPublicMembersOnly = true;
             }
             return new FieldAnalyzer();
         }

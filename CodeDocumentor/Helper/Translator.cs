@@ -86,9 +86,12 @@ namespace CodeDocumentor.Helper
                 return converted;
             }
 
-            var mergedWorkMaps = new List<WordMap>(optionsService.WordMaps);
+            var mergedWorkMaps = new HashSet<WordMap>(optionsService.WordMaps);
             //Some stuff just needs to be handled for the user
-            mergedWorkMaps.AddRange(Constants.INTERNAL_WORD_MAPS);
+            foreach (var item in Constants.INTERNAL_WORD_MAPS)
+            {
+                mergedWorkMaps.Add(item);
+            }
             foreach (var wordMap in mergedWorkMaps)
             {
                 converted = Regex.Replace(converted, string.Format(wordMatchRegexTemplate, wordMap.Word), wordMap.Translation);

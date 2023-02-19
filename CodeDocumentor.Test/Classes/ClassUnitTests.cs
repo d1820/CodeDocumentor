@@ -1,4 +1,5 @@
 ﻿using CodeDocumentor.Services;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,7 +7,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Classes
 {
     /// <summary>
     /// The class unit test.
@@ -14,12 +15,10 @@ namespace CodeDocumentor.Test
     public class ClassUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
-        
+
         public ClassUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            DIContainer = fixture.DIContainer;
-            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace CodeDocumentor.Test
         {
             if (testCode == string.Empty)
             {
-                this.VerifyCSharpDiagnostic(testCode, "public");
+                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
@@ -50,7 +49,7 @@ namespace CodeDocumentor.Test
                                }
                 };
 
-                this.VerifyCSharpDiagnostic(file, "public", expected);
+                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
         }
 
@@ -69,6 +68,10 @@ namespace CodeDocumentor.Test
             var fix = _fixture.LoadTestFile($@"./Classes/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($@"./Classes/TestFiles/{testCode}");
 
+            _fixture.OptionsPropertyCallback = (o) =>
+            {
+                _fixture.SetPublicProcessingOption(o, diagType);
+            };
             var expected = new DiagnosticResult
             {
                 Id = ClassAnalyzerSettings.DiagnosticId,
@@ -80,9 +83,9 @@ namespace CodeDocumentor.Test
                         }
             };
 
-            this.VerifyCSharpDiagnostic(test, diagType, expected);
+            VerifyCSharpDiagnostic(test, diagType, expected);
 
-            this.VerifyCSharpFix(test, fix, diagType);
+            VerifyCSharpFix(test, fix, diagType);
         }
 
         [Fact]
@@ -90,12 +93,14 @@ namespace CodeDocumentor.Test
         {
             var fix = _fixture.LoadTestFile($@"./Classes/TestFiles/ClassTester.cs");
             var test = _fixture.LoadTestFile($@"./Classes/TestFiles/ClassTester.cs");
-            _optionsService.IsEnabledForPublicMembersOnly = true;
-            BypassSettingPublicMembersOnly = true;
+            _fixture.OptionsPropertyCallback = (o) =>
+            {
+                o.IsEnabledForPublicMembersOnly = true;
+            };
 
-            this.VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PRIVATE);
+            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PRIVATE);
 
-            this.VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PRIVATE);
+            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PRIVATE);
         }
 
         /// <summary>
@@ -115,15 +120,7 @@ namespace CodeDocumentor.Test
         {
             if (diagType == TestFixture.DIAG_TYPE_PRIVATE)
             {
-                if (!BypassSettingPublicMembersOnly)
-                {
-                    _optionsService.IsEnabledForPublicMembersOnly = false;
-                }
                 return new NonPublicClassAnalyzer();
-            }
-            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
-            {
-                _optionsService.IsEnabledForPublicMembersOnly = true;
             }
             return new ClassAnalyzer();
         }

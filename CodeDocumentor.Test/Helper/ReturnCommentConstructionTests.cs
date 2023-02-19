@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
     public class ReturnCommentConstructionTests : IClassFixture<TestFixture>

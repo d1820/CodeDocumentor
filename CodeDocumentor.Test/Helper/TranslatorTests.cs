@@ -5,17 +5,16 @@ using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TranslatorTests : IClassFixture<TestFixture>
+    public class TranslatorTests
     {
-        public TranslatorTests(TestFixture testFixure)
+        private readonly TestFixture _testFixure;
+
+        public TranslatorTests()
         {
-            var temp = testFixure.OptionsService.WordMaps.ToList();
-            temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
-            temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
-            testFixure.OptionsService.WordMaps = temp.ToArray();
+            _testFixure = new TestFixture();
         }
 
         [Theory]
@@ -39,6 +38,12 @@ namespace CodeDocumentor.Test
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
+            _testFixure.OptionsPropertyCallback = (o) => {
+                var temp = o.WordMaps.ToList();
+                temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
+                temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+                o.WordMaps = temp.ToArray();
+            };
             var translated = input.Translate();
             translated.Should().Be(output);
         }

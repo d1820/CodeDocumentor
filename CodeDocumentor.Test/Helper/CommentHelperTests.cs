@@ -9,20 +9,20 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class CommentHelperTests : IClassFixture<TestFixture>
+    public class CommentHelperTests
     {
         private readonly TestFixture fixture;
 
-        public CommentHelperTests(TestFixture fixture)
+        public CommentHelperTests()
         {
-            this.fixture = fixture;
+            fixture = new TestFixture();
         }
 
         //SpilitNameAndToLower
         [Fact]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
         {
-            fixture.OptionsService.ExcludeAsyncSuffix = true;
+            fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = true;
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
             result.Count.Should().Be(3);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();
@@ -33,7 +33,7 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse()
         {
-            fixture.OptionsService.ExcludeAsyncSuffix = false;
+            fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = false;
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync".AsSpan(), true);
             result.Count.Should().Be(4);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();

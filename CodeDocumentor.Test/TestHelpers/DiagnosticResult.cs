@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.TestHelpers
 {
     [SuppressMessage("XMLDocumentation", "")]
     public struct DiagnosticResultLocation
@@ -19,9 +19,9 @@ namespace CodeDocumentor.Test
                 throw new ArgumentOutOfRangeException(nameof(column), "column must be >= -1");
             }
 
-            this.Path = path;
-            this.Line = line;
-            this.Column = column;
+            Path = path;
+            Line = line;
+            Column = column;
         }
 
         public string Path { get; }
@@ -40,16 +40,16 @@ namespace CodeDocumentor.Test
         {
             get
             {
-                if (this.locations == null)
+                if (locations == null)
                 {
-                    this.locations = new DiagnosticResultLocation[] { };
+                    locations = new DiagnosticResultLocation[] { };
                 }
-                return this.locations;
+                return locations;
             }
 
             set
             {
-                this.locations = value;
+                locations = value;
             }
         }
 
@@ -63,7 +63,7 @@ namespace CodeDocumentor.Test
         {
             get
             {
-                return this.Locations.Length > 0 ? this.Locations[0].Path : "";
+                return Locations.Length > 0 ? Locations[0].Path : "";
             }
         }
 
@@ -71,7 +71,7 @@ namespace CodeDocumentor.Test
         {
             get
             {
-                return this.Locations.Length > 0 ? this.Locations[0].Line : -1;
+                return Locations.Length > 0 ? Locations[0].Line : -1;
             }
         }
 
@@ -79,7 +79,7 @@ namespace CodeDocumentor.Test
         {
             get
             {
-                return this.Locations.Length > 0 ? this.Locations[0].Column : -1;
+                return Locations.Length > 0 ? Locations[0].Column : -1;
             }
         }
     }

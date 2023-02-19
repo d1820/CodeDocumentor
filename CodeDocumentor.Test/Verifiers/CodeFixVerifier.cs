@@ -21,10 +21,6 @@ namespace CodeDocumentor.Test
     [SuppressMessage("XMLDocumentation", "")]
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
-        protected Container DIContainer;
-        protected bool BypassSettingPublicMembersOnly;
-        protected IOptionsService _optionsService;
-
         protected CodeFixVerifier()
         {
            

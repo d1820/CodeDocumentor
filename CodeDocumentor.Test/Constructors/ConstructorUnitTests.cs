@@ -1,4 +1,4 @@
-﻿using CodeDocumentor.Services;
+﻿using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -7,27 +7,28 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test.Records
+namespace CodeDocumentor.Test.Constructors
 {
     /// <summary>
-    /// The class unit test.
+    /// The constructor unit test.
     /// </summary>
-    public class RecordUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
+    [SuppressMessage("XMLDocumentation", "")]
+    public class ConstrcutorUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
 
-        public RecordUnitTest(TestFixture fixture)
+        public ConstrcutorUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
         }
 
         /// <summary>
-        /// No diagnostics show.
+        /// Nos diagnostics show.
         /// </summary>
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        [InlineData("RecordTesterInheritDoc.cs")]
+        [InlineData("InheritDocTestCode.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
@@ -36,16 +37,15 @@ namespace CodeDocumentor.Test.Records
             }
             else
             {
-                var file = _fixture.LoadTestFile($@"./Records/TestFiles/{testCode}");
-
+                var file = _fixture.LoadTestFile($@"./Constructors/TestFiles/{testCode}");
                 var expected = new DiagnosticResult
                 {
-                    Id = RecordAnalyzerSettings.DiagnosticId,
-                    Message = RecordAnalyzerSettings.MessageFormat,
+                    Id = ConstructorAnalyzerSettings.DiagnosticId,
+                    Message = ConstructorAnalyzerSettings.MessageFormat,
                     Severity = DiagnosticSeverity.Hidden,
                     Locations =
                          new[] {
-                                new DiagnosticResultLocation("Test0.cs", 8, 19)
+                                new DiagnosticResultLocation("Test0.cs", 10, 16)
                                }
                 };
 
@@ -61,20 +61,22 @@ namespace CodeDocumentor.Test.Records
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData("RecordTester.cs", "RecordTesterFix.cs", 7, 20, TestFixture.DIAG_TYPE_PRIVATE)]
-        [InlineData("PublicRecordTester.cs", "PublicRecordTesterFix.cs", 7, 27, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("PublicConstructorTestCode.cs", "PublicContructorTestFixCode.cs", 9, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("PrivateConstructorTestCode.cs", "PrivateContructorTestFixCode.cs", 9, 17, TestFixture.DIAG_TYPE_PRIVATE)]
+        [InlineData("PublicConstructorWithBooleanParameterTestCode.cs", "PublicContructorWithBooleanParameterTestFixCode.cs", 9, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
-            var fix = _fixture.LoadTestFile($@"./Records/TestFiles/{fixCode}");
-            var test = _fixture.LoadTestFile($@"./Records/TestFiles/{testCode}");
+            var fix = _fixture.LoadTestFile($@"./Constructors/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Constructors/TestFiles/{testCode}");
             _fixture.OptionsPropertyCallback = (o) =>
             {
                 _fixture.SetPublicProcessingOption(o, diagType);
             };
+
             var expected = new DiagnosticResult
             {
-                Id = RecordAnalyzerSettings.DiagnosticId,
-                Message = RecordAnalyzerSettings.MessageFormat,
+                Id = ConstructorAnalyzerSettings.DiagnosticId,
+                Message = ConstructorAnalyzerSettings.MessageFormat,
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {
@@ -90,8 +92,8 @@ namespace CodeDocumentor.Test.Records
         [Fact]
         public void SkipsDiagnosticAndFixWhenPublicOnlyTrue()
         {
-            var fix = _fixture.LoadTestFile($@"./Records/TestFiles/RecordTester.cs");
-            var test = _fixture.LoadTestFile($@"./Records/TestFiles/RecordTester.cs");
+            var fix = _fixture.LoadTestFile($@"./Constructors/TestFiles/PrivateConstructorTestCode.cs");
+            var test = _fixture.LoadTestFile($@"./Constructors/TestFiles/PrivateConstructorTestCode.cs");
             _fixture.OptionsPropertyCallback = (o) =>
             {
                 o.IsEnabledForPublicMembersOnly = true;
@@ -108,7 +110,7 @@ namespace CodeDocumentor.Test.Records
         /// <returns>A CodeFixProvider.</returns>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new RecordCodeFixProvider();
+            return new ConstructorCodeFixProvider();
         }
 
         /// <summary>
@@ -119,9 +121,9 @@ namespace CodeDocumentor.Test.Records
         {
             if (diagType == TestFixture.DIAG_TYPE_PRIVATE)
             {
-                return new NonPublicRecordAnalyzer();
+                return new NonPublicConstructorAnalyzer();
             }
-            return new RecordAnalyzer();
+            return new ConstructorAnalyzer();
         }
     }
 }

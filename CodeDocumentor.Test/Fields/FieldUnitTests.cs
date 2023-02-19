@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,89 +7,18 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Fields
 {
-    [SuppressMessage("XMLDocumentation", "")]
-    public partial class FieldUnitTest
-    {
-        /// <summary>
-        /// The inherit doc test code.
-        /// </summary>
-        private const string InheritDocTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class FieldTester
-	{
-		/// <inheritdoc/>
-		const int ConstFieldTester = 666;
-
-		public FieldTester()
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The const field test code.
-        /// </summary>
-        private const string ConstFieldTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class FieldTester
-	{
-		public const int ConstFieldTester = 666;
-
-		public FieldTester()
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The const field test fix code.
-        /// </summary>
-        private const string ConstFieldTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class FieldTester
-	{
-        /// <summary>
-        /// The const field tester.
-        /// </summary>
-        public const int ConstFieldTester = 666;
-
-		public FieldTester()
-		{
-		}
-	}
-}";
-    }
-
     /// <summary>
     /// The field unit test.
     /// </summary>
-
-    public partial class FieldUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
+    public class FieldUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
 
         public FieldUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            DIContainer = fixture.DIContainer;
-            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -97,10 +27,33 @@ namespace ConsoleApp4
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        [InlineData(InheritDocTestCode)]
+        [InlineData("InheritDocTestCode.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
-            this.VerifyCSharpDiagnostic(testCode);
+            VerifyCSharpDiagnostic(testCode);
+
+            if (testCode == string.Empty)
+            {
+                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
+            }
+            else
+            {
+                var file = _fixture.LoadTestFile($@"./Fields/TestFiles/{testCode}");
+
+                var expected = new DiagnosticResult
+                {
+                    Id = FieldAnalyzerSettings.DiagnosticId,
+                    Message = FieldAnalyzerSettings.MessageFormat,
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                         new[] {
+                                new DiagnosticResultLocation("Test0.cs", 10, 26)
+                               }
+                };
+
+                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
+
+            }
         }
 
         /// <summary>
@@ -111,9 +64,12 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(ConstFieldTestCode, ConstFieldTestFixCode, 10, 20)]
+        [InlineData("ConstFieldTestCode.cs", "ConstFieldTestFixCode.cs", 9, 26)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
+            var fix = _fixture.LoadTestFile($@"./Fields/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Fields/TestFiles/{testCode}");
+
             var expected = new DiagnosticResult
             {
                 Id = FieldAnalyzerSettings.DiagnosticId,
@@ -125,9 +81,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>
@@ -147,15 +103,7 @@ namespace ConsoleApp4
         {
             if (diagType == "private")
             {
-                if (!BypassSettingPublicMembersOnly)
-                {
-                    _optionsService.IsEnabledForPublicMembersOnly = false;
-                }
                 return new NonPublicFieldAnalyzer();
-            }
-            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
-            {
-                _optionsService.IsEnabledForPublicMembersOnly = true;
             }
             return new FieldAnalyzer();
         }

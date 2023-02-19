@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,58 +7,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
-{
-    [SuppressMessage("XMLDocumentation", "")]
-    public partial class InterfaceUnitTest
-    {
-        /// <summary>
-        /// The test code.
-        /// </summary>
-        private const string TestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public interface IInterfaceTester
-	{
-	}
-}";
-
-        /// <summary>
-        /// The test fix code.
-        /// </summary>
-        private const string TestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
+namespace CodeDocumentor.Test.Enums
 {
     /// <summary>
-    /// The interface tester interface.
-    /// </summary>
-    public interface IInterfaceTester
-	{
-	}
-}";
-    }
-
-    /// <summary>
-    /// The interface unit test.
+    /// The enum unit test.
     /// </summary>
 
-    public partial class InterfaceUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
+    public class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
 
-        public InterfaceUnitTest(TestFixture fixture)
+        public EnumUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            DIContainer = fixture.DIContainer;
-            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -68,7 +30,7 @@ namespace ConsoleApp4
         [InlineData("")]
         public void NoDiagnosticsShow(string testCode)
         {
-            this.VerifyCSharpDiagnostic(testCode);
+            VerifyCSharpDiagnostic(testCode);
         }
 
         /// <summary>
@@ -79,13 +41,15 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(TestCode, TestFixCode, 8, 19)]
+        [InlineData("TestCode.cs", "TestFixCode.cs", 7, 17)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
+            var fix = _fixture.LoadTestFile($@"./Enums/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($@"./Enums/TestFiles/{testCode}");
             var expected = new DiagnosticResult
             {
-                Id = InterfaceAnalyzerSettings.DiagnosticId,
-                Message = InterfaceAnalyzerSettings.MessageFormat,
+                Id = EnumAnalyzerSettings.DiagnosticId,
+                Message = EnumAnalyzerSettings.MessageFormat,
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {
@@ -93,9 +57,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>
@@ -104,7 +68,7 @@ namespace ConsoleApp4
         /// <returns>A CodeFixProvider.</returns>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new InterfaceCodeFixProvider();
+            return new EnumCodeFixProvider();
         }
 
         /// <summary>
@@ -113,7 +77,7 @@ namespace ConsoleApp4
         /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
-            return new InterfaceAnalyzer();
+            return new EnumAnalyzer();
         }
     }
 }

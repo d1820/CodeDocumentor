@@ -3,7 +3,7 @@ using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.TestHelpers
 {
     [SuppressMessage("XMLDocumentation", "")]
     public class TestOptionsService : IOptionsService

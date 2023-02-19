@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -6,27 +7,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
 
-namespace CodeDocumentor.Test
+namespace CodeDocumentor.Test.Properties
 {
     [SuppressMessage("XMLDocumentation", "")]
     public partial class PropertyUnitTest
     {
-        /// <summary>
-        /// The inherit doc test code.
-        /// </summary>
-        private const string InheritDocTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class PropertyTester
-	{
-		/// <inheritdoc/>
-		public string PersonName { get; set; }
-	}
-}";
 
         /// <summary>
         /// The property with getter setter test code.
@@ -390,8 +375,6 @@ namespace ConsoleApp4
         public PropertyUnitTest(TestFixture fixture)
         {
             _fixture = fixture;
-            DIContainer = fixture.DIContainer;
-            _optionsService = fixture.OptionsService;
         }
 
         /// <summary>
@@ -400,15 +383,16 @@ namespace ConsoleApp4
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        [InlineData(InheritDocTestCode)]
+        [InlineData("InheritDocTestCode.cs")]
         public void NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
             {
-                this.VerifyCSharpDiagnostic(testCode, "public");
+                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
+                var file = _fixture.LoadTestFile($@"./Properties/TestFiles/{testCode}");
                 var expected = new DiagnosticResult
                 {
                     Id = PropertyAnalyzerSettings.DiagnosticId,
@@ -416,11 +400,11 @@ namespace ConsoleApp4
                     Severity = DiagnosticSeverity.Hidden,
                     Locations =
                          new[] {
-                                new DiagnosticResultLocation("Test0.cs", 11, 17)
+                                new DiagnosticResultLocation("Test0.cs", 10, 23)
                                }
                 };
 
-                this.VerifyCSharpDiagnostic(testCode, "public", expected);
+                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
         }
 
@@ -444,6 +428,9 @@ namespace ConsoleApp4
         [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
         public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
+            _fixture.OptionsPropertyCallback = (o) => {
+                _fixture.SetPublicProcessingOption(o, diagType);
+            };
             var expected = new DiagnosticResult
             {
                 Id = PropertyAnalyzerSettings.DiagnosticId,
@@ -455,9 +442,9 @@ namespace ConsoleApp4
                         }
             };
 
-            this.VerifyCSharpDiagnostic(testCode, diagType, expected);
+            VerifyCSharpDiagnostic(testCode, diagType, expected);
 
-            this.VerifyCSharpFix(testCode, fixCode, diagType);
+            VerifyCSharpFix(testCode, fixCode, diagType);
         }
 
         /// <summary>
@@ -477,15 +464,7 @@ namespace ConsoleApp4
         {
             if (diagType == TestFixture.DIAG_TYPE_PRIVATE)
             {
-                if (!BypassSettingPublicMembersOnly)
-                {
-                    _optionsService.IsEnabledForPublicMembersOnly = false;
-                }
                 return new NonPublicPropertyAnalyzer();
-            }
-            if (diagType == TestFixture.DIAG_TYPE_PUBLIC_ONLY && !BypassSettingPublicMembersOnly)
-            {
-                _optionsService.IsEnabledForPublicMembersOnly = true;
             }
             return new PropertyAnalyzer();
         }

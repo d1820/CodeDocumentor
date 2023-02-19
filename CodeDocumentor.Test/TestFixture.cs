@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
 using SimpleInjector;
 using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Test.TestHelpers;
 
 namespace CodeDocumentor.Test
 {
@@ -20,20 +21,36 @@ namespace CodeDocumentor.Test
         public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
         public const string DIAG_TYPE_PRIVATE = "private";
 
-        public Container DIContainer;
-        public IOptionsService OptionsService;
+        public Action<IOptionsService> OptionsPropertyCallback { get; set; }
 
         public TestFixture()
         {
             Runtime.RunningUnitTests = true;
+            
+            if(CodeDocumentorPackage.DIContainer == null)
+            {      
+                var DIContainer = new Container();
+                DIContainer.Register<IOptionsService>(() =>
+                {
+                    var os = new TestOptionsService();
+                    OptionsPropertyCallback?.Invoke(os);
+                    return os;
+                }, Lifestyle.Transient);
 
-            CodeDocumentorPackage.DIContainer = DIContainer = new Container();
-            OptionsService = new TestOptionsService();
-            DIContainer.Register(() =>
+                CodeDocumentorPackage.DIContainer = DIContainer;
+            }          
+        }
+
+        public void SetPublicProcessingOption(IOptionsService o, string diagType)
+        {
+            if (diagType == DIAG_TYPE_PRIVATE)
             {
-                OptionsService = new TestOptionsService();
-                return OptionsService;
-            }, Lifestyle.Transient);
+                o.IsEnabledForPublicMembersOnly = false;
+            }
+            if (diagType == DIAG_TYPE_PUBLIC_ONLY)
+            {
+                o.IsEnabledForPublicMembersOnly = true;
+            }
         }
 
         public string LoadTestFile(string relativePath)

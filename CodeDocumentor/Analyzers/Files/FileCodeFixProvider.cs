@@ -34,7 +34,8 @@ namespace CodeDocumentor
             EnumAnalyzerSettings.DiagnosticId,
             InterfaceAnalyzerSettings.DiagnosticId,
             MethodAnalyzerSettings.DiagnosticId,
-            FieldAnalyzerSettings.DiagnosticId
+            FieldAnalyzerSettings.DiagnosticId,
+            RecordAnalyzerSettings.DiagnosticId
         });
 
         /// <summary>
@@ -77,6 +78,7 @@ namespace CodeDocumentor
             _nodesTempToReplace.Clear();
             neededCommentCount += InterfaceCodeFixProvider.BuildComments(root, _nodesTempToReplace);
             neededCommentCount += ClassCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += RecordCodeFixProvider.BuildComments(root, _nodesTempToReplace);
             var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
             {
                 return _nodesTempToReplace[n1];

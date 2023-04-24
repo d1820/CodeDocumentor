@@ -62,14 +62,24 @@ namespace CodeDocumentor.Helper
             List<char> singleWord = new List<char>();
             List<char> upperGroup = new List<char>();
 
-            if (IsAllUpperCase(name) || IsAllLowerCase(name))
+            bool allUpperCase = IsAllUpperCase(name);
+            bool allLowerCase = IsAllLowerCase(name);
+
+            if (allUpperCase || allLowerCase)
             {
                 var matches = SpecailCharRegEx.Matches(name);
                 foreach (Match m in matches)
                 {
                     if (m.Success && !string.IsNullOrWhiteSpace(m.Value))
                     {
-                        words.Add(new string(UpperToTitleCase(m.Value).ToArray()));
+                        if (allUpperCase)
+                        {
+                            words.Add(new string(m.Value.ToArray())); // keep casing
+                        }
+                        else
+                        {
+                            words.Add(new string(UpperToTitleCase(m.Value).ToArray()));
+                        }
                     }
                 }
                 return words;

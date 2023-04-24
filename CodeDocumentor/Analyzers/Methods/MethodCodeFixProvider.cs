@@ -125,6 +125,10 @@ namespace CodeDocumentor
                 {
                     continue;
                 }
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                 neededCommentCount++;

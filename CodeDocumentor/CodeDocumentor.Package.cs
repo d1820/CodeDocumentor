@@ -52,8 +52,11 @@ namespace CodeDocumentor.Vsix2022
             if (_DIContainer == null)
             {
                 _DIContainer = overrideContainer ?? new Container();
-                _DIContainer.RegisterServices();
-                _DIContainer.Verify();
+                if (overrideContainer == null) //expect teh override container to do all registrations it needs
+                {
+                    _DIContainer.RegisterServices();
+                    _DIContainer.Verify();
+                }
             }
             return _DIContainer;
         }

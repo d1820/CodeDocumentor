@@ -27,18 +27,14 @@ namespace CodeDocumentor.Test
         {
             Runtime.RunningUnitTests = true;
 
-            if (CodeDocumentorPackage.DIContainer() == null)
+            var testContainer = new Container();
+            testContainer.Register<IOptionsService>(() =>
             {
-                var DIContainer = new Container();
-                DIContainer.Register<IOptionsService>(() =>
-                {
-                    var os = new TestOptionsService();
-                    OptionsPropertyCallback?.Invoke(os);
-                    return os;
-                }, Lifestyle.Transient);
-
-                CodeDocumentorPackage.DIContainer(DIContainer);
-            }
+                var os = new TestOptionsService();
+                OptionsPropertyCallback?.Invoke(os);
+                return os;
+            }, Lifestyle.Transient);
+            CodeDocumentorPackage.DIContainer(testContainer);
         }
 
         public void SetPublicProcessingOption(IOptionsService o, string diagType)

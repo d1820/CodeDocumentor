@@ -96,7 +96,7 @@ namespace CodeDocumentor
 
         private static PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
+            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
 
             bool isBoolean = false;
             if (declarationSyntax.Type.IsKind(SyntaxKind.PredefinedType))

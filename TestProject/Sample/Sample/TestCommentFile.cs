@@ -48,6 +48,10 @@ namespace Welcom.Test
             return "";
         }
 
+        /// <summary>
+        /// Checks if is valid.
+        /// </summary>
+        /// <returns>A bool.</returns>
         public bool EnsureValid()
         {
             return true;

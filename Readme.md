@@ -13,6 +13,7 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 <!-- toc -->
 
 - [Instruction](#instruction)
+- [Known Issues](#known-issues)
 - [Settings](#settings)
   - [Word Translations](#word-translations)
   - [Recommended Settings](#recommended-settings)
@@ -34,6 +35,13 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 2. Then you can click the bulb to see the fix option. When you click the option, the documentation will be added.
 3. You can use shortcut(Alt+Enter or Ctrl+.) to quickly add the documentation. Documentation fixes can be implemented at the member, document, project, and solution levels.
 
+## Known Issues
+
+- As of VS2022 verison 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
+
+  ![OutOfProcess](./GifInstruction/outOfProcess.PNG)
+
+  **Please disable this setting to allow CodeDocumentor to work correctly.**
 
 ## Settings
 ---

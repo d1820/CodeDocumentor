@@ -300,7 +300,7 @@ namespace CodeDocumentor.Helper
 
             // [2] -- end tag
             XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
-            return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<SyntaxNode>(content), endTag);
+            return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(content), endTag);
         }
 
         /// <summary>

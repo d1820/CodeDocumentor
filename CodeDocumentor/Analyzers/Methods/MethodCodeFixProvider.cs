@@ -139,7 +139,7 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
+            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
 
             string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(methodComment));

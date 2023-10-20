@@ -109,7 +109,7 @@ namespace CodeDocumentor
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
+            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
 
             string comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));

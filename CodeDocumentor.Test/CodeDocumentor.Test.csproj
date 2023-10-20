@@ -127,7 +127,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.4.33103.184" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.4.33103.184" />
     <PackageReference Include="Moq" Version="4.20.69" />

@@ -76,7 +76,7 @@ namespace CodeDocumentor
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<SyntaxNode> list = SyntaxFactory.List<SyntaxNode>();
+            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
 
             string comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText);
             list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));

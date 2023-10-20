@@ -3,11 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Linq;
-using CodeDocumentor.Vsix2022;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using System.Data.Common;
-using System.Windows.Shapes;
 using CodeDocumentor.Test.TestHelpers;
 
 namespace CodeDocumentor.Test.Methods

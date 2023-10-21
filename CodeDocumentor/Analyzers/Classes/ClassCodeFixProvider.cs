@@ -69,7 +69,7 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        /// Builds the headers.
+        /// Builds the comments. This is only used in the file level fixProvider.
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
@@ -82,6 +82,10 @@ namespace CodeDocumentor
             {
                 if (optionsService.IsEnabledForPublicMembersOnly
                     && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                {
+                    continue;
+                }
+                if (declarationSyntax.HasSummary()) //if the class has comments dont redo it. User should update manually
                 {
                     continue;
                 }
@@ -122,6 +126,7 @@ namespace CodeDocumentor
                     list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
                 }
             }
+            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
 
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

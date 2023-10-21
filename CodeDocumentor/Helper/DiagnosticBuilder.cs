@@ -28,7 +28,15 @@ namespace CodeDocumentor.Helper
 
             var alreadyHasComment = commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax);
 
-            context.ReportDiagnostic(Diagnostic.Create(getRuleCallback.Invoke(alreadyHasComment), identifier.GetLocation()));
+            try
+            {
+                context.ReportDiagnostic(Diagnostic.Create(getRuleCallback.Invoke(alreadyHasComment), identifier.GetLocation()));
+            }
+            catch (OperationCanceledException ex)
+            {
+                //noop
+            }
+            
         }
     }
 }

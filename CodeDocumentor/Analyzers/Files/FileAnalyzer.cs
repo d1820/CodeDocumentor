@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -48,7 +49,14 @@ namespace CodeDocumentor
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(FileAnalyzerSettings.GetRule(), node.GetLocation()));
+            try
+            {
+                context.ReportDiagnostic(Diagnostic.Create(FileAnalyzerSettings.GetRule(), node.GetLocation()));
+            }
+            catch (OperationCanceledException ex)
+            {
+                //noop
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace CodeDocumentor.Services
         public bool IsEnabledForPublicMembersOnly { get; set; } = CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly ?? false;
         public bool UseNaturalLanguageForReturnNode { get; set; } = CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode ?? false;
         public bool UseToDoCommentsOnSummaryError { get; set; } = CodeDocumentorPackage.Options?.UseToDoCommentsOnSummaryError ?? false;
+        public bool PreserveExistingSummaryText { get; set; } = CodeDocumentorPackage.Options?.PreserveExistingSummaryText ?? true;
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
         public WordMap[] WordMaps { get; set; } = CodeDocumentorPackage.Options?.WordMaps ?? Constants.WORD_MAPS;
     }

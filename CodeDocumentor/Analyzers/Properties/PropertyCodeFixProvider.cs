@@ -68,7 +68,7 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        /// Builds the headers.
+        /// Builds the comments. This is only used in the file level fixProvider.
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
@@ -135,6 +135,7 @@ namespace CodeDocumentor
                 string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false);
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
             }
+            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
 
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

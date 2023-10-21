@@ -92,6 +92,11 @@ namespace CodeDocumentor.Vsix2022
         [Description("When documenting methods that can not create a valid summary insert TODO instead. Async is ignored")]
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
+        [Category(SummarySubCategory)]
+        [DisplayName("Preserve Existing Summary Text")]
+        [Description("When updating a comment or documenting the whole file if this is tru; thee summary text will not be regenerated. Defaults to true.")]
+        public bool PreserveExistingSummaryText { get; set; } = true;
+
         /// <summary>
         /// Gets or Sets the word maps.
         /// </summary>
@@ -122,6 +127,7 @@ namespace CodeDocumentor.Vsix2022
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
             WordMaps = settings.WordMaps ?? Constants.WORD_MAPS; //if we dont have anything need to use defaults
             DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
+            PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
         }
 
         /// <summary>
@@ -138,6 +144,7 @@ namespace CodeDocumentor.Vsix2022
                 UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
                 WordMaps = this.WordMaps,
                 DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity,
+                PreserveExistingSummaryText = this.PreserveExistingSummaryText
             };
             settings.Save();
         }

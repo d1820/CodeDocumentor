@@ -48,5 +48,10 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         /// <value>A list of wordmaps.</value>
         WordMap[] WordMaps { get; set; }
+
+        /// <summary>
+        /// Gets or Sets a value indicating whether preserve existing summary text.
+        /// </summary>
+        bool PreserveExistingSummaryText { get; set; }
     }
 }

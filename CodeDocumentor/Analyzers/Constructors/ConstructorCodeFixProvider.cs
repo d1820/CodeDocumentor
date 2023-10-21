@@ -64,6 +64,12 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
+        /// <summary>
+        /// Builds the comments. This is only used in the file level fixProvider.
+        /// </summary>
+        /// <param name="root">The root.</param>
+        /// <param name="nodesToReplace">The nodes to replace.</param>
+        /// <returns>An int.</returns>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ConstructorDeclaration)).OfType<ConstructorDeclarationSyntax>().ToArray();
@@ -134,6 +140,7 @@ namespace CodeDocumentor
                     list = list.AddRange(DocumentationHeaderHelper.CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
                 }
             }
+            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }
     }

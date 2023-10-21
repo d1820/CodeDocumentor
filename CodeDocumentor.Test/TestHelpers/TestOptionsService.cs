@@ -22,5 +22,6 @@ namespace CodeDocumentor.Test.TestHelpers
 
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
+        public bool PreserveExistingSummaryText { get; set; }
     }
 }

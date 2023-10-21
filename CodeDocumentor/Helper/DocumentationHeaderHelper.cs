@@ -162,6 +162,29 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
+        /// Wrap element syntax in comment syntax.
+        /// </summary>
+        /// <param name="element">The element.</param>
+        /// <returns>An array of XmlNodeSyntaxes</returns>
+        public static XmlNodeSyntax[] WrapElementSyntaxInCommentSyntax(XmlElementSyntax element)
+        {
+            /*
+                 ///[0] <summary>
+                 /// The code fix provider.
+                 /// </summary>[1] [2]
+             */
+
+            // [0] " " + leading comment exterior trivia
+            XmlTextSyntax xmlText0 = CreateLineStartTextSyntax();
+
+            // [2] new line
+            XmlTextSyntax xmlText1 = CreateLineEndTextSyntax();
+
+            var nodes =  new XmlNodeSyntax[] { xmlText0, element, xmlText1 };
+            return nodes;
+        }
+
+        /// <summary>
         ///   Creates parameter part nodes.
         /// </summary>
         /// <param name="parameterName"> The parameter name. </param>
@@ -457,7 +480,7 @@ namespace CodeDocumentor.Helper
         /// <summary>
         /// Has summary.
         /// </summary>
-        /// <param name="leadingTrivia">The leading trivia.</param>
+        /// <param name="syntax">The syntax.</param>
         /// <returns>A bool.</returns>
         internal static bool HasSummary(this CSharpSyntaxNode syntax)
         {
@@ -465,6 +488,78 @@ namespace CodeDocumentor.Helper
             || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
             || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
         }
+
+        /// <summary>
+        /// Check on the user OCR.
+        /// new line added
+        /// <![CDATA[<Test>sdsd</test>]]>
+        /// </summary>
+        /// <example>
+        /// test
+        /// </example>
+        /// <remarks> test remarks </remarks>
+        /// <returns>A string.</returns>
+        internal static string test()
+        {
+            return "";
+        }
+
+        /// <summary>
+        /// Gets the element syntax.
+        /// </summary>
+        /// <param name="syntax">The syntax.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>A XmlElementSyntax.</returns>
+        internal static XmlElementSyntax GetElementSyntax(this CSharpSyntaxNode syntax, string name)
+        {
+            if(syntax.HasLeadingTrivia)
+            {
+                var docComment = syntax.GetLeadingTrivia().FirstOrDefault(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
+                                                                || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+                                                                || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
+                if (docComment != default)
+                {
+                    var docTriviaSyntax = docComment.GetStructure() as DocumentationCommentTriviaSyntax;
+                    var items = docTriviaSyntax?.Content
+                        .OfType<XmlElementSyntax>();
+
+                    var match = items
+                        .FirstOrDefault(element => string.Equals(element.StartTag.Name.LocalName.ValueText, name, StringComparison.OrdinalIgnoreCase));
+
+                    return match;
+
+                    //if (summaryElement != null)
+                    //{
+                    //    // Get the text inside the <summary> element
+                    //    string summaryText = string.Join("", summaryElement.ChildNodes()
+                    //        .OfType<XmlTextSyntax>()
+                    //        .Select(node => node.TextTokens.ToFullString()));
+                    //    var parts = summaryText.Trim().Split(new[] { "///" }, StringSplitOptions.RemoveEmptyEntries).Select(s=> "/// " + s);
+                    //    return string.Join(Environment.NewLine, parts);
+                    //}
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Attach existing node syntax.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="declarationSyntax">The declaration syntax.</param>
+        /// <param name="xmlNodeName">The xml node name.</param>
+        /// <returns><![CDATA[SyntaxList<XmlNodeSyntax>]]></returns>
+        internal static SyntaxList<XmlNodeSyntax> AttachExistingNodeSyntax(this SyntaxList<XmlNodeSyntax> list, CSharpSyntaxNode declarationSyntax, string xmlNodeName)
+        {
+            var remarks = declarationSyntax.GetElementSyntax(xmlNodeName);
+            if (remarks != null)
+            {
+                list = list.AddRange(DocumentationHeaderHelper.WrapElementSyntaxInCommentSyntax(remarks));
+            }
+            return list;
+        }
+
+
 
         ///// <summary>
         ///// Builds the leading trivia.
@@ -527,7 +622,7 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        ///   Creates comment exterior.
+        ///   Creates comment exterior. This is the <![CDATA[///]]>
         /// </summary>
         /// <returns> A SyntaxTriviaList. </returns>
         private static SyntaxTriviaList CreateCommentExterior()

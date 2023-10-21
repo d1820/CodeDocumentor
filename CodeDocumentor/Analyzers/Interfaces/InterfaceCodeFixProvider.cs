@@ -97,7 +97,7 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        /// Builds the headers.
+        /// Builds the comments. This is only used in the file level fixProvider.
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>

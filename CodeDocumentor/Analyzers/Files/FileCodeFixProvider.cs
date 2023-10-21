@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -26,8 +27,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
-            FileAnalyzerSettings.DiagnosticId,
+        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {           
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
             ConstructorAnalyzerSettings.DiagnosticId,
@@ -35,7 +35,8 @@ namespace CodeDocumentor
             InterfaceAnalyzerSettings.DiagnosticId,
             MethodAnalyzerSettings.DiagnosticId,
             FieldAnalyzerSettings.DiagnosticId,
-            RecordAnalyzerSettings.DiagnosticId
+            RecordAnalyzerSettings.DiagnosticId,
+            FileAnalyzerSettings.DiagnosticId,
         });
 
         /// <summary>
@@ -91,14 +92,9 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: async (c) =>
-                    {
-                        return context.Document.WithSyntaxRoot(newRoot);
-                    },
+                    createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
                     equivalenceKey: title),
                 diagnostic);
-
-
         }
 
     }

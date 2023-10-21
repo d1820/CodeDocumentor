@@ -97,9 +97,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
+           
         }
 
         private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
@@ -110,7 +113,7 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        /// Builds the headers.
+        /// Builds the comments. This is only used in the file level fixProvider.
         /// </summary>
         /// <param name="root">The root.</param>
         /// <param name="nodesToReplace">The nodes to replace.</param>
@@ -122,6 +125,11 @@ namespace CodeDocumentor
             foreach (var declarationSyntax in declarations)
             {
                 if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                {
+                    continue;
+                }
+                //if method is already commented dont redo it, user should update methods indivually
+                if (declarationSyntax.HasSummary())
                 {
                     continue;
                 }
@@ -140,9 +148,8 @@ namespace CodeDocumentor
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
-
-            string methodComment = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
-            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(methodComment));
+            var commentXmlSyntax = GetSummaryXmlSyntax(declarationSyntax);
+            list = list.AddRange(commentXmlSyntax);
 
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
             {
@@ -171,6 +178,8 @@ namespace CodeDocumentor
                 }
             }
 
+            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
+
             string returnType = declarationSyntax.ReturnType.ToString();
             if (returnType != "void")
             {
@@ -180,6 +189,22 @@ namespace CodeDocumentor
             }
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+        }
+
+        private static XmlNodeSyntax[] GetSummaryXmlSyntax(MethodDeclarationSyntax declarationSyntax)
+        {
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            if (optionsService.PreserveExistingSummaryText)
+            {
+                var summary = declarationSyntax.GetElementSyntax("summary");
+
+                if (summary != null)
+                {
+                    return DocumentationHeaderHelper.WrapElementSyntaxInCommentSyntax(summary);
+                }
+            }
+            var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
+            return DocumentationHeaderHelper.CreateSummaryPartNodes(summaryText); ;
         }
     }
 }

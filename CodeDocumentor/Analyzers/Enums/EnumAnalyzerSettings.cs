@@ -25,7 +25,7 @@ namespace CodeDocumentor
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             return new DiagnosticDescriptor(EnumAnalyzerSettings.DiagnosticId, EnumAnalyzerSettings.Title,
                 EnumAnalyzerSettings.MessageFormat, EnumAnalyzerSettings.Category,
-                hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.DefaultDiagnosticSeverity, true);
+                hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.EnumDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity, true);
         }
     }
 }

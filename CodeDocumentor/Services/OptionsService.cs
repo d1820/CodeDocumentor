@@ -12,6 +12,22 @@ namespace CodeDocumentor.Services
     {
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
 
+        public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.ClassDiagnosticSeverity;
+
+        public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.ConstructorDiagnosticSeverity;
+
+        public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.EnumDiagnosticSeverity;
+
+        public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.FieldDiagnosticSeverity;
+
+        public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.InterfaceDiagnosticSeverity;
+
+        public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.MethodDiagnosticSeverity;
+
+        public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.PropertyDiagnosticSeverity;
+
+        public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.RecordDiagnosticSeverity;
+
         public bool ExcludeAsyncSuffix { get; set; } = CodeDocumentorPackage.Options?.ExcludeAsyncSuffix ?? false;
 
         public bool IncludeValueNodeInProperties { get; set; } = CodeDocumentorPackage.Options?.IncludeValueNodeInProperties ?? false;
@@ -36,6 +52,14 @@ namespace CodeDocumentor.Services
             WordMaps = settings.WordMaps;
             DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
             PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
+            ClassDiagnosticSeverity = settings.ClassDiagnosticSeverity;
+            ConstructorDiagnosticSeverity = settings.ConstructorDiagnosticSeverity;
+            EnumDiagnosticSeverity = settings.EnumDiagnosticSeverity;
+            FieldDiagnosticSeverity = settings.FieldDiagnosticSeverity;
+            InterfaceDiagnosticSeverity = settings.InterfaceDiagnosticSeverity;
+            MethodDiagnosticSeverity = settings.MethodDiagnosticSeverity;
+            PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
+            RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
         }
     }
 }

@@ -26,6 +26,46 @@ namespace CodeDocumentor.Vsix2022
         [Description("When highlighting missing comments this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Class Diagnostic Severity")]
+        [Description("When highlighting missing comments on a class this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Constructor Diagnostic Severity")]
+        [Description("When highlighting missing comments on a constructor this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Enum Diagnostic Severity")]
+        [Description("When highlighting missing comments on an enum this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Field Diagnostic Severity")]
+        [Description("When highlighting missing comments on a field this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Interface Diagnostic Severity")]
+        [Description("When highlighting missing comments on an interface this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Method Diagnostic Severity")]
+        [Description("When highlighting missing comments on a method this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Property Diagnostic Severity")]
+        [Description("When highlighting missing comments on a property this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Record Diagnostic Severity")]
+        [Description("When highlighting missing comments on a record this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
+        public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
+
         /// <summary> Gets or Sets a value indicating whether exclude asynchronously suffix. </summary>
         /// <value> A bool. </value>
         [Category(SummarySubCategory)]
@@ -49,7 +89,7 @@ namespace CodeDocumentor.Vsix2022
 
         [Category(SummarySubCategory)]
         [DisplayName("Preserve Existing Summary Text")]
-        [Description("When updating a comment or documenting the whole file if this is tru; thee summary text will not be regenerated. Defaults to true.")]
+        [Description("When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.")]
         public bool PreserveExistingSummaryText { get; set; } = true;
 
         //Any properties that need defaults should be mnanaged in the Settings Class. This is only a pass through for VS
@@ -86,6 +126,14 @@ namespace CodeDocumentor.Vsix2022
             WordMaps = settings.WordMaps ?? Constants.WORD_MAPS; //if we dont have anything need to use defaults
             DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
             PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
+            ClassDiagnosticSeverity = settings.ClassDiagnosticSeverity;
+            ConstructorDiagnosticSeverity = settings.ConstructorDiagnosticSeverity;
+            EnumDiagnosticSeverity = settings.EnumDiagnosticSeverity;
+            FieldDiagnosticSeverity = settings.FieldDiagnosticSeverity;
+            InterfaceDiagnosticSeverity = settings.InterfaceDiagnosticSeverity;
+            MethodDiagnosticSeverity = settings.MethodDiagnosticSeverity;
+            PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
+            RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
         }
 
         /// <summary> Save settings to storage. </summary>
@@ -100,7 +148,15 @@ namespace CodeDocumentor.Vsix2022
                 UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
                 WordMaps = this.WordMaps,
                 DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity,
-                PreserveExistingSummaryText = this.PreserveExistingSummaryText
+                PreserveExistingSummaryText = this.PreserveExistingSummaryText,
+                ClassDiagnosticSeverity = this.ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = this.ConstructorDiagnosticSeverity,
+                EnumDiagnosticSeverity = this.EnumDiagnosticSeverity,
+                FieldDiagnosticSeverity = this.FieldDiagnosticSeverity,
+                InterfaceDiagnosticSeverity = this.InterfaceDiagnosticSeverity,
+                MethodDiagnosticSeverity = this.MethodDiagnosticSeverity,
+                PropertyDiagnosticSeverity = this.PropertyDiagnosticSeverity,
+                RecordDiagnosticSeverity = this.RecordDiagnosticSeverity
             };
             settings.Save();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();

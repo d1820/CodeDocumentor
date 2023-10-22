@@ -14,6 +14,22 @@ namespace CodeDocumentor.Vsix2022
         /// <summary> Gets or Sets the default diagnostic severity. </summary>
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
+        public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
+
+        public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
+
         /// <summary> Gets or Sets a value indicating whether exclude asynchronously suffix. </summary>
         /// <value> A bool. </value>
         public bool ExcludeAsyncSuffix { get; set; }

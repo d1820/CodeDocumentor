@@ -4,14 +4,9 @@ using CodeDocumentor.Vsix2022;
 
 namespace CodeDocumentor.Helper
 {
-
-    /// <summary>
-    ///   The pluralizer to pluralize word.
-    /// </summary>
+    /// <summary> The pluralizer to pluralize word. </summary>
     public static class Pluralizer
     {
-        internal static CustomPluralizer pl = new CustomPluralizer();
-
         static Pluralizer()
         {
             foreach (var item in Constants.INTERNAL_WORD_MAPS)
@@ -20,16 +15,12 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        /// <summary>
-        /// Is plural.
-        /// </summary>
-        /// <param name="word">The word.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Is plural. </summary>
+        /// <param name="word"> The word. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPlural(string word) => pl.IsPlural(word);
 
-        /// <summary>
-        ///   Pluralizes word.
-        /// </summary>
+        /// <summary> Pluralizes word. </summary>
         /// <param name="word"> The word. </param>
         /// <returns> A plural word. </returns>
         public static string Pluralize(string word)
@@ -51,11 +42,13 @@ namespace CodeDocumentor.Helper
         public static string PluralizeCustom(string word, string nextWord = null)
         {
             var convertCustom = Constants.PLURALIZE_CUSTOM_LIST.FirstOrDefault(f => f.Word.Equals(word, StringComparison.InvariantCultureIgnoreCase));
-            if(convertCustom == null)
+            if (convertCustom == null)
             {
                 return word;
             }
             return convertCustom.GetTranslation(nextWord);
         }
+
+        internal static CustomPluralizer pl = new CustomPluralizer();
     }
 }

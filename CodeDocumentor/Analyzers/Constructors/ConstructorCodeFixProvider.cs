@@ -15,32 +15,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary>
-    ///   The constructor code fix provider.
-    /// </summary>
+    /// <summary> The constructor code fix provider. </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorCodeFixProvider)), Shared]
     public class ConstructorCodeFixProvider : BaseCodeFixProvider
     {
-        private const string title = "Code Documentor this constructor";
-        private const string titleRebuild = "Code Documentor update this constructor";
-
-        /// <summary>
-        ///   Gets the fixable diagnostic ids.
-        /// </summary>
+        /// <summary> Gets the fixable diagnostic ids. </summary>
         public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ConstructorAnalyzerSettings.DiagnosticId);
 
-        /// <summary>
-        ///   Gets fix all provider.
-        /// </summary>
+        /// <summary> Gets fix all provider. </summary>
         /// <returns> A FixAllProvider. </returns>
         public override sealed FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary>
-        ///   Registers code fixes async.
-        /// </summary>
+        /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -67,12 +56,10 @@ namespace CodeDocumentor
             await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
-        /// <summary>
-        /// Builds the comments. This is only used in the file level fixProvider.
-        /// </summary>
-        /// <param name="root">The root.</param>
-        /// <param name="nodesToReplace">The nodes to replace.</param>
-        /// <returns>An int.</returns>
+        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
+        /// <param name="root"> The root. </param>
+        /// <param name="nodesToReplace"> The nodes to replace. </param>
+        /// <returns> An int. </returns>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ConstructorDeclaration)).OfType<ConstructorDeclarationSyntax>().ToArray();
@@ -95,6 +82,9 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
+        private const string title = "Code Documentor this constructor";
+        private const string titleRebuild = "Code Documentor update this constructor";
+
         private static ConstructorDeclarationSyntax BuildNewDeclaration(ConstructorDeclarationSyntax declarationSyntax)
         {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
@@ -103,32 +93,13 @@ namespace CodeDocumentor
             return newDeclaration;
         }
 
-        /// <summary>
-        ///   Adds documentation header async.
-        /// </summary>
-        /// <param name="document"> The document. </param>
-        /// <param name="root"> The root. </param>
-        /// <param name="declarationSyntax"> The declaration syntax. </param>
-        /// <param name="cancellationToken"> The cancellation token. </param>
-        /// <returns> A Document. </returns>
-        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ConstructorDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
-        { 
-            return await Task.Run(() => {
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-                return document.WithSyntaxRoot(newRoot);
-            }, cancellationToken);
-        }
-
-        /// <summary>
-        ///   Creates documentation comment trivia syntax.
-        /// </summary>
+        /// <summary> Creates documentation comment trivia syntax. </summary>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ConstructorDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
-           
+
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             string comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate());
             list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
@@ -137,6 +108,22 @@ namespace CodeDocumentor
                         .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+        }
+
+        /// <summary> Adds documentation header async. </summary>
+        /// <param name="document"> The document. </param>
+        /// <param name="root"> The root. </param>
+        /// <param name="declarationSyntax"> The declaration syntax. </param>
+        /// <param name="cancellationToken"> The cancellation token. </param>
+        /// <returns> A Document. </returns>
+        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ConstructorDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        {
+            return await Task.Run(() =>
+            {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
     }
 }

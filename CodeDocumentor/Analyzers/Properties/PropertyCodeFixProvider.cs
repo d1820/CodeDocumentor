@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -16,32 +15,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary>
-    ///   The property code fix provider.
-    /// </summary>
+    /// <summary> The property code fix provider. </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PropertyCodeFixProvider)), Shared]
     public class PropertyCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Code Documentor this property";
-        private const string titleRebuild = "Code Documentor update this property";
-
-        /// <summary>
-        ///   Gets the fixable diagnostic ids.
-        /// </summary>
+        /// <summary> Gets the fixable diagnostic ids. </summary>
         public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PropertyAnalyzerSettings.DiagnosticId);
 
-        /// <summary>
-        ///   Gets fix all provider.
-        /// </summary>
+        /// <summary> Gets fix all provider. </summary>
         /// <returns> A FixAllProvider. </returns>
         public override sealed FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary>
-        ///   Registers code fixes async.
-        /// </summary>
+        /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -67,11 +55,9 @@ namespace CodeDocumentor
                 diagnostic);
         }
 
-        /// <summary>
-        /// Builds the comments. This is only used in the file level fixProvider.
-        /// </summary>
-        /// <param name="root">The root.</param>
-        /// <param name="nodesToReplace">The nodes to replace.</param>
+        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
+        /// <param name="root"> The root. </param>
+        /// <param name="nodesToReplace"> The nodes to replace. </param>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.PropertyDeclaration)).OfType<PropertyDeclarationSyntax>().ToArray();
@@ -93,6 +79,9 @@ namespace CodeDocumentor
             }
             return neededCommentCount;
         }
+
+        private const string title = "Code Documentor this property";
+        private const string titleRebuild = "Code Documentor update this property";
 
         private static PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax)
         {
@@ -116,9 +105,7 @@ namespace CodeDocumentor
             return newDeclaration;
         }
 
-        /// <summary>
-        ///   Adds documentation header async.
-        /// </summary>
+        /// <summary> Adds documentation header async. </summary>
         /// <param name="document"> The document. </param>
         /// <param name="root"> The root. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
@@ -126,7 +113,8 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);

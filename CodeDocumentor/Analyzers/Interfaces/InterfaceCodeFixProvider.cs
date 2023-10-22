@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -16,32 +15,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary>
-    ///   The interface code fix provider.
-    /// </summary>
+    /// <summary> The interface code fix provider. </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InterfaceCodeFixProvider)), Shared]
     public class InterfaceCodeFixProvider : BaseCodeFixProvider
     {
-        private const string title = "Code Documentor this interface";
-        private const string titleRebuild = "Code Documentor update this interface";
-
-        /// <summary>
-        ///   Gets the fixable diagnostic ids.
-        /// </summary>
+        /// <summary> Gets the fixable diagnostic ids. </summary>
         public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzerSettings.DiagnosticId);
 
-        /// <summary>
-        ///   Gets fix all provider.
-        /// </summary>
+        /// <summary> Gets fix all provider. </summary>
         /// <returns> A FixAllProvider. </returns>
         public override sealed FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary>
-        ///   Registers code fixes async.
-        /// </summary>
+        /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -64,22 +52,28 @@ namespace CodeDocumentor
             await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
-        /// <summary>
-        ///   Adds documentation header async.
-        /// </summary>
-        /// <param name="document"> The document. </param>
+        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
         /// <param name="root"> The root. </param>
-        /// <param name="declarationSyntax"> The declaration syntax. </param>
-        /// <param name="cancellationToken"> The cancellation token. </param>
-        /// <returns> A Document. </returns>
-        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, InterfaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        /// <param name="nodesToReplace"> The nodes to replace. </param>
+        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
-            return await Task.Run(() => {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.InterfaceDeclaration)).OfType<InterfaceDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            foreach (var declarationSyntax in declarations)
+            {
+                if (declarationSyntax.HasSummary())
+                {
+                    continue;
+                }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-                return document.WithSyntaxRoot(newRoot);
-            }, cancellationToken);
+                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                neededCommentCount++;
+            }
+            return neededCommentCount;
         }
+
+        private const string title = "Code Documentor this interface";
+        private const string titleRebuild = "Code Documentor update this interface";
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
@@ -97,26 +91,20 @@ namespace CodeDocumentor
             return newDeclaration;
         }
 
-        /// <summary>
-        /// Builds the comments. This is only used in the file level fixProvider.
-        /// </summary>
-        /// <param name="root">The root.</param>
-        /// <param name="nodesToReplace">The nodes to replace.</param>
-        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        /// <summary> Adds documentation header async. </summary>
+        /// <param name="document"> The document. </param>
+        /// <param name="root"> The root. </param>
+        /// <param name="declarationSyntax"> The declaration syntax. </param>
+        /// <param name="cancellationToken"> The cancellation token. </param>
+        /// <returns> A Document. </returns>
+        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, InterfaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.InterfaceDeclaration)).OfType<InterfaceDeclarationSyntax>().ToArray();
-            var neededCommentCount = 0;
-            foreach (var declarationSyntax in declarations)
+            return await Task.Run(() =>
             {
-                if (declarationSyntax.HasSummary())
-                {
-                    continue;
-                }
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
-                neededCommentCount++;
-            }
-            return neededCommentCount;
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
     }
 }

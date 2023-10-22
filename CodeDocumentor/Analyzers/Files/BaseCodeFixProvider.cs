@@ -11,14 +11,10 @@ namespace CodeDocumentor
 {
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
+        /// <summary> The title. </summary>
         protected const string FILE_FIX_TITLE = "Code Documentor this whole file";
 
-        /// <summary>
-        ///   Gets the fixable diagnostic ids.
-        /// </summary>
+        /// <summary> Gets the fixable diagnostic ids. </summary>
         protected ImmutableArray<string> FileFixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
@@ -30,9 +26,7 @@ namespace CodeDocumentor
             RecordAnalyzerSettings.DiagnosticId
         });
 
-        /// <summary>
-        ///   Registers code fixes async.
-        /// </summary>
+        /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
@@ -65,7 +59,7 @@ namespace CodeDocumentor
             {
                 return _nodesTempToReplace[n1];
             });
-            if(neededCommentCount == 0)
+            if (neededCommentCount == 0)
             {
                 return;
             }
@@ -77,6 +71,5 @@ namespace CodeDocumentor
                     equivalenceKey: FILE_FIX_TITLE),
                 diagnostic);
         }
-
     }
 }

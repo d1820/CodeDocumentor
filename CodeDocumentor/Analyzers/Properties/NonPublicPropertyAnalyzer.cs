@@ -10,15 +10,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    /// <summary>
-    ///   The property analyzer.
-    /// </summary>
+    /// <summary> The property analyzer. </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicPropertyAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        ///   Gets the supported diagnostics.
-        /// </summary>
+        /// <summary> Gets the supported diagnostics. </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -32,9 +28,7 @@ namespace CodeDocumentor
             }
         }
 
-        /// <summary>
-        ///   Initializes.
-        /// </summary>
+        /// <summary> Initializes. </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
@@ -43,9 +37,7 @@ namespace CodeDocumentor
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.PropertyDeclaration);
         }
 
-        /// <summary>
-        ///   Analyzes node.
-        /// </summary>
+        /// <summary> Analyzes node. </summary>
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {

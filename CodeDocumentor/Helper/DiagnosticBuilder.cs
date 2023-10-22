@@ -9,13 +9,11 @@ namespace CodeDocumentor.Helper
 {
     public static class DiagnosticBuilder
     {
-        /// <summary>
-        /// Builds the diagnostic.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="node">The node.</param>
-        /// <param name="identifier">The identifier.</param>
-        /// <param name="getRuleCallback">The get rule callback.</param>
+        /// <summary> Builds the diagnostic. </summary>
+        /// <param name="context"> The context. </param>
+        /// <param name="node"> The node. </param>
+        /// <param name="identifier"> The identifier. </param>
+        /// <param name="getRuleCallback"> The get rule callback. </param>
         public static void BuildDiagnostic(this SyntaxNodeAnalysisContext context, CSharpSyntaxNode node,
                                             SyntaxToken identifier,
                                             Func<bool, DiagnosticDescriptor> getRuleCallback)
@@ -36,7 +34,6 @@ namespace CodeDocumentor.Helper
             {
                 //noop
             }
-            
         }
     }
 }

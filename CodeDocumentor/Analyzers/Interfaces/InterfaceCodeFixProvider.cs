@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -18,7 +20,7 @@ namespace CodeDocumentor
     ///   The interface code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InterfaceCodeFixProvider)), Shared]
-    public class InterfaceCodeFixProvider : CodeFixProvider
+    public class InterfaceCodeFixProvider : BaseCodeFixProvider
     {
         private const string title = "Code Documentor this interface";
         private const string titleRebuild = "Code Documentor update this interface";
@@ -51,12 +53,15 @@ namespace CodeDocumentor
 
             InterfaceDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<InterfaceDeclarationSyntax>().First();
 
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title: displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary>
@@ -69,25 +74,21 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, InterfaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
-
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             string comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText);
-            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
-            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
-            {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
-                {
-                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
-                }
-            }
+            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+                        .WithTypeParamters(declarationSyntax);
 
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

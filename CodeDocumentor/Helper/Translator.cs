@@ -9,7 +9,7 @@ namespace CodeDocumentor.Helper
 {
     public static class Translator
     {
-        private static string wordMatchRegexTemplate = @"\b({0})\b";
+        private static readonly string wordMatchRegexTemplate = @"\b({0})\b";
 
         /// <summary>
         ///   Translates text replacing words from the WordMap settings

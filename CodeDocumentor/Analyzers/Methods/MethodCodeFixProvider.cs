@@ -21,10 +21,8 @@ namespace CodeDocumentor
     ///   The method code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MethodCodeFixProvider)), Shared]
-    public class MethodCodeFixProvider : CodeFixProvider
+    public class MethodCodeFixProvider : BaseCodeFixProvider
     {
-        private static Regex regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
         private const string title = "Code Documentor this method";
 
         private const string titleRebuild = "Code Documentor update this method";
@@ -61,13 +59,15 @@ namespace CodeDocumentor
             {
                 return;
             }
-
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title: displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary>
@@ -75,18 +75,7 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="textToSearch"> </param>
         /// <returns> </returns>
-        internal static IEnumerable<string> GetExceptions(string textToSearch)
-        {
-            if (string.IsNullOrEmpty(textToSearch))
-            {
-                return Enumerable.Empty<string>();
-            }
-            var exceptions = regEx.Matches(textToSearch).OfType<Match>()
-                                                        .Select(m => m?.Groups[0]?.Value)
-                                                        .Distinct();
-            return exceptions;
-        }
-
+    
         /// <summary>
         ///   Adds documentation header async.
         /// </summary>
@@ -148,63 +137,19 @@ namespace CodeDocumentor
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
-            var commentXmlSyntax = GetSummaryXmlSyntax(declarationSyntax);
-            list = list.AddRange(commentXmlSyntax);
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
 
-            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
-            {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
-                {
-                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
-                }
-            }
-
-            if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
-            {
-                foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
-                {
-                    string parameterComment = CommentHelper.CreateParameterComment(parameter);
-                    list = list.AddRange(DocumentationHeaderHelper.CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
-                }
-            }
-
-            var exceptions = GetExceptions(declarationSyntax.Body?.ToFullString());
-
-            if (exceptions.Any())
-            {
-                foreach (var exception in exceptions)
-                {
-                    list = list.AddRange(DocumentationHeaderHelper.CreateExceptionNodes(exception));
-                }
-            }
-
-            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
-
-            string returnType = declarationSyntax.ReturnType.ToString();
-            if (returnType != "void")
-            {
-                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);
-                string returnComment = commentConstructor.Comment;
-                list = list.AddRange(DocumentationHeaderHelper.CreateReturnPartNodes(returnComment));
-            }
+            list = list.WithSummary(declarationSyntax,summaryText, optionsService.PreserveExistingSummaryText)
+                        .WithTypeParamters(declarationSyntax)
+                        .WithParameters(declarationSyntax)
+                        .WithExceptionTypes(declarationSyntax)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE)
+                        .WithReturnType(declarationSyntax);
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }
 
-        private static XmlNodeSyntax[] GetSummaryXmlSyntax(MethodDeclarationSyntax declarationSyntax)
-        {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.PreserveExistingSummaryText)
-            {
-                var summary = declarationSyntax.GetElementSyntax("summary");
-
-                if (summary != null)
-                {
-                    return DocumentationHeaderHelper.WrapElementSyntaxInCommentSyntax(summary);
-                }
-            }
-            var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
-            return DocumentationHeaderHelper.CreateSummaryPartNodes(summaryText); ;
-        }
     }
 }

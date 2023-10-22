@@ -23,5 +23,17 @@ namespace CodeDocumentor.Test.TestHelpers
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
         public bool PreserveExistingSummaryText { get; set; }
+
+        public void Update(Vsix2022.Settings settings)
+        {
+            IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
+            UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
+            ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
+            IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
+            UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
+            WordMaps = settings.WordMaps;
+            DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
+            PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
+        }
     }
 }

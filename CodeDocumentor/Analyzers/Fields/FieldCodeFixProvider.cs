@@ -20,7 +20,7 @@ namespace CodeDocumentor
     ///   The field code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FieldCodeFixProvider)), Shared]
-    public class FieldCodeFixProvider : CodeFixProvider
+    public class FieldCodeFixProvider : BaseCodeFixProvider
     {
         private const string title = "Code Documentor this field";
         private const string titleRebuild = "Code Documentor update this field";
@@ -57,13 +57,15 @@ namespace CodeDocumentor
             {
                 return;
             }
-
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title: displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary>
@@ -76,9 +78,11 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, FieldDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
 
         private static FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax)

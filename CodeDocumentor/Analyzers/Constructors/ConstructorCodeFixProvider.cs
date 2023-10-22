@@ -19,7 +19,7 @@ namespace CodeDocumentor
     ///   The constructor code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorCodeFixProvider)), Shared]
-    public class ConstructorCodeFixProvider : CodeFixProvider
+    public class ConstructorCodeFixProvider : BaseCodeFixProvider
     {
         private const string title = "Code Documentor this constructor";
         private const string titleRebuild = "Code Documentor update this constructor";
@@ -56,12 +56,15 @@ namespace CodeDocumentor
             {
                 return;
             }
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title: displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary>
@@ -109,10 +112,12 @@ namespace CodeDocumentor
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ConstructorDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
-        {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+        { 
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
 
         /// <summary>
@@ -123,24 +128,14 @@ namespace CodeDocumentor
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ConstructorDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
+           
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            string comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate());
+            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+                        .WithParameters(declarationSyntax)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 
-            bool isPrivate = false;
-            if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
-            {
-                isPrivate = true;
-            }
-
-            string comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, isPrivate);
-            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
-            if (declarationSyntax.ParameterList.Parameters.Any())
-            {
-                foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
-                {
-                    string parameterComment = CommentHelper.CreateParameterComment(parameter);
-                    list = list.AddRange(DocumentationHeaderHelper.CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
-                }
-            }
-            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }
     }

@@ -58,12 +58,12 @@ namespace CodeDocumentor
             {
                 return;
             }
-
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title: displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
         }
 
@@ -98,44 +98,16 @@ namespace CodeDocumentor
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
 
-            bool isBoolean = false;
-            if (declarationSyntax.Type.IsKind(SyntaxKind.PredefinedType))
-            {
-                isBoolean = ((PredefinedTypeSyntax)declarationSyntax.Type).Keyword.IsKind(SyntaxKind.BoolKeyword);
-            }
-            else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
-            {
-                var returnType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
-                if (returnType != null)
-                {
-                    isBoolean = returnType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
-                }
-            }
+            var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
 
-            bool hasSetter = false;
-
-            if (declarationSyntax.AccessorList != null && declarationSyntax.AccessorList.Accessors.Any(o => o.Kind() == SyntaxKind.SetAccessorDeclaration))
-            {
-                if (declarationSyntax.AccessorList.Accessors.First(o => o.Kind() == SyntaxKind.SetAccessorDeclaration).ChildTokens().Any(o => o.Kind() == SyntaxKind.PrivateKeyword || o.Kind() == SyntaxKind.InternalKeyword))
-                {
-                    // private set or internal set should consider as no set.
-                    hasSetter = false;
-                }
-                else
-                {
-                    hasSetter = true;
-                }
-            }
-
-            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
-            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(propertyComment));
+            var hasSetter = declarationSyntax.PropertyHasSetter();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.IncludeValueNodeInProperties)
-            {
-                string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false);
-                list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
-            }
-            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
+            string propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
+
+            list = list.WithSummary(declarationSyntax, propertyComment, optionsService.PreserveExistingSummaryText)
+                        .WithPropertyValueTypes(declarationSyntax, optionsService.IncludeValueNodeInProperties)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 
@@ -154,9 +126,11 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-            return document.WithSyntaxRoot(newRoot);
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
     }
 }

@@ -14,9 +14,22 @@ namespace CodeDocumentor.Services
         public bool PreserveExistingSummaryText { get; set; } = CodeDocumentorPackage.Options?.PreserveExistingSummaryText ?? true;
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
         public WordMap[] WordMaps { get; set; } = CodeDocumentorPackage.Options?.WordMaps ?? Constants.WORD_MAPS;
+
+        public void Update(Vsix2022.Settings settings)
+        {
+            IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
+            UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
+            ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
+            IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
+            UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
+            WordMaps = settings.WordMaps;
+            DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
+            PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
+        }
     }
 
     public interface IOptionsService : IOptionPageGrid
     {
+        void Update(Vsix2022.Settings settings);
     }
 }

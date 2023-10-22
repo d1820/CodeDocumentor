@@ -14,6 +14,8 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 - [Instruction](#instruction)
 - [Known Issues](#known-issues)
+- [Comment Ordering](#comment-ordering)
+- [Supported Comment Refactorings](#supported-comment-refactorings)
 - [Settings](#settings)
   - [Word Translations](#word-translations)
   - [Recommended Settings](#recommended-settings)
@@ -43,6 +45,23 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
   **Please disable this setting to allow CodeDocumentor to work correctly.**
 
+## Comment Ordering
+
+Comments are structured in the following order
+
+- Summary
+- Generic Types *if applies
+- Parameter Types *if applies
+- Exception Types *if applies
+- Property Value Types *if applies
+- Remarks
+- Examples
+- Return Types *if applies
+ 
+## Supported Comment Refactorings
+
+Code Documentor supports creating, updating, and recreating on a given type. There is also an avaialble fix at eny level to comment the whole file.
+
 ## Settings
 ---
 
@@ -57,7 +76,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Use TODO comment when summary can not be determined|When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated. |
 | Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |
 | Default Diagnostics | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change. |
-
+|Preserve Existing Summary Text|When updating a comment or documenting the whole file if this is tru; thee summary text will not be regenerated. Defaults to true.|
 
 
 

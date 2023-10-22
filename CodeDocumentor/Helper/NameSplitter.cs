@@ -11,9 +11,9 @@ namespace CodeDocumentor.Helper
     /// </summary>
     public static class NameSplitter
     {
-        private static Regex IsUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
-        private static Regex IsLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
-        private static Regex SpecailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex IsUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
+        private static readonly Regex IsLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
+        private static readonly Regex SpecailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary>
         /// Checks if is all upper case.

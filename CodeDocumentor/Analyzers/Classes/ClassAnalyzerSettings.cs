@@ -15,7 +15,7 @@ namespace CodeDocumentor
         /// <summary>
         ///   The category.
         /// </summary>
-        internal const string Category = DocumentationHeaderHelper.Category;
+        internal const string Category = DocumentationHeaderHelper.CATEGORY;
 
         /// <summary>
         ///   The diagnostic id.

@@ -468,65 +468,6 @@ namespace ConsoleApp4
 		}
 	}
 }";
-
-        private const string MethodWithException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			throw new Exception(""test"");
-		}
-	}
-}";
-        private const string MethodWithNoException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-        private const string MethodWithDuplicateException = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list int return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			throw new Exception(""test"");
-            throw new Exception(""test"");
-		}
-	}
-}";
     }
 
     /// <summary>
@@ -638,34 +579,6 @@ namespace ConsoleApp4
 
 
 
-        #region GetExceptions
-
-
-        [Fact]
-        public async Task GetExceptions_ReturnsMatches()
-        {
-            var exceptions = MethodCodeFixProvider.GetExceptions(MethodWithException);
-
-            Assert.Single(exceptions.ToList());
-        }
-
-
-
-        [Fact]
-        public async Task GetExceptions_ReturnsNoMatches_WhenNoExceptions()
-        {
-            var exceptions = MethodCodeFixProvider.GetExceptions(MethodWithNoException);
-            Assert.Empty(exceptions.ToList());
-        }
-
-
-
-        [Fact]
-        public async Task GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()
-        {
-            var exceptions = MethodCodeFixProvider.GetExceptions(MethodWithDuplicateException);
-            Assert.Single(exceptions.ToList());
-        }
-        #endregion
+       
     }
 }

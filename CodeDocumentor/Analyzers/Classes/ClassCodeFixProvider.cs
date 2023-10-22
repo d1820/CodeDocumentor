@@ -20,7 +20,7 @@ namespace CodeDocumentor
     ///   The class code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ClassCodeFixProvider)), Shared]
-    public class ClassCodeFixProvider : CodeFixProvider
+    public class ClassCodeFixProvider : BaseCodeFixProvider
     {
         private const string title = "Code Documentor this class";
 
@@ -59,13 +59,15 @@ namespace CodeDocumentor
             {
                 return;
             }
-
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title:displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary>
@@ -106,27 +108,23 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         internal static async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
 
-            return document.WithSyntaxRoot(newRoot);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
 
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
-
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
-            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
 
-            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
-            {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
-                {
-                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
-                }
-            }
-            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
+            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText).WithTypeParamters(declarationSyntax)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

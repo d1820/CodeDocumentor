@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -12,22 +9,17 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeDocumentor
 {
-
-    /// <summary>
-    ///   The class code fix provider.
-    /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FileCodeFixProvider)), Shared]
-    public class FileCodeFixProvider : CodeFixProvider
+    public abstract class BaseCodeFixProvider : CodeFixProvider
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Code Documentor this whole file";
+        protected const string FILE_FIX_TITLE = "Code Documentor this whole file";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
         /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
+        protected ImmutableArray<string> FileFixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
             ConstructorAnalyzerSettings.DiagnosticId,
@@ -35,31 +27,20 @@ namespace CodeDocumentor
             InterfaceAnalyzerSettings.DiagnosticId,
             MethodAnalyzerSettings.DiagnosticId,
             FieldAnalyzerSettings.DiagnosticId,
-            RecordAnalyzerSettings.DiagnosticId,
-            FileAnalyzerSettings.DiagnosticId,
+            RecordAnalyzerSettings.DiagnosticId
         });
-
-        /// <summary>
-        ///   Gets fix all provider.
-        /// </summary>
-        /// <returns> A FixAllProvider. </returns>
-        public override sealed FixAllProvider GetFixAllProvider()
-        {
-            return null;
-        }
 
         /// <summary>
         ///   Registers code fixes async.
         /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
-        public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-            //if (CodeDocumentorPackage.IsDebugMode)
-            //{
-            //    return;
-            //}
-            Diagnostic diagnostic = context.Diagnostics.First();
+            if (Runtime.RunningUnitTests)
+            {
+                return;
+            }
 
             //build it up, but check for counts if anything actually needs to be shown
             var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
@@ -91,9 +72,9 @@ namespace CodeDocumentor
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: FILE_FIX_TITLE,
                     createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
-                    equivalenceKey: title),
+                    equivalenceKey: FILE_FIX_TITLE),
                 diagnostic);
         }
 

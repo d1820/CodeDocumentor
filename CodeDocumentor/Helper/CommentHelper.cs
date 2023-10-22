@@ -273,12 +273,12 @@ namespace CodeDocumentor.Helper
             bool hasSummary = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlElementSyntax>()
-                .Any(o => o.StartTag.Name.ToString().Equals(DocumentationHeaderHelper.Summary));
+                .Any(o => o.StartTag.Name.ToString().Equals(DocumentationHeaderHelper.SUMMARY));
 
             bool hasInheritDoc = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlEmptyElementSyntax>()
-                .Any(o => o.Name.ToString().Equals(DocumentationHeaderHelper.InheritDoc));
+                .Any(o => o.Name.ToString().Equals(DocumentationHeaderHelper.INHERITDOC));
 
             return hasSummary || hasInheritDoc;
         }

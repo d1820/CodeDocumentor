@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
+using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 
@@ -147,6 +148,9 @@ namespace CodeDocumentor.Vsix2022
                 PreserveExistingSummaryText = this.PreserveExistingSummaryText
             };
             settings.Save();
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            optionsService.Update(settings);
+               
         }
     }
 }

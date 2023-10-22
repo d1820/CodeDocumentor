@@ -20,7 +20,7 @@ namespace CodeDocumentor
     ///   The record code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RecordCodeFixProvider)), Shared]
-    public class RecordCodeFixProvider : CodeFixProvider
+    public class RecordCodeFixProvider : BaseCodeFixProvider
     {
         private const string title = "Code Documentor this record";
 
@@ -58,13 +58,15 @@ namespace CodeDocumentor
             {
                 return;
             }
-
+            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: declaration.HasSummary() ? titleRebuild : title,
+                    title: displayTitle,
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
-                    equivalenceKey: declaration.HasSummary() ? titleRebuild : title),
+                    equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary>
@@ -105,27 +107,22 @@ namespace CodeDocumentor
         /// <returns> A Document. </returns>
         internal static async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, RecordDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            var newDeclaration = BuildNewDeclaration(declarationSyntax);
-            SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-
-            return document.WithSyntaxRoot(newRoot);
+            return await Task.Run(() => {
+                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                return document.WithSyntaxRoot(newRoot);
+            }, cancellationToken);
         }
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
             SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
-
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             string comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
-            list = list.AddRange(DocumentationHeaderHelper.CreateSummaryPartNodes(comment));
-
-            if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
-            {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
-                {
-                    list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
-                }
-            }
-            list = list.AttachExistingNodeSyntax(declarationSyntax, "remarks").AttachExistingNodeSyntax(declarationSyntax, "example");
+            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+                        .WithTypeParamters(declarationSyntax)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
+                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 
             DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

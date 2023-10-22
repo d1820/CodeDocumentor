@@ -4,16 +4,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary>
-    ///   Verifies whether a member is private.
-    /// </summary>
+    /// <summary> Verifies whether a member is private. </summary>
     public class PrivateMemberVerifier
     {
-        /// <summary>
-        /// Are the private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Are the private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(ClassDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
@@ -24,11 +20,9 @@ namespace CodeDocumentor.Helper
             return false;
         }
 
-        /// <summary>
-        /// Is private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Is private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(RecordDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
@@ -39,11 +33,9 @@ namespace CodeDocumentor.Helper
             return false;
         }
 
-        /// <summary>
-        /// Are the private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Are the private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(InterfaceDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
@@ -54,11 +46,9 @@ namespace CodeDocumentor.Helper
             return false;
         }
 
-        /// <summary>
-        /// Are the private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Are the private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(FieldDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
@@ -79,11 +69,9 @@ namespace CodeDocumentor.Helper
             return false;
         }
 
-        /// <summary>
-        /// Are the private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Are the private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(ConstructorDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
@@ -104,11 +92,9 @@ namespace CodeDocumentor.Helper
             return false;
         }
 
-        /// <summary>
-        /// Are the private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Are the private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(PropertyDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
@@ -129,11 +115,9 @@ namespace CodeDocumentor.Helper
             return false;
         }
 
-        /// <summary>
-        /// Are the private member.
-        /// </summary>
-        /// <param name="node">The node.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Are the private member. </summary>
+        /// <param name="node"> The node. </param>
+        /// <returns> A bool. </returns>
         public static bool IsPrivateMember(MethodDeclarationSyntax node)
         {
             if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))

@@ -1,5 +1,4 @@
-﻿using System;
-using CodeDocumentor.Helper;
+﻿using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -8,35 +7,25 @@ namespace CodeDocumentor
 {
     internal class FieldAnalyzerSettings
     {
-        /// <summary>
-        ///   The title.
-        /// </summary>
-        internal const string Title = "The field must have a documentation header.";
+        /// <summary> The category. </summary>
+        internal const string Category = DocumentationHeaderHelper.CATEGORY;
 
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        internal const string Category = DocumentationHeaderHelper.Category;
-
-        /// <summary>
-        ///   The diagnostic id.
-        /// </summary>
+        /// <summary> The diagnostic id. </summary>
         internal const string DiagnosticId = Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID;
 
-        /// <summary>
-        ///   The message format.
-        /// </summary>
+        /// <summary> The message format. </summary>
         internal const string MessageFormat = Title;
 
-        /// <summary>
-        ///   The diagnostic descriptor rule.
-        /// </summary>
+        /// <summary> The title. </summary>
+        internal const string Title = "The field must have a documentation header.";
+
+        /// <summary> The diagnostic descriptor rule. </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             return new DiagnosticDescriptor(FieldAnalyzerSettings.DiagnosticId, FieldAnalyzerSettings.Title, FieldAnalyzerSettings.MessageFormat,
                 FieldAnalyzerSettings.Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.DefaultDiagnosticSeverity, true);
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.FieldDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity, true);
         }
     }
 }

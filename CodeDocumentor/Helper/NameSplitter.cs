@@ -1,59 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary>
-    ///   The name splitter.
-    /// </summary>
+    /// <summary> The name splitter. </summary>
     public static class NameSplitter
     {
-        private static Regex IsUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
-        private static Regex IsLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
-        private static Regex SpecailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        /// <summary>
-        /// Checks if is all upper case.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns>A bool.</returns>
-        public static bool IsAllUpperCase(string text)
-        {
-            return IsUpperRegEx.IsMatch(text);
-        }
-
-        /// <summary>
-        ///  Checks if is all lower case.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Checks if is all lower case. </summary>
+        /// <param name="text"> The text. </param>
+        /// <returns> A bool. </returns>
         public static bool IsAllLowerCase(string text)
         {
             return IsLowerRegEx.IsMatch(text);
         }
 
-        /// <summary>
-        /// Upper the to title case.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns><![CDATA[IEnumerable<char>]]></returns>
-        public static IEnumerable<char> UpperToTitleCase(string text)
+        /// <summary> Checks if is all upper case. </summary>
+        /// <param name="text"> The text. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsAllUpperCase(string text)
         {
-            bool newWord = true;
-            foreach (char c in text)
-            {
-                if (newWord) { yield return Char.ToUpper(c); newWord = false; }
-                else yield return Char.ToLower(c);
-                if (c == ' ') newWord = true;
-            }
+            return IsUpperRegEx.IsMatch(text);
         }
 
-        /// <summary>
-        ///   Splits name by upper character.
-        /// </summary>
+        /// <summary> Splits name by upper character. </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A list of words. </returns>
         public static List<string> Split(string name)
@@ -133,13 +104,29 @@ namespace CodeDocumentor.Helper
             return words;
         }
 
-        /// <summary>
-        /// Processes the char.
-        /// </summary>
-        /// <param name="i">The i.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="singleWord">The single word.</param>
-        /// <param name="words">The words.</param>
+        /// <summary> Upper the to title case. </summary>
+        /// <param name="text"> The text. </param>
+        /// <returns> <![CDATA[IEnumerable<char>]]> </returns>
+        public static IEnumerable<char> UpperToTitleCase(string text)
+        {
+            bool newWord = true;
+            foreach (char c in text)
+            {
+                if (newWord) { yield return Char.ToUpper(c); newWord = false; }
+                else yield return Char.ToLower(c);
+                if (c == ' ') newWord = true;
+            }
+        }
+
+        private static readonly Regex IsLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
+        private static readonly Regex IsUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
+        private static readonly Regex SpecailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary> Processes the char. </summary>
+        /// <param name="i"> The i. </param>
+        /// <param name="name"> The name. </param>
+        /// <param name="singleWord"> The single word. </param>
+        /// <param name="words"> The words. </param>
         private static void ProcessChar(int i, ReadOnlySpan<char> name, ref List<char> singleWord, ref List<string> words)
         {
             var c = name[i];

@@ -98,9 +98,9 @@ namespace CodeDocumentor.Test.Classes
                 o.IsEnabledForPublicMembersOnly = true;
             };
 
-            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PRIVATE);
+            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 
-            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PRIVATE);
+            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

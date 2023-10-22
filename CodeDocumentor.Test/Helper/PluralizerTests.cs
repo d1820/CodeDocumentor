@@ -12,7 +12,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Is", "Checks if is")]
         public void Pluralizer_ConvertsDoCorrectly(string word, string converted)
         {
-            var result = Pluralizer.Pluralize(word);
+            var result = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(word));
             result.Should().Be(converted);
         }
     }

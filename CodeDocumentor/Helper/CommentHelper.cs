@@ -12,50 +12,44 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary>
-    /// The comment helper.
-    /// </summary>
+    /// <summary> The comment helper. </summary>
     public static class CommentHelper
     {
-        /// <summary>
-        /// Withs the period.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns>A string.</returns>
-        public static string WithPeriod(this string text)
-        {
-            if (text.EndsWith("."))
-            {
-                return text;
-            }
-            return text + ".";
-        }
-
-        /// <summary>
-        /// Creates the class comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
+        /// <summary> Creates the class comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
         public static string CreateClassComment(string name)
         {
             return CreateCommonComment(name);
         }
 
-        /// <summary>
-        /// Create the record comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
-        public static string CreateRecordComment(string name)
+        /// <summary> Creates the constructor comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <param name="isPrivate"> If true, is private. </param>
+        /// <returns> A string. </returns>
+        public static string CreateConstructorComment(string name, bool isPrivate)
+        {
+            if (isPrivate)
+            {
+                return $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created.".Translate();
+            }
+            else
+            {
+                return $"Initializes a new instance of the <see cref=\"{name}\"/> class.".Translate();
+            }
+        }
+
+        /// <summary> Creates the enum comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
+        public static string CreateEnumComment(string name)
         {
             return CreateCommonComment(name);
         }
 
-        /// <summary>
-        /// Creates the field comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
+        /// <summary> Creates the field comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
         public static string CreateFieldComment(string name)
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
@@ -84,33 +78,11 @@ namespace CodeDocumentor.Helper
                     return $"{string.Join(" ", parts)}.";
                 }
             }
-
-
         }
 
-        /// <summary>
-        /// Creates the constructor comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="isPrivate">If true, is private.</param>
-        /// <returns>A string.</returns>
-        public static string CreateConstructorComment(string name, bool isPrivate)
-        {
-            if (isPrivate)
-            {
-                return $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created.".Translate();
-            }
-            else
-            {
-                return $"Initializes a new instance of the <see cref=\"{name}\"/> class.".Translate();
-            }
-        }
-
-        /// <summary>
-        /// Creates the interface comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
+        /// <summary> Creates the interface comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
         public static string CreateInterfaceComment(string name)
         {
             List<string> parts = SpilitNameAndToLower(name, false);
@@ -124,48 +96,10 @@ namespace CodeDocumentor.Helper
             return string.Join(" ", parts).WithPeriod().Translate();
         }
 
-        /// <summary>
-        /// Creates the enum comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
-        public static string CreateEnumComment(string name)
-        {
-            return CreateCommonComment(name);
-        }
-
-        /// <summary>
-        /// Creates the property comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="isBoolean">If true, is boolean.</param>
-        /// <param name="hasSetter">If true, has setter.</param>
-        /// <returns>A string.</returns>
-        public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter)
-        {
-            string comment = "Gets";
-            if (hasSetter)
-            {
-                comment += " or Sets";
-            }
-
-            if (isBoolean)
-            {
-                comment += CreatePropertyBooleanPart(name).Translate();
-            }
-            else
-            {
-                comment += " the " + string.Join(" ", SpilitNameAndToLower(name, true));
-            }
-            return comment.WithPeriod();
-        }
-
-        /// <summary>
-        /// Creates the method comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="returnType">The return type.</param>
-        /// <returns>A string.</returns>
+        /// <summary> Creates the method comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <param name="returnType"> The return type. </param>
+        /// <returns> A string. </returns>
         public static string CreateMethodComment(string name, TypeSyntax returnType)
         {
             List<string> parts = SpilitNameAndToLower(name, false, false);
@@ -230,11 +164,9 @@ namespace CodeDocumentor.Helper
             return string.Join(" ", parts).Translate().WithPeriod();
         }
 
-        /// <summary>
-        /// Creates the parameter comment.
-        /// </summary>
-        /// <param name="parameter">The parameter.</param>
-        /// <returns>A string.</returns>
+        /// <summary> Creates the parameter comment. </summary>
+        /// <param name="parameter"> The parameter. </param>
+        /// <returns> A string. </returns>
         public static string CreateParameterComment(ParameterSyntax parameter)
         {
             bool isBoolean = false;
@@ -263,65 +195,73 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        /// <summary>
-        /// Has comment.
-        /// </summary>
-        /// <param name="commentTriviaSyntax">The comment trivia syntax.</param>
-        /// <returns>A bool.</returns>
+        /// <summary> Creates the property comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <param name="isBoolean"> If true, is boolean. </param>
+        /// <param name="hasSetter"> If true, has setter. </param>
+        /// <returns> A string. </returns>
+        public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter)
+        {
+            string comment = "Gets";
+            if (hasSetter)
+            {
+                comment += " or Sets";
+            }
+
+            if (isBoolean)
+            {
+                comment += CreatePropertyBooleanPart(name).Translate();
+            }
+            else
+            {
+                comment += " the " + string.Join(" ", SpilitNameAndToLower(name, true));
+            }
+            return comment.WithPeriod();
+        }
+
+        /// <summary> Create the record comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
+        public static string CreateRecordComment(string name)
+        {
+            return CreateCommonComment(name);
+        }
+
+        /// <summary> Has comment. </summary>
+        /// <param name="commentTriviaSyntax"> The comment trivia syntax. </param>
+        /// <returns> A bool. </returns>
         public static bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
         {
             bool hasSummary = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlElementSyntax>()
-                .Any(o => o.StartTag.Name.ToString().Equals(DocumentationHeaderHelper.Summary));
+                .Any(o => o.StartTag.Name.ToString().Equals(DocumentationHeaderHelper.SUMMARY));
 
             bool hasInheritDoc = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlEmptyElementSyntax>()
-                .Any(o => o.Name.ToString().Equals(DocumentationHeaderHelper.InheritDoc));
+                .Any(o => o.Name.ToString().Equals(DocumentationHeaderHelper.INHERITDOC));
 
             return hasSummary || hasInheritDoc;
         }
 
-        /// <summary>
-        /// Creates the property boolean part.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
-        private static string CreatePropertyBooleanPart(string name)
+        /// <summary> Withs the period. </summary>
+        /// <param name="text"> The text. </param>
+        /// <returns> A string. </returns>
+        public static string WithPeriod(this string text)
         {
-            string booleanPart = " a value indicating whether ";
-
-            var parts = SpilitNameAndToLower(name, true).ToList();
-
-            string isWord = parts.FirstOrDefault(o => o == "is");
-            if (isWord != null)
+            if (text.EndsWith("."))
             {
-                parts.Remove(isWord);
-                parts.Insert(parts.Count - 1, isWord);
+                return text;
             }
-
-            booleanPart += string.Join(" ", parts);
-            return booleanPart;
+            return text + ".";
         }
 
-        /// <summary>
-        /// Creates the common comment.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
-        private static string CreateCommonComment(string name)
-        {
-            return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}.";
-        }
-
-        /// <summary>
-        /// Spilit the name and to lower.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="isFirstCharacterLower">If true, is first character lower.</param>
-        /// <param name="shouldTranslate">If true, should translate.</param>
-        /// <returns><![CDATA[List<string>]]></returns>
+        /// <summary> Spilit the name and to lower. </summary>
+        /// <param name="name"> The name. </param>
+        /// <param name="isFirstCharacterLower"> If true, is first character lower. </param>
+        /// <param name="shouldTranslate"> If true, should translate. </param>
+        /// <returns> <![CDATA[List<string>]]> </returns>
         internal static List<string> SpilitNameAndToLower(string name, bool isFirstCharacterLower, bool shouldTranslate = true)
         {
             if (shouldTranslate)
@@ -342,10 +282,36 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        /// <summary>
-        /// Handle asynchronously keyword.
-        /// </summary>
-        /// <param name="parts">The parts.</param>
+        /// <summary> Creates the common comment. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
+        private static string CreateCommonComment(string name)
+        {
+            return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}.";
+        }
+
+        /// <summary> Creates the property boolean part. </summary>
+        /// <param name="name"> The name. </param>
+        /// <returns> A string. </returns>
+        private static string CreatePropertyBooleanPart(string name)
+        {
+            string booleanPart = " a value indicating whether ";
+
+            var parts = SpilitNameAndToLower(name, true).ToList();
+
+            string isWord = parts.FirstOrDefault(o => o == "is");
+            if (isWord != null)
+            {
+                parts.Remove(isWord);
+                parts.Insert(parts.Count - 1, isWord);
+            }
+
+            booleanPart += string.Join(" ", parts);
+            return booleanPart;
+        }
+
+        /// <summary> Handle asynchronously keyword. </summary>
+        /// <param name="parts"> The parts. </param>
         private static void HandleAsyncKeyword(List<string> parts)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();

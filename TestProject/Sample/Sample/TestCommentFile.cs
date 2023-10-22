@@ -29,6 +29,9 @@ namespace Welcom.Test
         /// <summary>
         /// Initializes a new instance of the <see cref="Field_Tester_Spacer"/> class.
         /// </summary>
+        /// <example>
+        /// test
+        /// </example>
         public Field_Tester_Spacer()
         {
         }
@@ -36,7 +39,13 @@ namespace Welcom.Test
 
         /// <summary>
         /// Check on the user OCR.
+        /// new line added
+        /// <![CDATA[<Test>sdsd</test>]]>
         /// </summary>
+        /// <remarks> test remarks </remarks>
+        /// <example>
+        /// test
+        /// </example>
         /// <returns>A string.</returns>
         public string Check_On_The_User_OCR()
         {
@@ -48,8 +57,14 @@ namespace Welcom.Test
             return "";
         }
 
+        /// <summary>
+        /// Checks if is valid.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        /// <returns>A bool.</returns>
         public bool EnsureValid()
         {
+            throw new Exception("fsd");
             return true;
 
         }

@@ -13,9 +13,7 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicMethodAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        ///   Gets the supported diagnostics.
-        /// </summary>
+        /// <summary> Gets the supported diagnostics. </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -29,18 +27,16 @@ namespace CodeDocumentor
             }
         }
 
-        /// <summary>
-        ///   Initializes.
-        /// </summary>
+        /// <summary> Initializes. </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.MethodDeclaration);
         }
 
-        /// <summary>
-        ///   Analyzes node.
-        /// </summary>
+        /// <summary> Analyzes node. </summary>
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {

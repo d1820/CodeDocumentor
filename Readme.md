@@ -13,6 +13,9 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 <!-- toc -->
 
 - [Instruction](#instruction)
+- [Known Issues](#known-issues)
+- [Comment Ordering](#comment-ordering)
+- [Supported Comment Refactorings](#supported-comment-refactorings)
 - [Settings](#settings)
   - [Word Translations](#word-translations)
   - [Recommended Settings](#recommended-settings)
@@ -24,6 +27,7 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
   - [Attribute](#attribute)
   - [Example](#example)
 - [Usage Examples](#usage-examples)
+- [Special Thanks](#special-thanks)
 
 <!-- tocstop -->
 
@@ -34,6 +38,30 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 2. Then you can click the bulb to see the fix option. When you click the option, the documentation will be added.
 3. You can use shortcut(Alt+Enter or Ctrl+.) to quickly add the documentation. Documentation fixes can be implemented at the member, document, project, and solution levels.
 
+## Known Issues
+
+- As of VS2022 verison 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
+
+  ![OutOfProcess](./GifInstruction/outOfProcess.PNG)
+
+  **Please disable this setting to allow CodeDocumentor to work correctly.**
+
+## Comment Ordering
+
+Comments are structured in the following order
+
+- Summary
+- Generic Types *if applies
+- Parameter Types *if applies
+- Exception Types *if applies
+- Property Value Types *if applies
+- Remarks
+- Examples
+- Return Types *if applies
+ 
+## Supported Comment Refactorings
+
+Code Documentor supports creating, updating, and recreating on a given type. There is also an avaialble fix at eny level to comment the whole file.
 
 ## Settings
 ---
@@ -48,6 +76,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Use natural language for return comments|When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example Enabled: ```<return>A List of Strings</return>``` Example Disabled: ``` <returns><![CDATA[Task<int>]]></returns>```|
 | Use TODO comment when summary can not be determined|When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated. |
 | Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |
+| Preserve Existing Summary Text|When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.|
 | Default Diagnostics | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change. |
 
 
@@ -61,7 +90,7 @@ As part of the settings WordMaps can be defined to help control how you want tex
 
 These are the recommended settings that create the best output experience
 
-![RecommenedSettings](./GifInstruction/RecomendedSettings.PNG)
+![RecommenedSettings](./GifInstruction/RecommendedSettings.PNG)
 
 
 ### Example Options Screen
@@ -135,14 +164,31 @@ public class Test<T>
 
 
 ## Usage Examples
----
-<img src="./GifInstruction/quick action options.gif" />
 
-<img src="./GifInstruction/short cut to quick add.gif" />
+Inline code notification
 
 <img src="./GifInstruction/warning wave line.gif" />
 
+Add comments to a single type
+<img src="./GifInstruction/SingleTypeAddComments.gif" />
 
----
-Special Thanks
+Update comments to a single type
+<img src="./GifInstruction/SingleTypeUpdateComments.gif" />
+
+Update comments to a single type when preserving the summary setting is true
+<img src="./GifInstruction/SingleTypeUpdatePreserveComments.gif" />
+
+Update comments to a single type when preserving the summary setting is false
+<img src="./GifInstruction/SingleTypeUpdatePreserveCommentsDisabled.gif" />
+
+Update the whole file at once
+<img src="./GifInstruction/UpdateWholeFile.gif" />
+
+How fast comments can be added
+<img src="./GifInstruction/short cut to quick add.gif" />
+
+
+
+
+## Special Thanks
 This was forked and modified from [jinyafeng](https://github.com/jinyafeng/DocumentationAssistant)

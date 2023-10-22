@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -9,11 +8,7 @@ namespace CodeDocumentor.Helper
 {
     public static class Translator
     {
-        private static string wordMatchRegexTemplate = @"\b({0})\b";
-
-        /// <summary>
-        ///   Translates text replacing words from the WordMap settings
-        /// </summary>
+        /// <summary> Translates text replacing words from the WordMap settings </summary>
         /// <param name="node"> </param>
         /// <returns> A string </returns>
         public static string Translate(this CSharpSyntaxNode node)
@@ -21,9 +16,7 @@ namespace CodeDocumentor.Helper
             return TranslateText(node.ToString());
         }
 
-        /// <summary>
-        ///   Translates text replacing words from the WordMap settings
-        /// </summary>
+        /// <summary> Translates text replacing words from the WordMap settings </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>
         public static string Translate(this string text)
@@ -31,9 +24,7 @@ namespace CodeDocumentor.Helper
             return TranslateText(text);
         }
 
-        /// <summary>
-        ///   Translates text replacing words from the WordMap settings
-        /// </summary>
+        /// <summary> Translates text replacing words from the WordMap settings </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>
         public static string TranslateText(string text)
@@ -64,5 +55,7 @@ namespace CodeDocumentor.Helper
             }
             return converted;
         }
+
+        private static readonly string wordMatchRegexTemplate = @"\b({0})\b";
     }
 }

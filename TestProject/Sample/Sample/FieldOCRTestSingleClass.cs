@@ -7,29 +7,129 @@ using System.Threading.Tasks;
 namespace Sample
 {
     /// <summary>
+    /// The interface interface.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    interface IInterface<TEntity>
+    {
+        /// <summary>
+        /// Does the work.
+        /// </summary>
+        /// <returns>A string.</returns>
+        string DoWork();
+    }
+
+    /// <summary>
+    /// The test types.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class TestTypes<T>
+    {
+
+    }
+
+    /// <summary>
+    /// The inhertit test types.
+    /// </summary>
+    public class InhertitTestTypes: TestTypes<int>
+    {
+
+    }
+
+
+
+
+
+    /// <summary>
     /// The field OCR test single class.
     /// </summary>
-    internal class FieldOCRTestSingleClass
+    internal class FieldOCRTestSingleClass : IInterface<string>
     {
+        /// <summary>
+        /// test field.
+        /// </summary>
+        private static string _testField;
+        /// <summary>
+        /// Gets or Sets the test property.
+        /// </summary>
+        public int TestProperty { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FieldOCRTestSingleClass"/> class.
+        /// </summary>
+        public FieldOCRTestSingleClass()
+        {
+
+        }
 
         /// <summary>
         /// Does the work.
         /// </summary>
         /// <returns>A string.</returns>
-        internal string DoWork()
+        public string DoWork()
         {
             return "";
         }
-
         /// <summary>
         /// Does the work with params.
         /// </summary>
         /// <param name="test">The test.</param>
         /// <param name="we">The we.</param>
+        /// <returns>A bool.</returns>
+        internal bool DoWorkWithParams(string test, string we)
+        {
+            return true;
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// The field OCR test single class.
+    /// </summary>
+    internal class FieldOCRTestSingleClass : IInterface<string>
+    {
+        /// <summary>
+        /// Work with types.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="test">The test.</param>
+        /// <param name="we">The we.</param>
+        /// <remarks>
+        /// test
+        /// </remarks>
+        /// <example>
+        /// test
+        /// </example>
         /// <returns>A string.</returns>
-        internal string DoWorkWithParams(string test, string we)
+        internal string WorkWithTypes<TEntity>(string test, string we)
         {
             return "";
         }
+
+    }
+
+    /// <summary>
+    /// The test record.
+    /// </summary>
+    internal record TestRecord
+    {
+        /// <summary>
+        /// test field.
+        /// </summary>
+        private static string _testField;
+        /// <summary>
+        /// Gets or Sets the test property.
+        /// </summary>
+        public int TestProperty { get; set; }
     }
 }

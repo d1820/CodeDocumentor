@@ -8,16 +8,9 @@ namespace CodeDocumentor.Helper
 {
     public static class WordExtensions
     {
-        public static void TryAddSingleWord(this List<string> words, List<char> singleWord, bool clearSingleWord = false)
+        public static bool IsBoolReturnType(this TypeSyntax returnType)
         {
-            if (singleWord.Any())
-            {
-                words.Add(new string(singleWord.ToArray()));
-            }
-            if (clearSingleWord)
-            {
-                singleWord.Clear();
-            }
+            return returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
         }
 
         public static bool IsVerbCombo(this string word, string nextWord = null)
@@ -31,9 +24,16 @@ namespace CodeDocumentor.Helper
             return skipWord || skipNextWord;
         }
 
-        public static bool IsBoolReturnType(this TypeSyntax returnType)
+        public static void TryAddSingleWord(this List<string> words, List<char> singleWord, bool clearSingleWord = false)
         {
-            return returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
+            if (singleWord.Any())
+            {
+                words.Add(new string(singleWord.ToArray()));
+            }
+            if (clearSingleWord)
+            {
+                singleWord.Clear();
+            }
         }
     }
 }

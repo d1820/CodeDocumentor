@@ -8,56 +8,6 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
-        public static class DiagnosticIds
-        {
-            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
-            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
-            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
-            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
-            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
-            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
-            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
-            public const string FILE_DIAGNOSTIC_ID = "CD1607";
-            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
-        }
-
-        public static WordMap[] WORD_MAPS { get; set; } = new[] {
-            new WordMap { Word = "int", Translation = "integer" },
-            new WordMap { Word = "Int32", Translation = "integer" },
-            new WordMap { Word = "Int64", Translation = "integer" },
-            new WordMap { Word = "OfList", Translation = "OfLists" },
-            new WordMap { Word = "OfEnumerable", Translation = "OfLists" },
-            new WordMap { Word = "IEnumerable", Translation = "List" },
-            new WordMap { Word = "IList", Translation = "List" },
-            new WordMap { Word = "IReadOnlyList", Translation = "Read Only List" },
-            new WordMap { Word = "ICollection", Translation = "Collection" },
-            new WordMap { Word = "OfCollection", Translation = "OfCollections" },
-            new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },
-            new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" }
-        };
-
-        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
-            new WordMap { Word = "To", Translation = "Converts to" },
-            new WordMap { Word = "Do", Translation = "Does" }
-        };
-
-        //These should match the 
-        public static string[] PLURALIZE_ANYWAY_LIST()
-        {
-            return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
-        }
-
-        public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
-            new WordMap { Word = "Is", Translation = "Checks if is" },
-            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
-                    if(!string.IsNullOrEmpty( nextWord) && Pluralizer.IsPlural(nextWord)){
-                        return "Checks if";
-                    }
-                    return translation;
-                }
-            }
-        };
-
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
         public static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] { "accept",
@@ -707,12 +657,62 @@ namespace CodeDocumentor.Vsix2022
                                                                     "is", "am", "are", "was", "were", "been", "being", "have", "does",
                                                                     "has", "had", "having",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
-                                                                    "dare", "need", "used", "ought", "goes", 
+                                                                    "dare", "need", "used", "ought", "goes",
                                                                     //pluralization conversions
                                                                     "converts to",
                                                                     "checks if is",
                                                                     //Other types
                                                                     "on", "by", "an", "in", "at", "of",
         };
+
+        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
+            new WordMap { Word = "To", Translation = "Converts to" },
+            new WordMap { Word = "Do", Translation = "Does" }
+        };
+
+        public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
+            new WordMap { Word = "Is", Translation = "Checks if is" },
+            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
+                    if(!string.IsNullOrEmpty( nextWord) && Pluralizer.IsPlural(nextWord)){
+                        return "Checks if";
+                    }
+                    return translation;
+                }
+            }
+        };
+
+        public static WordMap[] WORD_MAPS { get; set; } = new[] {
+            new WordMap { Word = "int", Translation = "integer" },
+            new WordMap { Word = "Int32", Translation = "integer" },
+            new WordMap { Word = "Int64", Translation = "integer" },
+            new WordMap { Word = "OfList", Translation = "OfLists" },
+            new WordMap { Word = "OfEnumerable", Translation = "OfLists" },
+            new WordMap { Word = "IEnumerable", Translation = "List" },
+            new WordMap { Word = "IList", Translation = "List" },
+            new WordMap { Word = "IReadOnlyList", Translation = "Read Only List" },
+            new WordMap { Word = "ICollection", Translation = "Collection" },
+            new WordMap { Word = "OfCollection", Translation = "OfCollections" },
+            new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },
+            new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" }
+        };
+
+        //These should match the
+        public static string[] PLURALIZE_ANYWAY_LIST()
+        {
+            return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
+        }
+
+        public static class DiagnosticIds
+        {
+            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
+            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
+            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
+            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
+            public const string FILE_DIAGNOSTIC_ID = "CD1607";
+            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
+            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
+            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
+            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
+        }
     }
 }

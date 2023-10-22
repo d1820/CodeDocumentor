@@ -78,6 +78,14 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |
 | Preserve Existing Summary Text|When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.|
 | Default Diagnostics | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change. |
+| Class Diagnostics | Allows setting a new default diagnostic level for evaluation for classes. A restart of Visual Studio is required on change. |
+| Constructor Diagnostics | Allows setting a new default diagnostic level for evaluation for constructors. A restart of Visual Studio is required on change. |
+| Enum Diagnostics | Allows setting a new default diagnostic level for evaluation for enums. A restart of Visual Studio is required on change. |
+| Field Diagnostics | Allows setting a new default diagnostic level for evaluation for fields. A restart of Visual Studio is required on change. |
+| Interface Diagnostics | Allows setting a new default diagnostic level for evaluation for interfaces. A restart of Visual Studio is required on change. |
+| Method Diagnostics | Allows setting a new default diagnostic level for evaluation for methods. A restart of Visual Studio is required on change. |
+| Property Diagnostics | Allows setting a new default diagnostic level for evaluation for properties. A restart of Visual Studio is required on change. |
+| Record Diagnostics | Allows setting a new default diagnostic level for evaluation for records. A restart of Visual Studio is required on change. |
 
 
 
@@ -93,16 +101,13 @@ These are the recommended settings that create the best output experience
 ![RecommenedSettings](./GifInstruction/RecommendedSettings.PNG)
 
 
-### Example Options Screen
-
-![ExampleSettings](./GifInstruction/Settings.PNG)
-
 ## Also Supports
 ---
 
 - For method documenting it will scan the method code for any exceptions and automatically add them as exception nodes
 - For method generic return types it uses XML CDATA so the actual generic type is displayed
 - For method documenting where generics are used typeparam nodes are added.
+- Whole file, project and solution comment adding
 
 To adjust these defaults go to Tools > Options > CodeDocumentor
 

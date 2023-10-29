@@ -4,7 +4,7 @@ namespace Sample;
 
 
 [ProtoContract]
-public class protoTester
+public class ProtoTesterFileScoped
 {
     private string _test;
 
@@ -25,26 +25,3 @@ public class protoTester
     private string ManWorker() { return ""; }
 }
 
-
-namespace Sample.Other
-{
-
-    [ProtoContract]
-    public class protoTester
-    {
-        public protoTester()
-        {
-
-        }
-        static protoTester()
-        {
-
-        }
-
-        [ProtoMember(1)]
-        public int MyProperty { get; set; }
-
-        [ProtoMember(2)]
-        internal int MyProperty1 { get; set; }
-    }
-}

@@ -9,44 +9,48 @@ namespace CodeDocumentor.Helper
 {
     public abstract class BaseReturnTypeCommentConstruction
     {
-        /// <summary> Gets or Sets the array comment template. </summary>
-        /// <value> A string. </value>
-        public abstract string ArrayCommentTemplate { get; set; }
+        protected readonly bool _useProperCasing;
 
-        /// <summary> Generates the comment. </summary>
+        /// <summary>
+        /// Gets or Sets the array comment template.
+        /// </summary>
+        /// <value> A string. </value>
+        public abstract string ArrayCommentTemplate { get; }
+
+        /// <summary>
+        /// Generates the comment.
+        /// </summary>
         public string Comment { get; protected set; }
 
-        /// <summary> Gets or Sets the dictionary comment template. </summary>
+        /// <summary>
+        /// Gets or Sets the dictionary comment template.
+        /// </summary>
         /// <value> A string. </value>
-        public abstract string DictionaryCommentTemplate { get; set; }
+        public abstract string DictionaryCommentTemplate { get;  }
 
-        /// <summary> Gets or Sets the list comment template. </summary>
+        /// <summary>
+        /// Gets or Sets the list comment template.
+        /// </summary>
         /// <value> A string. </value>
-        public abstract string ListCommentTemplate { get; set; }
+        public abstract string ListCommentTemplate { get;  }
 
-        /// <summary> Gets or Sets the read only collection comment template. </summary>
+        /// <summary>
+        /// Gets or Sets the read only collection comment template.
+        /// </summary>
         /// <value> A string. </value>
-        public abstract string ReadOnlyCollectionCommentTemplate { get; set; }
+        public abstract string ReadOnlyCollectionCommentTemplate { get;  }
 
-        /// <summary> Generates general comment. </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <param name="includeStartingWord"> Flag to determine if a starting word should be included </param>
-        /// <returns> The comment. </returns>
-        public string GenerateGeneralComment(ReadOnlySpan<char> returnType, bool includeStartingWord)
+        protected BaseReturnTypeCommentConstruction(bool useProperCasing)
         {
-            //We dont lowercase here cause its probably a type ie) Span, Custom<T>
-            var lowerReturnWord = returnType.ToString();
-            if (includeStartingWord)
-            {
-                return string.Format("{0} {1}", DetermineStartingWord(returnType), lowerReturnWord);
-            }
-            return lowerReturnWord;
+            _useProperCasing = useProperCasing;
         }
 
-        /// <summary> Builds a comment </summary>
+        /// <summary>
+        /// Builds a comment
+        /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <param name="returnGenericTypeAsFullString">
-        ///     Flag indicating if the full type should just be returned as a string
+        /// Flag indicating if the full type should just be returned as a string
         /// </param>
         /// <returns> The comment </returns>
         internal virtual string BuildComment(TypeSyntax returnType, bool returnGenericTypeAsFullString)
@@ -61,7 +65,6 @@ namespace CodeDocumentor.Helper
                 }
                 return GenerateIdentifierNameTypeComment(identifier);
             }
-
             if (returnType is QualifiedNameSyntax)
             {
                 return GenerateQualifiedNameTypeComment(returnType as QualifiedNameSyntax);
@@ -74,23 +77,49 @@ namespace CodeDocumentor.Helper
             {
                 return GenerateArrayTypeComment(returnType as ArrayTypeSyntax);
             }
-
-            return GenerateGeneralComment(returnType.ToFullString().AsSpan(), _useStartingWords).WithPeriod();
+            if (returnType is PredefinedTypeSyntax)
+            {
+                return GeneratePredefinedTypeComment(returnType as PredefinedTypeSyntax);
+            }
+            return GenerateGeneralComment(returnType.ToFullString().AsSpan());
         }
 
-        protected readonly bool _useProperCasing;
-        protected readonly bool _useStartingWords;
-
-        protected BaseReturnTypeCommentConstruction(bool useProperCasing, bool useStartingWords)
+        /// <summary>
+        /// Generates identifier name type comment.
+        /// </summary>
+        /// <param name="returnType"> The return type. </param>
+        /// <returns> The comment. </returns>
+        internal virtual string GenerateIdentifierNameTypeComment(IdentifierNameSyntax returnType)
         {
-            _useProperCasing = useProperCasing;
-            _useStartingWords = useStartingWords;
+            return GenerateGeneralComment(returnType.Identifier.ValueText.AsSpan());
         }
 
-        /// <summary> Finds the parent MethodDeclarationSyntax if exists </summary>
+        /// <summary>
+        /// Generates qualified name type comment.
+        /// </summary>
+        /// <param name="returnType"> The return type. </param>
+        /// <returns> The comment. </returns>
+        internal virtual string GenerateQualifiedNameTypeComment(QualifiedNameSyntax returnType)
+        {
+            return GenerateGeneralComment(returnType.ToString().AsSpan());
+        }
+
+        /// <summary>
+        /// Generates predefined type comment.
+        /// </summary>
+        /// <param name="returnType"> The return type. </param>
+        /// <returns> The comment. </returns>
+        private string GeneratePredefinedTypeComment(PredefinedTypeSyntax returnType)
+        {
+            return GenerateGeneralComment(returnType.Keyword.ValueText.AsSpan());
+        }
+
+        /// <summary>
+        /// Finds the parent MethodDeclarationSyntax if exists
+        /// </summary>
         /// <param name="node"> </param>
         /// <returns> </returns>
-        protected static MethodDeclarationSyntax GetMethodDeclarationSyntax(SyntaxNode node)
+        private static MethodDeclarationSyntax GetMethodDeclarationSyntax(SyntaxNode node)
         {
             if (!(node is MethodDeclarationSyntax) && node.Parent != null)
             {
@@ -99,18 +128,42 @@ namespace CodeDocumentor.Helper
             return node as MethodDeclarationSyntax;
         }
 
-        /// <summary> Determines specific object name. </summary>
+        /// <summary>
+        /// Builds the children generic arg list.
+        /// </summary>
+        /// <param name="argType"> The arg type. </param>
+        /// <param name="items"> The items. </param>
+        /// <param name="pluaralizeName"> If true, pluaralize name. </param>
+        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
+        {
+            bool shouldPluralize;
+            if (argType is GenericNameSyntax genericArgType)
+            {
+                var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
+                if (childArg != null)
+                {
+                    //we check the parent to see if the child needs to be pluralized
+                    shouldPluralize = ShouldPluralize(argType, pluaralizeName);
+                    BuildChildrenGenericArgList(childArg, items, shouldPluralize);
+                }
+            }
+            items.Add(DetermineSpecificObjectName(argType, pluaralizeName, pluaralizeIdentifierType));
+        }
+
+        /// <summary>
+        /// Determines specific object name.
+        /// </summary>
         /// <param name="specificType"> The specific type. </param>
         /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
         /// <returns> The comment. </returns>
-        protected string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false)
+        private string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
         {
             string value;
             string result;
             if (specificType is IdentifierNameSyntax identifierNameSyntax)
             {
                 value = identifierNameSyntax.Identifier.ValueText.Translate();
-                result = Pluralizer.Pluralize(value);
+                result = pluaralizeIdentifierType? Pluralizer.Pluralize(value): value;
             }
             else if (specificType is PredefinedTypeSyntax predefinedTypeSyntax)
             {
@@ -130,34 +183,39 @@ namespace CodeDocumentor.Helper
             return result;
         }
 
-        /// <summary> Determines started word. </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        protected string DetermineStartingWord(ReadOnlySpan<char> returnType)
-        {
-            var vowelChars = new List<char>() { 'a', 'e', 'i', 'o', 'u' };
-            if (vowelChars.Contains(char.ToLower(returnType[0])))
-            {
-                return _useProperCasing ? "An" : "an";
-            }
-            else
-            {
-                return _useProperCasing ? "A" : "a";
-            }
-        }
 
-        /// <summary> Generates array type comment. </summary>
+
+        /// <summary>
+        /// Generates array type comment.
+        /// </summary>
         /// <param name="arrayTypeSyntax"> The array type syntax. </param>
         /// <returns> The comment. </returns>
-        protected string GenerateArrayTypeComment(ArrayTypeSyntax arrayTypeSyntax)
+        private string GenerateArrayTypeComment(ArrayTypeSyntax arrayTypeSyntax)
         {
             return string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(arrayTypeSyntax.ElementType, true));
         }
 
-        /// <summary> Generates generic type comment. </summary>
+        /// <summary>
+        /// Generates general comment.
+        /// </summary>
         /// <param name="returnType"> The return type. </param>
+        /// <param name="includeStartingWord"> Flag to determine if a starting word should be included </param>
         /// <returns> The comment. </returns>
-        protected string GenerateGenericTypeComment(GenericNameSyntax returnType, bool returnGenericTypeAsFullString)
+        private string GenerateGeneralComment(ReadOnlySpan<char> returnType)
+        {
+            //TODO: change the whole comment flow to support cref
+            //We dont lowercase here cause its probably a type ie) Span, Custom<T>
+            //var cref = $"<see cref=\"{returnType.ToString()}\"/>";
+            //return cref;
+            return returnType.ToString();
+        }
+
+        /// <summary>
+        /// Generates generic type comment.
+        /// </summary>
+        /// <param name="returnType"> The return type. </param>
+        /// <returns> The string </returns>
+        private string GenerateGenericTypeComment(GenericNameSyntax returnType, bool returnGenericTypeAsFullString)
         {
             // this will return the full generic Ex. Task<Request>- which then will get added to a CDATA
             if (returnGenericTypeAsFullString)
@@ -174,7 +232,7 @@ namespace CodeDocumentor.Helper
                 items.Reverse();
 
                 var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                return string.Format(ReadOnlyCollectionCommentTemplate, resultStr).WithPeriod();
+                return string.Format(ReadOnlyCollectionCommentTemplate, resultStr);
             }
 
             // IEnumerable IList List
@@ -185,7 +243,7 @@ namespace CodeDocumentor.Helper
                 BuildChildrenGenericArgList(argType, items, true);
                 items.Reverse();
                 var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                return string.Format(ListCommentTemplate, resultStr).WithPeriod();
+                return string.Format(ListCommentTemplate, resultStr);
             }
 
             if (returnType.IsDictionary())
@@ -195,19 +253,29 @@ namespace CodeDocumentor.Helper
                     var argType1 = returnType.TypeArgumentList.Arguments.First();
                     var argType2 = returnType.TypeArgumentList.Arguments.Last();
                     List<string> items = new List<string>();
-                    BuildChildrenGenericArgList(argType2, items);
+                    BuildChildrenGenericArgList(argType2, items, pluaralizeIdentifierType: false);
                     items.Reverse();
                     var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                    return string.Format(DictionaryCommentTemplate, argType1.Translate(), resultStr).WithPeriod();
+                    return string.Format(DictionaryCommentTemplate, argType1.Translate(), resultStr);
                 }
-                return GenerateGeneralComment(genericTypeStr.AsSpan(), _useStartingWords).WithPeriod();
+                return GenerateGeneralComment(genericTypeStr.AsSpan());
             }
 
-            if (returnType.IsTask())
+            if (returnType.IsTask() || returnType.IsGenericActionResult())
             {
+                var prefix = "<see cref=\"Task\"/> of type ";
+                if (returnType.IsGenericActionResult())
+                {
+                    prefix += "<see cref=\"ActionResult\"/> of type ";
+                }
                 if (returnType.TypeArgumentList.Arguments.Count == 1)
                 {
                     var firstType = returnType.TypeArgumentList.Arguments.First();
+                    //List<string> items = new List<string>();
+                    //BuildChildrenGenericArgList(firstType, items, false, false);
+                    //TODO: fix comments flow to support cref nodes
+                    //return prefix + BuildComment(firstType, returnGenericTypeAsFullString);
+
                     return BuildComment(firstType, returnGenericTypeAsFullString);
                 }
                 //This should be impossible, but will handle just in case
@@ -217,7 +285,7 @@ namespace CodeDocumentor.Helper
                     var item = returnType.TypeArgumentList.Arguments[i];
                     if (i > 0)
                     {
-                        builder.Append($"{DetermineStartingWord(item.ToString().AsSpan())}");
+                        builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), _useProperCasing)}");
                     }
                     builder.Append($"{BuildComment(item, returnGenericTypeAsFullString)}");
                     if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
@@ -226,57 +294,15 @@ namespace CodeDocumentor.Helper
                     }
                 }
 
-                return builder.ToString().WithPeriod();
+                return builder.ToString();
             }
 
-            return GenerateGeneralComment(genericTypeStr.AsSpan(), _useStartingWords).WithPeriod();
+            return GenerateGeneralComment(genericTypeStr.AsSpan());
         }
 
-        /// <summary> Generates identifier name type comment. </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        protected virtual string GenerateIdentifierNameTypeComment(IdentifierNameSyntax returnType)
-        {
-            return GenerateGeneralComment(returnType.Identifier.ValueText.AsSpan(), _useStartingWords).WithPeriod();
-        }
-
-        /// <summary> Generates predefined type comment. </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        protected string GeneratePredefinedTypeComment(PredefinedTypeSyntax returnType)
-        {
-            return GenerateGeneralComment(returnType.Keyword.ValueText.AsSpan(), true).WithPeriod();
-        }
-
-        /// <summary> Generates qualified name type comment. </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        protected virtual string GenerateQualifiedNameTypeComment(QualifiedNameSyntax returnType)
-        {
-            return GenerateGeneralComment(returnType.ToString().AsSpan(), _useStartingWords).WithPeriod();
-        }
-
-        /// <summary> Builds the children generic arg list. </summary>
-        /// <param name="argType"> The arg type. </param>
-        /// <param name="items"> The items. </param>
-        /// <param name="pluaralizeName"> If true, pluaralize name. </param>
-        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, bool pluaralizeName = false)
-        {
-            bool shouldPluralize;
-            if (argType is GenericNameSyntax genericArgType)
-            {
-                var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
-                if (childArg != null)
-                {
-                    //we check the parent to see if the child needs to be pluralized
-                    shouldPluralize = ShouldPluralize(argType, pluaralizeName);
-                    BuildChildrenGenericArgList(childArg, items, shouldPluralize);
-                }
-            }
-            items.Add(DetermineSpecificObjectName(argType, pluaralizeName));
-        }
-
-        /// <summary> Shoulds the pluralize. </summary>
+        /// <summary>
+        /// Shoulds the pluralize.
+        /// </summary>
         /// <param name="argType"> The arg type. </param>
         /// <param name="defaultValue"> If true, default value. </param>
         /// <returns> A bool. </returns>

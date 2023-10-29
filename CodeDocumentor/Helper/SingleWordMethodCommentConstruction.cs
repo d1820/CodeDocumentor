@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.VisualStudio.VSConstants;
 
 namespace CodeDocumentor.Helper
 {
@@ -6,25 +8,29 @@ namespace CodeDocumentor.Helper
     {
         /// <summary> Gets or Sets the array comment template. </summary>
         /// <value> A string. </value>
-        public override string ArrayCommentTemplate { get; set; } = "an array of {0}";
+        public override string ArrayCommentTemplate { get; } = "an array of {0}";
 
         /// <summary> Gets or Sets the dictionary comment template. </summary>
         /// <value> A string. </value>
-        public override string DictionaryCommentTemplate { get; set; } = "dictionary with a key of type {0} and a value of type {1}";
+        public override string DictionaryCommentTemplate { get; } = "dictionary with a key of type {0} and a value of type {1}";
 
         /// <summary> Gets or Sets the list comment template. </summary>
         /// <value> A string. </value>
-        public override string ListCommentTemplate { get; set; } = "list of {0}";
+        public override string ListCommentTemplate { get; } = "list of {0}";
 
         /// <summary> Gets or Sets the read only collection comment template. </summary>
         /// <value> A string. </value>
-        public override string ReadOnlyCollectionCommentTemplate { get; set; } = "read only collection of {0}";
+        public override string ReadOnlyCollectionCommentTemplate { get; } = "read only collection of {0}";
 
         /// <summary> Initializes a new instance of the <see cref="SingleWordMethodCommentConstruction" /> class. </summary>
         /// <param name="returnType"> The return type. </param>
-        public SingleWordMethodCommentConstruction(TypeSyntax returnType) : base(false, false)
+        public SingleWordMethodCommentConstruction(TypeSyntax returnType) : base(false)
         {
-            Comment = BuildComment(returnType, false);
+            var comment = BuildComment(returnType, false); //we dont need to translate or period here cause the caller of this does all that work
+            if (!string.IsNullOrEmpty(comment) && comment != ".")
+            {
+                Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), false), comment);
+            }
         }
 
         /// <summary> Builds a string comment for a summary node </summary>
@@ -39,13 +45,14 @@ namespace CodeDocumentor.Helper
             {
                 return string.Empty;
             }
-            return base.BuildComment(returnType, returnGenericTypeAsFullString);
+            return base.BuildComment(returnType, returnGenericTypeAsFullString).Translate().WithPeriod();
+            //return string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), false), comment);
         }
 
         /// <summary> Generates identifier name type comment. </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
-        protected override string GenerateIdentifierNameTypeComment(IdentifierNameSyntax returnType)
+        internal override string GenerateIdentifierNameTypeComment(IdentifierNameSyntax returnType)
         {
             return $"<see cref=\"{returnType.Identifier.ValueText.Translate()}\"/>";
         }
@@ -53,7 +60,7 @@ namespace CodeDocumentor.Helper
         /// <summary> Generates qualified name type comment. </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
-        protected override string GenerateQualifiedNameTypeComment(QualifiedNameSyntax returnType)
+        internal override string GenerateQualifiedNameTypeComment(QualifiedNameSyntax returnType)
         {
             return $"<see cref=\"{returnType.Translate()}\"/>";
         }

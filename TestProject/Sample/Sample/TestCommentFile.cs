@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -7,46 +8,15 @@ using System.Threading.Tasks;
 
 namespace Welcom.Test
 {
-    /// <summary>
-    /// The record.
-    /// </summary>
-    public class Record
-    {
-
-    }
-
-
-    /// <summary>
-    /// The field tester spacer.
-    /// </summary>
     [ExcludeFromCodeCoverage]
     public class Field_Tester_Spacer
     {
 
-
-        const int ConstFieldTester = 666;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Field_Tester_Spacer"/> class.
-        /// </summary>
-        /// <example>
-        /// test
-        /// </example>
         public Field_Tester_Spacer()
         {
         }
 
 
-        /// <summary>
-        /// Check on the user OCR.
-        /// new line added
-        /// <![CDATA[<Test>sdsd</test>]]>
-        /// </summary>
-        /// <remarks> test remarks </remarks>
-        /// <example>
-        /// test
-        /// </example>
-        /// <returns>A string.</returns>
         public string Check_On_The_User_OCR()
         {
             return "";
@@ -57,15 +27,9 @@ namespace Welcom.Test
             return "";
         }
 
-        /// <summary>
-        /// Checks if is valid.
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        /// <returns>A bool.</returns>
         public bool EnsureValid()
         {
             throw new Exception("fsd");
-            return true;
 
         }
 
@@ -74,44 +38,14 @@ namespace Welcom.Test
             return "";
         }
 
-        /// <summary>
-        /// Be action timer.
-        /// </summary>
-        /// <returns>A string.</returns>
         public string BeActionTimer()
         {
             return "";
         }
     }
 
-
-    /// <summary>
-    /// The field OCR tester.
-    /// </summary>
-    public class FieldOCRTester
+    public class ShortMethodNameTests
     {
-        public const bool IS_CONTAINER = true;
-
-        const string SERVER_ORG_CODE = "test";
-
-        /// <summary>
-        /// The const field tester.
-        /// </summary>
-        public const int ConstFieldTester = 666;
-
-        /// <summary>
-        /// Gets or Sets the my property public.
-        /// </summary>
-        public int MyPropertyPublic { get; set; }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FieldOCRTester"/> class.
-        /// </summary>
-        public FieldOCRTester()
-        {
-        }
-
         public string AtTime()
         {
             return "";
@@ -152,7 +86,6 @@ namespace Welcom.Test
             return "";
         }
 
-
         public string DoWorkWithParams(string test)
         {
             return "";
@@ -164,29 +97,15 @@ namespace Welcom.Test
         }
     }
 
-
-    /// <summary>
-    /// The private class.
-    /// </summary>
-    internal class PrivateClass
+    internal class InternalClass
     {
-
-        /// <summary>
-        /// The const field tester.
-        /// </summary>
         const int ConstFieldTester = 666;
 
-        /// <summary>
-        /// Prevents a default instance of the <see cref="PrivateClass"/> class from being created.
-        /// </summary>
-        private PrivateClass()
+        private InternalClass()
         {
         }
     }
 
-    /// <summary>
-    /// The private record.
-    /// </summary>
     internal record PrivateRecord
     {
 
@@ -198,311 +117,178 @@ namespace Welcom.Test
         }
     }
 
-    /// <summary>
-    /// The public record.
-    /// </summary>
     public record PublicRecord
     {
 
-        const int ConstFieldTester = 666;
-
+        public const bool IS_CONTAINER = true;
 
         private PublicRecord()
         {
         }
     }
 
-    /// <summary>
-    /// The record controller interface.
-    /// </summary>
-    /// <typeparam name="TIn"></typeparam>
-    /// <typeparam name="Tout"></typeparam>
+    public class Record
+    {
+        //tests a single word record name
+    }
+
     public interface IRecordController<TIn, Tout>
     {
 
-        /// <summary>
-        /// Gets the items.
-        /// </summary>
-        /// <typeparam name="TOther"></typeparam>
-        /// <param name="request">The request.</param>
-        /// <param name="newReq">The new req.</param>
-        /// <returns><![CDATA[IRecordController<TIn, Tout>]]></returns>
         IRecordController<TIn, Tout> GetItems<TOther>(TIn request, TOther newReq);
 
-        /// <summary>
-        /// Test string.
-        /// </summary>
-        /// <param name="go">The go.</param>
-        /// <returns><![CDATA[Task<string>]]></returns>
         Task<string> TestString(string go);
     }
 
-    //[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
-    /// <summary>
-    /// The test.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class Test<T>
+    public class GenericTypeTests
     {
-        /// <summary>
-        /// The url.
-        /// </summary>
-        private readonly string _url = "";
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Test"/> class.
-        /// </summary>
-        public Test()
-        {
-
-        }
-
-
-        /// <summary>
-        /// Gets or Sets the my property.
-        /// </summary>
-        public int MyProperty { get; set; }
-
-
-        /// <summary>
-        /// Gets or Sets a value indicating whether is valid.
-        /// </summary>
-        /// <value>A bool.</value>
-        public bool IsValid { get; set; }
-
-
-        /// <summary>
-        /// Gets or Sets a value indicating whether has exception.
-        /// </summary>
-        public bool HasException { get; set; }
-
-        /// <summary>
-        /// Gets the shipping address.
-        /// </summary>
-        public int ShippingAddress => 12;
-
-
-        /// <summary>
-        /// Gets or Sets the shipping address asynchronously.
-        /// </summary>
-        public Task<int> ShippingAddressAsync { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address list.
-        /// </summary>
-        /// <value>A list of integers.</value>
-        public List<int> ShippingAddressList { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address list of list.
-        /// </summary>
-        /// <value>A list of lists of integers.</value>
-        public List<List<int>> ShippingAddressListOfList { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address dictionary.
-        /// </summary>
-        /// <value>A dictionary with a key of type integer and a value of type string.</value>
-        public Dictionary<int, string> ShippingAddressDictionary { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address dictionary of list.
-        /// </summary>
-        /// <value>A dictionary with a key of type integer and a value of type list of strings.</value>
-        public Dictionary<int, List<string>> ShippingAddressDictionaryOfList { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address dictionary of list of list.
-        /// </summary>
-        /// <value>A dictionary with a key of type integer and a value of type list of lists of strings.</value>
-        public Dictionary<int, List<List<string>>> ShippingAddressDictionaryOfListOfList { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address read only collectiony.
-        /// </summary>
-        /// <value>A read only collection of strings.</value>
-        public IReadOnlyCollection<string> ShippingAddressReadOnlyCollectiony { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address read only collectionf list.
-        /// </summary>
-        /// <value>A read only collection of lists of strings.</value>
-        public IReadOnlyCollection<List<string>> ShippingAddressReadOnlyCollectionfList { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the shipping address read only collection of collection.
-        /// </summary>
-        /// <value>A read only collection of read only collections of strings.</value>
-        public IReadOnlyCollection<IReadOnlyCollection<string>> ShippingAddressReadOnlyCollectionOfCollection { get; set; }
-
-        /// <summary>
-        /// Gets the <see cref="Record"/> asynchronously.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns><![CDATA[Task<Record>]]></returns>
         public Task<Record> GetAsync(string name)
         {
             return Task.FromResult(new Record());
         }
 
-        /// <summary>
-        /// TODO: Add Summary
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns><![CDATA[Task<int>]]></returns>
         public Task<int> GetoneAsync(string name)
         {
             return Task.FromResult(1);
         }
 
+        internal class ClientDto { }
+        internal class CreateClientDto { }
+        internal class ActionResult<T> { }
 
-        /// <summary>
-        /// Getthrees the <typeparamref name="TResult"></typeparamref>.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="name">The name.</param>
-        /// <returns>A <typeparamref name="TResult"></typeparamref></returns>
+        internal Task<ActionResult<ClientDto>> CreateAsync(CreateClientDto clientDto)
+        {
+            throw new ArgumentException("test");
+        }
+
+        internal Task<ClientDto> CreateAgainAsync(CreateClientDto clientDto)
+        {
+            throw new ArgumentException("test");
+        }
+
+        internal ActionResult<ClientDto> CreateActionResultAsync(CreateClientDto clientDto)
+        {
+            throw new ArgumentException("test");
+        }
+
+        internal Task<List<ClientDto>> CreateListAsync(CreateClientDto clientDto)
+        {
+            throw new ArgumentException("test");
+        }
+
+        internal Task<Dictionary<int, ClientDto>> CreateDictionaryAsync(CreateClientDto clientDto)
+        {
+            throw new ArgumentException("test");
+        }
+
+        internal Task<Dictionary<int, List<string>>> CreateDictionaryListAsync(CreateClientDto clientDto)
+        {
+            throw new ArgumentException("test");
+        }
+
         public TResult Getthree<TResult>(string name)
         {
             return default;
         }
 
-        /// <summary>
-        /// Should pluralize.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A bool.</returns>
+        public TResult Tester<TResult>()
+        {
+            return default;
+        }
+
+        public Task<TResult> Getfive<TResult>(string name)
+        {
+            return default;
+        }
+    }
+
+    //[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
+    public class PropertyAndFieldTests
+    {
+        private readonly string _url = "";
+
+        public int MyProperty { get; set; }
+
+        public bool IsValid { get; set; }
+
+        public bool HasException { get; set; }
+
+        public int ShippingAddress => 12;
+
+        public Task<int> ShippingAddressAsync { get; set; }
+
+        public List<int> ShippingAddressList { get; set; }
+
+        public List<List<int>> ShippingAddressListOfList { get; set; }
+
+        public Dictionary<int, string> ShippingAddressDictionary { get; set; }
+
+        public Dictionary<int, List<string>> ShippingAddressDictionaryOfList { get; set; }
+
+        public Dictionary<int, List<List<string>>> ShippingAddressDictionaryOfListOfList { get; set; }
+
+        public IReadOnlyCollection<string> ShippingAddressReadOnlyCollectiony { get; set; }
+
+        public IReadOnlyCollection<List<string>> ShippingAddressReadOnlyCollectionfList { get; set; }
+
+        public IReadOnlyCollection<IReadOnlyCollection<string>> ShippingAddressReadOnlyCollectionOfCollection { get; set; }
+
+        public int MyProperty1 { get; set; }
+
+        public DateTime? NullDateTime { get; set; }
+
+        public int? NullInt { get; set; }
+
+        public int?[] NullIntArray { get; set; }
+
+        public bool ExecuteWelcome() { ManWorker(); return true; }
+
+        private string ManWorker() { return ""; }
+
+    }
+
+    public class MethodTests
+    {
         public bool ShouldPluralize(string name)
         {
             return default;
         }
 
-        /// <summary>
-        /// Getfives the <typeparamref name="TResult"></typeparamref>.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="name">The name.</param>
-        /// <returns><![CDATA[Task<TResult>]]></returns>
-        public Task<TResult> Getfive<TResult>(string name)
-        {
-            return default;
-        }
-
-        /// <summary>
-        /// Getfours the <see cref="Record"/>.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A Record.</returns>
         public Record Getfour(string name)
         {
             return new Record();
         }
 
-        /// <summary>
-        /// Getones the <see cref="Record"/>.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A Record.</returns>
         public Record Getone(string name)
         {
             return new Record();
         }
 
-
-        /// <summary>
-        /// TODO: Add Summary
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A string.</returns>
         public string Gettwo(string name)
         {
             return name;
         }
 
-        /// <summary>
-        /// Testers the <typeparamref name="TResult"></typeparamref>.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>A <typeparamref name="TResult"></typeparamref></returns>
-        public TResult Tester<TResult>()
+        public IReadOnlyCollection<IReadOnlyCollection<string>> ShippingAddressReadOnlyCollectionOfCollection()
         {
-            return default;
+            var list = new List<IReadOnlyCollection<string>>();
+            return new ReadOnlyCollection<IReadOnlyCollection<string>>(list);
+        }
+
+        public Dictionary<int, List<List<string>>> ShippingAddressDictionaryOfListOfList()
+        {
+            return new Dictionary<int, List<List<string>>>();
         }
     }
 
-    /// <summary>
-    /// The Test integer interface.
-    /// </summary>
     public interface TestInt
     {
-        /// <summary>
-        /// Gets or Sets the my property public.
-        /// </summary>
         public int MyPropertyPublic { get; set; }
 
-        /// <summary>
-        /// Gets or Sets the my property internal.
-        /// </summary>
         internal int MyPropertyInternal { get; set; }
 
-        /// <summary>
-        /// Gets or Sets the my property protected.
-        /// </summary>
         protected int MyPropertyProtected { get; set; }
 
-        /// <summary>
-        /// Gets or Sets the my property.
-        /// </summary>
         int MyProperty { get; set; }
-
-        /// <summary>
-        /// Test method.
-        /// </summary>
-        void TestMethod();
     }
-    /// <summary>
-    /// The privte tester.
-    /// </summary>
-    class privteTester
-    {
-        /// <summary>
-        /// Gets or Sets the my property.
-        /// </summary>
-        public int MyProperty { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the my property1.
-        /// </summary>
-        public int MyProperty1 { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the null date time.
-        /// </summary>
-        public DateTime? NullDateTime { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the null int.
-        /// </summary>
-        public int? NullInt { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the null int array.
-        /// </summary>
-        public int?[] NullIntArray { get; set; }
-
-        /// <summary>
-        /// Execute welcome.
-        /// </summary>
-        /// <returns>A bool.</returns>
-        public bool ExecuteWelcome() { ManWorker(); return true; }
-
-        /// <summary>
-        /// Man worker.
-        /// </summary>
-        /// <returns>A string.</returns>
-        private string ManWorker() { return ""; }
-    }
-
 }

@@ -88,8 +88,8 @@ namespace CodeDocumentor
         {
             SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            VariableDeclaratorSyntax field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            string comment = CommentHelper.CreateFieldComment(field.Identifier.ValueText);
+            VariableDeclaratorSyntax field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
+            string comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText);
             DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
 
             FieldDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));

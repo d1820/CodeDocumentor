@@ -24,7 +24,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A read only collection of strings.");
+            comment.Should().Be("A read only collection of strings");
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A read only collection of list of strings.");
+            comment.Should().Be("A read only collection of list of strings");
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A read only collection of read only collections of strings.");
+            comment.Should().Be("A read only collection of read only collections of strings");
         }
 
         #endregion
@@ -59,7 +59,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings.");
+            comment.Should().Be("A list of strings");
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("List", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of list of strings.");
+            comment.Should().Be("A list of list of strings");
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("List", list2);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of list of list of strings.");
+            comment.Should().Be("A list of list of list of strings");
         }
 
         [Fact]
@@ -92,7 +92,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings.");
+            comment.Should().Be("A list of strings");
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of list of strings.");
+            comment.Should().Be("A list of list of strings");
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of integers.");
+            comment.Should().Be("A list of integers");
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of list of integers.");
+            comment.Should().Be("A list of list of integers");
         }
 
         #endregion
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings.");
+            comment.Should().Be("A list of strings");
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of list of strings.");
+            comment.Should().Be("A list of list of strings");
         }
 
         #endregion
@@ -156,7 +156,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("ICollection", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings.");
+            comment.Should().Be("A list of strings");
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Collection", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings.");
+            comment.Should().Be("A list of strings");
         }
 
         #endregion
@@ -178,7 +178,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IDictionary", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type string.");
+            comment.Should().Be("A dictionary with a key of type string and a value of type string");
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IDictionary", SyntaxKind.IntKeyword, SyntaxKind.IntKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type integer and a value of type integer.");
+            comment.Should().Be("A dictionary with a key of type integer and a value of type integer");
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type string.");
+            comment.Should().Be("A dictionary with a key of type string and a value of type string");
         }
 
         [Fact]
@@ -206,7 +206,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings.");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings");
         }
 
         [Fact]
@@ -217,7 +217,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list2);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of list of strings.");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of list of strings");
         }
 
         #endregion
@@ -230,7 +230,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Task", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A string.");
+            comment.Should().Be("string");
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Task", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings.");
+            comment.Should().Be("A list of strings");
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Task", dict);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings.");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings");
         }
 
         [Fact]
@@ -261,7 +261,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Task", custom);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A CustomClass.");
+            comment.Should().Be("CustomClass");
         }
 
         #endregion
@@ -281,7 +281,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Span", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A Span.");
+            comment.Should().Be("Span");
         }
 
         [Fact]
@@ -290,7 +290,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("CustomClass", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A CustomClass.");
+            comment.Should().Be("CustomClass");
         }
 
         #endregion

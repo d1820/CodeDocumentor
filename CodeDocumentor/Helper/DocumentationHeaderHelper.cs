@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using CodeDocumentor.Vsix2022;
+using EnvDTE;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.OLE.Interop;
+using SimpleInjector.Diagnostics;
 
 namespace CodeDocumentor.Helper
 {
@@ -173,6 +177,18 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
         }
 
+        /// <summary>
+        /// Checks if is generic action result.
+        /// </summary>
+        /// <param name="nameSyntax">The name syntax.</param>
+        /// <returns>A bool.</returns>
+        public static bool IsGenericActionResult(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("ActionResult", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
         public static bool PropertyHasSetter(this PropertyDeclarationSyntax declarationSyntax)
         {
             bool hasSetter = false;
@@ -216,6 +232,36 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(content), endTag);
         }
 
+        /// <summary>
+        /// Determines started word.
+        /// </summary>
+        /// <param name="returnType">The return type.</param>
+        /// <param name="useProperCasing">If true, use proper casing.</param>
+        /// <returns>A string.</returns>
+        internal static string DetermineStartingWord(ReadOnlySpan<char> returnType, bool useProperCasing = true)
+        {
+            if (returnType.IsEmpty)
+            {
+                return string.Empty;
+            }
+            var str = returnType.ToString();
+            //if the returnType alread starts with a or an then just return
+            if (str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) || str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return string.Empty;
+            }
+            var vowelChars = new List<char>() { 'a', 'e', 'i', 'o', 'u' };
+            if (vowelChars.Contains(char.ToLower(returnType[0])))
+            {
+                return useProperCasing ? "An" : "an";
+            }
+            else
+            {
+                return useProperCasing ? "A" : "a";
+            }
+        }
+
+
         /// <summary> Create the return element syntax. </summary>
         /// <param name="content"> The content. </param>
         /// <param name="xmlNodeName"> The xml node name. </param>
@@ -231,8 +277,9 @@ namespace CodeDocumentor.Helper
 
             var regex = $@"<{xmlNodeName}>(.+)<\/{xmlNodeName}>";
 
-            var cleanContent = content?.Trim();
+            var cleanContent = (content ?? string.Empty).Trim();
             var plueckedReturnElemement = Regex.Match(cleanContent, regex);
+            //if we get in a full <returns>fff</returns> we pull the inner text from the node and create the corret XmlNodes
             if (plueckedReturnElemement == null || plueckedReturnElemement.Groups.Count == 0)
             {
                 XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
@@ -240,12 +287,12 @@ namespace CodeDocumentor.Helper
             }
             cleanContent = plueckedReturnElemement.Success ? plueckedReturnElemement.Groups[0].Value : cleanContent;
 
-            var xmlParseResponse = IsXML(cleanContent);
-
-            if (xmlParseResponse.isTypeParam)
+            var xmlParseResponse = new XmlInformation(cleanContent);
+            if (xmlParseResponse.IsTypeParam)
             {
                 try
                 {
+                    //var startingWord = DetermineStartingWord(cleanContent.AsSpan(), true);
                     var text = SyntaxFactory.XmlText($"A ");
                     var name = typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
                     var typeParamNode = CreateTypeParameterRefElementSyntax(name);
@@ -263,7 +310,7 @@ namespace CodeDocumentor.Helper
                     return SyntaxFactory.XmlElement(startTag, list, endTag);
                 }
             }
-            if (xmlParseResponse.isGeneric || xmlParseResponse.isXml)
+            if (xmlParseResponse.IsGeneric || xmlParseResponse.IsXml)
             {
                 //Wrap any xml thats not a typeParamRef to CDATA
                 SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
@@ -296,7 +343,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A XmlTextSyntax. </returns>
         internal static XmlTextSyntax CreateSummaryTextSyntax(string content)
         {
-            content = " " + content;
+            content = " " + content ?? string.Empty;
             /*
                 /// <summary>[0]
                 /// The code fix provider.[1] [2]
@@ -339,13 +386,13 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary> Create the type parameter ref element syntax. </summary>
-        /// <param name="parameterName"> The parameter name. </param>
+        /// <param name="parameterName"> The parameter name. <see cref="XmlElementSyntax"/> </param>
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
         {
             XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparamref");
 
-            /// <typeparamref name="parameterName"> [0][1] </param> [2]
+            /// <typeparamref name="parameterName"> [0][1] </typeparamref> [2]
 
             // [0] -- param start tag with attribute
             XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
@@ -354,6 +401,27 @@ namespace CodeDocumentor.Helper
             // [2] -- end tag
             XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, endTag);
+        }
+
+        /// <summary>
+        /// Creates the see C ref element syntax.
+        /// </summary>
+        /// <param name="typeName">The type name.</param>
+        /// <returns>A <see cref="XmlElementSyntax"/>.</returns>
+        internal static XmlElementSyntax CreateSeeCRefElementSyntax(string typeName)
+        {
+            XmlNameSyntax paramName = SyntaxFactory.XmlName("see");
+
+            /// <see cref="typeName" />
+
+            // [0] -- param start tag with attribute
+            XmlTextAttributeSyntax creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
+            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
+
+            // [2] -- end tag
+            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            return SyntaxFactory.XmlElement(startTag, endTag);
+
         }
 
         /// <summary> Gets the element syntax. </summary>
@@ -413,22 +481,6 @@ namespace CodeDocumentor.Helper
                 isPrivate = true;
             }
             return isPrivate;
-        }
-
-        /// <summary> Checks if is XML. </summary>
-        /// <param name="text"> The text. </param>
-        /// <returns> A (bool isXml, bool isGeneric, bool isTypeParam) . </returns>
-        internal static (bool isXml, bool isGeneric, bool isTypeParam) IsXML(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return (false, false, false);
-            }
-            var isXml = Regex.IsMatch(text, @"CDATA");
-            var isGeneric = Regex.IsMatch(text, @"(\w+\<)");
-            var isTypeParam = Regex.IsMatch(text, @"(<typeparam)");
-
-            return (isXml, isGeneric, isTypeParam);
         }
 
         /// <summary> Upserts the leading trivia. </summary>
@@ -534,7 +586,7 @@ namespace CodeDocumentor.Helper
         {
             if (includeValueNodeInProperties)
             {
-                string returnComment = new ReturnCommentConstruction().BuildComment(declarationSyntax.Type, false);
+                string returnComment = new ReturnCommentConstruction(declarationSyntax.Type, false).Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
             }
             return list;

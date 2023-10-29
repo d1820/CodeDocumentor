@@ -97,6 +97,7 @@
     <Compile Include="Analyzers\Classes\NonPublicClassAnalyzer.cs" />
     <Compile Include="Analyzers\Methods\NonPublicMethodAnalyzer.cs" />
     <Compile Include="Analyzers\Properties\NonPublicPropertyAnalyzer.cs" />
+    <Compile Include="Models\XmlInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Analyzers\Properties\PropertyAnalyzer.cs" />
     <Compile Include="Analyzers\Properties\PropertyAnalyzerSettings.cs" />

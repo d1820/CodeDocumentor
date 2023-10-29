@@ -20,7 +20,11 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateClassComment(string name)
         {
-            return CreateCommonComment(name);
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+            return CreateCommonComment(name).Translate().WithPeriod();
         }
 
         /// <summary> Creates the constructor comment. </summary>
@@ -29,14 +33,20 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateConstructorComment(string name, bool isPrivate)
         {
+            string comment;
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
             if (isPrivate)
             {
-                return $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created.".Translate();
+                comment= $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created";
             }
             else
             {
-                return $"Initializes a new instance of the <see cref=\"{name}\"/> class.".Translate();
+                comment= $"Initializes a new instance of the <see cref=\"{name}\"/> class";
             }
+            return comment.Translate().WithPeriod();
         }
 
         /// <summary> Creates the enum comment. </summary>
@@ -44,7 +54,11 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateEnumComment(string name)
         {
-            return CreateCommonComment(name);
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+            return CreateCommonComment(name).Translate().WithPeriod();
         }
 
         /// <summary> Creates the field comment. </summary>
@@ -52,10 +66,15 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateFieldComment(string name)
         {
+            string comment;
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
             List<string> parts = SpilitNameAndToLower(name, false, false);
             if (parts.Count == 1)
             {
-                return $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}.";
+                comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
             }
             else
             {
@@ -63,7 +82,7 @@ namespace CodeDocumentor.Helper
                 var skipThe = parts[0].IsVerbCombo();
                 if (!skipThe)
                 {
-                    return $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}.";
+                    comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
                 }
                 else
                 {
@@ -75,9 +94,10 @@ namespace CodeDocumentor.Helper
                     {
                         parts[0] = Pluralizer.Pluralize(parts[0]);
                     }
-                    return $"{string.Join(" ", parts)}.";
+                    comment = $"{string.Join(" ", parts)}";
                 }
             }
+            return comment.Translate().WithPeriod();
         }
 
         /// <summary> Creates the interface comment. </summary>
@@ -85,6 +105,10 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateInterfaceComment(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
             List<string> parts = SpilitNameAndToLower(name, false);
             if (parts[0] == "I")
             {
@@ -93,7 +117,7 @@ namespace CodeDocumentor.Helper
 
             parts.Insert(0, "The");
             parts.Add("interface");
-            return string.Join(" ", parts).WithPeriod().Translate();
+            return string.Join(" ", parts).Translate().WithPeriod();
         }
 
         /// <summary> Creates the method comment. </summary>
@@ -102,6 +126,10 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateMethodComment(string name, TypeSyntax returnType)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
             List<string> parts = SpilitNameAndToLower(name, false, false);
             var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
             if (parts.Count >= 2)
@@ -115,16 +143,23 @@ namespace CodeDocumentor.Helper
 
             if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
             {
-                parts.Insert(1, "the");
-
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 //try and use the return type for the value;
                 if (returnType.ToString() != "void")
                 {
                     string returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
+                   
                     if (!string.IsNullOrEmpty(returnComment))
                     {
-                        parts.Insert(2, returnComment);
+                        if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            parts.Insert(1, "the");
+                            parts.Insert(2, returnComment);
+                        }
+                        else
+                        {
+                            parts.Insert(1, returnComment);
+                        }
                     }
                     else
                     {
@@ -138,16 +173,13 @@ namespace CodeDocumentor.Helper
                         }
                     }
                 }
+                else if (optionsService.UseToDoCommentsOnSummaryError)
+                {
+                    return "TODO: Add Summary";
+                }
                 else
                 {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
-                    {
-                        return "TODO: Add Summary";
-                    }
-                    else
-                    {
-                        return string.Empty;
-                    }
+                    return string.Empty;
                 }
             }
             else
@@ -191,7 +223,7 @@ namespace CodeDocumentor.Helper
             }
             else
             {
-                return CreateCommonComment(parameter.Identifier.ValueText);
+                return CreateCommonComment(parameter.Identifier.ValueText).WithPeriod();
             }
         }
 
@@ -202,6 +234,10 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
             string comment = "Gets";
             if (hasSetter)
             {
@@ -216,7 +252,7 @@ namespace CodeDocumentor.Helper
             {
                 comment += " the " + string.Join(" ", SpilitNameAndToLower(name, true));
             }
-            return comment.WithPeriod();
+            return comment.Translate().WithPeriod();
         }
 
         /// <summary> Create the record comment. </summary>
@@ -224,7 +260,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateRecordComment(string name)
         {
-            return CreateCommonComment(name);
+            return CreateCommonComment(name).Translate().WithPeriod();
         }
 
         /// <summary> Has comment. </summary>
@@ -287,7 +323,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         private static string CreateCommonComment(string name)
         {
-            return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}.";
+            return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}";
         }
 
         /// <summary> Creates the property boolean part. </summary>

@@ -17,7 +17,7 @@ namespace CodeDocumentor
 {
     /// <summary> The property code fix provider. </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PropertyCodeFixProvider)), Shared]
-    public class PropertyCodeFixProvider : CodeFixProvider
+    public class PropertyCodeFixProvider : BaseCodeFixProvider
     {
         /// <summary> Gets the fixable diagnostic ids. </summary>
         public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PropertyAnalyzerSettings.DiagnosticId);
@@ -53,6 +53,8 @@ namespace CodeDocumentor
                     createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
                     equivalenceKey: displayTitle),
                 diagnostic);
+
+            await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
         /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>

@@ -42,7 +42,7 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 - As of VS2022 verison 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
 
-  ![OutOfProcess](./GifInstruction/outOfProcess.PNG)
+  ![OutOfProcess](./GifInstruction/outOfProcess.png)
 
   **Please disable this setting to allow CodeDocumentor to work correctly.**
 
@@ -98,7 +98,7 @@ As part of the settings WordMaps can be defined to help control how you want tex
 
 These are the recommended settings that create the best output experience
 
-![RecommenedSettings](./GifInstruction/RecommendedSettings.PNG)
+![RecommenedSettings](./GifInstruction/RecommendedSettings.png)
 
 
 ## Also Supports

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
@@ -9,17 +10,18 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class CommentHelperTests
+    public class CommentHelperTests: IClassFixture<TestFixture>
     {
         private readonly TestFixture fixture;
 
-        public CommentHelperTests()
+        public CommentHelperTests(TestFixture fixture)
         {
-            fixture = new TestFixture();
+            this.fixture = fixture;
         }
 
         //SpilitNameAndToLower
         [Fact]
+        [Priority(1)]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
         {
             fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = true;
@@ -31,6 +33,7 @@ namespace CodeDocumentor.Test.Helper
         }
 
         [Fact]
+        [Priority(2)]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse()
         {
             fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = false;

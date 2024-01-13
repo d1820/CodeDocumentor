@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sample
+namespace Sample.CodeDocumentor
 {
     /// <summary>
     /// The interface interface.
@@ -31,7 +31,7 @@ namespace Sample
     /// <summary>
     /// The inhertit test types.
     /// </summary>
-    public class InhertitTestTypes: TestTypes<int>
+    public class InhertitTestTypes : TestTypes<int>
     {
 
     }

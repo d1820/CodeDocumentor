@@ -199,7 +199,6 @@ namespace CodeDocumentor.Helper
         /// Generates general comment.
         /// </summary>
         /// <param name="returnType"> The return type. </param>
-        /// <param name="includeStartingWord"> Flag to determine if a starting word should be included </param>
         /// <returns> The comment. </returns>
         private string GenerateGeneralComment(ReadOnlySpan<char> returnType)
         {

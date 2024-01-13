@@ -34,6 +34,8 @@ namespace CodeDocumentor.Services
 
         public bool IsEnabledForPublicMembersOnly { get; set; } = CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly ?? false;
 
+        public bool IsEnabledForNonPublicFields { get; set; } = CodeDocumentorPackage.Options?.IsEnabledForNonPublicFields ?? false;
+
         public bool PreserveExistingSummaryText { get; set; } = CodeDocumentorPackage.Options?.PreserveExistingSummaryText ?? true;
 
         public bool UseNaturalLanguageForReturnNode { get; set; } = CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode ?? false;
@@ -60,6 +62,7 @@ namespace CodeDocumentor.Services
             MethodDiagnosticSeverity = settings.MethodDiagnosticSeverity;
             PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
             RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
+            IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
         }
     }
 }

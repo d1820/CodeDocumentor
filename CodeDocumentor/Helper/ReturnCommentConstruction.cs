@@ -34,11 +34,20 @@ namespace CodeDocumentor.Helper
         public ReturnCommentConstruction(TypeSyntax returnType) : base(true)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var comment = BuildComment(returnType, !optionsService.UseNaturalLanguageForReturnNode).Translate().WithPeriod();
-            if (!string.IsNullOrEmpty(comment) && comment != ".")
+            var comment = BuildComment(returnType, !optionsService.UseNaturalLanguageForReturnNode);
+            if (optionsService.UseNaturalLanguageForReturnNode)
             {
-                Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment);
+                comment = comment.Translate().WithPeriod();
+                if (!string.IsNullOrEmpty(comment) && comment != ".")
+                {
+                    Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment);
+                }
             }
+            else
+            {
+                Comment = comment;
+            }
+
         }
 
         /// <summary>

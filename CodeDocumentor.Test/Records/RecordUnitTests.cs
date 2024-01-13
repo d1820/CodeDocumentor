@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Services;
+﻿using System.Threading.Tasks;
+using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -28,15 +29,15 @@ namespace CodeDocumentor.Test.Records
         [Theory]
         [InlineData("")]
         [InlineData("RecordTesterInheritDoc.cs")]
-        public void NoDiagnosticsShow(string testCode)
+        public async Task NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
             {
-                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
+                await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
-                var file = _fixture.LoadTestFile($@"./Records/TestFiles/{testCode}");
+                var file = _fixture.LoadTestFile($"./Records/TestFiles/{testCode}");
 
                 var expected = new DiagnosticResult
                 {
@@ -49,7 +50,7 @@ namespace CodeDocumentor.Test.Records
                                }
                 };
 
-                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
+                await VerifyCSharpDiagnosticAsync(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
         }
 
@@ -63,10 +64,10 @@ namespace CodeDocumentor.Test.Records
         [Theory]
         [InlineData("RecordTester.cs", "RecordTesterFix.cs", 7, 20, TestFixture.DIAG_TYPE_PRIVATE)]
         [InlineData("PublicRecordTester.cs", "PublicRecordTesterFix.cs", 7, 27, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
+        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
-            var fix = _fixture.LoadTestFile($@"./Records/TestFiles/{fixCode}");
-            var test = _fixture.LoadTestFile($@"./Records/TestFiles/{testCode}");
+            var fix = _fixture.LoadTestFile($"./Records/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($"./Records/TestFiles/{testCode}");
             _fixture.OptionsPropertyCallback = (o) =>
             {
                 _fixture.SetPublicProcessingOption(o, diagType);
@@ -82,24 +83,24 @@ namespace CodeDocumentor.Test.Records
                         }
             };
 
-            VerifyCSharpDiagnostic(test, diagType, expected);
+            await VerifyCSharpDiagnosticAsync(test, diagType, expected);
 
-            VerifyCSharpFix(test, fix, diagType);
+            await VerifyCSharpFixAsync(test, fix, diagType);
         }
 
         [Fact]
-        public void SkipsDiagnosticAndFixWhenPublicOnlyTrue()
+        public async Task SkipsDiagnosticAndFixWhenPublicOnlyTrue()
         {
-            var fix = _fixture.LoadTestFile($@"./Records/TestFiles/RecordTester.cs");
-            var test = _fixture.LoadTestFile($@"./Records/TestFiles/RecordTester.cs");
+            var fix = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
+            var test = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
             _fixture.OptionsPropertyCallback = (o) =>
             {
                 o.IsEnabledForPublicMembersOnly = true;
             };
 
-            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 
-            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

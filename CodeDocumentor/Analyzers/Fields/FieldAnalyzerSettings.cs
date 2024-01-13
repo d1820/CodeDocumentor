@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal class FieldAnalyzerSettings
+    internal static class FieldAnalyzerSettings
     {
         /// <summary> The category. </summary>
         internal const string Category = DocumentationHeaderHelper.CATEGORY;

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -43,9 +44,9 @@ namespace CodeDocumentor.Test
         /// </summary>
         /// <param name="source"> A class in the form of a string to run the analyzer on </param>
         /// <param name="expected"> DiagnosticResults that should appear after the analyzer is run on the source </param>
-        protected void VerifyCSharpDiagnostic(string source, string diagType = "public", params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpDiagnosticAsync(string source, string diagType = "public", params DiagnosticResult[] expected)
         {
-            VerifyDiagnostics(new[] { source }, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), expected);
+            await VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), expected);
         }
 
         /// <summary>
@@ -54,9 +55,9 @@ namespace CodeDocumentor.Test
         /// </summary>
         /// <param name="source"> A class in the form of a string to run the analyzer on </param>
         /// <param name="expected"> DiagnosticResults that should appear after the analyzer is run on the source </param>
-        protected void VerifyBasicDiagnostic(string source, params DiagnosticResult[] expected)
+        protected async Task VerifyBasicDiagnosticAsync(string source, params DiagnosticResult[] expected)
         {
-            VerifyDiagnostics(new[] { source }, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
+            await VerifyDiagnosticsAsync(new[] { source }, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
         }
 
         /// <summary>
@@ -65,9 +66,9 @@ namespace CodeDocumentor.Test
         /// </summary>
         /// <param name="sources"> An array of strings to create source documents from to run the analyzers on </param>
         /// <param name="expected"> DiagnosticResults that should appear after the analyzer is run on the sources </param>
-        protected void VerifyCSharpDiagnostic(string[] sources, string diagType = "public", params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpDiagnosticAsync(string[] sources, string diagType = "public", params DiagnosticResult[] expected)
         {
-            VerifyDiagnostics(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), expected);
+            await VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), expected);
         }
 
         /// <summary>
@@ -76,9 +77,9 @@ namespace CodeDocumentor.Test
         /// </summary>
         /// <param name="sources"> An array of strings to create source documents from to run the analyzers on </param>
         /// <param name="expected"> DiagnosticResults that should appear after the analyzer is run on the sources </param>
-        protected void VerifyBasicDiagnostic(string[] sources, params DiagnosticResult[] expected)
+        protected async Task VerifyBasicDiagnosticAsync(string[] sources, params DiagnosticResult[] expected)
         {
-            VerifyDiagnostics(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
+            await VerifyDiagnosticsAsync(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
         }
 
         /// <summary>
@@ -89,9 +90,9 @@ namespace CodeDocumentor.Test
         /// <param name="language"> The language of the classes represented by the source strings </param>
         /// <param name="analyzer"> The analyzer to be run on the source code </param>
         /// <param name="expected"> DiagnosticResults that should appear after the analyzer is run on the sources </param>
-        private void VerifyDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
+        private async Task VerifyDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
         {
-            var diagnostics = GetSortedDiagnostics(sources, language, analyzer);
+            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzer);
             VerifyDiagnosticResults(diagnostics, analyzer, expected);
         }
 

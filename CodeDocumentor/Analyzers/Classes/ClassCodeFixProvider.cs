@@ -111,6 +111,7 @@ namespace CodeDocumentor
             string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
 
             list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText).WithTypeParamters(declarationSyntax)
+                        .WithParameters(declarationSyntax)
                         .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
                         .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 

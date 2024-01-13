@@ -31,6 +31,7 @@ namespace CodeDocumentor.Test.TestHelpers
         public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
         public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
+        public bool IsEnabledForNonPublicFields { get; set; }
 
         public void Update(Vsix2022.Settings settings)
         {

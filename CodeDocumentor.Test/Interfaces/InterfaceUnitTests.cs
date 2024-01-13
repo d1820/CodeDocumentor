@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -28,9 +29,9 @@ namespace CodeDocumentor.Test.Interfaces
         /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
-        public void NoDiagnosticsShow(string testCode)
+        public async Task NoDiagnosticsShow(string testCode)
         {
-            VerifyCSharpDiagnostic(testCode);
+            await VerifyCSharpDiagnosticAsync(testCode);
         }
 
         /// <summary>
@@ -42,10 +43,10 @@ namespace CodeDocumentor.Test.Interfaces
         /// <param name="column">The column.</param>
         [Theory]
         [InlineData("TestCode.cs", "TestFixCode.cs", 7, 22)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
-            var fix = _fixture.LoadTestFile($@"./Interfaces/TestFiles/{fixCode}");
-            var test = _fixture.LoadTestFile($@"./Interfaces/TestFiles/{testCode}");
+            var fix = _fixture.LoadTestFile($"./Interfaces/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($"./Interfaces/TestFiles/{testCode}");
             var expected = new DiagnosticResult
             {
                 Id = InterfaceAnalyzerSettings.DiagnosticId,
@@ -57,9 +58,9 @@ namespace CodeDocumentor.Test.Interfaces
                         }
             };
 
-            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

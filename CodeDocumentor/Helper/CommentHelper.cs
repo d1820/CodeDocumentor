@@ -148,7 +148,7 @@ namespace CodeDocumentor.Helper
                 if (returnType.ToString() != "void")
                 {
                     string returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
-                   
+
                     if (!string.IsNullOrEmpty(returnComment))
                     {
                         if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
@@ -169,7 +169,7 @@ namespace CodeDocumentor.Helper
                         }
                         else
                         {
-                            return returnComment;
+                            return returnComment.Translate().WithPeriod(); ;
                         }
                     }
                 }
@@ -286,11 +286,15 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string WithPeriod(this string text)
         {
-            if (text.EndsWith("."))
+            if (text?.Trim().EndsWith(".") == true)
             {
                 return text;
             }
-            return text + ".";
+            if(text.Length > 0)
+            {
+                return text + ".";
+            }
+            return text;
         }
 
         /// <summary> Spilit the name and to lower. </summary>

@@ -11,6 +11,10 @@ using Microsoft.CodeAnalysis;
 using SimpleInjector;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Test.TestHelpers;
+using Xunit;
+
+[assembly: TestCaseOrderer(PriorityOrderer.FullName, PriorityOrderer.AssemblyName)]
+[assembly: SuppressMessage("XMLDocumentation", "")]
 
 namespace CodeDocumentor.Test
 {
@@ -20,6 +24,7 @@ namespace CodeDocumentor.Test
         public const string DIAG_TYPE_PUBLIC = "public";
         public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
         public const string DIAG_TYPE_PRIVATE = "private";
+        private Container _testContainer;
 
         public Action<IOptionsService> OptionsPropertyCallback { get; set; }
 
@@ -27,14 +32,14 @@ namespace CodeDocumentor.Test
         {
             Runtime.RunningUnitTests = true;
 
-            var testContainer = new Container();
-            testContainer.Register<IOptionsService>(() =>
+             _testContainer = new Container();
+            _testContainer.Register<IOptionsService>(() =>
             {
                 var os = new TestOptionsService();
                 OptionsPropertyCallback?.Invoke(os);
                 return os;
             }, Lifestyle.Transient);
-            CodeDocumentorPackage.DIContainer(testContainer);
+            CodeDocumentorPackage.DIContainer(_testContainer);
         }
 
         public void SetPublicProcessingOption(IOptionsService o, string diagType)

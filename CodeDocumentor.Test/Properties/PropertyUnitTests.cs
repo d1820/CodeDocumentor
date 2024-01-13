@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -384,15 +385,15 @@ namespace ConsoleApp4
         [Theory]
         [InlineData("")]
         [InlineData("InheritDocTestCode.cs")]
-        public void NoDiagnosticsShow(string testCode)
+        public async Task NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
             {
-                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
+                await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
-                var file = _fixture.LoadTestFile($@"./Properties/TestFiles/{testCode}");
+                var file = _fixture.LoadTestFile($"./Properties/TestFiles/{testCode}");
                 var expected = new DiagnosticResult
                 {
                     Id = PropertyAnalyzerSettings.DiagnosticId,
@@ -404,7 +405,7 @@ namespace ConsoleApp4
                                }
                 };
 
-                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
+                await VerifyCSharpDiagnosticAsync(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
         }
 
@@ -426,7 +427,7 @@ namespace ConsoleApp4
         [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC)]
         [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
+        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             _fixture.OptionsPropertyCallback = (o) => {
                 _fixture.SetPublicProcessingOption(o, diagType);
@@ -442,9 +443,9 @@ namespace ConsoleApp4
                         }
             };
 
-            VerifyCSharpDiagnostic(testCode, diagType, expected);
+            await VerifyCSharpDiagnosticAsync(testCode, diagType, expected);
 
-            VerifyCSharpFix(testCode, fixCode, diagType);
+            await VerifyCSharpFixAsync(testCode, fixCode, diagType);
         }
 
         /// <summary>

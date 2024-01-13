@@ -42,6 +42,11 @@ namespace CodeDocumentor.Vsix2022
         /// <value> A bool. </value>
         public bool IsEnabledForPublicMembersOnly { get; set; }
 
+        /// <summary>
+        /// Gets or Sets a value indicating whether enabled for non public is fields.
+        /// </summary>
+        public bool IsEnabledForNonPublicFields { get; set; }
+
         /// <summary> Gets or Sets a value indicating whether preserve existing summary text. </summary>
         public bool PreserveExistingSummaryText { get; set; } = true;
 

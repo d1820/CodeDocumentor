@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
@@ -8,13 +9,13 @@ using Xunit;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TranslatorTests
+    public class TranslatorTests : IClassFixture<TestFixture>
     {
         private readonly TestFixture _testFixure;
 
-        public TranslatorTests()
+        public TranslatorTests(TestFixture fixture)
         {
-            _testFixure = new TestFixture();
+            _testFixure = fixture;
         }
 
         [Theory]
@@ -36,6 +37,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Int case check", "Int case check")]
         [InlineData("Do Work", "Does Work")]
         [InlineData("To UpperCase", "Converts to UpperCase")]
+        [Priority(3)]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
             _testFixure.OptionsPropertyCallback = (o) => {

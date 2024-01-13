@@ -9,472 +9,11 @@ using CodeDocumentor.Test.TestHelpers;
 
 namespace CodeDocumentor.Test.Methods
 {
-    [SuppressMessage("XMLDocumentation", "")]
-    public partial class MethodUnitTest
-    {
-
-        /// <summary>
-        /// The basic test code.
-        /// </summary>
-        private const string BasicTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public void ShowBasicMethodTester()
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The basic test fix code.
-        /// </summary>
-        private const string BasicTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the basic method tester.
-        /// </summary>
-        public void ShowBasicMethodTester()
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with parameter test code.
-        /// </summary>
-        private const string MethodWithParameterTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public void ShowMethodWithParameterTester(string param1, int param2, bool param3)
-		{
-		}
-	}
-}";
-        /// <summary>
-        /// The method with parameter test fix code.
-        /// </summary>
-        private const string MethodWithParameterTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with parameter tester.
-        /// </summary>
-        /// <param name=""param1"">The param1.</param>
-        /// <param name=""param2"">The param2.</param>
-        /// <param name=""param3"">If true, param3.</param>
-        public void ShowMethodWithParameterTester(string param1, int param2, bool param3)
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with parameter test code.
-        /// </summary>
-        private const string MethodWithBooleanParameterTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public void ShowMethodWithBooleanParameterTester(bool isRed, bool? isAssociatedWithAllProduct)
-		{
-		}
-	}
-}";
-        /// <summary>
-        /// The method with parameter test fix code.
-        /// </summary>
-        private const string MethodWithBooleanParameterTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with boolean parameter tester.
-        /// </summary>
-        /// <param name=""isRed"">If true, is red.</param>
-        /// <param name=""isAssociatedWithAllProduct"">If true, is associated with all product.</param>
-        public void ShowMethodWithBooleanParameterTester(bool isRed, bool? isAssociatedWithAllProduct)
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with parameter test code.
-        /// </summary>
-        private const string MethodWithNullableStructParameterTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public void Show(DiagnosticResult? param1, int param2, bool param3)
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with parameter test fix code.
-        /// </summary>
-        private const string MethodWithNullableStructParameterTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name=""param1"">The param1.</param>
-        /// <param name=""param2"">The param2.</param>
-        /// <param name=""param3"">If true, param3.</param>
-        public void Show(DiagnosticResult? param1, int param2, bool param3)
-		{
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with return test code.
-        /// </summary>
-        private const string MethodWithReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public MethodTester ShowMethodWithReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with return test fix code.
-        /// </summary>
-        private const string MethodWithReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with return tester.
-        /// </summary>
-        /// <returns>A MethodTester.</returns>
-        public MethodTester ShowMethodWithReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with string return test code.
-        /// </summary>
-        private const string MethodWithStringReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public string ShowMethodWithStringReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with string return test fix code.
-        /// </summary>
-        private const string MethodWithStringReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with string return tester.
-        /// </summary>
-        /// <returns>A string.</returns>
-        public string ShowMethodWithStringReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with object return test code.
-        /// </summary>
-        private const string MethodWithObjectReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public object ShowMethodWithObjectReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with object return test fix code.
-        /// </summary>
-        private const string MethodWithObjectReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with object return tester.
-        /// </summary>
-        /// <returns>An object.</returns>
-        public object ShowMethodWithObjectReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with integer return test code.
-        /// </summary>
-        private const string MethodWithIntReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public int ShowMethodWithIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with integer return test fix code.
-        /// </summary>
-        private const string MethodWithIntReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with integer return tester.
-        /// </summary>
-        /// <returns>An int.</returns>
-        public int ShowMethodWithIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with list int return test code.
-        /// </summary>
-        private const string MethodWithListIntReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public List<int> ShowMethodWithListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with list int return test fix code.
-        /// </summary>
-        private const string MethodWithListIntReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list integer return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<int>]]></returns>
-        public List<int> ShowMethodWithListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with list of list int return test code.
-        /// </summary>
-        private const string MethodWithListListIntReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with list of list int return test fix code.
-        /// </summary>
-        private const string MethodWithListListIntReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list list integer return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<List<int>>]]></returns>
-        public List<List<int>> ShowMethodWithListListIntReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with list qualified name return test code.
-        /// </summary>
-        private const string MethodWithListQualifiedNameReturnTestCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-		public List<A.B> ShowMethodWithListQualifiedNameReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-
-        /// <summary>
-        /// The method with list qualified name return test fix code.
-        /// </summary>
-        private const string MethodWithListQualifiedNameReturnTestFixCode = @"
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleApp4
-{
-	public class MethodTester
-	{
-        /// <summary>
-        /// Shows the method with list qualified name return tester.
-        /// </summary>
-        /// <returns><![CDATA[List<A.B>]]></returns>
-        public List<A.B> ShowMethodWithListQualifiedNameReturnTester()
-		{
-			return null;
-		}
-	}
-}";
-    }
-
     /// <summary>
     /// The method unit test.
     /// </summary>
     [SuppressMessage("XMLDocumentation", "")]
-    public partial class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
+    public class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
 
@@ -489,15 +28,15 @@ namespace ConsoleApp4
         [Theory]
         [InlineData("")]
         [InlineData("InheritDocTestCode.cs")]
-        public void NoDiagnosticsShow(string testCode)
+        public async Task NoDiagnosticsShow(string testCode)
         {
             if (testCode == string.Empty)
             {
-                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
+                await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
-                var file = _fixture.LoadTestFile($@"./Methods/TestFiles/{testCode}");
+                var file = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}");
                 var expected = new DiagnosticResult
                 {
                     Id = MethodAnalyzerSettings.DiagnosticId,
@@ -509,7 +48,7 @@ namespace ConsoleApp4
                                }
                 };
 
-                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
+                await VerifyCSharpDiagnosticAsync(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
 
 
@@ -523,19 +62,23 @@ namespace ConsoleApp4
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
         [Theory]
-        [InlineData(BasicTestCode, BasicTestFixCode, 10, 15)]
-        [InlineData(MethodWithParameterTestCode, MethodWithParameterTestFixCode, 10, 15)]
-        [InlineData(MethodWithBooleanParameterTestCode, MethodWithBooleanParameterTestFixCode, 10, 15)]
-        [InlineData(MethodWithNullableStructParameterTestCode, MethodWithNullableStructParameterTestFixCode, 10, 15)]
-        [InlineData(MethodWithReturnTestCode, MethodWithReturnTestFixCode, 10, 23)]
-        [InlineData(MethodWithStringReturnTestCode, MethodWithStringReturnTestFixCode, 10, 17)]
-        [InlineData(MethodWithObjectReturnTestCode, MethodWithObjectReturnTestFixCode, 10, 17)]
-        [InlineData(MethodWithIntReturnTestCode, MethodWithIntReturnTestFixCode, 10, 14)]
-        [InlineData(MethodWithListIntReturnTestCode, MethodWithListIntReturnTestFixCode, 10, 20)]
-        [InlineData(MethodWithListListIntReturnTestCode, MethodWithListListIntReturnTestFixCode, 10, 26)]
-        [InlineData(MethodWithListQualifiedNameReturnTestCode, MethodWithListQualifiedNameReturnTestFixCode, 10, 20)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        [InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
+        [InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
+        [InlineData("MethodWithBooleanParameterTestCode", "MethodWithBooleanParameterTestFixCode", 9, 21)]
+        [InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]
+        [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
+        [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
+        [InlineData("MethodWithListIntReturnTestCode", "MethodWithListIntReturnTestFixCode", 9, 26)]
+        [InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
+        [InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
+        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
+        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
+            var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
+            var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
+
             _fixture.OptionsPropertyCallback = (o) => {
                 o.UseNaturalLanguageForReturnNode = false;
             };
@@ -550,9 +93,9 @@ namespace ConsoleApp4
                         }
             };
 
-            VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            VerifyCSharpFix(testCode, fixCode, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>
@@ -579,6 +122,6 @@ namespace ConsoleApp4
 
 
 
-       
+
     }
 }

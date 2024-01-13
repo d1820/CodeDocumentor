@@ -56,7 +56,7 @@ namespace CodeDocumentor.Vsix2022
             return _DIContainer;
         }
 
-        protected static IOptionPageGrid _options;
+        internal static IOptionPageGrid _options;
         private static readonly object _syncRoot = new object();
         private static Container _DIContainer;
 

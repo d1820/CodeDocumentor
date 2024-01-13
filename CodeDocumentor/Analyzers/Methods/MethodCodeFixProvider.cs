@@ -85,9 +85,6 @@ namespace CodeDocumentor
         private const string title = "Code Documentor this method";
 
         private const string titleRebuild = "Code Documentor update this method";
-        /// <summary> Gets the exceptions from the body </summary>
-        /// <param name="textToSearch"> </param>
-        /// <returns> </returns>
 
         private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
         {

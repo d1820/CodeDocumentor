@@ -12,12 +12,28 @@ using SimpleInjector;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Test.TestHelpers;
 using Xunit;
+using System.Collections.Concurrent;
+using Xunit.Abstractions;
+using System.Reflection;
 
 [assembly: TestCaseOrderer(PriorityOrderer.FullName, PriorityOrderer.AssemblyName)]
 [assembly: SuppressMessage("XMLDocumentation", "")]
 
+
 namespace CodeDocumentor.Test
 {
+    public static class TestFixtureExtensions
+    {
+        public static string GetTestName(this ITestOutputHelper output, bool returnFullName = false)
+        {
+            var type = output.GetType();
+            var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
+            var test = (ITest)testMember.GetValue(output);
+            var name = test.DisplayName.Split('(').First();
+            return returnFullName ? name : name.Split('.').Last();
+        }
+    }
+
     [SuppressMessage("XMLDocumentation", "")]
     public class TestFixture
     {
@@ -26,20 +42,40 @@ namespace CodeDocumentor.Test
         public const string DIAG_TYPE_PRIVATE = "private";
         private Container _testContainer;
 
-        public Action<IOptionsService> OptionsPropertyCallback { get; set; }
+        public string CurrentTestName { get; set; }
+
+        protected static ConcurrentDictionary<string, Action<IOptionsService>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<IOptionsService>>();
 
         public TestFixture()
         {
             Runtime.RunningUnitTests = true;
+        }
 
-             _testContainer = new Container();
+        public void Initialize(ITestOutputHelper output)
+        {
+            CurrentTestName = output.GetTestName();
+
+            _testContainer = new Container();
             _testContainer.Register<IOptionsService>(() =>
             {
                 var os = new TestOptionsService();
-                OptionsPropertyCallback?.Invoke(os);
+                if (CurrentTestName != null && RegisteredCallBacks.TryGetValue(CurrentTestName, out var callback))
+                {
+                    callback.Invoke(os);
+                }
                 return os;
             }, Lifestyle.Transient);
             CodeDocumentorPackage.DIContainer(_testContainer);
+        }
+
+        public void RegisterCallback(string name, Action<IOptionsService> callback)
+        {
+            if (RegisteredCallBacks.ContainsKey(name))
+            {
+                RegisteredCallBacks[name] = callback;
+                return;
+            }
+            RegisteredCallBacks.TryAdd(name, callback);
         }
 
         public void SetPublicProcessingOption(IOptionsService o, string diagType)
@@ -152,5 +188,6 @@ namespace CodeDocumentor.Test
             var item = SyntaxFactory.IdentifierName(typeName);
             return item;
         }
+
     }
 }

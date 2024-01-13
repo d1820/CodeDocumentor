@@ -5,6 +5,7 @@ using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Helper
 {
@@ -13,9 +14,10 @@ namespace CodeDocumentor.Test.Helper
     {
         private readonly TestFixture _testFixure;
 
-        public TranslatorTests(TestFixture fixture)
+        public TranslatorTests(TestFixture fixture, ITestOutputHelper output)
         {
             _testFixure = fixture;
+            fixture.Initialize(output);
         }
 
         [Theory]
@@ -40,12 +42,12 @@ namespace CodeDocumentor.Test.Helper
         [Priority(3)]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            _testFixure.OptionsPropertyCallback = (o) => {
+            _testFixure.RegisterCallback(nameof(TranslateText_ReturnsTranslatedStrings), (o) => {
                 var temp = o.WordMaps.ToList();
                 temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
                 temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
                 o.WordMaps = temp.ToArray();
-            };
+            });
             var translated = input.Translate();
             translated.Should().Be(output);
         }

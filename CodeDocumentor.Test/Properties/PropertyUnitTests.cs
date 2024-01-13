@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Properties
 {
@@ -373,9 +374,10 @@ namespace ConsoleApp4
     {
         private readonly TestFixture _fixture;
 
-        public PropertyUnitTest(TestFixture fixture)
+        public PropertyUnitTest(TestFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
+            fixture.Initialize(output);
         }
 
         /// <summary>
@@ -427,11 +429,11 @@ namespace ConsoleApp4
         [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(PublicPropertyInterfaceTestCode, PublicPropertyInterfaceTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC)]
         [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
-        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
+        public async Task ShowPropertyDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
-            _fixture.OptionsPropertyCallback = (o) => {
+            _fixture.RegisterCallback(nameof(ShowPropertyDiagnosticAndFix), (o) => {
                 _fixture.SetPublicProcessingOption(o, diagType);
-            };
+            });
             var expected = new DiagnosticResult
             {
                 Id = PropertyAnalyzerSettings.DiagnosticId,

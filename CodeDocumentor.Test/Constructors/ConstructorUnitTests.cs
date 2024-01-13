@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Constructors
 {
@@ -18,9 +19,10 @@ namespace CodeDocumentor.Test.Constructors
     {
         private readonly TestFixture _fixture;
 
-        public ConstrcutorUnitTest(TestFixture fixture)
+        public ConstrcutorUnitTest(TestFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
+            fixture.Initialize(output);
         }
 
         /// <summary>
@@ -65,14 +67,14 @@ namespace CodeDocumentor.Test.Constructors
         [InlineData("PublicConstructorTestCode.cs", "PublicContructorTestFixCode.cs", 9, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData("PrivateConstructorTestCode.cs", "PrivateContructorTestFixCode.cs", 9, 17, TestFixture.DIAG_TYPE_PRIVATE)]
         [InlineData("PublicConstructorWithBooleanParameterTestCode.cs", "PublicContructorWithBooleanParameterTestFixCode.cs", 9, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
-        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
+        public async Task ShowConstructorDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($"./Constructors/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Constructors/TestFiles/{testCode}");
-            _fixture.OptionsPropertyCallback = (o) =>
+            _fixture.RegisterCallback(nameof(ShowConstructorDiagnosticAndFix), (o) =>
             {
                 _fixture.SetPublicProcessingOption(o, diagType);
-            };
+            });
 
             var expected = new DiagnosticResult
             {
@@ -91,14 +93,14 @@ namespace CodeDocumentor.Test.Constructors
         }
 
         [Fact]
-        public async Task SkipsDiagnosticAndFixWhenPublicOnlyTrue()
+        public async Task SkipsConstructorDiagnosticAndFixWhenPublicOnlyTrue()
         {
             var fix = _fixture.LoadTestFile("./Constructors/TestFiles/PrivateConstructorTestCode.cs");
             var test = _fixture.LoadTestFile("./Constructors/TestFiles/PrivateConstructorTestCode.cs");
-            _fixture.OptionsPropertyCallback = (o) =>
+            _fixture.RegisterCallback(nameof(SkipsConstructorDiagnosticAndFixWhenPublicOnlyTrue), (o) =>
             {
                 o.IsEnabledForPublicMembersOnly = true;
-            };
+            });
 
             await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 

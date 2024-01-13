@@ -6,6 +6,7 @@ using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Helper
 {
@@ -14,9 +15,10 @@ namespace CodeDocumentor.Test.Helper
     {
         private readonly TestFixture fixture;
 
-        public CommentHelperTests(TestFixture fixture)
+        public CommentHelperTests(TestFixture fixture, ITestOutputHelper output)
         {
             this.fixture = fixture;
+            this.fixture.Initialize(output);
         }
 
         //SpilitNameAndToLower
@@ -24,7 +26,7 @@ namespace CodeDocumentor.Test.Helper
         [Priority(1)]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
         {
-            fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = true;
+            fixture.RegisterCallback(nameof(SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing), (o) => o.ExcludeAsyncSuffix = true);
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
             result.Count.Should().Be(3);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();
@@ -36,7 +38,7 @@ namespace CodeDocumentor.Test.Helper
         [Priority(2)]
         public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse()
         {
-            fixture.OptionsPropertyCallback = (o) => o.ExcludeAsyncSuffix = false;
+            fixture.RegisterCallback(nameof(SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse), (o) => o.ExcludeAsyncSuffix = false);
             var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
             result.Count.Should().Be(4);
             result[0].All(a => char.IsLower(a)).Should().BeTrue();

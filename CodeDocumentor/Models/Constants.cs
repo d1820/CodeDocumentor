@@ -1,7 +1,9 @@
 ﻿// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using CodeDocumentor.Helper;
 
 namespace CodeDocumentor.Vsix2022
@@ -10,14 +12,14 @@ namespace CodeDocumentor.Vsix2022
     {
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
-        public static string[] AXUILLARY_SPECIAL_WORD_LIST { get; set; } = new[] {"are", "was", "were", "been", "being", "have", "does",
+        private static string[] AXUILLARY_SPECIAL_WORD_LIST { get; set; } = new[] {"are", "was", "were", "been", "being", "have", "does",
                                                                     "has", "had", "having",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
                                                                     "dare", "need", "used", "ought", "goes" };
 
-        public static string[] TWO_LETTER_WORD_LIST { get; set; } = new[] { "on", "by", "an", "in", "at", "of", "is", "am" };
+        private static string[] TWO_LETTER_WORD_LIST { get; set; } = new[] { "on", "by", "an", "in", "at", "of", "is", "am" };
 
-        public static string[] PLURALIZATION_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", };
+        private static string[] PLURALIZATION_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", };
 
         public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "To", Translation = "Converts to" },
@@ -69,7 +71,17 @@ namespace CodeDocumentor.Vsix2022
             public const string RECORD_DIAGNOSTIC_ID = "CD1608";
         }
 
-        public static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] {
+        public static IEnumerable<string> GetInternalWordList()
+        {
+            var items = new List<string>();
+            items.AddRange(INTERNAL_SPECIAL_WORD_LIST);
+            items.AddRange(AXUILLARY_SPECIAL_WORD_LIST);
+            items.AddRange(TWO_LETTER_WORD_LIST);
+            items.AddRange(PLURALIZATION_CONVERSIONS);
+            return items;
+        }
+
+        private static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] {
 "accept",
 "access",
 "add",

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using CodeDocumentor.Test.TestHelpers;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Methods
 {
@@ -17,9 +18,10 @@ namespace CodeDocumentor.Test.Methods
     {
         private readonly TestFixture _fixture;
 
-        public MethodUnitTest(TestFixture fixture)
+        public MethodUnitTest(TestFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
+            fixture.Initialize(output);
         }
         /// <summary>
         /// Nos diagnostics show.
@@ -74,14 +76,15 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
         [InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
         [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
-        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
 
-            _fixture.OptionsPropertyCallback = (o) => {
+            _fixture.RegisterCallback(nameof(ShowMethodDiagnosticAndFix), (o) =>
+            {
                 o.UseNaturalLanguageForReturnNode = false;
-            };
+            });
             var expected = new DiagnosticResult
             {
                 Id = MethodAnalyzerSettings.DiagnosticId,

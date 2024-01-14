@@ -30,7 +30,7 @@ namespace CodeDocumentor.Helper
             {
                 context.ReportDiagnostic(Diagnostic.Create(getRuleCallback.Invoke(alreadyHasComment), identifier.GetLocation()));
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
                 //noop
             }

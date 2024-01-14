@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using CodeDocumentor.Helper;
 using FluentAssertions;
 using Xunit;
@@ -90,26 +89,22 @@ namespace ConsoleApp4
 }";
 
         [Fact]
-        public async Task GetExceptions_ReturnsMatches()
+        public void GetExceptions_ReturnsMatches()
         {
             var exceptions = DocumentationHeaderHelper.GetExceptions(MethodWithException);
 
             Assert.Single(exceptions.ToList());
         }
 
-
-
         [Fact]
-        public async Task GetExceptions_ReturnsNoMatches_WhenNoExceptions()
+        public void GetExceptions_ReturnsNoMatches_WhenNoExceptions()
         {
             var exceptions = DocumentationHeaderHelper.GetExceptions(MethodWithNoException);
             Assert.Empty(exceptions.ToList());
         }
 
-
-
         [Fact]
-        public async Task GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()
+        public void GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()
         {
             var exceptions = DocumentationHeaderHelper.GetExceptions(MethodWithDuplicateException);
             Assert.Single(exceptions.ToList());

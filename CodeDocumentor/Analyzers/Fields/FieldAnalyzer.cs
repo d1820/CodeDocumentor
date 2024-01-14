@@ -1,6 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -39,13 +41,14 @@ namespace CodeDocumentor
             {
                 return;
             }
-            if (PrivateMemberVerifier.IsPrivateMember(node))
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            if (!optionsService.IsEnabledForNonPublicFields && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
 
-            // Only const field.
-            if (!node.Modifiers.Any(SyntaxKind.ConstKeyword))
+            // Only const and static field.
+            if (!node.Modifiers.Any(SyntaxKind.ConstKeyword) && !node.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 return;
             }

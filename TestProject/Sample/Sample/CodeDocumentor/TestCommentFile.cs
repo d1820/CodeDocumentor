@@ -5,12 +5,20 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+//[assembly: SuppressMessage("XMLDocumentation", "")]
 
-namespace Welcom.Test
+namespace Sample.CodeDocumentor
 {
     [ExcludeFromCodeCoverage]
+    //[SuppressMessage("XMLDocumentation", "")]
     public class Field_Tester_Spacer
     {
+        private static string _staticField;
+
+        private string _nonstaticField;
+
+        private static void GetFastMatch() { }
+
 
         public Field_Tester_Spacer()
         {

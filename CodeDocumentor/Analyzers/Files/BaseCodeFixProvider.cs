@@ -27,6 +27,11 @@ namespace CodeDocumentor
             RecordAnalyzerSettings.DiagnosticId
         });
 
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return null;
+        }
+
         /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>

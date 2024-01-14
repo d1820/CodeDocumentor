@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +24,31 @@
     <Compile Remove="Fields\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Interfaces\TestFiles\TestCode.cs" />
     <Compile Remove="Interfaces\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\BasicTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\BasicTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithCrefTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithCrefTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithIntReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithIntReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithListIntReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithListIntReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithListListIntReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithListListIntReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithListQualifiedNameReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithListQualifiedNameReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithParameterTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithParameterTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestFixCode.cs" />
     <Compile Remove="Properties\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTester.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTesterFix.cs" />
@@ -34,9 +58,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Methods\TestFiles\InheritDocTestCode.cs">
+    <Content Include="Methods\TestFiles\BasicTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Include="Methods\TestFiles\BasicTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\InheritDocTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -82,6 +112,72 @@
     <None Include="Interfaces\TestFiles\TestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Methods\TestFiles\MethodWithBooleanParameterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithCrefTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithCrefTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithIntReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithIntReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithListIntReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithListIntReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithListListIntReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithListListIntReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithListQualifiedNameReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithListQualifiedNameReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithNullableStructParameterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithObjectReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithObjectReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithParameterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithParameterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithStringReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\TestFiles\InheritDocTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -126,16 +222,18 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.4.33103.184" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.4.33103.184" />
-    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.8.37222" ExcludeAssets="runtime">
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.8.37221" />
+    <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
     <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
     <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="xunit" Version="2.5.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+    <PackageReference Include="xunit" Version="2.6.5" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

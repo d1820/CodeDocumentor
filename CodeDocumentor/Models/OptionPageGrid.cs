@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
@@ -26,41 +26,65 @@ namespace CodeDocumentor.Vsix2022
         [Description("When highlighting missing comments this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
+        /// <summary>
+        /// Gets or Sets the class diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Class Diagnostic Severity")]
         [Description("When highlighting missing comments on a class this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the constructor diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Constructor Diagnostic Severity")]
         [Description("When highlighting missing comments on a constructor this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the enum diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Enum Diagnostic Severity")]
         [Description("When highlighting missing comments on an enum this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the field diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Field Diagnostic Severity")]
         [Description("When highlighting missing comments on a field this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the interface diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Interface Diagnostic Severity")]
         [Description("When highlighting missing comments on an interface this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the method diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Method Diagnostic Severity")]
         [Description("When highlighting missing comments on a method this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the property diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Property Diagnostic Severity")]
         [Description("When highlighting missing comments on a property this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the record diagnostic severity.
+        /// </summary>
         [Category(AnalyzerSubCategory)]
         [DisplayName("Record Diagnostic Severity")]
         [Description("When highlighting missing comments on a record this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
@@ -87,6 +111,17 @@ namespace CodeDocumentor.Vsix2022
         [Description("When documenting classes, fields, methods, and properties only add documentation headers if the item is public. Visual Studio must be restarted to fully take affect.")]
         public bool IsEnabledForPublicMembersOnly { get; set; }
 
+        /// <summary>
+        /// Gets or Sets a value indicating whether enabled for non public is fields.
+        /// </summary>
+        [Category(SubCategory)]
+        [DisplayName("Enable comments for non public fields")]
+        [Description("When documenting fields allow adding documentation headers if the item is not public. This only applies to const and static fields. Visual Studio must be restarted to fully take affect.")]
+        public bool IsEnabledForNonPublicFields { get; set; }
+
+        /// <summary>
+        /// Gets or Sets a value indicating whether preserve existing summary text.
+        /// </summary>
         [Category(SummarySubCategory)]
         [DisplayName("Preserve Existing Summary Text")]
         [Description("When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.")]
@@ -134,6 +169,7 @@ namespace CodeDocumentor.Vsix2022
             MethodDiagnosticSeverity = settings.MethodDiagnosticSeverity;
             PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
             RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
+            IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
         }
 
         /// <summary> Save settings to storage. </summary>
@@ -141,22 +177,23 @@ namespace CodeDocumentor.Vsix2022
         {
             var settings = new Settings
             {
-                IsEnabledForPublicMembersOnly = this.IsEnabledForPublicMembersOnly,
-                UseNaturalLanguageForReturnNode = this.UseNaturalLanguageForReturnNode,
-                ExcludeAsyncSuffix = this.ExcludeAsyncSuffix,
-                IncludeValueNodeInProperties = this.IncludeValueNodeInProperties,
-                UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
-                WordMaps = this.WordMaps,
-                DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity,
-                PreserveExistingSummaryText = this.PreserveExistingSummaryText,
-                ClassDiagnosticSeverity = this.ClassDiagnosticSeverity,
-                ConstructorDiagnosticSeverity = this.ConstructorDiagnosticSeverity,
-                EnumDiagnosticSeverity = this.EnumDiagnosticSeverity,
-                FieldDiagnosticSeverity = this.FieldDiagnosticSeverity,
-                InterfaceDiagnosticSeverity = this.InterfaceDiagnosticSeverity,
-                MethodDiagnosticSeverity = this.MethodDiagnosticSeverity,
-                PropertyDiagnosticSeverity = this.PropertyDiagnosticSeverity,
-                RecordDiagnosticSeverity = this.RecordDiagnosticSeverity
+                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
+                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
+                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
+                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
+                UseToDoCommentsOnSummaryError = UseToDoCommentsOnSummaryError,
+                WordMaps = WordMaps,
+                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
+                PreserveExistingSummaryText = PreserveExistingSummaryText,
+                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
+                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
+                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
+                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
+                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
+                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
+                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields
             };
             settings.Save();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();

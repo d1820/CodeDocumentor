@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Helper;
 using FluentAssertions;
@@ -17,7 +16,6 @@ namespace CodeDocumentor.Test.Helper
             result.Count.Should().Be(3);
             result[0].Should().Be("SERVER");
         }
-
 
         [Fact]
         public void Split_ReturnsWordsSplitByUnderscore_WhenAllUppercaseStringWithNumber()

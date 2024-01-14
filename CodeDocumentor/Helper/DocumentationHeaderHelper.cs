@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -86,20 +86,63 @@ namespace CodeDocumentor.Helper
         /// <param name="node"> The node. </param>
         /// <param name="recursive"> If true, recursive. </param>
         /// <returns> A bool. </returns>
-        public static bool HasAnalyzerExclusion(MemberDeclarationSyntax node, bool recursive = true)
+        public static bool HasAnalyzerExclusion(SyntaxNode node, bool recursive = true, List<AttributeSyntax> attrs = null)
         {
             if (node == null)
             {
                 return false;
             }
+            if (attrs == null)
+            {
+                attrs = new List<AttributeSyntax>();
+            }
 
-            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
-            var hasExclusion = attrs.Where(w => w.ArgumentList != null).SelectMany(w => w.ArgumentList.Arguments).Any(w => w.Expression.IsKind(SyntaxKind.StringLiteralExpression) && w.Expression.ToString().Contains(EXCLUSION_CATEGORY));
+            if (node is MemberDeclarationSyntax memSyntax)
+            {
+                attrs.AddRange(GetAttributes(memSyntax));
+            }
+
+            if (node is CompilationUnitSyntax compSyntax)
+            {
+                attrs.AddRange(GetAttributes(compSyntax));
+            }
+
+            var hasExclusion = attrs.Any();
             if (!hasExclusion && recursive)
             {
-                return HasAnalyzerExclusion(node.Parent as MemberDeclarationSyntax, recursive);
+                return HasAnalyzerExclusion(node.Parent, recursive, attrs);
             }
             return hasExclusion;
+        }
+
+        private static IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)
+        {
+            if (node == null)
+            {
+                return new SyntaxList<AttributeSyntax>();
+            }
+
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            return attrs.Where(w => w.ArgumentList != null)
+                         .SelectMany(w => w.ArgumentList.Arguments
+                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
+                                .Select(ss => w));
+
+        }
+
+        private static IEnumerable<AttributeSyntax> GetAttributes(MemberDeclarationSyntax node)
+        {
+            if (node == null)
+            {
+                return new SyntaxList<AttributeSyntax>();
+            }
+
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            return attrs.Where(w => w.ArgumentList != null)
+                         .SelectMany(w => w.ArgumentList.Arguments
+                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
+                                .Select(ss => w));
+
         }
 
         /// <summary> Checks if is dictionary. </summary>
@@ -195,7 +238,7 @@ namespace CodeDocumentor.Helper
 
             if (declarationSyntax.AccessorList != null && declarationSyntax.AccessorList.Accessors.Any(o => o.Kind() == SyntaxKind.SetAccessorDeclaration))
             {
-                if (declarationSyntax.AccessorList.Accessors.First(o => o.Kind() == SyntaxKind.SetAccessorDeclaration).ChildTokens().Any(o => o.Kind() == SyntaxKind.PrivateKeyword || o.Kind() == SyntaxKind.InternalKeyword))
+                if (declarationSyntax.AccessorList.Accessors.First(o => o.Kind() == SyntaxKind.SetAccessorDeclaration).ChildTokens().Any(o => o.IsKind(SyntaxKind.PrivateKeyword) || o.IsKind(SyntaxKind.InternalKeyword)))
                 {
                     // private set or internal set should consider as no set.
                     hasSetter = false;
@@ -261,7 +304,6 @@ namespace CodeDocumentor.Helper
             }
         }
 
-
         /// <summary> Create the return element syntax. </summary>
         /// <param name="content"> The content. </param>
         /// <param name="xmlNodeName"> The xml node name. </param>
@@ -294,7 +336,7 @@ namespace CodeDocumentor.Helper
                 {
                     //var startingWord = DetermineStartingWord(cleanContent.AsSpan(), true);
                     var text = SyntaxFactory.XmlText($"A ");
-                    var name = typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
+                    var name = _typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
                     var typeParamNode = CreateTypeParameterRefElementSyntax(name);
 
                     var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
@@ -521,7 +563,7 @@ namespace CodeDocumentor.Helper
             {
                 return Enumerable.Empty<string>();
             }
-            var exceptions = regEx.Matches(textToSearch).OfType<Match>()
+            var exceptions = _regEx.Matches(textToSearch).OfType<Match>()
                                                         .Select(m => m?.Groups[0]?.Value)
                                                         .Distinct();
             return exceptions;
@@ -565,6 +607,19 @@ namespace CodeDocumentor.Helper
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
         internal static SyntaxList<XmlNodeSyntax> WithParameters(this SyntaxList<XmlNodeSyntax> list, BaseMethodDeclarationSyntax declarationSyntax)
+        {
+            if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
+            {
+                foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
+                {
+                    string parameterComment = CommentHelper.CreateParameterComment(parameter);
+                    list = list.AddRange(DocumentationHeaderHelper.CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
+                }
+            }
+            return list;
+        }
+
+        internal static SyntaxList<XmlNodeSyntax> WithParameters(this SyntaxList<XmlNodeSyntax> list, TypeDeclarationSyntax declarationSyntax)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
@@ -668,10 +723,10 @@ namespace CodeDocumentor.Helper
         #endregion Builders
 
         /// <summary> The reg ex. </summary>
-        private static readonly Regex regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         /// <summary> type param regex. </summary>
-        private static readonly Regex typeParamRegex = new Regex(@"""\w+""");
+        private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
 
         /// <summary> Creates the comment exterior. </summary>
         /// <returns> A SyntaxTriviaList. </returns>

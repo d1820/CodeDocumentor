@@ -1,20 +1,25 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TranslatorTests
+    public class TranslatorTests : IClassFixture<TestFixture>
     {
         private readonly TestFixture _testFixure;
+        private readonly ITestOutputHelper _output;
 
-        public TranslatorTests()
+        public TranslatorTests(TestFixture fixture, ITestOutputHelper output)
         {
-            _testFixure = new TestFixture();
+            _testFixure = fixture;
+            _output = output;
+            fixture.Initialize(output);
         }
 
         [Theory]
@@ -38,14 +43,16 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            _testFixure.OptionsPropertyCallback = (o) => {
+            _testFixure.RegisterCallback(_testFixure.CurrentTestName, (o) => {
                 var temp = o.WordMaps.ToList();
                 temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
                 temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
                 o.WordMaps = temp.ToArray();
-            };
+            });
             var translated = input.Translate();
             translated.Should().Be(output);
+            var ff = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            _output.WriteLine(ff.ExcludeAsyncSuffix.ToString());
         }
     }
 }

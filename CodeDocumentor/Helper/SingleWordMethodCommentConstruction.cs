@@ -45,7 +45,12 @@ namespace CodeDocumentor.Helper
             {
                 return string.Empty;
             }
-            return base.BuildComment(returnType, returnGenericTypeAsFullString).Translate().WithPeriod();
+            var comment = base.BuildComment(returnType, returnGenericTypeAsFullString);
+            //if (!returnGenericTypeAsFullString)
+            //{
+            //    comment = comment.Translate().WithPeriod();
+            //}
+            return comment;
             //return string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), false), comment);
         }
 

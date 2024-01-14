@@ -1,19 +1,43 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using CodeDocumentor.Services;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleInjector;
-using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Test.TestHelpers;
+using Xunit;
+using Xunit.Abstractions;
+
+[assembly: TestCaseOrderer(PriorityOrderer.FullName, PriorityOrderer.AssemblyName)]
+[assembly: SuppressMessage("XMLDocumentation", "")]
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, DisableTestParallelization = true)]
 
 namespace CodeDocumentor.Test
 {
+    public static class TestFixtureExtensions
+    {
+        public static string GetTestName(this ITestOutputHelper output, bool returnFullName = true)
+        {
+            var type = output.GetType();
+            var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
+            var test = (ITest)testMember.GetValue(output);
+            if (returnFullName)
+            {
+                return test.DisplayName;
+            }
+            var name = test.DisplayName.Split('(').First();
+            return returnFullName ? name : name.Split('.').Last();
+        }
+    }
+
     [SuppressMessage("XMLDocumentation", "")]
     public class TestFixture
     {
@@ -21,20 +45,44 @@ namespace CodeDocumentor.Test
         public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
         public const string DIAG_TYPE_PRIVATE = "private";
 
-        public Action<IOptionsService> OptionsPropertyCallback { get; set; }
+        public string CurrentTestName { get; set; }
+
+        protected static ConcurrentDictionary<string, Action<IOptionsService>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<IOptionsService>>();
 
         public TestFixture()
         {
             Runtime.RunningUnitTests = true;
+        }
 
-            var testContainer = new Container();
-            testContainer.Register<IOptionsService>(() =>
+        public void Initialize(ITestOutputHelper output)
+        {
+            CurrentTestName = output.GetTestName();
+
+            CodeDocumentorPackage.ContainerFactory = () =>
             {
-                var os = new TestOptionsService();
-                OptionsPropertyCallback?.Invoke(os);
-                return os;
-            }, Lifestyle.Transient);
-            CodeDocumentorPackage.DIContainer(testContainer);
+                var _testContainer = new Container();
+                _testContainer.Register<IOptionsService>(() =>
+                {
+                    var os = new TestOptionsService();
+                    if (CurrentTestName != null && RegisteredCallBacks.TryGetValue(CurrentTestName, out var callback))
+                    {
+                        callback.Invoke(os);
+                    }
+                    return os;
+                }, Lifestyle.Transient);
+                _testContainer.Verify();
+                return _testContainer;
+            };
+        }
+
+        public void RegisterCallback(string name, Action<IOptionsService> callback)
+        {
+            if (RegisteredCallBacks.ContainsKey(name))
+            {
+                RegisteredCallBacks[name] = callback;
+                return;
+            }
+            RegisteredCallBacks.TryAdd(name, callback);
         }
 
         public void SetPublicProcessingOption(IOptionsService o, string diagType)

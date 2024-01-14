@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -42,23 +43,30 @@ namespace CodeDocumentor.Vsix2022
     {
         public static bool IsDebugMode = Debugger.IsAttached;
 
-        public static Container DIContainer(Container overrideContainer = null)
+        public static Func<Container> ContainerFactory { get; set; }
+
+        public static Container DIContainer()
         {
+            if(ContainerFactory != null)
+            {
+                return ContainerFactory();
+            }
             if (_DIContainer == null)
             {
-                _DIContainer = overrideContainer ?? new Container();
-                if (overrideContainer == null) //expect teh override container to do all registrations it needs
-                {
-                    _DIContainer.RegisterServices();
-                    _DIContainer.Verify();
-                }
+                _DIContainer =  new Container();
+                _DIContainer.RegisterServices();
+                _DIContainer.Verify();
             }
             return _DIContainer;
         }
 
-        protected static IOptionPageGrid _options;
+#pragma warning disable IDE1006 // Naming Styles
+        internal static IOptionPageGrid _options;
+#pragma warning restore IDE1006 // Naming Styles
         private static readonly object _syncRoot = new object();
+#pragma warning disable IDE1006 // Naming Styles
         private static Container _DIContainer;
+#pragma warning restore IDE1006 // Naming Styles
 
         #region Package Members
 

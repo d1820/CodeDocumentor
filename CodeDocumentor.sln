@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		LICENSE.txt = LICENSE.txt
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
@@ -34,6 +35,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GifInstruction", "GifInstru
 		GifInstruction\unitTestIssues.png = GifInstruction\unitTestIssues.png
 		GifInstruction\UpdateWholeFile.gif = GifInstruction\UpdateWholeFile.gif
 		GifInstruction\warning wave line.gif = GifInstruction\warning wave line.gif
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0A66D98B-E7CD-41E8-BB41-106CD04552B0}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
 Global

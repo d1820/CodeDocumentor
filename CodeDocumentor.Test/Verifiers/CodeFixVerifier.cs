@@ -2,14 +2,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
-using SimpleInjector;
 using Xunit;
 
 namespace CodeDocumentor.Test
@@ -23,7 +21,7 @@ namespace CodeDocumentor.Test
     {
         protected CodeFixVerifier()
         {
-           
+
         }
 
         /// <summary>
@@ -53,9 +51,9 @@ namespace CodeDocumentor.Test
         /// <param name="allowNewCompilerDiagnostics">
         ///   A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied
         /// </param>
-        protected void VerifyCSharpFix(string oldSource, string newSource, string diagType = "public", int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected async Task VerifyCSharpFixAsync(string oldSource, string newSource, string diagType = "public", int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
         {
-            VerifyFix(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
+            await VerifyFixAsync(LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(diagType), GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
         }
 
         /// <summary>
@@ -67,9 +65,9 @@ namespace CodeDocumentor.Test
         /// <param name="allowNewCompilerDiagnostics">
         ///   A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied
         /// </param>
-        protected void VerifyBasicFix(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
+        protected async Task VerifyBasicFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false)
         {
-            VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
+            await VerifyFixAsync(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
         }
 
         /// <summary>
@@ -90,11 +88,11 @@ namespace CodeDocumentor.Test
         /// <param name="allowNewCompilerDiagnostics">
         ///   A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied
         /// </param>
-        private void VerifyFix(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics)
+        private async Task VerifyFixAsync(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics)
         {
             var document = CreateDocument(oldSource, language);
-            var analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, new[] { document });
-            var compilerDiagnostics = GetCompilerDiagnostics(document);
+            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document });
+            var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document);
             var attempts = analyzerDiagnostics.Length;
 
             for (int i = 0; i < attempts; ++i)
@@ -102,7 +100,7 @@ namespace CodeDocumentor.Test
                 var actions = new List<CodeAction>();
                 var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), CancellationToken.None);
 
-                codeFixProvider.RegisterCodeFixesAsync(context).Wait();
+                await codeFixProvider.RegisterCodeFixesAsync(context);
 
                 if (!actions.Any())
                 {
@@ -111,25 +109,26 @@ namespace CodeDocumentor.Test
 
                 if (codeFixIndex != null)
                 {
-                    document = ApplyFix(document, actions.ElementAt((int)codeFixIndex));
+                    document = await ApplyFixAsync(document, actions.ElementAt((int)codeFixIndex));
                     break;
                 }
 
-                document = ApplyFix(document, actions.ElementAt(0));
-                analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, new[] { document });
+                document = await ApplyFixAsync(document, actions.ElementAt(0));
+                analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document });
 
-                var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
+                var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document));
 
                 //check if applying the code fix introduced any new compiler diagnostics
                 if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
                 {
                     // Format and get the compiler diagnostics again so that the locations make sense in the output
-                    document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace));
-                    newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
+                    document = document.WithSyntaxRoot(Formatter.Format(await document.GetSyntaxRootAsync(), Formatter.Annotation, document.Project.Solution.Workspace));
+                    newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document));
 
+                    var root = await document.GetSyntaxRootAsync();
                     Assert.Fail(string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                             string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
-                            document.GetSyntaxRootAsync().Result.ToFullString()));
+                            root.ToFullString()));
                 }
 
                 //check if there are analyzer diagnostics left after the code fix
@@ -140,8 +139,8 @@ namespace CodeDocumentor.Test
             }
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
-            var actual = GetStringFromDocument(document);
-            Assert.Equal(newSource, actual);
+            var actual = await GetStringFromDocumentAsync(document);
+           Assert.Equal(newSource, actual);
         }
     }
 }

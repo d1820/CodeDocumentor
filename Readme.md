@@ -1,5 +1,10 @@
 # CodeDocumentor
 ---
+![GitHub CI](https://github.com/d1820/CodeDocumentor/actions/workflows/dotnet.yml/badge.svg)
+![GitHub License](https://img.shields.io/github/license/d1820/CodeDocumentor?logo=github&logoColor=green)
+![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/DanTurco.CodeDocumentor)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.CodeDocumentor)
+
 
 A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method. While VS2022 provides basic documentation capabilities this fills the gap in trying to populate the summary and return nodes. This also gives control over how the summaries are translated.
 
@@ -73,6 +78,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Exclude async wording from comments|When documenting members skip adding asynchronously to the comment. |
 | Include ```<value>``` node in property comments|When documenting properties add the value node with the return type |
 | Enable comments for public members only|When documenting classes, fields, methods, and properties only add documentation headers if the item is public |
+| Enable comments for non public fields|When documenting fields allow adding documentation headers if the item is not public. This only applies to const and static fields.|
 | Use natural language for return comments|When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example Enabled: ```<return>A List of Strings</return>``` Example Disabled: ``` <returns><![CDATA[Task<int>]]></returns>```|
 | Use TODO comment when summary can not be determined|When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated. |
 | Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |

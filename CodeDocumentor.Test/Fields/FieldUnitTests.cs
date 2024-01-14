@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -28,17 +27,17 @@ namespace CodeDocumentor.Test.Fields
         [Theory]
         [InlineData("")]
         [InlineData("InheritDocTestCode.cs")]
-        public void NoDiagnosticsShow(string testCode)
+        public async Task NoDiagnosticsShow(string testCode)
         {
-            VerifyCSharpDiagnostic(testCode);
+            await VerifyCSharpDiagnosticAsync(testCode);
 
             if (testCode == string.Empty)
             {
-                VerifyCSharpDiagnostic(testCode, TestFixture.DIAG_TYPE_PUBLIC);
+                await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
             else
             {
-                var file = _fixture.LoadTestFile($@"./Fields/TestFiles/{testCode}");
+                var file = _fixture.LoadTestFile($"./Fields/TestFiles/{testCode}");
 
                 var expected = new DiagnosticResult
                 {
@@ -51,7 +50,7 @@ namespace CodeDocumentor.Test.Fields
                                }
                 };
 
-                VerifyCSharpDiagnostic(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
+                await VerifyCSharpDiagnosticAsync(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
 
             }
         }
@@ -65,10 +64,10 @@ namespace CodeDocumentor.Test.Fields
         /// <param name="column">The column.</param>
         [Theory]
         [InlineData("ConstFieldTestCode.cs", "ConstFieldTestFixCode.cs", 9, 26)]
-        public void ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
-            var fix = _fixture.LoadTestFile($@"./Fields/TestFiles/{fixCode}");
-            var test = _fixture.LoadTestFile($@"./Fields/TestFiles/{testCode}");
+            var fix = _fixture.LoadTestFile($"./Fields/TestFiles/{fixCode}");
+            var test = _fixture.LoadTestFile($"./Fields/TestFiles/{testCode}");
 
             var expected = new DiagnosticResult
             {
@@ -81,9 +80,9 @@ namespace CodeDocumentor.Test.Fields
                         }
             };
 
-            VerifyCSharpDiagnostic(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
-            VerifyCSharpFix(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
         /// <summary>

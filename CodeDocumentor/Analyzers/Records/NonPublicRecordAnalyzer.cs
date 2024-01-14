@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
@@ -25,6 +25,7 @@ namespace CodeDocumentor
                     return new List<DiagnosticDescriptor>().ToImmutableArray();
                 }
                 return ImmutableArray.Create(RecordAnalyzerSettings.GetRule());
+
             }
         }
 

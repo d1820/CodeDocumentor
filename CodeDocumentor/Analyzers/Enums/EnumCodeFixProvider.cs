@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -18,11 +18,11 @@ namespace CodeDocumentor
     public class EnumCodeFixProvider : BaseCodeFixProvider
     {
         /// <summary> Gets the fixable diagnostic ids. </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumAnalyzerSettings.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumAnalyzerSettings.DiagnosticId);
 
         /// <summary> Gets fix all provider. </summary>
         /// <returns> A FixAllProvider. </returns>
-        public override sealed FixAllProvider GetFixAllProvider()
+        public sealed override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
@@ -30,7 +30,7 @@ namespace CodeDocumentor
         /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
-        public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
@@ -39,7 +39,7 @@ namespace CodeDocumentor
 
             EnumDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<EnumDeclarationSyntax>().First();
 
-            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
+            var displayTitle = declaration.HasSummary() ? TitleRebuild : Title;
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: displayTitle,
@@ -70,8 +70,8 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
-        private const string title = "Code Documentor this enum";
-        private const string titleRebuild = "Code Documentor update this enum";
+        private const string Title = "Code Documentor this enum";
+        private const string TitleRebuild = "Code Documentor update this enum";
 
         private static EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax)
         {

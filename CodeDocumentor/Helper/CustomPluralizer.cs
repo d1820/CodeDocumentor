@@ -13,7 +13,7 @@ namespace CodeDocumentor.Helper
             }
             else
             {
-                this.AddIrregularRule(single.ToLower(), plural);
+                AddIrregularRule(single.ToLower(), plural);
             }
         }
     }

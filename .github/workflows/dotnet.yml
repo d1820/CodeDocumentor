@@ -34,9 +34,7 @@ jobs:
       run: nuget restore CodeDocumentor.sln
 
     - name: Build
-      run: msbuild CodeDocumentor.sln /p:platform="Any CPU" /p:configuration="Release"
+      run: msbuild CodeDocumentor.sln /p:platform="Any CPU" /p:configuration="Debug"
 
     - name: Test
-      uses: microsoft/vstest-action@v1.0.0
-      with:
-        searchFolder: .\CodeDocumentor.Test\bin\release\
+      run: vstest.console.exe .\CodeDocumentor\CodeDocumentor\CodeDocumentor.Test\bin\Release\net48\CodeDocumentor.Test.dll

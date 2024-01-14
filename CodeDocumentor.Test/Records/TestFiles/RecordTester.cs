@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConsoleApp4
 {
-    public record RecordTester
+    private record RecordTester
     {
     }
 }

@@ -7,7 +7,7 @@ namespace ConsoleApp4
     /// <summary>
     /// The record tester.
     /// </summary>
-    public record RecordTester
+    private record RecordTester
     {
     }
 }

@@ -18,6 +18,7 @@ using Xunit.Abstractions;
 
 [assembly: TestCaseOrderer(PriorityOrderer.FullName, PriorityOrderer.AssemblyName)]
 [assembly: SuppressMessage("XMLDocumentation", "")]
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, DisableTestParallelization = true)]
 
 namespace CodeDocumentor.Test
 {
@@ -59,7 +60,6 @@ namespace CodeDocumentor.Test
 
             CodeDocumentorPackage.ContainerFactory = () =>
             {
-                //output.WriteLine($"In Container Factory: {CurrentTestName}");
                 var _testContainer = new Container();
                 _testContainer.Register<IOptionsService>(() =>
                 {
@@ -69,7 +69,7 @@ namespace CodeDocumentor.Test
                         callback.Invoke(os);
                     }
                     return os;
-                }, Lifestyle.Singleton);
+                }, Lifestyle.Transient);
                 _testContainer.Verify();
                 return _testContainer;
             };

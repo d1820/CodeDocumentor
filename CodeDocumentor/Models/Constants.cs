@@ -750,6 +750,5 @@ namespace CodeDocumentor.Vsix2022
 "zip",
 "zoom" };
 
-
     }
 }

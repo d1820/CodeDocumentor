@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Linq;
-using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using CodeDocumentor.Test.TestHelpers;
 using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Methods
@@ -52,8 +51,6 @@ namespace CodeDocumentor.Test.Methods
 
                 await VerifyCSharpDiagnosticAsync(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
             }
-
-
         }
 
         /// <summary>
@@ -81,7 +78,7 @@ namespace CodeDocumentor.Test.Methods
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
 
-            _fixture.RegisterCallback(nameof(ShowMethodDiagnosticAndFix), (o) =>
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.UseNaturalLanguageForReturnNode = false;
             });
@@ -122,9 +119,5 @@ namespace CodeDocumentor.Test.Methods
             }
             return new MethodAnalyzer();
         }
-
-
-
-
     }
 }

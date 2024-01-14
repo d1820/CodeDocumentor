@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,7 +13,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool IsAllLowerCase(string text)
         {
-            return IsLowerRegEx.IsMatch(text);
+            return _isLowerRegEx.IsMatch(text);
         }
 
         /// <summary> Checks if is all upper case. </summary>
@@ -21,7 +21,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool IsAllUpperCase(string text)
         {
-            return IsUpperRegEx.IsMatch(text);
+            return _isUpperRegEx.IsMatch(text);
         }
 
         /// <summary> Splits name by upper character. </summary>
@@ -38,7 +38,7 @@ namespace CodeDocumentor.Helper
 
             if (allUpperCase || allLowerCase)
             {
-                var matches = SpecailCharRegEx.Matches(name);
+                var matches = _specailCharRegEx.Matches(name);
                 foreach (Match m in matches)
                 {
                     if (m.Success && !string.IsNullOrWhiteSpace(m.Value))
@@ -113,14 +113,21 @@ namespace CodeDocumentor.Helper
             foreach (char c in text)
             {
                 if (newWord) { yield return Char.ToUpper(c); newWord = false; }
-                else yield return Char.ToLower(c);
-                if (c == ' ') newWord = true;
+                else
+                {
+                    yield return Char.ToLower(c);
+                }
+
+                if (c == ' ')
+                {
+                    newWord = true;
+                }
             }
         }
 
-        private static readonly Regex IsLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
-        private static readonly Regex IsUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
-        private static readonly Regex SpecailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _isLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
+        private static readonly Regex _isUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
+        private static readonly Regex _specailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary> Processes the char. </summary>
         /// <param name="i"> The i. </param>

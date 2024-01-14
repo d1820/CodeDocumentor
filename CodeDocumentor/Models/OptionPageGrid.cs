@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
@@ -119,7 +119,6 @@ namespace CodeDocumentor.Vsix2022
         [Description("When documenting fields allow adding documentation headers if the item is not public. This only applies to const and static fields. Visual Studio must be restarted to fully take affect.")]
         public bool IsEnabledForNonPublicFields { get; set; }
 
-
         /// <summary>
         /// Gets or Sets a value indicating whether preserve existing summary text.
         /// </summary>
@@ -178,23 +177,23 @@ namespace CodeDocumentor.Vsix2022
         {
             var settings = new Settings
             {
-                IsEnabledForPublicMembersOnly = this.IsEnabledForPublicMembersOnly,
-                UseNaturalLanguageForReturnNode = this.UseNaturalLanguageForReturnNode,
-                ExcludeAsyncSuffix = this.ExcludeAsyncSuffix,
-                IncludeValueNodeInProperties = this.IncludeValueNodeInProperties,
-                UseToDoCommentsOnSummaryError = this.UseToDoCommentsOnSummaryError,
-                WordMaps = this.WordMaps,
-                DefaultDiagnosticSeverity = this.DefaultDiagnosticSeverity,
-                PreserveExistingSummaryText = this.PreserveExistingSummaryText,
-                ClassDiagnosticSeverity = this.ClassDiagnosticSeverity,
-                ConstructorDiagnosticSeverity = this.ConstructorDiagnosticSeverity,
-                EnumDiagnosticSeverity = this.EnumDiagnosticSeverity,
-                FieldDiagnosticSeverity = this.FieldDiagnosticSeverity,
-                InterfaceDiagnosticSeverity = this.InterfaceDiagnosticSeverity,
-                MethodDiagnosticSeverity = this.MethodDiagnosticSeverity,
-                PropertyDiagnosticSeverity = this.PropertyDiagnosticSeverity,
-                RecordDiagnosticSeverity = this.RecordDiagnosticSeverity,
-                IsEnabledForNonPublicFields = this.IsEnabledForNonPublicFields
+                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
+                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
+                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
+                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
+                UseToDoCommentsOnSummaryError = UseToDoCommentsOnSummaryError,
+                WordMaps = WordMaps,
+                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
+                PreserveExistingSummaryText = PreserveExistingSummaryText,
+                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
+                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
+                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
+                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
+                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
+                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
+                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields
             };
             settings.Save();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();

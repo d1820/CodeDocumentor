@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +9,7 @@ namespace CodeDocumentor.Helper
 {
     public abstract class BaseReturnTypeCommentConstruction
     {
-        protected readonly bool _useProperCasing;
+        protected readonly bool UseProperCasing;
 
         /// <summary>
         /// Gets or Sets the array comment template.
@@ -42,7 +42,7 @@ namespace CodeDocumentor.Helper
 
         protected BaseReturnTypeCommentConstruction(bool useProperCasing)
         {
-            _useProperCasing = useProperCasing;
+            UseProperCasing = useProperCasing;
         }
 
         /// <summary>
@@ -183,8 +183,6 @@ namespace CodeDocumentor.Helper
             return result;
         }
 
-
-
         /// <summary>
         /// Generates array type comment.
         /// </summary>
@@ -284,7 +282,7 @@ namespace CodeDocumentor.Helper
                     var item = returnType.TypeArgumentList.Arguments[i];
                     if (i > 0)
                     {
-                        builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), _useProperCasing)}");
+                        builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), UseProperCasing)}");
                     }
                     builder.Append($"{BuildComment(item, returnGenericTypeAsFullString)}");
                     if (i + 1 < returnType.TypeArgumentList.Arguments.Count)

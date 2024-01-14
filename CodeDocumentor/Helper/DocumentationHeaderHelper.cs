@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -304,7 +304,6 @@ namespace CodeDocumentor.Helper
             }
         }
 
-
         /// <summary> Create the return element syntax. </summary>
         /// <param name="content"> The content. </param>
         /// <param name="xmlNodeName"> The xml node name. </param>
@@ -337,7 +336,7 @@ namespace CodeDocumentor.Helper
                 {
                     //var startingWord = DetermineStartingWord(cleanContent.AsSpan(), true);
                     var text = SyntaxFactory.XmlText($"A ");
-                    var name = typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
+                    var name = _typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
                     var typeParamNode = CreateTypeParameterRefElementSyntax(name);
 
                     var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
@@ -564,7 +563,7 @@ namespace CodeDocumentor.Helper
             {
                 return Enumerable.Empty<string>();
             }
-            var exceptions = regEx.Matches(textToSearch).OfType<Match>()
+            var exceptions = _regEx.Matches(textToSearch).OfType<Match>()
                                                         .Select(m => m?.Groups[0]?.Value)
                                                         .Distinct();
             return exceptions;
@@ -724,10 +723,10 @@ namespace CodeDocumentor.Helper
         #endregion Builders
 
         /// <summary> The reg ex. </summary>
-        private static readonly Regex regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         /// <summary> type param regex. </summary>
-        private static readonly Regex typeParamRegex = new Regex(@"""\w+""");
+        private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
 
         /// <summary> Creates the comment exterior. </summary>
         /// <returns> A SyntaxTriviaList. </returns>

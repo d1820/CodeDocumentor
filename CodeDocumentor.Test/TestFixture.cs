@@ -1,34 +1,37 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using CodeDocumentor.Services;
+using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleInjector;
-using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Test.TestHelpers;
 using Xunit;
-using System.Collections.Concurrent;
 using Xunit.Abstractions;
-using System.Reflection;
 
 [assembly: TestCaseOrderer(PriorityOrderer.FullName, PriorityOrderer.AssemblyName)]
 [assembly: SuppressMessage("XMLDocumentation", "")]
-
 
 namespace CodeDocumentor.Test
 {
     public static class TestFixtureExtensions
     {
-        public static string GetTestName(this ITestOutputHelper output, bool returnFullName = false)
+        public static string GetTestName(this ITestOutputHelper output, bool returnFullName = true)
         {
             var type = output.GetType();
             var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
             var test = (ITest)testMember.GetValue(output);
+            if (returnFullName)
+            {
+                return test.DisplayName;
+            }
             var name = test.DisplayName.Split('(').First();
             return returnFullName ? name : name.Split('.').Last();
         }
@@ -40,7 +43,6 @@ namespace CodeDocumentor.Test
         public const string DIAG_TYPE_PUBLIC = "public";
         public const string DIAG_TYPE_PUBLIC_ONLY = "publicOnly";
         public const string DIAG_TYPE_PRIVATE = "private";
-        private Container _testContainer;
 
         public string CurrentTestName { get; set; }
 
@@ -55,17 +57,22 @@ namespace CodeDocumentor.Test
         {
             CurrentTestName = output.GetTestName();
 
-            _testContainer = new Container();
-            _testContainer.Register<IOptionsService>(() =>
+            CodeDocumentorPackage.ContainerFactory = () =>
             {
-                var os = new TestOptionsService();
-                if (CurrentTestName != null && RegisteredCallBacks.TryGetValue(CurrentTestName, out var callback))
+                //output.WriteLine($"In Container Factory: {CurrentTestName}");
+                var _testContainer = new Container();
+                _testContainer.Register<IOptionsService>(() =>
                 {
-                    callback.Invoke(os);
-                }
-                return os;
-            }, Lifestyle.Transient);
-            CodeDocumentorPackage.DIContainer(_testContainer);
+                    var os = new TestOptionsService();
+                    if (CurrentTestName != null && RegisteredCallBacks.TryGetValue(CurrentTestName, out var callback))
+                    {
+                        callback.Invoke(os);
+                    }
+                    return os;
+                }, Lifestyle.Singleton);
+                _testContainer.Verify();
+                return _testContainer;
+            };
         }
 
         public void RegisterCallback(string name, Action<IOptionsService> callback)
@@ -188,6 +195,5 @@ namespace CodeDocumentor.Test
             var item = SyntaxFactory.IdentifierName(typeName);
             return item;
         }
-
     }
 }

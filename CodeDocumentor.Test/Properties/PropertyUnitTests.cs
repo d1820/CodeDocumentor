@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -431,7 +430,7 @@ namespace ConsoleApp4
         [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
         public async Task ShowPropertyDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
-            _fixture.RegisterCallback(nameof(ShowPropertyDiagnosticAndFix), (o) => {
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) => {
                 _fixture.SetPublicProcessingOption(o, diagType);
             });
             var expected = new DiagnosticResult

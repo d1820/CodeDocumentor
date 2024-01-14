@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -36,7 +36,7 @@ namespace CodeDocumentor.Helper
                 //Some stuff just needs to be handled for the user
                 foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
                 {
-                    var wordToLookFor = string.Format(wordMatchRegexTemplate, wordMap.Word);
+                    var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
                     converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
                 }
                 return converted;
@@ -50,12 +50,12 @@ namespace CodeDocumentor.Helper
             }
             foreach (var wordMap in mergedWorkMaps)
             {
-                var wordToLookFor = string.Format(wordMatchRegexTemplate, wordMap.Word);
+                var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
                 converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
             }
             return converted;
         }
 
-        private static readonly string wordMatchRegexTemplate = @"\b({0})\b";
+        private static readonly string _wordMatchRegexTemplate = @"\b({0})\b";
     }
 }

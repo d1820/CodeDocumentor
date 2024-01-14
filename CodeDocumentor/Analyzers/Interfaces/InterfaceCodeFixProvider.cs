@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -20,11 +20,11 @@ namespace CodeDocumentor
     public class InterfaceCodeFixProvider : BaseCodeFixProvider
     {
         /// <summary> Gets the fixable diagnostic ids. </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzerSettings.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(InterfaceAnalyzerSettings.DiagnosticId);
 
         /// <summary> Gets fix all provider. </summary>
         /// <returns> A FixAllProvider. </returns>
-        public override sealed FixAllProvider GetFixAllProvider()
+        public sealed override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
@@ -32,7 +32,7 @@ namespace CodeDocumentor
         /// <summary> Registers code fixes async. </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
-        public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
@@ -41,7 +41,7 @@ namespace CodeDocumentor
 
             InterfaceDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<InterfaceDeclarationSyntax>().First();
 
-            var displayTitle = declaration.HasSummary() ? titleRebuild : title;
+            var displayTitle = declaration.HasSummary() ? TitleRebuild : Title;
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: displayTitle,
@@ -72,8 +72,8 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
-        private const string title = "Code Documentor this interface";
-        private const string titleRebuild = "Code Documentor update this interface";
+        private const string Title = "Code Documentor this interface";
+        private const string TitleRebuild = "Code Documentor update this interface";
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {

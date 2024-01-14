@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Helper;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +9,7 @@ namespace CodeDocumentor.Test.Helper
     [SuppressMessage("XMLDocumentation", "")]
     public class ReturnCommentConstructionTests : IClassFixture<TestFixture>
     {
-        private ReturnCommentConstruction _returnCommentBuilder;
+        private readonly ReturnCommentConstruction _returnCommentBuilder;
 
         public ReturnCommentConstructionTests(TestFixture testFixure)
         {

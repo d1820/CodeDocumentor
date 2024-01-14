@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Microsoft.CodeAnalysis;
 
@@ -70,8 +70,12 @@ namespace CodeDocumentor.Vsix2022
         /// <returns> A Settings. </returns>
         public static Settings Load()
         {
-            if (Runtime.RunningUnitTests) return new Settings();
-            Directory.CreateDirectory(ProgramDataFolder);
+            if (Runtime.RunningUnitTests)
+            {
+                return new Settings();
+            }
+
+            Directory.CreateDirectory(_programDataFolder);
             var json = File.ReadAllText(GetSettingsFilePath());
             var settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings>(json);
             return settings;
@@ -80,8 +84,12 @@ namespace CodeDocumentor.Vsix2022
         /// <summary> Saves the settings </summary>
         public void Save()
         {
-            if (Runtime.RunningUnitTests) return;
-            Directory.CreateDirectory(ProgramDataFolder);
+            if (Runtime.RunningUnitTests)
+            {
+                return;
+            }
+
+            Directory.CreateDirectory(_programDataFolder);
             SaveToFile(GetSettingsFilePath());
             OnSettingsUpdated(this, EventArgs.Empty);
         }
@@ -93,14 +101,14 @@ namespace CodeDocumentor.Vsix2022
             File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(this));
         }
 
-        private static readonly string ProgramDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CodeDocumentor");
+        private static readonly string _programDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CodeDocumentor");
 
         /// <summary> Gets the settings file path. </summary>
         /// <returns> A string. </returns>
         private static string GetSettingsFilePath()
         {
             const string name = "codedocumentor.json";
-            var settingsPath = Path.Combine(ProgramDataFolder, name);
+            var settingsPath = Path.Combine(_programDataFolder, name);
 
             if (!File.Exists(settingsPath))
             {

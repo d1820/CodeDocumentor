@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using CodeDocumentor.Helper;
 using FluentAssertions;
 using Xunit;
@@ -97,16 +96,12 @@ namespace ConsoleApp4
             Assert.Single(exceptions.ToList());
         }
 
-
-
         [Fact]
         public void GetExceptions_ReturnsNoMatches_WhenNoExceptions()
         {
             var exceptions = DocumentationHeaderHelper.GetExceptions(MethodWithNoException);
             Assert.Empty(exceptions.ToList());
         }
-
-
 
         [Fact]
         public void GetExceptions_ReturnsDistinctMatches_WhenDuplicateExceptions()

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ConsoleApp4
 {
-    partial record RecordTester
+    public record RecordTester
     {
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Test.TestHelpers;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
@@ -13,10 +13,12 @@ namespace CodeDocumentor.Test.Helper
     public class TranslatorTests : IClassFixture<TestFixture>
     {
         private readonly TestFixture _testFixure;
+        private readonly ITestOutputHelper _output;
 
         public TranslatorTests(TestFixture fixture, ITestOutputHelper output)
         {
             _testFixure = fixture;
+            _output = output;
             fixture.Initialize(output);
         }
 
@@ -39,10 +41,9 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Int case check", "Int case check")]
         [InlineData("Do Work", "Does Work")]
         [InlineData("To UpperCase", "Converts to UpperCase")]
-        [Priority(3)]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            _testFixure.RegisterCallback(nameof(TranslateText_ReturnsTranslatedStrings), (o) => {
+            _testFixure.RegisterCallback(_testFixure.CurrentTestName, (o) => {
                 var temp = o.WordMaps.ToList();
                 temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
                 temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
@@ -50,6 +51,8 @@ namespace CodeDocumentor.Test.Helper
             });
             var translated = input.Translate();
             translated.Should().Be(output);
+            var ff = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            _output.WriteLine(ff.ExcludeAsyncSuffix.ToString());
         }
     }
 }

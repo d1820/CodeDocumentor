@@ -27,5 +27,4 @@ namespace CodeDocumentor.Test.TestHelpers
             Console.WriteLine($"Finished test: {methodUnderTest.Name}");
         }
     }
-
 }

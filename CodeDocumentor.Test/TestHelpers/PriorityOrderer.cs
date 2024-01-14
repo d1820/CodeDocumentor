@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit.Abstractions;
@@ -20,8 +20,10 @@ namespace CodeDocumentor.Test.TestHelpers
             {
                 int priority = 0;
 
-                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes((typeof(PriorityAttribute).AssemblyQualifiedName)))
+                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes(typeof(PriorityAttribute).AssemblyQualifiedName))
+                {
                     priority = attr.GetNamedArgument<int>("Priority");
+                }
 
                 GetOrCreate(sortedMethods, priority).Add(testCase);
             }
@@ -31,7 +33,9 @@ namespace CodeDocumentor.Test.TestHelpers
                 //run them in name order after priority order
                 list.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name, y.TestMethod.Method.Name));
                 foreach (TTestCase testCase in list)
+                {
                     yield return testCase;
+                }
             }
         }
 
@@ -39,7 +43,10 @@ namespace CodeDocumentor.Test.TestHelpers
         {
             TValue result;
 
-            if (dictionary.TryGetValue(key, out result)) return result;
+            if (dictionary.TryGetValue(key, out result))
+            {
+                return result;
+            }
 
             result = new TValue();
             dictionary[key] = result;
@@ -47,5 +54,4 @@ namespace CodeDocumentor.Test.TestHelpers
             return result;
         }
     }
-
 }

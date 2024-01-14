@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using CodeDocumentor.Services;
+using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -11,9 +9,6 @@ using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Classes
 {
-    /// <summary>
-    /// The class unit test.
-    /// </summary>
     public class ClassUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
@@ -24,10 +19,6 @@ namespace CodeDocumentor.Test.Classes
             fixture.Initialize(output);
         }
 
-        /// <summary>
-        /// No diagnostics show.
-        /// </summary>
-        /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
         [InlineData("ClassTesterInheritDoc.cs")]
@@ -48,7 +39,7 @@ namespace CodeDocumentor.Test.Classes
                     Severity = DiagnosticSeverity.Hidden,
                     Locations =
                          new[] {
-                                new DiagnosticResultLocation("Test0.cs", 8, 18)
+                                new DiagnosticResultLocation("Test0.cs", 4, 18)
                                }
                 };
 
@@ -56,22 +47,15 @@ namespace CodeDocumentor.Test.Classes
             }
         }
 
-        /// <summary>
-        /// Shows diagnostic and fix.
-        /// </summary>
-        /// <param name="testCode">The test code.</param>
-        /// <param name="fixCode">The fix code.</param>
-        /// <param name="line">The line.</param>
-        /// <param name="column">The column.</param>
         [Theory]
-        [InlineData("ClassTester.cs", "ClassTesterFix.cs", 7, 19, TestFixture.DIAG_TYPE_PRIVATE)]
-        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 7, 26, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("ClassTester.cs", "ClassTesterFix.cs", 3, 19, TestFixture.DIAG_TYPE_PRIVATE)]
+        [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 3, 26, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         public async Task ShowClassDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($"./Classes/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Classes/TestFiles/{testCode}");
 
-            _fixture.RegisterCallback(nameof(ShowClassDiagnosticAndFix), (o) =>
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 _fixture.SetPublicProcessingOption(o, diagType);
             });
@@ -96,7 +80,7 @@ namespace CodeDocumentor.Test.Classes
         {
             var fix = _fixture.LoadTestFile("./Classes/TestFiles/ClassTester.cs");
             var test = _fixture.LoadTestFile("./Classes/TestFiles/ClassTester.cs");
-            _fixture.RegisterCallback(nameof(SkipsClassDiagnosticAndFixWhenPublicOnlyTrue), (o) =>
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.IsEnabledForPublicMembersOnly = true;
             });
@@ -106,19 +90,11 @@ namespace CodeDocumentor.Test.Classes
             await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
-        /// <summary>
-        /// Gets c sharp code fix provider.
-        /// </summary>
-        /// <returns>A CodeFixProvider.</returns>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new ClassCodeFixProvider();
         }
 
-        /// <summary>
-        /// Gets c sharp diagnostic analyzer.
-        /// </summary>
-        /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
             if (diagType == TestFixture.DIAG_TYPE_PRIVATE)

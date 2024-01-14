@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using CodeDocumentor.Services;
+using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -70,7 +68,7 @@ namespace CodeDocumentor.Test.Records
         {
             var fix = _fixture.LoadTestFile($"./Records/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Records/TestFiles/{testCode}");
-            _fixture.RegisterCallback(nameof(ShowRecordDiagnosticAndFix), (o) =>
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 _fixture.SetPublicProcessingOption(o, diagType);
             });
@@ -95,7 +93,7 @@ namespace CodeDocumentor.Test.Records
         {
             var fix = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
             var test = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
-            _fixture.RegisterCallback(nameof(SkipsRecordDiagnosticAndFixWhenPublicOnlyTrue), (o) =>
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.IsEnabledForPublicMembersOnly = true;
             });

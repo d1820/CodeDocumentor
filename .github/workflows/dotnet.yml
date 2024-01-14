@@ -37,4 +37,4 @@ jobs:
       run: msbuild CodeDocumentor.sln /p:platform="Any CPU" /p:configuration="Debug"
 
     - name: Test
-      run: vstest.console.exe .\CodeDocumentor\CodeDocumentor\CodeDocumentor.Test\bin\Release\net48\CodeDocumentor.Test.dll
+      run: vstest.console.exe CodeDocumentor.Test\bin\Debug\net48\CodeDocumentor.Test.dll

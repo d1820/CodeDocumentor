@@ -1,0 +1,40 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: [windows-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup MsBuild
+      uses: microsoft/setup-msbuild@v1.3.1
+
+    - name: Setup VSTest.console.exe
+        # You may pin to the exact commit or the version.
+        # uses: darenm/Setup-VSTest@d9a5dffa3f11d9c27ec42eb69515d3aaeaad9ef8
+      uses: darenm/Setup-VSTest@v1.2
+          
+    - name: Setup NuGet.exe
+      # You may pin to the exact commit or the version.
+      # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
+      uses: NuGet/setup-nuget@v1.2.0    
+      
+    - name: Restore dependencies
+      run: nuget restore CodeDocumentor.sln
+      
+    - name: Build
+      run: msbuild CodeDocumentor.sln /p:platform="Any CPU" /p:configuration="Release"
+      
+    - name: Test
+      uses: microsoft/vstest-action@v1.0.0

@@ -12,17 +12,27 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: [windows-latest]
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 4.8.x
+    
+    - name: Setup MsBuild
+      uses: microsoft/setup-msbuild@v1.3.1
+
+    - name: vstest-action
+      uses: microsoft/vstest-action@v1.0.0   
+
+    - name: Setup NuGet.exe
+      # You may pin to the exact commit or the version.
+      # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
+      uses: NuGet/setup-nuget@v1.2.0    
+      
     - name: Restore dependencies
-      run: dotnet restore
+      run: nuget restore CodeDocumentor.sln
+      
     - name: Build
-      run: dotnet build --no-restore
+      run: msbuild CodeDocumentor.sln /p:platform="Any CPU" /p:configuration="Release"
+      
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      uses: microsoft/vstest-action@v1.0.0

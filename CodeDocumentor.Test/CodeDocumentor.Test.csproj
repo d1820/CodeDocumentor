@@ -31,6 +31,10 @@
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithInlineExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithInlineExceptionTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithIntReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithIntReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithListIntReturnTestCode.cs" />
@@ -39,6 +43,8 @@
     <Compile Remove="Methods\TestFiles\MethodWithListListIntReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithListQualifiedNameReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithListQualifiedNameReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithMixedExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithMIxedExceptionTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestCode.cs" />
@@ -65,6 +71,24 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\InheritDocTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithMixedExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithInlineExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithMixedExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithInlineExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithExceptionTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

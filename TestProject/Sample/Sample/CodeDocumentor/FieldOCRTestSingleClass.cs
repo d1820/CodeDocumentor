@@ -28,9 +28,6 @@ namespace Sample.CodeDocumentor
 
     }
 
-    /// <summary>
-    /// The inhertit test types.
-    /// </summary>
     public class InhertitTestTypes : TestTypes<int>
     {
 

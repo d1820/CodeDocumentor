@@ -33,7 +33,7 @@ namespace CodeDocumentor.Helper
         /// <summary> The reg ex. </summary>
         private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-        private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.(Throw\w+)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         /// <summary> type param regex. </summary>
         private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
@@ -574,12 +574,10 @@ namespace CodeDocumentor.Helper
             var exceptions = _regEx.Matches(textToSearch).OfType<Match>()
                                                         .Select(m => m?.Groups[0]?.Value)
                                                         .ToList();
-
+            System.Diagnostics.Debugger.Break();
 
             var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
-                                                       .Select(m => m?.Groups[0]?.Value);
-
-
+                                                       .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
             exceptions.AddRange(exceptionsInline);
             return exceptions.Distinct();
         }

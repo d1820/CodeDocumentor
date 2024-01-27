@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -86,6 +86,17 @@ namespace Sample.CodeDocumentor
             return "";
         }
 
+        internal string WorkWithTypesWithException(string test, string we)
+        {
+            throw new ArgumentException("");
+        }
+
+        internal string WorkWithTypesWithInlineException(string test, string we)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(test, nameof(test));
+            ArgumentNullException.ThrowIfNull(we, nameof(we));
+            return "";
+        }
     }
 
     /// <summary>

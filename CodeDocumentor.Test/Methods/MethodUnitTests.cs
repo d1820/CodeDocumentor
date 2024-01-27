@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
@@ -73,6 +73,8 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
         [InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
         [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
+        [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
         public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");

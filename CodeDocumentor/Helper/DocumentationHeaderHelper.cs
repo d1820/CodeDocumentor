@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using CodeDocumentor.Vsix2022;
-using EnvDTE;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.OLE.Interop;
-using SimpleInjector.Diagnostics;
 
 namespace CodeDocumentor.Helper
 {
@@ -33,6 +29,14 @@ namespace CodeDocumentor.Helper
 
         /// <summary> The summary. </summary>
         public const string SUMMARY = "summary";
+
+        /// <summary> The reg ex. </summary>
+        private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.(Throw\w+)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        /// <summary> type param regex. </summary>
+        private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
 
         /// <summary> Creates the exception nodes. </summary>
         /// <param name="exceptionType"> The exception type. </param>
@@ -559,14 +563,25 @@ namespace CodeDocumentor.Helper
         /// <returns> <![CDATA[IEnumerable<string>]]> </returns>
         internal static IEnumerable<string> GetExceptions(string textToSearch)
         {
+
             if (string.IsNullOrEmpty(textToSearch))
             {
                 return Enumerable.Empty<string>();
             }
+
+
+
             var exceptions = _regEx.Matches(textToSearch).OfType<Match>()
                                                         .Select(m => m?.Groups[0]?.Value)
-                                                        .Distinct();
-            return exceptions;
+                                                        .ToList();
+
+
+            var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
+                                                       .Select(m => m?.Groups[0]?.Value);
+
+
+            exceptions.AddRange(exceptionsInline);
+            return exceptions.Distinct();
         }
 
         /// <summary> Withs the exception types. </summary>
@@ -721,12 +736,6 @@ namespace CodeDocumentor.Helper
         }
 
         #endregion Builders
-
-        /// <summary> The reg ex. </summary>
-        private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
-        /// <summary> type param regex. </summary>
-        private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
 
         /// <summary> Creates the comment exterior. </summary>
         /// <returns> A SyntaxTriviaList. </returns>

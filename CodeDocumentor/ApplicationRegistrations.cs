@@ -1,4 +1,5 @@
-﻿using CodeDocumentor.Services;
+using CodeDocumentor.Services;
+using CodeDocumentor.Vsix2022;
 using SimpleInjector;
 
 namespace CodeDocumentor
@@ -7,7 +8,11 @@ namespace CodeDocumentor
     {
         public static void RegisterServices(this Container container)
         {
-            container.RegisterSingleton<IOptionsService, OptionsService>();
+            container.RegisterSingleton<IOptionsService>(() => {
+                var opts = new OptionsService();
+                opts.SetDefaults(CodeDocumentorPackage.Options);
+                return opts;
+            });
         }
     }
 }

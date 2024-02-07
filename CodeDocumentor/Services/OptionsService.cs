@@ -1,4 +1,4 @@
-﻿using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Services
@@ -6,43 +6,82 @@ namespace CodeDocumentor.Services
     public interface IOptionsService : IOptionPageGrid
     {
         void Update(Vsix2022.Settings settings);
+
+        void SetDefaults(IOptionPageGrid options);
     }
 
     public class OptionsService : IOptionsService
     {
-        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
+        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.ClassDiagnosticSeverity;
+        public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.ConstructorDiagnosticSeverity;
+        public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.EnumDiagnosticSeverity;
+        public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.FieldDiagnosticSeverity;
+        public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.InterfaceDiagnosticSeverity;
+        public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.MethodDiagnosticSeverity;
+        public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.PropertyDiagnosticSeverity;
+        public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
 
-        public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; } = CodeDocumentorPackage.Options?.RecordDiagnosticSeverity;
+        public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
 
-        public bool ExcludeAsyncSuffix { get; set; } = CodeDocumentorPackage.Options?.ExcludeAsyncSuffix ?? false;
+        public bool ExcludeAsyncSuffix { get; set; }
 
-        public bool IncludeValueNodeInProperties { get; set; } = CodeDocumentorPackage.Options?.IncludeValueNodeInProperties ?? false;
+        public bool IncludeValueNodeInProperties { get; set; }
 
-        public bool IsEnabledForPublicMembersOnly { get; set; } = CodeDocumentorPackage.Options?.IsEnabledForPublicMembersOnly ?? false;
+        public bool IsEnabledForPublicMembersOnly { get; set; }
 
-        public bool IsEnabledForNonPublicFields { get; set; } = CodeDocumentorPackage.Options?.IsEnabledForNonPublicFields ?? false;
+        public bool IsEnabledForNonPublicFields { get; set; }
 
-        public bool PreserveExistingSummaryText { get; set; } = CodeDocumentorPackage.Options?.PreserveExistingSummaryText ?? true;
+        public bool PreserveExistingSummaryText { get; set; }
 
-        public bool UseNaturalLanguageForReturnNode { get; set; } = CodeDocumentorPackage.Options?.UseNaturalLanguageForReturnNode ?? false;
+        public bool UseNaturalLanguageForReturnNode { get; set; }
 
-        public bool UseToDoCommentsOnSummaryError { get; set; } = CodeDocumentorPackage.Options?.UseToDoCommentsOnSummaryError ?? false;
+        public bool UseToDoCommentsOnSummaryError { get; set; }
 
-        public WordMap[] WordMaps { get; set; } = CodeDocumentorPackage.Options?.WordMaps ?? Constants.WORD_MAPS;
+        public WordMap[] WordMaps { get; set; }
+
+        public void SetDefaults(IOptionPageGrid options)
+        {
+            DefaultDiagnosticSeverity = options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
+
+            ClassDiagnosticSeverity = options.ClassDiagnosticSeverity;
+
+            ConstructorDiagnosticSeverity = options.ConstructorDiagnosticSeverity;
+
+            EnumDiagnosticSeverity = options.EnumDiagnosticSeverity;
+
+            FieldDiagnosticSeverity = options.FieldDiagnosticSeverity;
+
+            InterfaceDiagnosticSeverity = options.InterfaceDiagnosticSeverity;
+
+            MethodDiagnosticSeverity = options.MethodDiagnosticSeverity;
+
+            PropertyDiagnosticSeverity = options.PropertyDiagnosticSeverity;
+
+            RecordDiagnosticSeverity = options.RecordDiagnosticSeverity;
+
+            ExcludeAsyncSuffix = options?.ExcludeAsyncSuffix ?? false;
+
+            IncludeValueNodeInProperties = options?.IncludeValueNodeInProperties ?? false;
+
+            IsEnabledForPublicMembersOnly = options?.IsEnabledForPublicMembersOnly ?? false;
+
+            IsEnabledForNonPublicFields = options?.IsEnabledForNonPublicFields ?? false;
+
+            PreserveExistingSummaryText = options?.PreserveExistingSummaryText ?? true;
+
+            UseNaturalLanguageForReturnNode = options?.UseNaturalLanguageForReturnNode ?? false;
+
+            UseToDoCommentsOnSummaryError = options?.UseToDoCommentsOnSummaryError ?? false;
+
+            WordMaps = options?.WordMaps ?? Constants.WORD_MAPS;
+        }
 
         public void Update(Vsix2022.Settings settings)
         {

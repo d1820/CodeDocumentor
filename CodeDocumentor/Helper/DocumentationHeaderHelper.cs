@@ -569,12 +569,9 @@ namespace CodeDocumentor.Helper
                 return Enumerable.Empty<string>();
             }
 
-
-
             var exceptions = _regEx.Matches(textToSearch).OfType<Match>()
                                                         .Select(m => m?.Groups[0]?.Value)
                                                         .ToList();
-            System.Diagnostics.Debugger.Break();
 
             var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
                                                        .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();

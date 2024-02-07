@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Microsoft.VisualStudio.VSConstants;
 
 namespace CodeDocumentor.Helper
 {

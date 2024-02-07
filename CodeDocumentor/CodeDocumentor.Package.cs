@@ -1,11 +1,9 @@
 using System;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using CodeDocumentor.Services;
 using CodeDocumentor.Settings;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -39,9 +37,11 @@ namespace CodeDocumentor.Vsix2022
     [InstalledProductRegistration("#110", "#112", VsixOptions.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
+    [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        public static bool IsDebugMode = Debugger.IsAttached;
+        //public static bool IsDebugMode = Debugger.IsAttached;
 
         public static Func<Container> ContainerFactory { get; set; }
 
@@ -63,7 +63,7 @@ namespace CodeDocumentor.Vsix2022
 #pragma warning disable IDE1006 // Naming Styles
         internal static IOptionPageGrid _options;
 #pragma warning restore IDE1006 // Naming Styles
-        private static readonly object _syncRoot = new object();
+//        private static readonly object _syncRoot = new object();
 #pragma warning disable IDE1006 // Naming Styles
         private static Container _DIContainer;
 #pragma warning restore IDE1006 // Naming Styles
@@ -76,16 +76,16 @@ namespace CodeDocumentor.Vsix2022
         {
             get
             {
-                if (_options == null)
-                {
-                    lock (_syncRoot)
-                    {
-                        if (_options == null)
-                        {
-                            LoadPackage();
-                        }
-                    }
-                }
+                //if (_options == null)
+                //{
+                //    lock (_syncRoot)
+                //    {
+                //        if (_options == null)
+                //        {
+                //            LoadPackage();
+                //        }
+                //    }
+                //}
 
                 return _options;
             }
@@ -115,26 +115,30 @@ namespace CodeDocumentor.Vsix2022
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+
+            var optService = DIContainer().GetInstance<IOptionsService>();
+            optService.SetDefaults(_options);
+            //LoadPackage();
         }
 
-        /// <summary> Loads the package. </summary>
-        private static void LoadPackage()
-        {
-            var shell = (IVsShell)GetGlobalService(typeof(SVsShell));
-            var guid = new Guid(VsixOptions.PackageGuidString);
-            if (shell != null)
-            {
-                if (shell.IsPackageLoaded(ref guid, out IVsPackage package) != VSConstants.S_OK)
-                {
-                    ErrorHandler.Succeeded(shell.LoadPackage(ref guid, out package));
-                }
-            }
-            else
-            {
-                //This is used for unit testing to work, this would not get triggered when running as real vsix
-                ErrorHandler.Succeeded(1);
-            }
-        }
+        //private static void LoadPackage()
+        //{
+        //    ThreadHelper.ThrowIfNotOnUIThread();
+        //    var shell = (IVsShell)GetGlobalService(typeof(SVsShell));
+        //    var guid = new Guid(VsixOptions.PackageGuidString);
+        //    if (shell != null)
+        //    {
+        //        if (shell.IsPackageLoaded(ref guid, out IVsPackage _) != VSConstants.S_OK)
+        //        {
+        //            ErrorHandler.Succeeded(shell.LoadPackage(ref guid, out _));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //This is used for unit testing to work, this would not get triggered when running as real vsix
+        //        ErrorHandler.Succeeded(1);
+        //    }
+        //}
 
         #endregion
     }

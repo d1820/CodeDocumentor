@@ -3,7 +3,6 @@
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using CodeDocumentor.Helper;
 
 namespace CodeDocumentor.Vsix2022

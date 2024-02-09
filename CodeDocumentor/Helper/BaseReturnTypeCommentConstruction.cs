@@ -162,23 +162,23 @@ namespace CodeDocumentor.Helper
             string result;
             if (specificType is IdentifierNameSyntax identifierNameSyntax)
             {
-                value = identifierNameSyntax.Identifier.ValueText.Translate();
+                value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations();
                 result = pluaralizeIdentifierType? Pluralizer.Pluralize(value): value;
             }
             else if (specificType is PredefinedTypeSyntax predefinedTypeSyntax)
             {
-                value = predefinedTypeSyntax.Keyword.ValueText.Translate();
+                value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations();
                 result = pluaralizeName ? Pluralizer.Pluralize(value) : value;
             }
             else if (specificType is GenericNameSyntax genericNameSyntax)
             {
-                value = genericNameSyntax.Identifier.ValueText.Translate();
+                value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations();
 
                 result = pluaralizeName ? Pluralizer.Pluralize(value) : value;
             }
             else
             {
-                result = specificType.ToFullString().Translate();
+                result = specificType.ToFullString().ApplyUserTranslations();
             }
             return result;
         }
@@ -220,11 +220,11 @@ namespace CodeDocumentor.Helper
                 return returnType.ToString();
             }
 
-            string genericTypeStr = returnType.Identifier.ValueText;
+            var genericTypeStr = returnType.Identifier.ValueText;
             if (returnType.IsReadOnlyCollection())
             {
                 var argType = returnType.TypeArgumentList.Arguments.First();
-                List<string> items = new List<string>();
+                var items = new List<string>();
                 BuildChildrenGenericArgList(argType, items, true);
                 items.Reverse();
 
@@ -236,7 +236,7 @@ namespace CodeDocumentor.Helper
             if (returnType.IsList())
             {
                 var argType = returnType.TypeArgumentList.Arguments.First();
-                List<string> items = new List<string>();
+                var items = new List<string>();
                 BuildChildrenGenericArgList(argType, items, true);
                 items.Reverse();
                 var resultStr = string.Join(" of ", items).ToLowerInvariant();
@@ -249,11 +249,11 @@ namespace CodeDocumentor.Helper
                 {
                     var argType1 = returnType.TypeArgumentList.Arguments.First();
                     var argType2 = returnType.TypeArgumentList.Arguments.Last();
-                    List<string> items = new List<string>();
+                    var items = new List<string>();
                     BuildChildrenGenericArgList(argType2, items, pluaralizeIdentifierType: false);
                     items.Reverse();
                     var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                    return string.Format(DictionaryCommentTemplate, argType1.Translate(), resultStr);
+                    return string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), resultStr);
                 }
                 return GenerateGeneralComment(genericTypeStr.AsSpan());
             }

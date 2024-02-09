@@ -80,7 +80,7 @@ namespace CodeDocumentor.Services
 
             UseToDoCommentsOnSummaryError = options?.UseToDoCommentsOnSummaryError ?? false;
 
-            WordMaps = options?.WordMaps ?? Constants.WORD_MAPS;
+            WordMaps = options?.WordMaps ?? Constants.DEFAULT_WORD_MAPS;
         }
 
         public void Update(Vsix2022.Settings settings)

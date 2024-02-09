@@ -34,12 +34,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            Diagnostic diagnostic = context.Diagnostics.First();
-            Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            ConstructorDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ConstructorDeclarationSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ConstructorDeclarationSyntax>().First();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
@@ -87,9 +87,9 @@ namespace CodeDocumentor
 
         private static ConstructorDeclarationSyntax BuildNewDeclaration(ConstructorDeclarationSyntax declarationSyntax)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            DocumentationCommentTriviaSyntax commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
-            ConstructorDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
+            var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
 
@@ -98,10 +98,10 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ConstructorDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
+            var list = SyntaxFactory.List<XmlNodeSyntax>();
 
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            string comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate());
+            var comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate());
             list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                         .WithParameters(declarationSyntax)
                         .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
@@ -121,7 +121,7 @@ namespace CodeDocumentor
             return await Task.Run(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, cancellationToken);
         }

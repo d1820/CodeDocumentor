@@ -37,7 +37,7 @@ namespace CodeDocumentor.Helper
             var comment = BuildComment(returnType, !optionsService.UseNaturalLanguageForReturnNode);
             if (optionsService.UseNaturalLanguageForReturnNode)
             {
-                comment = comment.Translate().WithPeriod();
+                comment = comment.ApplyUserTranslations().WithPeriod();
                 if (!string.IsNullOrEmpty(comment) && comment != ".")
                 {
                     Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment);
@@ -56,7 +56,7 @@ namespace CodeDocumentor.Helper
         /// <param name="returnGenericTypeAsFullString">If true, return generic type as full string.</param>
         public ReturnCommentConstruction(TypeSyntax returnType, bool returnGenericTypeAsFullString) : base(true)
         {
-            var comment = BuildComment(returnType, returnGenericTypeAsFullString).Translate().WithPeriod();
+            var comment = BuildComment(returnType, returnGenericTypeAsFullString).ApplyUserTranslations().WithPeriod();
             if (!string.IsNullOrEmpty(comment) && comment != ".")
             {
                 Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment);

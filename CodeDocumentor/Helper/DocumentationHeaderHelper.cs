@@ -46,13 +46,13 @@ namespace CodeDocumentor.Helper
             // <exception cref = "parameterName" >
 
             // [0] -- line start text
-            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+            var lineStartText = CreateLineStartTextSyntax();
 
             var identity = SyntaxFactory.IdentifierName(exceptionType.Replace("throw new", string.Empty).Trim());
             CrefSyntax cref = SyntaxFactory.NameMemberCref(identity);
             var exceptionNode = SyntaxFactory.XmlExceptionElement(cref);
 
-            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+            var lineEndText = CreateLineEndTextSyntax();
 
             return new XmlNodeSyntax[] { lineStartText, exceptionNode, lineEndText };
         }
@@ -62,7 +62,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         public static DocumentationCommentTriviaSyntax CreateOnlySummaryDocumentationCommentTrivia(string content)
         {
-            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List(CreateSummaryPartNodes(content));
+            var list = SyntaxFactory.List(CreateSummaryPartNodes(content));
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }
 
@@ -75,13 +75,13 @@ namespace CodeDocumentor.Helper
             ///[0] <param name="parameterName"></param>[1][2]
 
             // [0] -- line start text
-            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+            var lineStartText = CreateLineStartTextSyntax();
 
             // [1] -- parameter text
-            XmlElementSyntax parameterText = CreateParameterElementSyntax(parameterName, parameterContent);
+            var parameterText = CreateParameterElementSyntax(parameterName, parameterContent);
 
             // [2] -- line end text
-            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+            var lineEndText = CreateLineEndTextSyntax();
 
             return new XmlNodeSyntax[] { lineStartText, parameterText, lineEndText };
         }
@@ -181,7 +181,7 @@ namespace CodeDocumentor.Helper
 
         public static bool IsPropertyReturnTypeBool(this PropertyDeclarationSyntax declarationSyntax)
         {
-            bool isBoolean = false;
+            var isBoolean = false;
             if (declarationSyntax.Type.IsKind(SyntaxKind.PredefinedType))
             {
                 isBoolean = ((PredefinedTypeSyntax)declarationSyntax.Type).Keyword.IsKind(SyntaxKind.BoolKeyword);
@@ -238,7 +238,7 @@ namespace CodeDocumentor.Helper
 
         public static bool PropertyHasSetter(this PropertyDeclarationSyntax declarationSyntax)
         {
-            bool hasSetter = false;
+            var hasSetter = false;
 
             if (declarationSyntax.AccessorList != null && declarationSyntax.AccessorList.Accessors.Any(o => o.Kind() == SyntaxKind.SetAccessorDeclaration))
             {
@@ -262,20 +262,20 @@ namespace CodeDocumentor.Helper
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateParameterElementSyntax(string parameterName, string parameterContent)
         {
-            XmlNameSyntax paramName = SyntaxFactory.XmlName("param");
+            var paramName = SyntaxFactory.XmlName("param");
 
             /// <param name="parameterName"> [0][1] </param>
             /// [2]
 
             // [0] -- param start tag with attribute
-            XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
-            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
+            var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
+            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
 
             // [1] -- content
-            XmlTextSyntax content = SyntaxFactory.XmlText(parameterContent);
+            var content = SyntaxFactory.XmlText(parameterContent);
 
             // [2] -- end tag
-            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(content), endTag);
         }
 
@@ -314,12 +314,12 @@ namespace CodeDocumentor.Helper
         /// <returns> A XmlNodeSyntax. </returns>
         internal static XmlNodeSyntax CreateReturnElementSyntax(string content, string xmlNodeName = "returns")
         {
-            XmlNameSyntax xmlName = SyntaxFactory.XmlName(xmlNodeName);
+            var xmlName = SyntaxFactory.XmlName(xmlNodeName);
             /// <returns> [0]xxx[1] </returns>
             /// [2]
 
-            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(xmlName);
-            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(xmlName);
+            var startTag = SyntaxFactory.XmlElementStartTag(xmlName);
+            var endTag = SyntaxFactory.XmlElementEndTag(xmlName);
 
             var regex = $@"<{xmlNodeName}>(.+)<\/{xmlNodeName}>";
 
@@ -328,7 +328,7 @@ namespace CodeDocumentor.Helper
             //if we get in a full <returns>fff</returns> we pull the inner text from the node and create the corret XmlNodes
             if (plueckedReturnElemement == null || plueckedReturnElemement.Groups.Count == 0)
             {
-                XmlTextSyntax contentText = SyntaxFactory.XmlText(cleanContent);
+                var contentText = SyntaxFactory.XmlText(cleanContent);
                 return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(contentText), endTag);
             }
             cleanContent = plueckedReturnElemement.Success ? plueckedReturnElemement.Groups[0].Value : cleanContent;
@@ -359,7 +359,7 @@ namespace CodeDocumentor.Helper
             if (xmlParseResponse.IsGeneric || xmlParseResponse.IsXml)
             {
                 //Wrap any xml thats not a typeParamRef to CDATA
-                SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
+                var text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
                 var tokens = SyntaxFactory.TokenList().Add(text1Token);
                 var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
 
@@ -374,9 +374,9 @@ namespace CodeDocumentor.Helper
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateSummaryElementSyntax(string content)
         {
-            XmlNameSyntax xmlName = SyntaxFactory.XmlName(SyntaxFactory.Identifier(DocumentationHeaderHelper.SUMMARY));
-            XmlElementStartTagSyntax summaryStartTag = SyntaxFactory.XmlElementStartTag(xmlName);
-            XmlElementEndTagSyntax summaryEndTag = SyntaxFactory.XmlElementEndTag(xmlName);
+            var xmlName = SyntaxFactory.XmlName(SyntaxFactory.Identifier(DocumentationHeaderHelper.SUMMARY));
+            var summaryStartTag = SyntaxFactory.XmlElementStartTag(xmlName);
+            var summaryEndTag = SyntaxFactory.XmlElementEndTag(xmlName);
 
             return SyntaxFactory.XmlElement(
                 summaryStartTag,
@@ -397,18 +397,18 @@ namespace CodeDocumentor.Helper
              */
 
             // [0] -- NewLine token
-            SyntaxToken newLine0Token = CreateNewLineToken();
+            var newLine0Token = CreateNewLineToken();
 
             // [1] -- Content + leading comment exterior trivia
-            SyntaxTriviaList leadingTrivia = CreateCommentExterior();
-            SyntaxToken text1Token = SyntaxFactory.XmlTextLiteral(leadingTrivia, content, content, SyntaxFactory.TriviaList());
+            var leadingTrivia = CreateCommentExterior();
+            var text1Token = SyntaxFactory.XmlTextLiteral(leadingTrivia, content, content, SyntaxFactory.TriviaList());
 
             // [2] -- NewLine token
-            SyntaxToken newLine2Token = CreateNewLineToken();
+            var newLine2Token = CreateNewLineToken();
 
             // [3] -- " " + leading comment exterior
-            SyntaxTriviaList leadingTrivia2 = CreateCommentExterior();
-            SyntaxToken text2Token = SyntaxFactory.XmlTextLiteral(leadingTrivia2, " ", " ", SyntaxFactory.TriviaList());
+            var leadingTrivia2 = CreateCommentExterior();
+            var text2Token = SyntaxFactory.XmlTextLiteral(leadingTrivia2, " ", " ", SyntaxFactory.TriviaList());
 
             return SyntaxFactory.XmlText(newLine0Token, text1Token, newLine2Token, text2Token);
         }
@@ -418,16 +418,16 @@ namespace CodeDocumentor.Helper
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
         {
-            XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparam");
+            var paramName = SyntaxFactory.XmlName("typeparam");
 
             /// <typeparam name="parameterName"> [0][1] </param> [2]
 
             // [0] -- param start tag with attribute
-            XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
-            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
+            var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
+            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
 
             // [2] -- end tag
-            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, endTag);
         }
 
@@ -436,16 +436,16 @@ namespace CodeDocumentor.Helper
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
         {
-            XmlNameSyntax paramName = SyntaxFactory.XmlName("typeparamref");
+            var paramName = SyntaxFactory.XmlName("typeparamref");
 
             /// <typeparamref name="parameterName"> [0][1] </typeparamref> [2]
 
             // [0] -- param start tag with attribute
-            XmlNameAttributeSyntax paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
-            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
+            var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
+            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
 
             // [2] -- end tag
-            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, endTag);
         }
 
@@ -456,16 +456,16 @@ namespace CodeDocumentor.Helper
         /// <returns>A <see cref="XmlElementSyntax"/>.</returns>
         internal static XmlElementSyntax CreateSeeCRefElementSyntax(string typeName)
         {
-            XmlNameSyntax paramName = SyntaxFactory.XmlName("see");
+            var paramName = SyntaxFactory.XmlName("see");
 
             /// <see cref="typeName" />
 
             // [0] -- param start tag with attribute
-            XmlTextAttributeSyntax creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
-            XmlElementStartTagSyntax startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
+            var creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
+            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
 
             // [2] -- end tag
-            XmlElementEndTagSyntax endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, endTag);
 
         }
@@ -521,7 +521,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         internal static bool IsPrivate(this BaseMethodDeclarationSyntax declarationSyntax)
         {
-            bool isPrivate = false;
+            var isPrivate = false;
             if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
                 isPrivate = true;
@@ -620,9 +620,9 @@ namespace CodeDocumentor.Helper
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
-                foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
+                foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    string parameterComment = CommentHelper.CreateParameterComment(parameter);
+                    var parameterComment = CommentHelper.CreateParameterComment(parameter);
                     list = list.AddRange(DocumentationHeaderHelper.CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
                 }
             }
@@ -633,9 +633,9 @@ namespace CodeDocumentor.Helper
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
-                foreach (ParameterSyntax parameter in declarationSyntax.ParameterList.Parameters)
+                foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    string parameterComment = CommentHelper.CreateParameterComment(parameter);
+                    var parameterComment = CommentHelper.CreateParameterComment(parameter);
                     list = list.AddRange(DocumentationHeaderHelper.CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
                 }
             }
@@ -651,7 +651,7 @@ namespace CodeDocumentor.Helper
         {
             if (includeValueNodeInProperties)
             {
-                string returnComment = new ReturnCommentConstruction(declarationSyntax.Type, false).Comment;
+                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, false).Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
             }
             return list;
@@ -663,11 +663,11 @@ namespace CodeDocumentor.Helper
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
         internal static SyntaxList<XmlNodeSyntax> WithReturnType(this SyntaxList<XmlNodeSyntax> list, MethodDeclarationSyntax declarationSyntax)
         {
-            string returnType = declarationSyntax.ReturnType.ToString();
+            var returnType = declarationSyntax.ReturnType.ToString();
             if (returnType != "void")
             {
                 var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);
-                string returnComment = commentConstructor.Comment;
+                var returnComment = commentConstructor.Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateReturnPartNodes(returnComment));
             }
             return list;
@@ -706,7 +706,7 @@ namespace CodeDocumentor.Helper
         {
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
             {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
+                foreach (var parameter in declarationSyntax.TypeParameterList.Parameters)
                 {
                     list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
                 }
@@ -722,7 +722,7 @@ namespace CodeDocumentor.Helper
         {
             if (declarationSyntax?.TypeParameterList?.Parameters.Any() == true)
             {
-                foreach (TypeParameterSyntax parameter in declarationSyntax.TypeParameterList.Parameters)
+                foreach (var parameter in declarationSyntax.TypeParameterList.Parameters)
                 {
                     list = list.AddRange(DocumentationHeaderHelper.CreateTypeParameterPartNodes(parameter.Identifier.ValueText));
                 }
@@ -749,8 +749,8 @@ namespace CodeDocumentor.Helper
             */
 
             // [0] end line token.
-            SyntaxToken xmlTextNewLineToken = CreateNewLineToken();
-            XmlTextSyntax xmlText = SyntaxFactory.XmlText(xmlTextNewLineToken);
+            var xmlTextNewLineToken = CreateNewLineToken();
+            var xmlText = SyntaxFactory.XmlText(xmlTextNewLineToken);
             return xmlText;
         }
 
@@ -765,9 +765,9 @@ namespace CodeDocumentor.Helper
             */
 
             // [0] " " + leading comment exterior trivia
-            SyntaxTriviaList xmlText0Leading = CreateCommentExterior();
-            SyntaxToken xmlText0LiteralToken = SyntaxFactory.XmlTextLiteral(xmlText0Leading, " ", " ", SyntaxFactory.TriviaList());
-            XmlTextSyntax xmlText0 = SyntaxFactory.XmlText(xmlText0LiteralToken);
+            var xmlText0Leading = CreateCommentExterior();
+            var xmlText0LiteralToken = SyntaxFactory.XmlTextLiteral(xmlText0Leading, " ", " ", SyntaxFactory.TriviaList());
+            var xmlText0 = SyntaxFactory.XmlText(xmlText0LiteralToken);
             return xmlText0;
         }
 
@@ -785,11 +785,11 @@ namespace CodeDocumentor.Helper
         {
             ///[0] <returns></returns>[1][2]
 
-            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+            var lineStartText = CreateLineStartTextSyntax();
 
             var returnElement = CreateReturnElementSyntax(content);
 
-            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+            var lineEndText = CreateLineEndTextSyntax();
 
             return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
         }
@@ -806,13 +806,13 @@ namespace CodeDocumentor.Helper
              */
 
             // [0] " " + leading comment exterior trivia
-            XmlTextSyntax xmlText0 = CreateLineStartTextSyntax();
+            var xmlText0 = CreateLineStartTextSyntax();
 
             // [1] Summary
-            XmlElementSyntax xmlElement = CreateSummaryElementSyntax(content);
+            var xmlElement = CreateSummaryElementSyntax(content);
 
             // [2] new line
-            XmlTextSyntax xmlText1 = CreateLineEndTextSyntax();
+            var xmlText1 = CreateLineEndTextSyntax();
 
             return new XmlNodeSyntax[] { xmlText0, xmlElement, xmlText1 };
         }
@@ -825,13 +825,13 @@ namespace CodeDocumentor.Helper
             ///[0] <param name="parameterName"></param>[1][2]
 
             // [0] -- line start text
-            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+            var lineStartText = CreateLineStartTextSyntax();
 
             // [1] -- parameter text
-            XmlElementSyntax parameterText = CreateTypeParameterElementSyntax(parameterName);
+            var parameterText = CreateTypeParameterElementSyntax(parameterName);
 
             // [2] -- line end text
-            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+            var lineEndText = CreateLineEndTextSyntax();
 
             return new XmlNodeSyntax[] { lineStartText, parameterText, lineEndText };
         }
@@ -843,11 +843,11 @@ namespace CodeDocumentor.Helper
         {
             ///[0] <value></value>[1][2]
 
-            XmlTextSyntax lineStartText = CreateLineStartTextSyntax();
+            var lineStartText = CreateLineStartTextSyntax();
 
             var returnElement = CreateReturnElementSyntax(content, "value");
 
-            XmlTextSyntax lineEndText = CreateLineEndTextSyntax();
+            var lineEndText = CreateLineEndTextSyntax();
 
             return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
         }
@@ -864,10 +864,10 @@ namespace CodeDocumentor.Helper
              */
 
             // [0] " " + leading comment exterior trivia
-            XmlTextSyntax xmlText0 = CreateLineStartTextSyntax();
+            var xmlText0 = CreateLineStartTextSyntax();
 
             // [2] new line
-            XmlTextSyntax xmlText1 = CreateLineEndTextSyntax();
+            var xmlText1 = CreateLineEndTextSyntax();
 
             var nodes = new XmlNodeSyntax[] { xmlText0, element, xmlText1 };
             return nodes;

@@ -34,12 +34,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            Diagnostic diagnostic = context.Diagnostics.First();
-            Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            FieldDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
@@ -86,13 +86,13 @@ namespace CodeDocumentor
 
         private static FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            VariableDeclaratorSyntax field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-            string comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText);
-            DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
+            var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
+            var comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText);
+            var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
 
-            FieldDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+            var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
 
@@ -107,7 +107,7 @@ namespace CodeDocumentor
             return await Task.Run(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, cancellationToken);
         }

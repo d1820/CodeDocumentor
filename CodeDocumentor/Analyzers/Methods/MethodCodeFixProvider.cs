@@ -34,12 +34,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            Diagnostic diagnostic = context.Diagnostics.First();
-            Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
@@ -88,8 +88,8 @@ namespace CodeDocumentor
 
         private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            DocumentationCommentTriviaSyntax commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
             return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
         }
 
@@ -98,7 +98,7 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
+            var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
 
@@ -124,7 +124,7 @@ namespace CodeDocumentor
             return await Task.Run(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, cancellationToken);
         }

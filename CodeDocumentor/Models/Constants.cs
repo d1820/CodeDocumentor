@@ -1,4 +1,4 @@
-﻿// For definitions of XML nodes see:
+// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System.Collections.Generic;
@@ -11,13 +11,14 @@ namespace CodeDocumentor.Vsix2022
     {
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
-        private static string[] AXUILLARY_SPECIAL_WORD_LIST { get; set; } = new[] {"are", "was", "were", "been", "being", "have", "does",
+        private static string[] AXUILLARY_VERB_WORD_LIST { get; set; } = new[] {"are", "was", "were", "been", "being", "have", "does",
                                                                     "has", "had", "having",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
                                                                     "dare", "need", "used", "ought", "goes" };
 
-        private static string[] TWO_LETTER_WORD_LIST { get; set; } = new[] { "on", "by", "an", "in", "at", "of", "is", "am" };
+        private static string[] TWO_LETTER_WORD_LIST { get; set; } = new[] { "an", "at", "be", "by", "do", "go", "if", "in", "is", "it", "me", "my", "no", "of", "on", "or", "so", "to", "up", "us", "we", "am", "as", "ax", "by", "do", "go", "he", "hi", "if", "in", "is", "it", "me", "my", "no", "of", "oh", "on", "or", "ox", "so", "to", "uh", "um", "up", "us", "we" };
 
+        //This checks for a set of words together being passed in as one word to evaluate. These sets of words together would could as a verb
         private static string[] PLURALIZATION_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", };
 
         public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
@@ -25,18 +26,11 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "Do", Translation = "Does" }
         };
 
-        public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
-            new WordMap { Word = "Is", Translation = "Checks if is" },
-            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
-                    if(!string.IsNullOrEmpty( nextWord) && Pluralizer.IsPlural(nextWord)){
-                        return "Checks if";
-                    }
-                    return translation;
-                }
-            }
-        };
+        //public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
 
-        public static WordMap[] WORD_MAPS { get; set; } = new[] {
+        //};
+
+        public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
             new WordMap { Word = "Int32", Translation = "integer" },
             new WordMap { Word = "Int64", Translation = "integer" },
@@ -52,10 +46,10 @@ namespace CodeDocumentor.Vsix2022
         };
 
         //These should match the
-        public static string[] PLURALIZE_ANYWAY_LIST()
-        {
-            return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
-        }
+        //public static string[] PLURALIZE_ANYWAY_LIST()
+        //{
+        //    return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
+        //}
 
         public static class DiagnosticIds
         {
@@ -70,17 +64,17 @@ namespace CodeDocumentor.Vsix2022
             public const string RECORD_DIAGNOSTIC_ID = "CD1608";
         }
 
-        public static IEnumerable<string> GetInternalWordList()
+        public static IEnumerable<string> GetInternalVerbCheckList()
         {
             var items = new List<string>();
-            items.AddRange(INTERNAL_SPECIAL_WORD_LIST);
-            items.AddRange(AXUILLARY_SPECIAL_WORD_LIST);
+            items.AddRange(INTERNAL_VERB_WORD_LIST);
+            items.AddRange(AXUILLARY_VERB_WORD_LIST);
             items.AddRange(TWO_LETTER_WORD_LIST);
             items.AddRange(PLURALIZATION_CONVERSIONS);
             return items;
         }
 
-        private static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] {
+        private static string[] INTERNAL_VERB_WORD_LIST { get; set; } = new[] {
 "accept",
 "access",
 "add",
@@ -245,6 +239,7 @@ namespace CodeDocumentor.Vsix2022
 "dislike",
 "display",
 "divide",
+"done",
 "double",
 "doubt",
 "drag",
@@ -407,6 +402,7 @@ namespace CodeDocumentor.Vsix2022
 "long",
 "look",
 "love",
+"make",
 "man",
 "manage",
 "march",

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -18,7 +18,7 @@ namespace CodeDocumentor.Test.TestHelpers
 
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
-        public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
+        public WordMap[] WordMaps { get; set; } = Constants.DEFAULT_WORD_MAPS;
 
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
 
@@ -32,6 +32,11 @@ namespace CodeDocumentor.Test.TestHelpers
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
         public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
         public bool IsEnabledForNonPublicFields { get; set; }
+
+        public void SetDefaults(IOptionPageGrid options)
+        {
+
+        }
 
         public void Update(Vsix2022.Settings settings)
         {

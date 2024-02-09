@@ -4,6 +4,8 @@ using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,16 +25,14 @@ namespace CodeDocumentor.Test.Helper
         }
 
         //SpilitNameAndToLower
-        //[Fact(Skip ="No")]
-        //public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
-        //{
-        //    _fixture.RegisterCallback(_fixture.CurrentTestName, (o) => o.ExcludeAsyncSuffix = true);
-        //    var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
-        //    result.Count.Should().Be(3);
-
-        //    var ff = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-        //    _output.WriteLine(ff.ExcludeAsyncSuffix.ToString());
-        //}
+        [Fact]
+        public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
+        {
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) => o.ExcludeAsyncSuffix = true);
+            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
+            result.Count.Should().Be(3);
+            result[0].Should().Be("execute");
+        }
 
         [Theory]
         [InlineData(false, 4)]
@@ -54,8 +54,27 @@ namespace CodeDocumentor.Test.Helper
                 result[1].All(a => char.IsUpper(a)).Should().BeTrue();
                 result[2].All(a => char.IsLower(a)).Should().BeTrue();
             }
-            var ff = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            _output.WriteLine(ff.ExcludeAsyncSuffix.ToString());
+        }
+
+        [Fact]
+        public void CreateFieldComment_ReturnsValidName()
+        {
+            var comment = CommentHelper.CreateFieldComment("_checkIfOneIsThere");
+            comment.Should().Be("_checkIfOneIsThere");
+        }
+
+        [Fact]
+        public void CreateMethodComment_ReturnsValidName()
+        {
+            var comment = CommentHelper.CreateMethodComment("MarkItemDone", SyntaxFactory.ParseTypeName("int"));
+            comment.Should().Be("_checkIfOneIsThere");
+        }
+
+        [Fact]
+        public void CreateInterfaceComment_ReturnsValidName()
+        {
+            var comment = CommentHelper.CreateInterfaceComment("IMarkItemDone");
+            comment.Should().Be("_checkIfOneIsThere");
         }
     }
 }

@@ -34,12 +34,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            Diagnostic diagnostic = context.Diagnostics.First();
-            Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            RecordDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<RecordDeclarationSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<RecordDeclarationSyntax>().First();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
@@ -67,7 +67,7 @@ namespace CodeDocumentor
             return await Task.Run(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, cancellationToken);
         }
@@ -104,20 +104,20 @@ namespace CodeDocumentor
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
+            var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            string comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
+            var comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
             list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
                         .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
 
-            DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 
             //append to any existing leading trivia [attributes, decorators, etc)
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            RecordDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+            var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -24,7 +24,17 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            return CreateCommonComment(name).Translate().WithPeriod();
+            var comment = NameSplitter
+                         .Split(name)
+                         .TranslateParts()
+                         .TryPluarizeFirstWord()
+                         .TryInsertTheWord()
+                         .ToLowerParts()
+                         .JoinToString()
+                         .ApplyUserTranslations()
+                         .WithPeriod();
+            //return CreateCommonComment(name).ApplyUserTranslations().WithPeriod();
+            return comment;
         }
 
         /// <summary> Creates the constructor comment. </summary>
@@ -40,13 +50,13 @@ namespace CodeDocumentor.Helper
             }
             if (isPrivate)
             {
-                comment= $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created";
+                comment = $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created";
             }
             else
             {
-                comment= $"Initializes a new instance of the <see cref=\"{name}\"/> class";
+                comment = $"Initializes a new instance of the <see cref=\"{name}\"/> class";
             }
-            return comment.Translate().WithPeriod();
+            return comment.ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Creates the enum comment. </summary>
@@ -58,7 +68,17 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            return CreateCommonComment(name).Translate().WithPeriod();
+            var comment = NameSplitter
+                           .Split(name)
+                           .TranslateParts()
+                           .TryPluarizeFirstWord()
+                           .TryInsertTheWord()
+                           .ToLowerParts()
+                           .JoinToString()
+                           .ApplyUserTranslations()
+                           .WithPeriod();
+            //CreateCommonComment(name).ApplyUserTranslations().WithPeriod()
+            return comment;
         }
 
         /// <summary> Creates the field comment. </summary>
@@ -66,38 +86,60 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateFieldComment(string name)
         {
-            string comment;
+            //string comment;
             if (string.IsNullOrEmpty(name))
             {
                 return name;
             }
-            List<string> parts = SpilitNameAndToLower(name, false, false);
-            if (parts.Count == 1)
-            {
-                comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
-            }
-            else
-            {
-                //At this point we have already pluralized and converted
-                var skipThe = parts[0].IsVerbCombo();
-                if (!skipThe)
-                {
-                    comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
-                }
-                else
-                {
-                    if (parts.Count >= 2)
-                    {
-                        parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-                    }
-                    else
-                    {
-                        parts[0] = Pluralizer.Pluralize(parts[0]);
-                    }
-                    comment = $"{string.Join(" ", parts)}";
-                }
-            }
-            return comment.Translate().WithPeriod();
+            //order matters
+            var comment = NameSplitter
+                            .Split(name)
+                            .HandleAsyncKeyword()
+                            .TranslateParts()
+                            .TryPluarizeFirstWord()
+                            .TryInsertTheWord()
+                            .ToLowerParts()
+                            .JoinToString()
+                            .ApplyUserTranslations()
+                            .WithPeriod();
+
+
+
+
+            //if (parts.Count >= 2)
+            //{
+            //    parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+            //}
+            //else
+            //{
+            //    parts[0] = Pluralizer.Pluralize(parts[0]);
+            //}
+
+            //var skipThe = parts[0].IsVerb();
+            //if (parts.Count == 1)
+            //{
+            //    if (!skipThe)
+            //    {
+            //        comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
+            //    }
+            //    else
+            //    {
+            //        comment = string.Join(" ", parts.Select(s => s.ToLowerInvariant()));
+            //    }
+            //}
+            //else
+            //{
+            //    if (!skipThe)
+            //    {
+            //        comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
+            //    }
+            //    else
+            //    {
+
+            //        comment = $"{string.Join(" ", parts)}";
+            //    }
+            //}
+            return comment;
         }
 
         /// <summary> Creates the interface comment. </summary>
@@ -109,15 +151,28 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            List<string> parts = SpilitNameAndToLower(name, false);
-            if (parts[0] == "I")
-            {
-                parts.RemoveAt(0);
-            }
+            var comment = NameSplitter
+                           .Split(name)
+                           .AddCustomPart("interface")
+                           .TranslateParts()
+                           .TryPluarizeFirstWord()
+                           .TryInsertTheWord()
+                           .ToLowerParts()
+                           .JoinToString()
+                           .ApplyUserTranslations()
+                           .WithPeriod();
 
-            parts.Insert(0, "The");
-            parts.Add("interface");
-            return string.Join(" ", parts).Translate().WithPeriod();
+            return comment;
+
+            //var parts = SpilitNameAndToLower(name);
+            //if (parts[0] == "I")
+            //{
+            //    parts.RemoveAt(0);
+            //}
+
+            //parts.Insert(0, "The");
+            //parts.Add("interface");
+            //return string.Join(" ", parts).ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Creates the method comment. </summary>
@@ -130,7 +185,7 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            List<string> parts = SpilitNameAndToLower(name, false, false);
+            var parts = SpilitNameAndToLower(name);
             var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
             if (parts.Count >= 2)
             {
@@ -147,7 +202,7 @@ namespace CodeDocumentor.Helper
                 //try and use the return type for the value;
                 if (returnType.ToString() != "void")
                 {
-                    string returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
+                    var returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
 
                     if (!string.IsNullOrEmpty(returnComment))
                     {
@@ -169,7 +224,7 @@ namespace CodeDocumentor.Helper
                         }
                         else
                         {
-                            return returnComment.Translate().WithPeriod(); ;
+                            return returnComment.ApplyUserTranslations().WithPeriod();
                         }
                     }
                 }
@@ -185,7 +240,7 @@ namespace CodeDocumentor.Helper
             else
             {
                 //At this point we have already pluralized and converted
-                var skipThe = parts[0].IsVerbCombo();
+                var skipThe = parts[0].IsVerb();
                 var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
                 if ((!skipThe && !isBool2part) || addTheAnyway)
                 {
@@ -193,7 +248,7 @@ namespace CodeDocumentor.Helper
                 }
             }
 
-            return string.Join(" ", parts).Translate().WithPeriod();
+            return string.Join(" ", parts).ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Creates the parameter comment. </summary>
@@ -201,7 +256,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateParameterComment(ParameterSyntax parameter)
         {
-            bool isBoolean = false;
+            var isBoolean = false;
             if (parameter.Type.IsKind(SyntaxKind.PredefinedType))
             {
                 isBoolean = (parameter.Type as PredefinedTypeSyntax).Keyword.IsKind(SyntaxKind.BoolKeyword);
@@ -219,11 +274,30 @@ namespace CodeDocumentor.Helper
 
             if (isBoolean)
             {
-                return "If true, " + string.Join(" ", SpilitNameAndToLower(parameter.Identifier.ValueText, true)).WithPeriod();
+                var comment = NameSplitter
+                                .Split(parameter.Identifier.ValueText)
+                                .AddCustomPart("If true, ", 0)
+                                .TranslateParts()
+                                .ToLowerParts()
+                                .JoinToString()
+                                .ApplyUserTranslations()
+                                .WithPeriod();
+                //return "If true, " + string.Join(" ", SpilitNameAndToLower(parameter.Identifier.ValueText, true)).WithPeriod();
+                return comment;
             }
             else
             {
-                return CreateCommonComment(parameter.Identifier.ValueText).WithPeriod();
+                var comment = NameSplitter
+                                .Split(parameter.Identifier.ValueText)
+                                .TranslateParts()
+                                .TryPluarizeFirstWord()
+                                .TryInsertTheWord()
+                                .ToLowerParts()
+                                .JoinToString()
+                                .ApplyUserTranslations()
+                                .WithPeriod();
+                //return CreateCommonComment(parameter.Identifier.ValueText).WithPeriod();
+                return comment;
             }
         }
 
@@ -238,21 +312,45 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            string comment = "Gets";
-            if (hasSetter)
-            {
-                comment += " or Sets";
-            }
+
+            //var comment = "Gets";
+            //if (hasSetter)
+            //{
+            //    comment += " or Sets";
+            //}
 
             if (isBoolean)
             {
-                comment += CreatePropertyBooleanPart(name).Translate();
+                var comment = NameSplitter
+                              .Split(name)
+                              .AddPropertyBooleanPart() //we do this here cause it will get pushed down the stack
+                              .AddCustomPart("Gets", 0)
+                              .AddCustomPart(hasSetter ? "or Sets" : null, 1)
+                              .TranslateParts()
+                              .ToLowerParts()
+                              .JoinToString()
+                              .ApplyUserTranslations()
+                              .WithPeriod();
+                //comment += CreatePropertyBooleanPart(name).ApplyUserTranslations();
+                return comment;
             }
             else
             {
-                comment += " the " + string.Join(" ", SpilitNameAndToLower(name, true));
+                var comment = NameSplitter
+                              .Split(name)
+                              .AddCustomPart("the", 0) //we do this here cause it will get pushed down the stack
+                              .AddCustomPart("Gets", 0)
+                              .AddCustomPart(hasSetter ? "or Sets" : null, 1)
+                              .TranslateParts()
+                              .ToLowerParts()
+                              .JoinToString()
+                              .ApplyUserTranslations()
+                              .WithPeriod();
+                return comment;
+
+                //comment += " the " + string.Join(" ", SpilitNameAndToLower(name, true));
             }
-            return comment.Translate().WithPeriod();
+            //return comment.ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Create the record comment. </summary>
@@ -260,7 +358,21 @@ namespace CodeDocumentor.Helper
         /// <returns> A string. </returns>
         public static string CreateRecordComment(string name)
         {
-            return CreateCommonComment(name).Translate().WithPeriod();
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+            var comment = NameSplitter
+                         .Split(name)
+                         .TranslateParts()
+                         .TryPluarizeFirstWord()
+                         .TryInsertTheWord()
+                         .ToLowerParts()
+                         .JoinToString()
+                         .ApplyUserTranslations()
+                         .WithPeriod();
+            //return CreateCommonComment(name).ApplyUserTranslations().WithPeriod();
+            return comment;
         }
 
         /// <summary> Has comment. </summary>
@@ -268,12 +380,12 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
         {
-            bool hasSummary = commentTriviaSyntax
+            var hasSummary = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlElementSyntax>()
                 .Any(o => o.StartTag.Name.ToString().Equals(DocumentationHeaderHelper.SUMMARY));
 
-            bool hasInheritDoc = commentTriviaSyntax
+            var hasInheritDoc = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlEmptyElementSyntax>()
                 .Any(o => o.Name.ToString().Equals(DocumentationHeaderHelper.INHERITDOC));
@@ -290,27 +402,37 @@ namespace CodeDocumentor.Helper
             {
                 return text;
             }
-            if(text.Length > 0)
+            if (text.Length > 0)
             {
                 return text + ".";
             }
             return text;
         }
 
-        /// <summary> Spilit the name and to lower. </summary>
-        /// <param name="name"> The name. </param>
-        /// <param name="isFirstCharacterLower"> If true, is first character lower. </param>
-        /// <param name="shouldTranslate"> If true, should translate. </param>
-        /// <returns> <![CDATA[List<string>]]> </returns>
-        internal static List<string> SpilitNameAndToLower(string name, bool isFirstCharacterLower, bool shouldTranslate = true)
-        {
-            if (shouldTranslate)
-            {
-                name = name.Translate();
-            }
-            List<string> parts = NameSplitter.Split(name);
+        ///// <summary> Spilit the name and to lower. </summary>
+        ///// <param name="name"> The name. </param>
+        ///// <param name="forceFirstCharToLower"> If true, force the first char to lower </param>
+        ///// <returns> <![CDATA[List<string>]]> </returns>
+        //internal static List<string> SpilitNameAndToLower(string name
+        //    , bool forceFirstCharToLower = false
+        //    //, bool shouldTranslate = true
+        //    )
+        //{
+        //    //if (shouldTranslate)
+        //    //{
+        //    //    name = name.Translate();
+        //    //}
+        //    var parts = NameSplitter.Split(name);
+        //    ToLowerParts(parts, forceFirstCharToLower);
+        //    HandleAsyncKeyword(parts);
+        //    return parts;
+        //}
 
-            int i = isFirstCharacterLower ? 0 : 1;
+        internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
+        {
+            var i = forceFirstCharToLower ||
+                (parts[0] != "The" & parts[0] != "If true, ")
+                ? 0 : 1;
             for (; i < parts.Count; i++)
             {
                 if (!parts[i].All(a => char.IsUpper(a)))
@@ -318,41 +440,45 @@ namespace CodeDocumentor.Helper
                     parts[i] = parts[i].ToLower();
                 }
             }
-            HandleAsyncKeyword(parts);
             return parts;
         }
 
-        /// <summary> Creates the common comment. </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> A string. </returns>
-        private static string CreateCommonComment(string name)
+        ///// <summary> Creates the common comment. </summary>
+        ///// <param name="name"> The name. </param>
+        ///// <returns> A string. </returns>
+        //private static string CreateCommonComment(string name)
+        //{
+        //    return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}";
+        //}
+
+
+        private static List<string> AddPropertyBooleanPart(this List<string> parts)
         {
-            return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}";
-        }
+            var booleanPart = " a value indicating whether to";
+            if (parts[0].IsPastTense())
+            {
+                booleanPart = " a value indicating whether ";
+            }
+            //var booleanPart = " a value indicating whether to ";
 
-        /// <summary> Creates the property boolean part. </summary>
-        /// <param name="name"> The name. </param>
-        /// <returns> A string. </returns>
-        private static string CreatePropertyBooleanPart(string name)
-        {
-            string booleanPart = " a value indicating whether ";
+            //var parts = SpilitNameAndToLower(name, true).ToList();
 
-            var parts = SpilitNameAndToLower(name, true).ToList();
-
-            string isWord = parts.FirstOrDefault(o => o == "is");
+            //is messes up readability. Lets remove it. ex) IsEnabledForDays
+            var isWord = parts.FirstOrDefault(o => o == "is");
             if (isWord != null)
             {
                 parts.Remove(isWord);
-                parts.Insert(parts.Count - 1, isWord);
+                //parts.Insert(parts.Count - 1, isWord);
             }
+            parts.Insert(0, booleanPart);
 
-            booleanPart += string.Join(" ", parts);
-            return booleanPart;
+            //booleanPart += string.Join(" ", parts);
+            return parts;
         }
 
         /// <summary> Handle asynchronously keyword. </summary>
         /// <param name="parts"> The parts. </param>
-        private static void HandleAsyncKeyword(List<string> parts)
+        private static List<string> HandleAsyncKeyword(this List<string> parts)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
 
@@ -365,6 +491,64 @@ namespace CodeDocumentor.Helper
             {
                 parts[idx] = "asynchronously";
             }
+            return parts;
+        }
+
+        private static List<string> TryInsertTheWord(this List<string> parts)
+        {
+            var skipThe = parts[0].IsVerb();
+            if (!skipThe)
+            {
+                for (var i = 0; i < parts.Count; i++)
+                {
+                    var p = parts[i];
+                    parts[i] = p.ToLowerInvariant();
+                }
+                parts.Insert(0, "The");
+            }
+            return parts;
+        }
+
+        private static List<string> TryPluarizeFirstWord(this List<string> parts)
+        {
+            if (parts.Count >= 2)
+            {
+                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+            }
+            else
+            {
+                parts[0] = Pluralizer.Pluralize(parts[0]);
+            }
+            return parts;
+        }
+
+        private static string JoinToString(this List<string> parts, string delimiter = " ")
+        {
+            return $"{string.Join(delimiter, parts)}";
+        }
+
+        private static List<string> TranslateParts(this List<string> parts)
+        {
+            for (var i = 0; i < parts.Count; i++)
+            {
+                var p = parts[i];
+                parts[i] = p.InternalTranslateText();
+            }
+            return parts;
+        }
+
+        private static List<string> AddCustomPart(this List<string> parts, string? part, int idx = -1)
+        {
+            if(part is null)
+            {
+                return parts;
+            }
+            if (idx == -1)
+            {
+                parts.Add(part);
+            }
+            part.Insert(idx, part);
+            return parts;
         }
     }
 }

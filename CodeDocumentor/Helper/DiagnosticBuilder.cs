@@ -18,7 +18,7 @@ namespace CodeDocumentor.Helper
                                             SyntaxToken identifier,
                                             Func<bool, DiagnosticDescriptor> getRuleCallback)
         {
-            DocumentationCommentTriviaSyntax commentTriviaSyntax = node
+            var commentTriviaSyntax = node
                 .GetLeadingTrivia()
                 .Select(o => o.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()

@@ -60,7 +60,7 @@ namespace CodeDocumentor.Vsix2022
 
         /// <summary> Gets or Sets the word maps. </summary>
         /// <value> An array of wordmaps. </value>
-        public WordMap[] WordMaps { get; set; } = Constants.WORD_MAPS;
+        public WordMap[] WordMaps { get; set; } = Constants.DEFAULT_WORD_MAPS;
 
         //public const string RegistryPath = @"DialogPage\BlueOnionSoftware.VsColorOutputOptions";
 

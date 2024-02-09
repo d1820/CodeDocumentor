@@ -158,7 +158,7 @@ namespace CodeDocumentor.Vsix2022
             ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
             IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
-            WordMaps = settings.WordMaps ?? Constants.WORD_MAPS; //if we dont have anything need to use defaults
+            WordMaps = settings.WordMaps ?? Constants.DEFAULT_WORD_MAPS; //if we dont have anything need to use defaults
             DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
             PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
             ClassDiagnosticSeverity = settings.ClassDiagnosticSeverity;

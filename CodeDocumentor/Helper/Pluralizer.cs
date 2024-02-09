@@ -1,24 +1,18 @@
-using System;
-using System.Linq;
-using CodeDocumentor.Vsix2022;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary> The pluralizer to pluralize word. </summary>
     public static class Pluralizer
     {
+        private static readonly Pluralize.NET.Pluralizer _netPluralizer;
+
         static Pluralizer()
         {
-            foreach (var item in Constants.INTERNAL_WORD_MAPS)
-            {
-                CustomPluralizer.UpsertIrregularRule(item.Word, item.Translation);
-            }
+            //foreach (var item in Constants.INTERNAL_WORD_MAPS)
+            //{
+            //    UpsertIrregularRule(item.Word, item.Translation);
+            //}
+            _netPluralizer = new Pluralize.NET.Pluralizer();
         }
-
-        /// <summary> Is plural. </summary>
-        /// <param name="word"> The word. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsPlural(string word) => CustomPluralizer.IsPlural(word);
 
         /// <summary> Pluralizes word. </summary>
         /// <param name="word"> The word. </param>
@@ -30,25 +24,32 @@ namespace CodeDocumentor.Helper
 
         public static string Pluralize(string word, string nextWord)
         {
-            var skipPlural = word.IsVerbCombo(nextWord);
-            var pluarlizeAnyway = Constants.PLURALIZE_ANYWAY_LIST().Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
-            if (!skipPlural || pluarlizeAnyway)
+            var skipPlural = word.IsVerbCombo(nextWord); //we dont pluralize first work verb of if the second word is a verb
+            //var pluarlizeAnyway = Constants.PLURALIZE_ANYWAY_LIST().Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
+            if (!skipPlural) //|| pluarlizeAnyway
             {
-                return CustomPluralizer.Pluralize(word);
+                return _netPluralizer.Pluralize(word);
             }
             return word;
         }
 
-        public static string PluralizeCustom(string word, string nextWord = null)
-        {
-            var convertCustom = Constants.PLURALIZE_CUSTOM_LIST.FirstOrDefault(f => f.Word.Equals(word, StringComparison.InvariantCultureIgnoreCase));
-            if (convertCustom == null)
-            {
-                return word;
-            }
-            return convertCustom.GetTranslation(nextWord);
-        }
+//        new WordMap { Word = "Is", Translation = "Checks if is" },
+//            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
+//                    if(!string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord)){
+//                        return "Checks if";
+//                    }
+//return translation;
+//                }
+//            }
 
-        internal static CustomPluralizer CustomPluralizer = new CustomPluralizer();
+        //public string PluralizeCustom(string word, string nextWord = null)
+        //{
+        //    var convertCustom = Constants.PLURALIZE_CUSTOM_LIST.FirstOrDefault(f => f.Word.Equals(word, StringComparison.InvariantCultureIgnoreCase));
+        //    if (convertCustom == null)
+        //    {
+        //        return word;
+        //    }
+        //    return convertCustom.GetTranslation(nextWord);
+        //}
     }
 }

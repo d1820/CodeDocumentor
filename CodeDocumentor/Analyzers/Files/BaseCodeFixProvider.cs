@@ -42,8 +42,8 @@ namespace CodeDocumentor
 #endif
             //build it up, but check for counts if anything actually needs to be shown
             var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
-            Document tempDoc = context.Document;
-            SyntaxNode root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
+            var tempDoc = context.Document;
+            var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
             //Order Matters
             var neededCommentCount = 0;
             neededCommentCount += PropertyCodeFixProvider.BuildComments(root, _nodesTempToReplace);

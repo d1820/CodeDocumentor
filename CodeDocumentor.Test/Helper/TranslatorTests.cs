@@ -49,10 +49,18 @@ namespace CodeDocumentor.Test.Helper
                 temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
                 o.WordMaps = temp.ToArray();
             });
-            var translated = input.Translate();
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            var translated = input.ApplyUserTranslations();
             translated.Should().Be(output);
-            var ff = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            _output.WriteLine(ff.ExcludeAsyncSuffix.ToString());
+        }
+
+        [Fact]
+        public void Check()
+        {
+            var f = new CustomPluralizer();
+            var d = f.Pluralize("make");
+            var gg = f.IsPlural("accepting");
+            d.Should().Be("accepts");
         }
     }
 }

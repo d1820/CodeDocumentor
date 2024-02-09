@@ -58,7 +58,7 @@ namespace CodeDocumentor.Helper
         /// <returns> The comment. </returns>
         internal override string GenerateIdentifierNameTypeComment(IdentifierNameSyntax returnType)
         {
-            return $"<see cref=\"{returnType.Identifier.ValueText.Translate()}\"/>";
+            return $"<see cref=\"{returnType.Identifier.ValueText.ApplyUserTranslations()}\"/>";
         }
 
         /// <summary> Generates qualified name type comment. </summary>
@@ -66,7 +66,7 @@ namespace CodeDocumentor.Helper
         /// <returns> The comment. </returns>
         internal override string GenerateQualifiedNameTypeComment(QualifiedNameSyntax returnType)
         {
-            return $"<see cref=\"{returnType.Translate()}\"/>";
+            return $"<see cref=\"{returnType.ApplyUserTranslations()}\"/>";
         }
     }
 }

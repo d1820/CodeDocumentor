@@ -35,7 +35,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            ConstructorDeclarationSyntax node = context.Node as ConstructorDeclarationSyntax;
+            var node = context.Node as ConstructorDeclarationSyntax;
             if (node == null)
             {
                 return;

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Settings;
 using Microsoft.VisualStudio.Shell;
@@ -118,6 +119,7 @@ namespace CodeDocumentor.Vsix2022
 
             var optService = DIContainer().GetInstance<IOptionsService>();
             optService.SetDefaults(_options);
+            Translator.Initialize(optService);
             //LoadPackage();
         }
 

@@ -29,12 +29,12 @@ namespace CodeDocumentor.Helper
         /// <returns> A list of words. </returns>
         public static List<string> Split(string name)
         {
-            List<string> words = new List<string>();
-            List<char> singleWord = new List<char>();
-            List<char> upperGroup = new List<char>();
+            var words = new List<string>();
+            var singleWord = new List<char>();
+            var upperGroup = new List<char>();
 
-            bool allUpperCase = IsAllUpperCase(name);
-            bool allLowerCase = IsAllLowerCase(name);
+            var allUpperCase = IsAllUpperCase(name);
+            var allLowerCase = IsAllLowerCase(name);
 
             if (allUpperCase || allLowerCase)
             {
@@ -58,12 +58,12 @@ namespace CodeDocumentor.Helper
 
             var splitName = name.AsSpan();
 
-            for (int i = 0; i < splitName.Length; i++)
+            for (var i = 0; i < splitName.Length; i++)
             {
                 var lookahead = i + 1;
 
                 //search for whole group of uppercase
-                char nextChar = splitName[i];
+                var nextChar = splitName[i];
                 upperGroup.Clear();
                 while (char.IsUpper(nextChar))
                 {
@@ -109,8 +109,8 @@ namespace CodeDocumentor.Helper
         /// <returns> <![CDATA[IEnumerable<char>]]> </returns>
         public static IEnumerable<char> UpperToTitleCase(string text)
         {
-            bool newWord = true;
-            foreach (char c in text)
+            var newWord = true;
+            foreach (var c in text)
             {
                 if (newWord) { yield return Char.ToUpper(c); newWord = false; }
                 else

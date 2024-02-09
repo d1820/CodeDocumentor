@@ -40,7 +40,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            MethodDeclarationSyntax node = context.Node as MethodDeclarationSyntax;
+            var node = context.Node as MethodDeclarationSyntax;
 
             if (!PrivateMemberVerifier.IsPrivateMember(node))
             {

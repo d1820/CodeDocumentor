@@ -41,7 +41,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            FieldDeclarationSyntax node = context.Node as FieldDeclarationSyntax;
+            var node = context.Node as FieldDeclarationSyntax;
 
             if (!PrivateMemberVerifier.IsPrivateMember(node))
             {
@@ -65,7 +65,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            VariableDeclaratorSyntax field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
+            var field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
             context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
         }
     }

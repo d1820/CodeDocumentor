@@ -32,12 +32,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            Diagnostic diagnostic = context.Diagnostics.First();
-            Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            EnumDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<EnumDeclarationSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<EnumDeclarationSyntax>().First();
 
             var displayTitle = declaration.HasSummary() ? TitleRebuild : Title;
             context.RegisterCodeFix(
@@ -75,11 +75,11 @@ namespace CodeDocumentor
 
         private static EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax)
         {
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            string comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText);
-            DocumentationCommentTriviaSyntax commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
-            EnumDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+            var comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText);
+            var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
+            var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
 
@@ -94,7 +94,7 @@ namespace CodeDocumentor
             return await Task.Run(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, cancellationToken);
         }

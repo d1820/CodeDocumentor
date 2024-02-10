@@ -9,6 +9,8 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
+        public static string[] PLURAL_EXCLUSIONS { get; set; } = new[] { "connection" };
+
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
         private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",

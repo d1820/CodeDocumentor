@@ -92,7 +92,7 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            //order matters
+            //order matters. fields are special in the sense there is not action attached and we dont need to do translations
             var comment = NameSplitter
                             .Split(name)
                             .HandleAsyncKeyword()
@@ -102,8 +102,6 @@ namespace CodeDocumentor.Helper
                                     parts[0] = parts[0].ToTitleCase();
                                 }
                             })
-                            .TranslateParts()
-                            .TryPluarizeFirstWord()
                             .TryInsertTheWord()
                             .ToLowerParts()
                             .JoinToString()

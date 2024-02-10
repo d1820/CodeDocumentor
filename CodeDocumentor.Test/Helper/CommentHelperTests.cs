@@ -25,10 +25,11 @@ namespace CodeDocumentor.Test.Helper
             Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
         }
 
-
         [Theory]
-        //[InlineData("_checkIfOneIsThere", "Check if one is there.")]
-        [InlineData("_isValid", "Checks if is valid.")]
+        [InlineData("_checkIfOneIsThere", "Check if one is there.")]
+        [InlineData("_isValid", "Is valid.")]
+        [InlineData("ConnectionString", "The connection string.")]
+        [InlineData("_hasErrors", "Has errors.")]
         public void CreateFieldComment_ReturnsValidName(string name, string expected)
         {
             var comment = CommentHelper.CreateFieldComment(name);

@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 namespace CodeDocumentor.Test.Helper
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class CommentHelperTests: IClassFixture<TestFixture>
+    public class CommentHelperTests : IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
         private readonly ITestOutputHelper _output;
@@ -22,59 +22,64 @@ namespace CodeDocumentor.Test.Helper
             _fixture = fixture;
             _output = output;
             _fixture.Initialize(output);
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
         }
 
-        //SpilitNameAndToLower
-        [Fact]
-        public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasing()
+
+        [Theory]
+        //[InlineData("_checkIfOneIsThere", "Check if one is there.")]
+        [InlineData("_isValid", "Checks if is valid.")]
+        public void CreateFieldComment_ReturnsValidName(string name, string expected)
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) => o.ExcludeAsyncSuffix = true);
-            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
-            result.Count.Should().Be(3);
-            result[0].Should().Be("execute");
+            var comment = CommentHelper.CreateFieldComment(name);
+            comment.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(false, 4)]
-        [InlineData(true, 3)]
-        public void SpilitNameAndToLower_KeepsAllUpperCaseWordsInProperCasingAddsAsyncToListWhenOptionFalse(bool exclude, int expectedCount)
+        [InlineData("MarkItemDone", "int", "Marks item done.")]
+        public void CreateMethodComment_ReturnsValidName(string name, string returnType, string expected)
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) => o.ExcludeAsyncSuffix = exclude);
-            var result = CommentHelper.SpilitNameAndToLower("ExecuteOCRActionAsync", true);
-            result.Count.Should().Be(expectedCount);
-            if (expectedCount == 4)
-            {
-                result[0].All(a => char.IsLower(a)).Should().BeTrue();
-                result[1].All(a => char.IsUpper(a)).Should().BeTrue();
-                result[2].All(a => char.IsLower(a)).Should().BeTrue();
-                result[3].All(a => char.IsLower(a)).Should().BeTrue();
-            }else if(expectedCount == 3)
-            {
-                result[0].All(a => char.IsLower(a)).Should().BeTrue();
-                result[1].All(a => char.IsUpper(a)).Should().BeTrue();
-                result[2].All(a => char.IsLower(a)).Should().BeTrue();
-            }
+            var comment = CommentHelper.CreateMethodComment(name, SyntaxFactory.ParseTypeName(returnType));
+            comment.Should().Be(expected);
         }
 
-        [Fact]
-        public void CreateFieldComment_ReturnsValidName()
+        [Theory]
+        [InlineData("IMarkItemDone", "Mark item done interface.")]
+        [InlineData("IPublisher", "The publishers interface.")]
+        [InlineData("INotifier", "The notifiers interface.")]
+        public void CreateInterfaceComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateFieldComment("_checkIfOneIsThere");
-            comment.Should().Be("_checkIfOneIsThere");
+            var comment = CommentHelper.CreateInterfaceComment(name);
+            comment.Should().Be(expected);
         }
 
-        [Fact]
-        public void CreateMethodComment_ReturnsValidName()
+        [Theory]
+        [InlineData("NominationBuilder", "The nominations builder.")]
+        [InlineData("AwaitingAgentEmailHandler", "Awaiting agent email handler.")]
+        [InlineData("PublishAgentEmailHandler", "Publish agent email handler.")]
+        [InlineData("LoadReportEmailHandler", "Load report email handler.")]
+        public void CreateClassComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateMethodComment("MarkItemDone", SyntaxFactory.ParseTypeName("int"));
-            comment.Should().Be("_checkIfOneIsThere");
+            var comment = CommentHelper.CreateClassComment(name);
+            comment.Should().Be(expected);
         }
 
-        [Fact]
-        public void CreateInterfaceComment_ReturnsValidName()
+        [Theory]
+        [InlineData("NominationBuilder", "The nominations builder.")]
+        public void CreateRecordComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateInterfaceComment("IMarkItemDone");
-            comment.Should().Be("_checkIfOneIsThere");
+            var comment = CommentHelper.CreateRecordComment(name);
+            comment.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("NominationType", "The nomination types.")]
+        [InlineData("BuildAccess", "Build accesses.")]
+        [InlineData("ClientRole", "The clients roles.")]
+        public void CreateEnumComment_ReturnsValidName(string name, string expected)
+        {
+            var comment = CommentHelper.CreateEnumComment(name);
+            comment.Should().Be(expected);
         }
     }
 }

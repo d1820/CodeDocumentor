@@ -11,19 +11,33 @@ namespace CodeDocumentor.Vsix2022
     {
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
-        private static string[] AXUILLARY_VERB_WORD_LIST { get; set; } = new[] {"are", "was", "were", "been", "being", "have", "does",
-                                                                    "has", "had", "having",
+        private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",
+                                                                    "has", "had", "having", "set", "get",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
                                                                     "dare", "need", "used", "ought", "goes" };
 
-        private static string[] TWO_LETTER_WORD_LIST { get; set; } = new[] { "an", "at", "be", "by", "do", "go", "if", "in", "is", "it", "me", "my", "no", "of", "on", "or", "so", "to", "up", "us", "we", "am", "as", "ax", "by", "do", "go", "he", "hi", "if", "in", "is", "it", "me", "my", "no", "of", "oh", "on", "or", "ox", "so", "to", "uh", "um", "up", "us", "we" };
+        private static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "an", "at", "be", "by", "do", "go", "if", "in", "is", "it", "me",
+                                                                    "my", "no", "of", "on", "or", "so", "to", "up", "us", "we", "am", "as", "ax", "by", "do", "go", "he",
+                                                                    "hi", "if", "in", "is", "it", "me", "my", "no", "of", "oh", "on", "or", "ox", "so", "to", "uh", "um",
+                                                                    "up", "us", "we" };
+
+        public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has","yes", "its", "ass" };
 
         //This checks for a set of words together being passed in as one word to evaluate. These sets of words together would could as a verb
-        private static string[] PLURALIZATION_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", };
+        //private static string[] PLURALIZATION_VERB_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", "checks if", };
 
         public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "To", Translation = "Converts to" },
-            new WordMap { Word = "Do", Translation = "Does" }
+            new WordMap { Word = "Do", Translation = "Does" },
+            new WordMap { Word = "Dto", Translation = "Data transfer object" },
+            new WordMap { Word = "Is", Translation = "Checks if is", OnlyIfInFirstPositon = true },
+            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
+                    if(!string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord)){
+                        return "Checks if";
+                    }
+                    return translation;
+                }
+            }
         };
 
         //public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
@@ -70,7 +84,7 @@ namespace CodeDocumentor.Vsix2022
             items.AddRange(INTERNAL_VERB_WORD_LIST);
             items.AddRange(AXUILLARY_VERB_WORD_LIST);
             items.AddRange(TWO_LETTER_WORD_LIST);
-            items.AddRange(PLURALIZATION_CONVERSIONS);
+            //items.AddRange(PLURALIZATION_VERB_CONVERSIONS);
             return items;
         }
 
@@ -106,6 +120,7 @@ namespace CodeDocumentor.Vsix2022
 "attempt",
 "attend",
 "attract",
+"await",
 "avoid",
 "back",
 "bake",
@@ -143,6 +158,7 @@ namespace CodeDocumentor.Vsix2022
 "bruise",
 "brush",
 "bubble",
+"build",
 "bump",
 "burn",
 "bury",
@@ -501,6 +517,7 @@ namespace CodeDocumentor.Vsix2022
 "promise",
 "protect",
 "provide",
+"publish",
 "pull",
 "pump",
 "punch",
@@ -744,6 +761,5 @@ namespace CodeDocumentor.Vsix2022
 "yell",
 "zip",
 "zoom" };
-
     }
 }

@@ -54,13 +54,17 @@ namespace CodeDocumentor.Test.Helper
             translated.Should().Be(output);
         }
 
-        [Fact]
-        public void Check()
+        [Theory]
+        [InlineData("Do", "Does")]
+        [InlineData("To", "Converts to")]
+        [InlineData("Is", "Checks if is")]
+        [InlineData("Ensure", "Checks if is")]
+        [InlineData("Dto", "Data transfer object")]
+        public void InteralTranslate_ConvertsCorrectly(string word, string converted)
         {
-            var f = new CustomPluralizer();
-            var d = f.Pluralize("make");
-            var gg = f.IsPlural("accepting");
-            d.Should().Be("accepts");
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            var result = Translator.InternalTranslateText(word, 99);
+            result.Should().Be(converted);
         }
     }
 }

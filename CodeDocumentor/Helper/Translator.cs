@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -12,6 +14,7 @@ namespace CodeDocumentor.Helper
         {
             _optionsService = optionsService;
         }
+
         /// <summary> Translates text replacing words from the WordMap settings </summary>
         /// <param name="node"> </param>
         /// <returns> A string </returns>
@@ -29,14 +32,23 @@ namespace CodeDocumentor.Helper
         }
 
         //This translates parts of the comment based on internal maps that should be applied for readabiity
-        internal static string InternalTranslateText(this string text)
+        internal static string InternalTranslateText(this string text, int textPosition)
         {
             var converted = text;
+            var userMaps = _optionsService.WordMaps ?? Array.Empty<WordMap>();
             //Some stuff just needs to be handled for the user. These are case sensitive
             foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
             {
-                var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
-                converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
+                if(wordMap.OnlyIfInFirstPositon && textPosition != 0)
+                {
+                    continue;
+                }
+                //dont run an internal word map if the user has one for the same thing
+                if(!userMaps.Any(a=>a.Word == wordMap.Word))
+                {
+                    var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
+                    converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
+                }
             }
             return converted;
         }
@@ -53,14 +65,8 @@ namespace CodeDocumentor.Helper
             }
 
             var mergedWorkMaps = new HashSet<WordMap>(_optionsService.WordMaps);
-            //Some stuff just needs to be handled for the user
-            foreach (var item in Constants.INTERNAL_WORD_MAPS)
-            {
-                mergedWorkMaps.Add(item);
-            }
             foreach (var wordMap in mergedWorkMaps)
             {
-
                 var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
                 converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
             }

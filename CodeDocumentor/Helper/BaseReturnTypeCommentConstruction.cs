@@ -271,7 +271,7 @@ namespace CodeDocumentor.Helper
                     //List<string> items = new List<string>();
                     //BuildChildrenGenericArgList(firstType, items, false, false);
                     //TODO: fix comments flow to support cref nodes
-                    //return prefix + BuildComment(firstType, returnGenericTypeAsFullString);
+                    var test = prefix + BuildComment(firstType, returnGenericTypeAsFullString);
 
                     return BuildComment(firstType, returnGenericTypeAsFullString);
                 }

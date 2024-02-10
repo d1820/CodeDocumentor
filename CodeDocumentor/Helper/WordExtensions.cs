@@ -17,7 +17,7 @@ namespace CodeDocumentor.Helper
         {
             var skipWord = word.IsVerb();
             var skipNextWord = false;
-            if (!string.IsNullOrEmpty(nextWord))
+            if (!string.IsNullOrEmpty(nextWord) && !skipWord)
             {
                 skipNextWord = nextWord.IsVerb();
             }
@@ -45,13 +45,27 @@ namespace CodeDocumentor.Helper
 
         public static bool IsVerb(this string word)
         {
-            var baseWord = word.EndsWith("ing") ? word.Substring(0, word.Length - 3) : word;
-            baseWord = baseWord.EndsWith("ed") ? baseWord.Substring(0, word.Length - 2) : baseWord;
-            baseWord = baseWord.EndsWith("s") ? baseWord.Substring(0, word.Length - 1) : baseWord;
+            var checkWord = word.GetWordFirstPart();
+            var variations = new List<string>();
+            var baseWord = checkWord;
+            if (checkWord.EndsWith("ing"))
+            {
+                baseWord = word.Substring(0, checkWord.Length - 3);
+            }
+            else if (baseWord.EndsWith("ed"))
+            {
+                baseWord = baseWord.Substring(0, checkWord.Length - 2);
+            }
+            else if (baseWord.EndsWith("s") && !Constants.LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER.Any(a => a.Equals(baseWord, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                baseWord = baseWord.Substring(0, checkWord.Length - 1);
+            }
             return Constants.GetInternalVerbCheckList().Any(w => w.Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
             || (w + "ed").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
             || (w + "ing").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
-            || (w + "s").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase));
+            || ((w + "s").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
+                && !Constants.LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER.Any(a => a.Equals(w, StringComparison.InvariantCultureIgnoreCase)))
+            );
         }
 
         public static void TryAddSingleWord(this List<string> words, List<char> singleWord, bool clearSingleWord = false)
@@ -64,6 +78,21 @@ namespace CodeDocumentor.Helper
             {
                 singleWord.Clear();
             }
+        }
+
+        public static string ToTitleCase(this string txt)
+        {
+            return char.ToUpper(txt[0]) + txt.Substring(1);
+        }
+
+        public static string GetWordFirstPart(this string word)
+        {
+            var checkWord = word;
+            if (word.Contains(" ")) //a translation already happened and swapped a word for a set of words. the first word is really what we are checking
+            {
+                checkWord = word.Split(' ').First();
+            }
+            return checkWord;
         }
     }
 }

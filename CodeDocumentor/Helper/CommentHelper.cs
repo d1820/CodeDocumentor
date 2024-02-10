@@ -74,6 +74,7 @@ namespace CodeDocumentor.Helper
                            .TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
+                           .PluaralizeLastWord()
                            .JoinToString()
                            .ApplyUserTranslations()
                            .WithPeriod();
@@ -95,6 +96,12 @@ namespace CodeDocumentor.Helper
             var comment = NameSplitter
                             .Split(name)
                             .HandleAsyncKeyword()
+                            .Tap((parts) => {
+                                if (char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
+                                {
+                                    parts[0] = parts[0].ToTitleCase();
+                                }
+                            })
                             .TranslateParts()
                             .TryPluarizeFirstWord()
                             .TryInsertTheWord()
@@ -153,6 +160,9 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                            .Split(name)
+                           .Tap((parts) => {
+                               parts.Remove("I");
+                           })
                            .AddCustomPart("interface")
                            .TranslateParts()
                            .TryPluarizeFirstWord()
@@ -185,70 +195,95 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            var parts = SpilitNameAndToLower(name);
-            var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
-            if (parts.Count >= 2)
-            {
-                parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0], parts[1]), parts[1]);
-            }
-            else
-            {
-                parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0]));
-            }
+            //var parts = SpilitNameAndToLower(name);
+            var isBool2part = false;
+            var comment = NameSplitter
+                         .Split(name)
+                         .Tap((parts) =>
+                         {
+                             isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
+                         })
+                         .HandleAsyncKeyword()
+                         .TryIncudeReturnType(returnType)
+                         .TryAddTodoSummary(returnType.ToString())
+                         .TranslateParts()
+                         .TryPluarizeFirstWord()
+                         .TryInsertTheWord((parts) =>
+                         {
+                             if (!isBool2part)
+                             {
+                                 parts.Insert(1, "the");
+                             }
+                         })
+                         .ToLowerParts()
+                         .JoinToString()
+                         .ApplyUserTranslations()
+                         .WithPeriod();
+            return comment;
 
-            if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
-            {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                //try and use the return type for the value;
-                if (returnType.ToString() != "void")
-                {
-                    var returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
+            //var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
+            //if (parts.Count >= 2)
+            //{
+            //    parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0], parts[1]), parts[1]);
+            //}
+            //else
+            //{
+            //    parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0]));
+            //}
 
-                    if (!string.IsNullOrEmpty(returnComment))
-                    {
-                        if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            parts.Insert(1, "the");
-                            parts.Insert(2, returnComment);
-                        }
-                        else
-                        {
-                            parts.Insert(1, returnComment);
-                        }
-                    }
-                    else
-                    {
-                        if (optionsService.UseToDoCommentsOnSummaryError)
-                        {
-                            return "TODO: Add Summary";
-                        }
-                        else
-                        {
-                            return returnComment.ApplyUserTranslations().WithPeriod();
-                        }
-                    }
-                }
-                else if (optionsService.UseToDoCommentsOnSummaryError)
-                {
-                    return "TODO: Add Summary";
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-            else
-            {
-                //At this point we have already pluralized and converted
-                var skipThe = parts[0].IsVerb();
-                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
-                if ((!skipThe && !isBool2part) || addTheAnyway)
-                {
-                    parts.Insert(1, "the");
-                }
-            }
+            //if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
+            //{
+            //    var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            //    //try and use the return type for the value;
+            //    if (returnType.ToString() != "void")
+            //    {
+            //        var returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
 
-            return string.Join(" ", parts).ApplyUserTranslations().WithPeriod();
+            //        if (!string.IsNullOrEmpty(returnComment))
+            //        {
+            //            if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
+            //            {
+            //                parts.Insert(1, "the");
+            //                parts.Insert(2, returnComment);
+            //            }
+            //            else
+            //            {
+            //                parts.Insert(1, returnComment);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (optionsService.UseToDoCommentsOnSummaryError)
+            //            {
+            //                return "TODO: Add Summary";
+            //            }
+            //            else
+            //            {
+            //                return returnComment.ApplyUserTranslations().WithPeriod();
+            //            }
+            //        }
+            //    }
+            //    else if (optionsService.UseToDoCommentsOnSummaryError)
+            //    {
+            //        return "TODO: Add Summary";
+            //    }
+            //    else
+            //    {
+            //        return string.Empty;
+            //    }
+            //}
+            //else
+            //{
+            //    //At this point we have already pluralized and converted
+            //    var skipThe = parts[0].IsVerb();
+            //    var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+            //    if ((!skipThe && !isBool2part) || addTheAnyway)
+            //    {
+            //        parts.Insert(1, "the");
+            //    }
+            //}
+
+            //return string.Join(" ", parts).ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Creates the parameter comment. </summary>
@@ -409,29 +444,12 @@ namespace CodeDocumentor.Helper
             return text;
         }
 
-        ///// <summary> Spilit the name and to lower. </summary>
-        ///// <param name="name"> The name. </param>
-        ///// <param name="forceFirstCharToLower"> If true, force the first char to lower </param>
-        ///// <returns> <![CDATA[List<string>]]> </returns>
-        //internal static List<string> SpilitNameAndToLower(string name
-        //    , bool forceFirstCharToLower = false
-        //    //, bool shouldTranslate = true
-        //    )
-        //{
-        //    //if (shouldTranslate)
-        //    //{
-        //    //    name = name.Translate();
-        //    //}
-        //    var parts = NameSplitter.Split(name);
-        //    ToLowerParts(parts, forceFirstCharToLower);
-        //    HandleAsyncKeyword(parts);
-        //    return parts;
-        //}
-
         internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
         {
             var i = forceFirstCharToLower ||
-                (parts[0] != "The" & parts[0] != "If true, ")
+                    (parts[0] != "The" && parts[0] != "If true, "
+                        && !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
+                    )
                 ? 0 : 1;
             for (; i < parts.Count; i++)
             {
@@ -440,17 +458,20 @@ namespace CodeDocumentor.Helper
                     parts[i] = parts[i].ToLower();
                 }
             }
+            //First letter is always caps unless it was forced lower
+            if (!forceFirstCharToLower && char.IsLower(parts[0], 0))
+            {
+                parts[0] = parts[0].ToTitleCase();// char.ToUpper(parts[0][0]) + parts[0].Substring(1);
+            }
             return parts;
         }
 
-        ///// <summary> Creates the common comment. </summary>
-        ///// <param name="name"> The name. </param>
-        ///// <returns> A string. </returns>
-        //private static string CreateCommonComment(string name)
-        //{
-        //    return $"The {string.Join(" ", SpilitNameAndToLower(name, true))}";
-        //}
-
+        internal static List<string> PluaralizeLastWord(this List<string> parts)
+        {
+            var lastIdx = parts.Count - 1;
+            parts[lastIdx] = Pluralizer.ForcePluralization(parts[lastIdx]);
+            return parts;
+        }
 
         private static List<string> AddPropertyBooleanPart(this List<string> parts)
         {
@@ -476,8 +497,6 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        /// <summary> Handle asynchronously keyword. </summary>
-        /// <param name="parts"> The parts. </param>
         private static List<string> HandleAsyncKeyword(this List<string> parts)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
@@ -494,17 +513,21 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> TryInsertTheWord(this List<string> parts)
+        private static List<string> TryInsertTheWord(this List<string> parts, Action<List<string>> customInsertCallback = null)
         {
-            var skipThe = parts[0].IsVerb();
-            if (!skipThe)
+            var checkWord = parts[0].GetWordFirstPart();
+            var skipThe = checkWord.IsVerb();
+            var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+            if (!skipThe || addTheAnyway)
             {
-                for (var i = 0; i < parts.Count; i++)
+                if (customInsertCallback != null)
                 {
-                    var p = parts[i];
-                    parts[i] = p.ToLowerInvariant();
+                    customInsertCallback.Invoke(parts);
                 }
-                parts.Insert(0, "The");
+                else
+                {
+                    parts.Insert(0, "The");
+                }
             }
             return parts;
         }
@@ -532,20 +555,74 @@ namespace CodeDocumentor.Helper
             for (var i = 0; i < parts.Count; i++)
             {
                 var p = parts[i];
-                parts[i] = p.InternalTranslateText();
+                parts[i] = p.InternalTranslateText(i);
             }
             return parts;
         }
 
-        private static List<string> AddCustomPart(this List<string> parts, string? part, int idx = -1)
+        private static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
         {
-            if(part is null)
+            tapAction?.Invoke(parts);
+            return parts;
+        }
+
+        private static List<string> TryIncudeReturnType(this List<string> parts, TypeSyntax returnType)
+        {
+            if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
+            {
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
+
+                if (!string.IsNullOrEmpty(returnComment))
+                {
+                    if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        parts.Insert(1, "the");
+                        parts.Insert(2, returnComment);
+                    }
+                    else
+                    {
+                        parts.Insert(1, returnComment);
+                    }
+                }
+                else
+                {
+                    if (optionsService.UseToDoCommentsOnSummaryError)
+                    {
+                        parts = new List<string> { "TODO: Add Summary" };
+                    }
+                }
+            }
+            return parts;
+        }
+
+        private static List<string> TryAddTodoSummary(this List<string> parts, string returnType)
+        {
+            if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
+            {
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                if (optionsService.UseToDoCommentsOnSummaryError)
+                {
+                    parts = new List<string> { "TODO: Add Summary" };
+                }
+                else
+                {
+                    parts = new List<string>();
+                }
+            }
+            return parts;
+        }
+
+        private static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
+        {
+            if (part is null)
             {
                 return parts;
             }
             if (idx == -1)
             {
                 parts.Add(part);
+                return parts;
             }
             part.Insert(idx, part);
             return parts;

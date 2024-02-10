@@ -1,4 +1,6 @@
 
+using System.Linq;
+
 namespace CodeDocumentor.Helper
 {
     public static class Pluralizer
@@ -12,6 +14,16 @@ namespace CodeDocumentor.Helper
             //    UpsertIrregularRule(item.Word, item.Translation);
             //}
             _netPluralizer = new Pluralize.NET.Pluralizer();
+        }
+
+        public static bool IsPlural(string word)
+        {
+            return _netPluralizer.IsPlural(word);
+        }
+
+        public static string ForcePluralization(string word)
+        {
+            return _netPluralizer.Pluralize(word);
         }
 
         /// <summary> Pluralizes word. </summary>
@@ -28,19 +40,14 @@ namespace CodeDocumentor.Helper
             //var pluarlizeAnyway = Constants.PLURALIZE_ANYWAY_LIST().Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
             if (!skipPlural) //|| pluarlizeAnyway
             {
-                return _netPluralizer.Pluralize(word);
+                var checkWord = word.GetWordFirstPart();
+                var pluraled = _netPluralizer.Pluralize(checkWord);
+                word = word.Replace(checkWord, pluraled);
             }
             return word;
         }
 
-//        new WordMap { Word = "Is", Translation = "Checks if is" },
-//            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
-//                    if(!string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord)){
-//                        return "Checks if";
-//                    }
-//return translation;
-//                }
-//            }
+
 
         //public string PluralizeCustom(string word, string nextWord = null)
         //{

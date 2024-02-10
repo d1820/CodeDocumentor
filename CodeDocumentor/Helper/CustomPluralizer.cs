@@ -1,6 +1,3 @@
-using System.Linq;
-using Pluralize.NET;
-
 //namespace CodeDocumentor.Helper
 //{
 //    public class CustomPluralizer : PluralizerBase

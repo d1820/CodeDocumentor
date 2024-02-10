@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -31,27 +29,35 @@ namespace CodeDocumentor.Helper
             return TranslateText(text);
         }
 
-        //This translates parts of the comment based on internal maps that should be applied for readabiity
-        internal static string InternalTranslateText(this string text, int textPosition)
-        {
-            var converted = text;
-            var userMaps = _optionsService.WordMaps ?? Array.Empty<WordMap>();
-            //Some stuff just needs to be handled for the user. These are case sensitive
-            foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
-            {
-                if(wordMap.OnlyIfInFirstPositon && textPosition != 0)
-                {
-                    continue;
-                }
-                //dont run an internal word map if the user has one for the same thing
-                if(!userMaps.Any(a=>a.Word == wordMap.Word))
-                {
-                    var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
-                    converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
-                }
-            }
-            return converted;
-        }
+        ////This translates parts of the comment based on internal maps that should be applied for readabiity
+        //internal static List<string> InternalTranslateText(this List<string> parts)
+        //{
+
+        //    for (var i = 0; i < parts.Count; i++)
+        //    {
+        //        var p = parts[i];
+        //        var nextp = parts.Count <= i + 1 ? parts[i + 1] : null;
+        //        parts[i] = p.InternalTranslateText(i, nextp);
+        //    }
+
+
+        //    var converted = text;
+        //    var userMaps = _optionsService.WordMaps ?? Array.Empty<WordMap>();
+        //    foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
+        //    {
+        //        if(wordMap.OnlyIfInFirstPositon && textPosition != 0)
+        //        {
+        //            continue;
+        //        }
+        //        //dont run an internal word map if the user has one for the same thing
+        //        if(!userMaps.Any(a=>a.Word == wordMap.Word))
+        //        {
+        //            var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
+        //            converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation(nextWord));
+        //        }
+        //    }
+        //    return converted;
+        //}
 
         /// <summary> Translates text replacing words from the WordMap settings </summary>
         /// <param name="text"> </param>
@@ -67,13 +73,13 @@ namespace CodeDocumentor.Helper
             var mergedWorkMaps = new HashSet<WordMap>(_optionsService.WordMaps);
             foreach (var wordMap in mergedWorkMaps)
             {
-                var wordToLookFor = string.Format(_wordMatchRegexTemplate, wordMap.Word);
+                var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
                 converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
             }
             return converted;
         }
 
-        private static readonly string _wordMatchRegexTemplate = @"\b({0})\b";
+
         private static IOptionsService _optionsService;
     }
 }

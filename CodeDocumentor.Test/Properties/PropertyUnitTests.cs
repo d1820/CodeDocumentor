@@ -43,7 +43,7 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or Sets the person name.
+        /// Gets or sets the person name.
         /// </summary>
         public string PersonName { get; set; }
 	}
@@ -199,9 +199,38 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or Sets a value indicating whether tester is started.
+        /// Gets or sets a value indicating whether tester started.
         /// </summary>
         public bool IsTesterStarted { get; set; }
+	}
+}";
+
+        private const string BooleanPropertyTest2Code = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class PropertyTester
+	{
+		public bool InExecutedState { get; set; }
+	}
+}";
+
+        private const string BooleanPropertyTest2FixCode = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class PropertyTester
+	{
+        /// <summary>
+        /// Gets or sets a value indicating whether in executed state.
+        /// </summary>
+        public bool InExecutedState { get; set; }
 	}
 }";
 
@@ -234,7 +263,7 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or Sets the test date time.
+        /// Gets or sets the test date time.
         /// </summary>
         public DateTime? TestDateTime { get; set; }
 	}
@@ -253,7 +282,7 @@ namespace ConsoleApp4
 	public class PropertyTester
 	{
         /// <summary>
-        /// Gets or Sets a value indicating whether tester is started.
+        /// Gets or sets a value indicating whether tester started.
         /// </summary>
         public bool? IsTesterStarted { get; set; }
 	}
@@ -423,6 +452,7 @@ namespace ConsoleApp4
         [InlineData(PropertyPrivateGetterTestCode, PropertyPrivateGetterTestFixCode, 10, 23, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(PropertyInternalGetterTestCode, PropertyInternalGetterTestFixCode, 10, 23, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(BooleanPropertyTestCode, BooleanPropertyTestFixCode, 10, 15, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData(BooleanPropertyTest2Code, BooleanPropertyTest2FixCode, 10, 15, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(NullableBooleanPropertyTestCode, NullableBooleanPropertyTestFixCode, 10, 16, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(ExpressionBodyPropertyTestCode, ExpressionBodyPropertyTestFixCode, 10, 17, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData(NullableDateTimePropertyTestCode, NullableDateTimePropertyTestFixCode, 10, 20, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -43,12 +44,24 @@ namespace CodeDocumentor.Helper
             }
         }
 
+        public static bool IsTwoLetterVerb(this string word)
+        {
+            var checkWord = word.GetWordFirstPart().Clean();
+            return Constants.TWO_LETTER_WORD_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static bool IsTwoLetterPropertyExclusionVerb(this string word)
+        {
+            var checkWord = word.GetWordFirstPart().Clean();
+            return Constants.TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
+        }
+
         public static bool IsVerb(this string word)
         {
-            var checkWord = word.GetWordFirstPart();
+            var checkWord = word.GetWordFirstPart().Clean();
             var variations = new List<string>();
             var baseWord = checkWord;
-            if (checkWord.EndsWith("ing"))
+            if (checkWord.EndsWith("ing") && !checkWord.Equals("string", StringComparison.InvariantCultureIgnoreCase))
             {
                 baseWord = word.Substring(0, checkWord.Length - 3);
             }
@@ -93,6 +106,12 @@ namespace CodeDocumentor.Helper
                 checkWord = word.Split(' ').First();
             }
             return checkWord;
+        }
+
+        public static string Clean(this string word)
+        {
+            string pattern = "[^a-zA-Z0-9 ]";
+            return Regex.Replace(word, pattern, "");
         }
     }
 }

@@ -2,15 +2,12 @@
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System.Collections.Generic;
-using System.Linq;
 using CodeDocumentor.Helper;
 
 namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
-        public static string[] PLURAL_EXCLUSIONS { get; set; } = new[] { "connection" };
-
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
         private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",
@@ -18,10 +15,11 @@ namespace CodeDocumentor.Vsix2022
                                                                     "did", "can", "shall", "will", "may", "might", "must",
                                                                     "dare", "need", "used", "ought", "goes" };
 
-        private static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "an", "at", "be", "by", "do", "go", "if", "in", "is", "it", "me",
-                                                                    "my", "no", "of", "on", "or", "so", "to", "up", "us", "we", "am", "as", "ax", "by", "do", "go", "he",
-                                                                    "hi", "if", "in", "is", "it", "me", "my", "no", "of", "oh", "on", "or", "ox", "so", "to", "uh", "um",
-                                                                    "up", "us", "we" };
+        public static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "am", "as", "ax", "an", "at", "be", "by", "do", "hi", "go", "if", "in", "is", "it", "me",
+                                                                       "my", "no", "of", "on", "or", "so", "to", "up", "us", "uh", "um", "we",
+                                                                     };
+
+        public static string[] TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST { get; } = new[] { "an", "is", "if", "by", "do" };
 
         public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has","yes", "its", "ass" };
 
@@ -32,7 +30,7 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "To", Translation = "Converts to" },
             new WordMap { Word = "Do", Translation = "Does" },
             new WordMap { Word = "Dto", Translation = "Data transfer object" },
-            new WordMap { Word = "Is", Translation = "Checks if is", OnlyIfInFirstPositon = true },
+            new WordMap { Word = "Is", Translation = "Checks if is" },
             new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
                     if(!string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord)){
                         return "Checks if";
@@ -41,6 +39,10 @@ namespace CodeDocumentor.Vsix2022
                 }
             }
         };
+
+        public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
+
+        public static readonly string CREF_MATCH_REGEX_TEMPLATE = @"<.*>";
 
         //public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
 
@@ -537,7 +539,7 @@ namespace CodeDocumentor.Vsix2022
 "realise",
 "receive",
 "recognise",
-"record",
+"recording",
 "reduce",
 "reflect",
 "refuse",
@@ -691,6 +693,7 @@ namespace CodeDocumentor.Vsix2022
 "tip",
 "tire",
 "to",
+"todo",
 "touch",
 "tour",
 "tow",

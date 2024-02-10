@@ -85,7 +85,7 @@
     <Compile Include="Helper\Pluralizer.cs" />
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
     <Compile Include="Helper\ReturnCommentConstruction.cs" />
-    <Compile Include="Helper\SingleWordMethodCommentConstruction.cs" />
+    <Compile Include="Helper\SingleWordCommentConstruction.cs" />
     <Compile Include="Helper\Translator.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />

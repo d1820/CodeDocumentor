@@ -47,24 +47,12 @@ namespace CodeDocumentor.Test.Helper
                 var temp = o.WordMaps.ToList();
                 temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
                 temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+                temp.AddRange(Constants.INTERNAL_WORD_MAPS);
                 o.WordMaps = temp.ToArray();
             });
             Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
             var translated = input.ApplyUserTranslations();
             translated.Should().Be(output);
-        }
-
-        [Theory]
-        [InlineData("Do", "Does")]
-        [InlineData("To", "Converts to")]
-        [InlineData("Is", "Checks if is")]
-        [InlineData("Ensure", "Checks if is")]
-        [InlineData("Dto", "Data transfer object")]
-        public void InteralTranslate_ConvertsCorrectly(string word, string converted)
-        {
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
-            var result = Translator.InternalTranslateText(word, 99);
-            result.Should().Be(converted);
         }
     }
 }

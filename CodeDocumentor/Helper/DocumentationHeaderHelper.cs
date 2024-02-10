@@ -159,6 +159,13 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.Contains("Dictionary");
         }
 
+        public static bool IsDictionary(this TypeSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.ToString();
+
+            return genericTypeStr.Contains("Dictionary");
+        }
+
         /// <summary> Checks if is list. </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
@@ -236,6 +243,13 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.IndexOf("ActionResult", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
         }
 
+        public static bool IsGenericValueTask(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("ValueTask", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
         public static bool PropertyHasSetter(this PropertyDeclarationSyntax declarationSyntax)
         {
             var hasSetter = false;
@@ -293,7 +307,10 @@ namespace CodeDocumentor.Helper
             }
             var str = returnType.ToString();
             //if the returnType alread starts with a or an then just return
-            if (str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) || str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase))
+            if (str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
+                str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
+                str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase)
+                )
             {
                 return string.Empty;
             }
@@ -651,7 +668,11 @@ namespace CodeDocumentor.Helper
         {
             if (includeValueNodeInProperties)
             {
-                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, false).Comment;
+                var options = new ReturnTypeBuilderOptions
+                {
+                    ReturnGenericTypeAsFullString = false
+                };
+                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
             }
             return list;

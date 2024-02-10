@@ -1,8 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
+using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Helper
 {
@@ -11,9 +15,11 @@ namespace CodeDocumentor.Test.Helper
     {
         private readonly ReturnCommentConstruction _returnCommentBuilder;
 
-        public ReturnCommentConstructionTests(TestFixture testFixure)
+        public ReturnCommentConstructionTests(TestFixture testFixure, ITestOutputHelper output)
         {
             _returnCommentBuilder = new ReturnCommentConstruction();
+            testFixure.Initialize(output);
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
         }
 
         #region ReadOnlyCollection
@@ -23,7 +29,11 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", SyntaxKind.StringKeyword);
 
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A read only collection of strings");
         }
 
@@ -33,8 +43,11 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.StringKeyword);
 
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A read only collection of list of strings");
         }
 
@@ -44,8 +57,11 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", SyntaxKind.StringKeyword);
 
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A read only collection of read only collections of strings");
         }
 
@@ -57,8 +73,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromList()
         {
             var roc = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of strings");
         }
 
@@ -68,8 +87,11 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.StringKeyword);
 
             var roc = TestFixture.BuildGenericNameSyntax("List", list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of list of strings");
         }
 
@@ -81,8 +103,11 @@ namespace CodeDocumentor.Test.Helper
             var list2 = TestFixture.BuildGenericNameSyntax("List", list);
 
             var roc = TestFixture.BuildGenericNameSyntax("List", list2);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of list of list of strings");
         }
 
@@ -90,8 +115,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromIList()
         {
             var roc = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of strings");
         }
 
@@ -100,8 +128,11 @@ namespace CodeDocumentor.Test.Helper
         {
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of list of strings");
         }
 
@@ -109,8 +140,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromListOfInt()
         {
             var roc = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of integers");
         }
 
@@ -119,7 +153,11 @@ namespace CodeDocumentor.Test.Helper
         {
             var list = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of list of integers");
         }
 
@@ -131,8 +169,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromIEnumerable()
         {
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of strings");
         }
 
@@ -141,8 +182,11 @@ namespace CodeDocumentor.Test.Helper
         {
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of list of strings");
         }
 
@@ -154,8 +198,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromICollection()
         {
             var roc = TestFixture.BuildGenericNameSyntax("ICollection", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of strings");
         }
 
@@ -163,8 +210,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromCollection()
         {
             var roc = TestFixture.BuildGenericNameSyntax("Collection", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A list of strings");
         }
 
@@ -176,8 +226,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromIDictionary()
         {
             var roc = TestFixture.BuildGenericNameSyntax("IDictionary", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A dictionary with a key of type string and a value of type string");
         }
 
@@ -185,8 +238,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromIDictionaryOfInt()
         {
             var roc = TestFixture.BuildGenericNameSyntax("IDictionary", SyntaxKind.IntKeyword, SyntaxKind.IntKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A dictionary with a key of type integer and a value of type integer");
         }
 
@@ -194,8 +250,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromDictionary()
         {
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A dictionary with a key of type string and a value of type string");
         }
 
@@ -204,8 +263,11 @@ namespace CodeDocumentor.Test.Helper
         {
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A dictionary with a key of type string and a value of type list of strings");
         }
 
@@ -215,8 +277,11 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var list2 = TestFixture.BuildGenericNameSyntax("List", list);
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list2);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("A dictionary with a key of type string and a value of type list of list of strings");
         }
 
@@ -228,9 +293,12 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfString()
         {
             var roc = TestFixture.BuildGenericNameSyntax("Task", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("string");
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
+            comment.Should().Be("and return a <see cref=\"Task\"/> of type string");
         }
 
         [Fact]
@@ -238,9 +306,12 @@ namespace CodeDocumentor.Test.Helper
         {
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("Task", list);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A list of strings");
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
+            comment.Should().Be("and return a <see cref=\"Task\"/> of a list of strings");
         }
 
         [Fact]
@@ -249,20 +320,40 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var dict = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
             var roc = TestFixture.BuildGenericNameSyntax("Task", dict);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings");
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
+            comment.Should().Be("and return a <see cref=\"Task\"/> of a dictionary with a key of type string and a value of type list of strings");
         }
 
         [Fact]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustom()
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomDoubleGenericType()
         {
-            var custom = TestFixture.BuildGenericNameSyntax("CustomClass", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
+            var custom = TestFixture.BuildGenericNameSyntax("CustomDoubleGenericType", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("Task", custom);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
-            comment.Should().Be("CustomClass");
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
+            comment.Should().Be("and return a <see cref=\"Task\"/> of type CustomDoubleGenericType");
         }
+
+        [Fact]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomClass()
+        {
+            var roc = SyntaxFactory.ParseTypeName($"Task<CustomClass>");
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
+            comment.Should().Be("and return a <see cref=\"Task\"/> of type <see cref=\"CustomClass\"/>");
+        }
+
+
 
         #endregion
 
@@ -279,8 +370,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromUnknown()
         {
             var roc = TestFixture.BuildGenericNameSyntax("Span", SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("Span");
         }
 
@@ -288,8 +382,11 @@ namespace CodeDocumentor.Test.Helper
         public void GenerateGenericTypeComment_CreatesValidStringFromUnknownGeneric()
         {
             var roc = TestFixture.BuildGenericNameSyntax("CustomClass", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
-
-            var comment = _returnCommentBuilder.BuildComment(roc, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be("CustomClass");
         }
 
@@ -304,7 +401,11 @@ namespace CodeDocumentor.Test.Helper
             var returnType = TestFixture.GetReturnType(roc);
 
             returnType.Should().NotBeNull();
-            var comment = _returnCommentBuilder.BuildComment(returnType, false);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = false
+            };
+            var comment = _returnCommentBuilder.BuildComment(returnType, options);
             comment.Should().Be("<typeparamref name=\"CustomClass\"></typeparamref>");
         }
 

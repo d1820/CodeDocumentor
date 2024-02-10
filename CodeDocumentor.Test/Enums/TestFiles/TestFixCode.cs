@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Test
 {
     /// <summary>
-    /// The enum tester.
+    /// The error codes.
     /// </summary>
-    public enum EnumTester
+    public enum ErrorCode
     {
     }
 }

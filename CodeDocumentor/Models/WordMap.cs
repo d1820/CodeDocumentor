@@ -18,8 +18,6 @@ namespace CodeDocumentor.Vsix2022
         /// <summary> Gets or Sets the word evaluator. </summary>
         public Func<string, string, string> WordEvaluator { get; set; }
 
-        public bool OnlyIfInFirstPositon { get; set; }
-
         /// <summary> Gets the translation. </summary>
         /// <param name="nextWord"> The next word. </param>
         /// <returns> A string. </returns>

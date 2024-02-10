@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -15,6 +16,8 @@ namespace CodeDocumentor.Helper
     /// <summary> The comment helper. </summary>
     public static class CommentHelper
     {
+        private static Regex _crefRegEx = new Regex(Constants.CREF_MATCH_REGEX_TEMPLATE);
+
         /// <summary> Creates the class comment. </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
@@ -27,8 +30,14 @@ namespace CodeDocumentor.Helper
             var comment = NameSplitter
                          .Split(name)
                          .TranslateParts()
-                         .TryPluarizeFirstWord()
-                         .TryInsertTheWord()
+                         //.TryPluarizeFirstWord()
+                         .TryInsertTheWord((parts) =>
+                         {
+                             if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                             {
+                                 parts.Insert(0, "The"); //for records we always force "The"
+                             }
+                         })
                          .ToLowerParts()
                          .JoinToString()
                          .ApplyUserTranslations()
@@ -96,7 +105,8 @@ namespace CodeDocumentor.Helper
             var comment = NameSplitter
                             .Split(name)
                             .HandleAsyncKeyword()
-                            .Tap((parts) => {
+                            .Tap((parts) =>
+                            {
                                 if (char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
                                 {
                                     parts[0] = parts[0].ToTitleCase();
@@ -158,12 +168,13 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                            .Split(name)
-                           .Tap((parts) => {
+                           .Tap((parts) =>
+                           {
                                parts.Remove("I");
                            })
                            .AddCustomPart("interface")
                            .TranslateParts()
-                           .TryPluarizeFirstWord()
+                           //.TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .JoinToString()
@@ -195,6 +206,7 @@ namespace CodeDocumentor.Helper
             }
             //var parts = SpilitNameAndToLower(name);
             var isBool2part = false;
+            var hasReturnComment = true;
             var comment = NameSplitter
                          .Split(name)
                          .Tap((parts) =>
@@ -202,13 +214,16 @@ namespace CodeDocumentor.Helper
                              isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
                          })
                          .HandleAsyncKeyword()
-                         .TryIncudeReturnType(returnType)
+                         .TryIncudeReturnType(returnType, (returnComment) =>
+                         {
+                             hasReturnComment = !string.IsNullOrEmpty(returnComment);
+                         })
                          .TryAddTodoSummary(returnType.ToString())
                          .TranslateParts()
                          .TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
-                             if (!isBool2part)
+                             if (!isBool2part && !hasReturnComment)
                              {
                                  parts.Insert(1, "the");
                              }
@@ -309,7 +324,7 @@ namespace CodeDocumentor.Helper
             {
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
-                                .AddCustomPart("If true, ", 0)
+                                .AddCustomPart("If true,", 0)
                                 .TranslateParts()
                                 .ToLowerParts()
                                 .JoinToString()
@@ -323,8 +338,13 @@ namespace CodeDocumentor.Helper
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
                                 .TranslateParts()
-                                .TryPluarizeFirstWord()
-                                .TryInsertTheWord()
+                                .TryInsertTheWord((parts) =>
+                                {
+                                    if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        parts.Insert(0, "The"); //for parameters we always force "The"
+                                    }
+                                })
                                 .ToLowerParts()
                                 .JoinToString()
                                 .ApplyUserTranslations()
@@ -398,8 +418,14 @@ namespace CodeDocumentor.Helper
             var comment = NameSplitter
                          .Split(name)
                          .TranslateParts()
-                         .TryPluarizeFirstWord()
-                         .TryInsertTheWord()
+                         //.TryPluarizeFirstWord()
+                         .TryInsertTheWord((parts) =>
+                         {
+                             if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                             {
+                                 parts.Insert(0, "The"); //for records we always force "The"
+                             }
+                         })
                          .ToLowerParts()
                          .JoinToString()
                          .ApplyUserTranslations()
@@ -445,16 +471,29 @@ namespace CodeDocumentor.Helper
         internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
         {
             var i = forceFirstCharToLower ||
-                    (parts[0] != "The" && parts[0] != "If true, "
-                        && !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
+                    (
+                        !parts[0].Equals("The", StringComparison.InvariantCultureIgnoreCase) &&
+                        !parts[0].Equals("If true,", StringComparison.InvariantCultureIgnoreCase) &&
+                        !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
                     )
                 ? 0 : 1;
             for (; i < parts.Count; i++)
             {
-                if (!parts[i].All(a => char.IsUpper(a)))
+                var part = parts[i];
+                var cref = _crefRegEx.Match(parts[i]);
+                if (cref.Success)
                 {
-                    parts[i] = parts[i].ToLower();
+                    part = _crefRegEx.Replace(part, "{cref}");
                 }
+                if (!part.All(a => char.IsUpper(a)))
+                {
+                    part = part.ToLower();
+                }
+                if (cref.Success)
+                {
+                    part = part.Replace("{cref}", cref.Value);
+                }
+                parts[i] = part;
             }
             //First letter is always caps unless it was forced lower
             if (!forceFirstCharToLower && char.IsLower(parts[0], 0))
@@ -474,19 +513,19 @@ namespace CodeDocumentor.Helper
         private static List<string> AddPropertyBooleanPart(this List<string> parts)
         {
             var booleanPart = " a value indicating whether to";
-            if (parts[0].IsPastTense())
+            if (parts[0].IsPastTense() || (parts[0].IsVerb()))
             {
-                booleanPart = " a value indicating whether ";
+                booleanPart = "a value indicating whether";
             }
             //var booleanPart = " a value indicating whether to ";
 
             //var parts = SpilitNameAndToLower(name, true).ToList();
 
             //is messes up readability. Lets remove it. ex) IsEnabledForDays
-            var isWord = parts.FirstOrDefault(o => o == "is");
-            if (isWord != null)
+            var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
+            if (isTwoLettweWord)
             {
-                parts.Remove(isWord);
+                parts.Remove(parts[0]);
                 //parts.Insert(parts.Count - 1, isWord);
             }
             parts.Insert(0, booleanPart);
@@ -511,20 +550,27 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> TryInsertTheWord(this List<string> parts, Action<List<string>> customInsertCallback = null)
+        internal static List<string> TryInsertTheWord(this List<string> parts, Action<List<string>> customInsertCallback = null)
         {
-            var checkWord = parts[0].GetWordFirstPart();
-            var skipThe = checkWord.IsVerb();
-            var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
-            if (!skipThe || addTheAnyway)
+            if (customInsertCallback != null)
             {
-                if (customInsertCallback != null)
+                customInsertCallback.Invoke(parts);
+            }
+            else
+            {
+                var checkWord = parts[0].GetWordFirstPart();
+                var skipThe = checkWord.IsVerb();
+                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+                if (!skipThe || addTheAnyway)
                 {
-                    customInsertCallback.Invoke(parts);
-                }
-                else
-                {
-                    parts.Insert(0, "The");
+                    if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        parts.Insert(0, "The");
+                    }
+                    else
+                    {
+                        parts[0] = "The"; //force casing
+                    }
                 }
             }
             return parts;
@@ -543,37 +589,62 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static string JoinToString(this List<string> parts, string delimiter = " ")
+        internal static string JoinToString(this List<string> parts, string delimiter = " ")
         {
             return $"{string.Join(delimiter, parts)}";
         }
 
-        private static List<string> TranslateParts(this List<string> parts)
+        private static bool CanEvaluateWordMap(WordMap wordMap, int partIdx)
         {
+            if (wordMap.Word == "Is" && partIdx != 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static List<string> TranslateParts(this List<string> parts)
+        {
+            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             for (var i = 0; i < parts.Count; i++)
             {
-                var p = parts[i];
-                parts[i] = p.InternalTranslateText(i);
+                var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
+                var userMaps = optionsService.WordMaps ?? Array.Empty<WordMap>();
+                foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
+                {
+                    if (!CanEvaluateWordMap(wordMap, i))
+                    {
+                        continue;
+                    }
+                    //dont run an internal word map if the user has one for the same thing
+                    if (!userMaps.Any(a => a.Word == wordMap.Word))
+                    {
+                        var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
+                        parts[i] = Regex.Replace(parts[i], wordToLookFor, wordMap.GetTranslation(nextWord));
+                    }
+                }
             }
             return parts;
         }
 
-        private static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
+        internal static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
         {
             tapAction?.Invoke(parts);
             return parts;
         }
 
-        private static List<string> TryIncudeReturnType(this List<string> parts, TypeSyntax returnType)
+        private static List<string> TryIncudeReturnType(this List<string> parts, TypeSyntax returnType, Action<string> returnTapAction = null)
         {
             if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                var returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
-
+                var returnComment = new SingleWordCommentConstruction(returnType).Comment;
+                returnTapAction?.Invoke(returnComment);
                 if (!string.IsNullOrEmpty(returnComment))
                 {
-                    if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
+                    if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) &&
+                        !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase) &&
+                        !returnComment.StartsWith("and", StringComparison.InvariantCultureIgnoreCase))
                     {
                         parts.Insert(1, "the");
                         parts.Insert(2, returnComment);
@@ -611,7 +682,7 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
+        internal static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
         {
             if (part is null)
             {
@@ -622,7 +693,7 @@ namespace CodeDocumentor.Helper
                 parts.Add(part);
                 return parts;
             }
-            part.Insert(idx, part);
+            parts.Insert(idx, part);
             return parts;
         }
     }

@@ -7,6 +7,13 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
+    public class ReturnTypeBuilderOptions
+    {
+        public bool ForcePredefinedTypeEvaluation { get; set; }
+        public bool ReturnGenericTypeAsFullString { get; set; }
+        public bool IsRootReturnType { get; set; } = true;
+        public bool UseProperCasing { get; set; }
+    }
     public abstract class BaseReturnTypeCommentConstruction
     {
         protected readonly bool UseProperCasing;
@@ -26,34 +33,28 @@ namespace CodeDocumentor.Helper
         /// Gets or Sets the dictionary comment template.
         /// </summary>
         /// <value> A string. </value>
-        public abstract string DictionaryCommentTemplate { get;  }
+        public abstract string DictionaryCommentTemplate { get; }
 
         /// <summary>
         /// Gets or Sets the list comment template.
         /// </summary>
         /// <value> A string. </value>
-        public abstract string ListCommentTemplate { get;  }
+        public abstract string ListCommentTemplate { get; }
 
         /// <summary>
         /// Gets or Sets the read only collection comment template.
         /// </summary>
         /// <value> A string. </value>
-        public abstract string ReadOnlyCollectionCommentTemplate { get;  }
+        public abstract string ReadOnlyCollectionCommentTemplate { get; }
 
-        protected BaseReturnTypeCommentConstruction(bool useProperCasing)
-        {
-            UseProperCasing = useProperCasing;
-        }
 
         /// <summary>
         /// Builds a comment
         /// </summary>
         /// <param name="returnType"> The return type. </param>
-        /// <param name="returnGenericTypeAsFullString">
-        /// Flag indicating if the full type should just be returned as a string
-        /// </param>
+        /// <param name="options">The options </param>
         /// <returns> The comment </returns>
-        internal virtual string BuildComment(TypeSyntax returnType, bool returnGenericTypeAsFullString)
+        internal virtual string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
             if (returnType is IdentifierNameSyntax identifier)
             {
@@ -63,55 +64,25 @@ namespace CodeDocumentor.Helper
                     var typeParamNode = DocumentationHeaderHelper.CreateTypeParameterRefElementSyntax(identifier.Identifier.ValueText);
                     return typeParamNode.ToFullString();
                 }
-                return GenerateIdentifierNameTypeComment(identifier);
+                return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), true);
             }
-            if (returnType is QualifiedNameSyntax)
+            if (returnType is QualifiedNameSyntax qst)
             {
-                return GenerateQualifiedNameTypeComment(returnType as QualifiedNameSyntax);
+                return GenerateGeneralComment(qst.ToString().AsSpan(), true);
             }
-            if (returnType is GenericNameSyntax)
+            if (returnType is GenericNameSyntax gst)
             {
-                return GenerateGenericTypeComment(returnType as GenericNameSyntax, returnGenericTypeAsFullString);
+                return GenerateGenericTypeComment(gst, options);
             }
-            if (returnType is ArrayTypeSyntax)
+            if (returnType is ArrayTypeSyntax ast)
             {
-                return GenerateArrayTypeComment(returnType as ArrayTypeSyntax);
+                return string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(ast.ElementType, true));
             }
-            if (returnType is PredefinedTypeSyntax)
+            if (returnType is PredefinedTypeSyntax pst)
             {
-                return GeneratePredefinedTypeComment(returnType as PredefinedTypeSyntax);
+                return GenerateGeneralComment(pst.Keyword.ValueText.AsSpan());
             }
-            return GenerateGeneralComment(returnType.ToFullString().AsSpan());
-        }
-
-        /// <summary>
-        /// Generates identifier name type comment.
-        /// </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        internal virtual string GenerateIdentifierNameTypeComment(IdentifierNameSyntax returnType)
-        {
-            return GenerateGeneralComment(returnType.Identifier.ValueText.AsSpan());
-        }
-
-        /// <summary>
-        /// Generates qualified name type comment.
-        /// </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        internal virtual string GenerateQualifiedNameTypeComment(QualifiedNameSyntax returnType)
-        {
-            return GenerateGeneralComment(returnType.ToString().AsSpan());
-        }
-
-        /// <summary>
-        /// Generates predefined type comment.
-        /// </summary>
-        /// <param name="returnType"> The return type. </param>
-        /// <returns> The comment. </returns>
-        private string GeneratePredefinedTypeComment(PredefinedTypeSyntax returnType)
-        {
-            return GenerateGeneralComment(returnType.Keyword.ValueText.AsSpan());
+            return GenerateGeneralComment(returnType.ToFullString().AsSpan(), true);
         }
 
         /// <summary>
@@ -163,7 +134,7 @@ namespace CodeDocumentor.Helper
             if (specificType is IdentifierNameSyntax identifierNameSyntax)
             {
                 value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations();
-                result = pluaralizeIdentifierType? Pluralizer.Pluralize(value): value;
+                result = pluaralizeIdentifierType ? Pluralizer.Pluralize(value) : value;
             }
             else if (specificType is PredefinedTypeSyntax predefinedTypeSyntax)
             {
@@ -184,27 +155,18 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Generates array type comment.
-        /// </summary>
-        /// <param name="arrayTypeSyntax"> The array type syntax. </param>
-        /// <returns> The comment. </returns>
-        private string GenerateArrayTypeComment(ArrayTypeSyntax arrayTypeSyntax)
-        {
-            return string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(arrayTypeSyntax.ElementType, true));
-        }
-
-        /// <summary>
         /// Generates general comment.
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
-        private string GenerateGeneralComment(ReadOnlySpan<char> returnType)
+        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, bool returnCref = false)
         {
-            //TODO: change the whole comment flow to support cref
-            //We dont lowercase here cause its probably a type ie) Span, Custom<T>
-            //var cref = $"<see cref=\"{returnType.ToString()}\"/>";
-            //return cref;
-            return returnType.ToString();
+            var rt = returnType.ToString();
+            if (returnCref)
+            {
+                return $"<see cref=\"{rt}\"/>";
+            }
+            return rt;
         }
 
         /// <summary>
@@ -212,10 +174,10 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The string </returns>
-        private string GenerateGenericTypeComment(GenericNameSyntax returnType, bool returnGenericTypeAsFullString)
+        private string GenerateGenericTypeComment(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             // this will return the full generic Ex. Task<Request>- which then will get added to a CDATA
-            if (returnGenericTypeAsFullString)
+            if (options.ReturnGenericTypeAsFullString)
             {
                 return returnType.ToString();
             }
@@ -229,7 +191,12 @@ namespace CodeDocumentor.Helper
                 items.Reverse();
 
                 var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                return string.Format(ReadOnlyCollectionCommentTemplate, resultStr);
+                var comment = string.Format(ReadOnlyCollectionCommentTemplate, resultStr);
+                if (options.IsRootReturnType)
+                {
+                    comment = comment.ToTitleCase();
+                }
+                return comment;
             }
 
             // IEnumerable IList List
@@ -240,7 +207,12 @@ namespace CodeDocumentor.Helper
                 BuildChildrenGenericArgList(argType, items, true);
                 items.Reverse();
                 var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                return string.Format(ListCommentTemplate, resultStr);
+                var comment = string.Format(ListCommentTemplate, resultStr);
+                if (options.IsRootReturnType)
+                {
+                    comment = comment.ToTitleCase();
+                }
+                return comment;
             }
 
             if (returnType.IsDictionary())
@@ -253,27 +225,50 @@ namespace CodeDocumentor.Helper
                     BuildChildrenGenericArgList(argType2, items, pluaralizeIdentifierType: false);
                     items.Reverse();
                     var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                    return string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), resultStr);
+                    var comment = string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), resultStr);
+                    if (options.IsRootReturnType)
+                    {
+                        //This ensure the return string has correct casing
+                        comment = comment.ToTitleCase();
+                    }
+                    return comment;
                 }
                 return GenerateGeneralComment(genericTypeStr.AsSpan());
             }
 
-            if (returnType.IsTask() || returnType.IsGenericActionResult())
+            if (returnType.IsTask() || returnType.IsGenericActionResult() || returnType.IsGenericValueTask())
             {
-                var prefix = "<see cref=\"Task\"/> of type ";
+                var prefix = "and return a <see cref=\"Task\"/> of type ";
                 if (returnType.IsGenericActionResult())
                 {
-                    prefix += "<see cref=\"ActionResult\"/> of type ";
+                    prefix = "and return an <see cref=\"ActionResult\"/> of type ";
+                }
+                if (returnType.IsGenericValueTask())
+                {
+                    prefix = "and return a <see cref=\"ValueTask\"/> of type ";
                 }
                 if (returnType.TypeArgumentList.Arguments.Count == 1)
                 {
                     var firstType = returnType.TypeArgumentList.Arguments.First();
+                    if (firstType.IsReadOnlyCollection() || firstType.IsDictionary() || firstType.IsList())
+                    {
+                        prefix = prefix.Replace("type ", "");
+                    }
+
                     //List<string> items = new List<string>();
                     //BuildChildrenGenericArgList(firstType, items, false, false);
                     //TODO: fix comments flow to support cref nodes
-                    var test = prefix + BuildComment(firstType, returnGenericTypeAsFullString);
+                    var newOptions = new ReturnTypeBuilderOptions
+                    {
+                        IsRootReturnType = false,
+                        ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
+                        UseProperCasing = options.UseProperCasing,
+                        ForcePredefinedTypeEvaluation = true //maybe??
+                    };
+                    var buildComment = BuildComment(firstType, newOptions);
+                    var comment = prefix + buildComment;
 
-                    return BuildComment(firstType, returnGenericTypeAsFullString);
+                    return comment;
                 }
                 //This should be impossible, but will handle just in case
                 var builder = new StringBuilder();
@@ -284,7 +279,14 @@ namespace CodeDocumentor.Helper
                     {
                         builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), UseProperCasing)}");
                     }
-                    builder.Append($"{BuildComment(item, returnGenericTypeAsFullString)}");
+                    var newOptions = new ReturnTypeBuilderOptions
+                    {
+                        IsRootReturnType = false,
+                        ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
+                        UseProperCasing = options.UseProperCasing,
+                        ForcePredefinedTypeEvaluation = true
+                    };
+                    builder.Append($"{BuildComment(item, newOptions)}");
                     if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
                     {
                         builder.Append(" and ");

@@ -10,37 +10,46 @@ namespace CodeDocumentor.Helper
     {
         /// <summary> Gets or Sets the array comment template. </summary>
         /// <value> A string. </value>
-        public override string ArrayCommentTemplate { get; } = "An array of {0}";
+        public override string ArrayCommentTemplate { get; } = "an array of {0}";
 
         /// <summary> Gets or Sets the dictionary comment template. </summary>
         /// <value> A string. </value>
-        public override string DictionaryCommentTemplate { get; } = "A dictionary with a key of type {0} and a value of type {1}";
+        public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
 
         /// <summary> Gets or Sets the list comment template. </summary>
         /// <value> A string. </value>
-        public override string ListCommentTemplate { get; } = "A list of {0}";
+        public override string ListCommentTemplate { get; } = "a list of {0}";
 
         /// <summary> Gets or Sets the read only collection comment template. </summary>
         /// <value> A string. </value>
-        public override string ReadOnlyCollectionCommentTemplate { get; } = "A read only collection of {0}";
+        public override string ReadOnlyCollectionCommentTemplate { get; } = "a read only collection of {0}";
 
         //used for testing
-        internal ReturnCommentConstruction() : base(true)
+        internal ReturnCommentConstruction()
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="ReturnCommentConstruction" /> class. </summary>
-        /// <param name="returnType"> The return type. </param>
-        public ReturnCommentConstruction(TypeSyntax returnType) : base(true)
+        public ReturnCommentConstruction(TypeSyntax returnType)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var comment = BuildComment(returnType, !optionsService.UseNaturalLanguageForReturnNode);
+            var options = new ReturnTypeBuilderOptions
+            {
+                ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode
+            };
+            var comment = BuildComment(returnType, options);
             if (optionsService.UseNaturalLanguageForReturnNode)
             {
-                comment = comment.ApplyUserTranslations().WithPeriod();
-                if (!string.IsNullOrEmpty(comment) && comment != ".")
+                comment = NameSplitter
+                              .Split(comment)
+                              .TranslateParts()
+                              .ToLowerParts()
+                              .JoinToString()
+                              .ApplyUserTranslations()
+                              .WithPeriod();
+                //comment = comment.ApplyUserTranslations().WithPeriod();
+                if (!string.IsNullOrEmpty(comment))
                 {
-                    Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment);
+                    Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();
                 }
             }
             else
@@ -49,29 +58,28 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ReturnCommentConstruction"/> class.
-        /// </summary>
-        /// <param name="returnType">The return type.</param>
-        /// <param name="returnGenericTypeAsFullString">If true, return generic type as full string.</param>
-        public ReturnCommentConstruction(TypeSyntax returnType, bool returnGenericTypeAsFullString) : base(true)
+        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
-            var comment = BuildComment(returnType, returnGenericTypeAsFullString).ApplyUserTranslations().WithPeriod();
-            if (!string.IsNullOrEmpty(comment) && comment != ".")
+            options.UseProperCasing = true;
+            var comment = BuildComment(returnType, options);
+
+            comment = NameSplitter
+                              .Split(comment)
+                              .TranslateParts()
+                              .ToLowerParts()
+                              .JoinToString()
+                              .ApplyUserTranslations()
+                              .WithPeriod();
+
+            if (!string.IsNullOrEmpty(comment))
             {
-                Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment);
+                Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();
             }
         }
 
-        /// <summary> Builds a string comment for a summary node </summary>
-        /// <param name="returnType"> </param>
-        /// <param name="returnGenericTypeAsFullString">
-        ///     Flag indicating if the full type should just be returned as a string
-        /// </param>
-        /// <returns> The comment </returns>
-        internal override string BuildComment(TypeSyntax returnType, bool returnGenericTypeAsFullString)
+        internal override string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
-            return base.BuildComment(returnType, returnGenericTypeAsFullString).Trim();
+            return base.BuildComment(returnType, options).Trim();
         }
     }
 }

@@ -1,6 +1,3 @@
-
-using System.Linq;
-
 namespace CodeDocumentor.Helper
 {
     public static class Pluralizer
@@ -14,6 +11,7 @@ namespace CodeDocumentor.Helper
             //    UpsertIrregularRule(item.Word, item.Translation);
             //}
             _netPluralizer = new Pluralize.NET.Pluralizer();
+            _netPluralizer.AddIrregularRule("error", "error");
         }
 
         public static bool IsPlural(string word)

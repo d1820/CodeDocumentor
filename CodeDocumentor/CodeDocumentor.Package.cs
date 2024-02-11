@@ -44,8 +44,6 @@ namespace CodeDocumentor.Vsix2022
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        //public static bool IsDebugMode = Debugger.IsAttached;
-
         public static Func<Container> ContainerFactory { get; set; }
 
         public static Container DIContainer()
@@ -81,17 +79,6 @@ namespace CodeDocumentor.Vsix2022
         {
             get
             {
-                //if (_options == null)
-                //{
-                //    lock (_syncRoot)
-                //    {
-                //        if (_options == null)
-                //        {
-                //            LoadPackage();
-                //        }
-                //    }
-                //}
-
                 return _options;
             }
             internal set
@@ -124,27 +111,7 @@ namespace CodeDocumentor.Vsix2022
             var optService = DIContainer().GetInstance<IOptionsService>();
             optService.SetDefaults(_options);
             Translator.Initialize(optService);
-            //LoadPackage();
         }
-
-        //private static void LoadPackage()
-        //{
-        //    ThreadHelper.ThrowIfNotOnUIThread();
-        //    var shell = (IVsShell)GetGlobalService(typeof(SVsShell));
-        //    var guid = new Guid(VsixOptions.PackageGuidString);
-        //    if (shell != null)
-        //    {
-        //        if (shell.IsPackageLoaded(ref guid, out IVsPackage _) != VSConstants.S_OK)
-        //        {
-        //            ErrorHandler.Succeeded(shell.LoadPackage(ref guid, out _));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //This is used for unit testing to work, this would not get triggered when running as real vsix
-        //        ErrorHandler.Succeeded(1);
-        //    }
-        //}
 
         #endregion
     }

@@ -94,7 +94,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Execute", "int", "Execute and return a valuetask of type integer.", "ValueTask")]
         [InlineData("Execute", "Person", "Execute and return a valuetask of type person.", "ValueTask")]
         [InlineData("ExecuteAsync", "string", "Execute and return a valuetask of type string.", "ValueTask", true, false)]
-        [InlineData("ExecuteAsync", "string", "Execute and return a valuetask type string asynchronously.", "ValueTask", false, false)]
+        [InlineData("ExecuteAsync", "string", "Execute and return a valuetask of type string asynchronously.", "ValueTask", false, false)]
         public void CreateMethodComment_ReturnsValidNaturalLanguage(string name, string returnType, string expected, string genericReturnType = null, bool excludeAsyncSuffix = false, bool useToDoCommentsOnSummaryError = true)
         {
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>

@@ -10,6 +10,8 @@ namespace CodeDocumentor.Vsix2022
     {
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
+        public static string[] EXCLUDE_THE_LIST_FOR_2PART_COMMENTS { get; set; } = new[] { "todo", "on" };
+
         private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",
                                                                     "has", "had", "having", "set", "get",
                                                                     "did", "can", "shall", "will", "may", "might", "must",

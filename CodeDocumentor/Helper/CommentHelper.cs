@@ -154,14 +154,15 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
-            //var parts = SpilitNameAndToLower(name);
-            var isBool2part = false;
+            var isBool = false;
+            var is2partPlusAsync = false;
             var hasReturnComment = true;
             var comment = NameSplitter
                          .Split(name)
                          .Tap((parts) =>
                          {
-                             isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
+                             is2partPlusAsync = (parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase)));
+                             isBool = returnType.IsBoolReturnType();
                          })
                          .HandleAsyncKeyword()
                          .TryIncudeReturnType(returnType, (returnComment) =>
@@ -173,7 +174,11 @@ namespace CodeDocumentor.Helper
                          .TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
-                             if (!isBool2part && !hasReturnComment)
+                             //this means any name of a method that is not a return type of bool and not 2 part (+async) should insert "the" into the sentence
+                             if (!isBool &&
+                                !hasReturnComment &&
+                                !Constants.EXCLUDE_THE_LIST_FOR_2PART_COMMENTS.Any(a => a.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase)) &&
+                                is2partPlusAsync)
                              {
                                  parts.Insert(1, "the");
                              }
@@ -537,6 +542,10 @@ namespace CodeDocumentor.Helper
                         parts = new List<string> { "TODO: Add Summary" };
                     }
                 }
+            }
+            else
+            {
+                returnTapAction?.Invoke(null);
             }
             return parts;
         }

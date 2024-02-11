@@ -77,7 +77,7 @@ namespace CodeDocumentor.Test
             var simplifiedDoc = await Simplifier.ReduceAsync(document, Simplifier.Annotation);
             var root = await simplifiedDoc.GetSyntaxRootAsync();
             root = Formatter.Format(root, Formatter.Annotation, simplifiedDoc.Project.Solution.Workspace);
-            return root.GetText().ToString().Replace("&lt;", "<").Replace("&gt;", ">");
+            return root.GetText().ToString();
         }
     }
 }

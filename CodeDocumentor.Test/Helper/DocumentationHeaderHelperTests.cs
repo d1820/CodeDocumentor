@@ -10,10 +10,10 @@ namespace CodeDocumentor.Test.Helper
     public class DocumentationHeaderHelperTests
     {
         [Fact]
-        public void CreateReturnElementSyntax_ReturnsTypeParamRefAsEmbededNodeInReturn()
+        public void CreateReturnElementSyntax_ReturnsTypeParamRefAsEmbeddedNodeInReturn()
         {
-            var str = "<typeparamref name=\"TResult\"></typeparamref>";
-            var expected = "<returns>A <typeparamref name=\"TResult\"></typeparamref></returns>";
+            const string str = "<typeparamref name=\"TResult\"></typeparamref>";
+            const string expected = "<returns>A <typeparamref name=\"TResult\"></typeparamref></returns>";
             var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
             result.ToFullString().Should().Be(expected);
         }
@@ -21,8 +21,8 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateReturnElementSyntax_ReturnsCDATAOfTaskInReturn()
         {
-            var str = "Task<int>";
-            var expected = "<returns><![CDATA[Task<int>]]></returns>";
+            const string str = "Task<int>";
+            const string expected = "<returns><![CDATA[Task<int>]]></returns>";
             var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
             result.ToFullString().Should().Be(expected);
         }

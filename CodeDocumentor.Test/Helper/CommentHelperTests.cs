@@ -196,14 +196,13 @@ namespace CodeDocumentor.Test.Helper
             comment.Should().Be(expected);
         }
 
-
         [Theory]
         [InlineData("Do", "Does")]
         [InlineData("To", "Converts to")]
         [InlineData("Is", "Checks if is")]
         [InlineData("Ensure", "Checks if is")]
         [InlineData("Dto", "Data transfer object")]
-        public void InteralTranslate_ConvertsCorrectly(string word, string converted)
+        public void InternalTranslate_ConvertsCorrectly(string word, string converted)
         {
             Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
             var result = CommentHelper.TranslateParts(new List<string> { word });

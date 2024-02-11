@@ -13,7 +13,6 @@ namespace CodeDocumentor.Test.Properties
     [SuppressMessage("XMLDocumentation", "")]
     public partial class PropertyUnitTest
     {
-
         /// <summary>
         /// The property with getter setter test code.
         /// </summary>
@@ -397,7 +396,6 @@ namespace ConsoleApp4
     /// <summary>
     /// The property unit test.
     /// </summary>
-
     public partial class PropertyUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
@@ -417,7 +415,7 @@ namespace ConsoleApp4
         [InlineData("InheritDocTestCode.cs")]
         public async Task NoDiagnosticsShow(string testCode)
         {
-            if (testCode == string.Empty)
+            if (testCode?.Length == 0)
             {
                 await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
@@ -460,7 +458,8 @@ namespace ConsoleApp4
         [InlineData(PrivatePropertyInterfaceTestCode, PrivatePropertyInterfaceTestFixCode, 10, 10, TestFixture.DIAG_TYPE_PRIVATE)]
         public async Task ShowPropertyDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) => {
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            {
                 _fixture.SetPublicProcessingOption(o, diagType);
             });
             var expected = new DiagnosticResult

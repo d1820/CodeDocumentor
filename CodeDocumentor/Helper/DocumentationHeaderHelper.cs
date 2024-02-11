@@ -115,29 +115,29 @@ namespace CodeDocumentor.Helper
         /// <param name="node"> The node. </param>
         /// <param name="recursive"> If true, recursive. </param>
         /// <returns> A bool. </returns>
-        public static bool HasAnalyzerExclusion(SyntaxNode node, bool recursive = true, List<AttributeSyntax> attrs = null)
+        public static bool HasAnalyzerExclusion(SyntaxNode node, bool recursive = true, List<AttributeSyntax> attributes = null)
         {
             if (node == null)
             {
                 return false;
             }
-            if (attrs == null)
+            if (attributes == null)
             {
-                attrs = new List<AttributeSyntax>();
+                attributes = new List<AttributeSyntax>();
             }
 
             if (node is MemberDeclarationSyntax memSyntax)
             {
-                attrs.AddRange(GetAttributes(memSyntax));
+                attributes.AddRange(GetAttributes(memSyntax));
             }
 
             if (node is CompilationUnitSyntax compSyntax)
             {
-                attrs.AddRange(GetAttributes(compSyntax));
+                attributes.AddRange(GetAttributes(compSyntax));
             }
 
-            var hasExclusion = attrs.Any();
-            return !hasExclusion && recursive ? HasAnalyzerExclusion(node.Parent, recursive, attrs) : hasExclusion;
+            var hasExclusion = attributes.Any();
+            return !hasExclusion && recursive ? HasAnalyzerExclusion(node.Parent, recursive, attributes) : hasExclusion;
         }
 
         /// <summary>

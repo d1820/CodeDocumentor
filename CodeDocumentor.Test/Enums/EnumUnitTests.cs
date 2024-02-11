@@ -11,7 +11,6 @@ namespace CodeDocumentor.Test.Enums
     /// <summary>
     /// The enum unit test.
     /// </summary>
-
     public class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;

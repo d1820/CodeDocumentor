@@ -37,7 +37,6 @@ namespace CodeDocumentor.Test.TestHelpers
 
         public void SetDefaults(IOptionPageGrid options)
         {
-
         }
 
         public void Update(Vsix2022.Settings settings)

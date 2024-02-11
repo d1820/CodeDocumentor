@@ -13,12 +13,12 @@ namespace CodeDocumentor.Test.Helper
     public class ReturnCommentConstructionTests : IClassFixture<TestFixture>
     {
         private readonly ReturnCommentConstruction _returnCommentBuilder;
-        private ReturnTypeBuilderOptions _options;
+        private readonly ReturnTypeBuilderOptions _options;
 
-        public ReturnCommentConstructionTests(TestFixture testFixure, ITestOutputHelper output)
+        public ReturnCommentConstructionTests(TestFixture testFixture, ITestOutputHelper output)
         {
             _returnCommentBuilder = new ReturnCommentConstruction();
-            testFixure.Initialize(output);
+            testFixture.Initialize(output);
             Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
 
             _options = new ReturnTypeBuilderOptions
@@ -302,8 +302,6 @@ namespace CodeDocumentor.Test.Helper
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));
         }
-
-
 
         #endregion
 

@@ -128,7 +128,11 @@ namespace CodeDocumentor.Helper
             var newWord = true;
             foreach (var c in text)
             {
-                if (newWord) { yield return char.ToUpper(c); newWord = false; }
+                if (newWord)
+                {
+                    yield return char.ToUpper(c);
+                    newWord = false;
+                }
                 else
                 {
                     yield return char.ToLower(c);

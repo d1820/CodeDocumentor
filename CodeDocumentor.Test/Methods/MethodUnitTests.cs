@@ -24,7 +24,7 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("InheritDocTestCode.cs")]
         public async Task NoDiagnosticsShow(string testCode)
         {
-            if (testCode == string.Empty)
+            if (testCode?.Length == 0)
             {
                 await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }

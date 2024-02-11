@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Helper;
 using FluentAssertions;
@@ -61,7 +61,7 @@ namespace CodeDocumentor.Test.Helper
         }
 
         [Fact]
-        public void Split_ReturnsWordsHandlingGroupsOfUppercaseLettersAtBegining()
+        public void Split_ReturnsWordsHandlingGroupsOfUppercaseLettersAtBeginning()
         {
             var result = NameSplitter.Split("PROPExecuteOCRAction");
             result.Count.Should().Be(4);

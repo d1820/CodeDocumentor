@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -112,18 +112,18 @@ namespace CodeDocumentor.Test
         /// <param name="expectedResults"> Diagnostic Results that should have appeared in the code </param>
         private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expectedResults)
         {
-            int expectedCount = expectedResults.Count();
-            int actualCount = actualResults.Count();
+            var expectedCount = expectedResults.Length;
+            var actualCount = actualResults.Count();
 
             if (expectedCount != actualCount)
             {
-                string diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzer, actualResults.ToArray()) : "    NONE.";
+                var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzer, actualResults.ToArray()) : "    NONE.";
 
-               Assert.Fail(
-                    string.Format("Mismatch between number of diagnostics returned, expected \"{0}\" actual \"{1}\"\r\n\r\nDiagnostics:\r\n{2}\r\n", expectedCount, actualCount, diagnosticsOutput));
+                Assert.Fail(
+                     string.Format("Mismatch between number of diagnostics returned, expected \"{0}\" actual \"{1}\"\r\n\r\nDiagnostics:\r\n{2}\r\n", expectedCount, actualCount, diagnosticsOutput));
             }
 
-            for (int i = 0; i < expectedResults.Length; i++)
+            for (var i = 0; i < expectedResults.Length; i++)
             {
                 var actual = actualResults.ElementAt(i);
                 var expected = expectedResults[i];
@@ -139,9 +139,9 @@ namespace CodeDocumentor.Test
                 {
                     if (actual.Location != Location.None)
                     {
-                       Assert.Fail(
-                            string.Format("Expected:\nA project diagnostic with No location\nActual:\n{0}",
-                            FormatDiagnostics(analyzer, actual)));
+                        Assert.Fail(
+                             string.Format("Expected:\nA project diagnostic with No location\nActual:\n{0}",
+                             FormatDiagnostics(analyzer, actual)));
                     }
                 }
                 else
@@ -151,13 +151,13 @@ namespace CodeDocumentor.Test
 
                     if (additionalLocations.Length != expected.Locations.Length - 1)
                     {
-                       Assert.Fail(
-                            string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
-                                expected.Locations.Length - 1, additionalLocations.Length,
-                                FormatDiagnostics(analyzer, actual)));
+                        Assert.Fail(
+                             string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
+                                 expected.Locations.Length - 1, additionalLocations.Length,
+                                 FormatDiagnostics(analyzer, actual)));
                     }
 
-                    for (int j = 0; j < additionalLocations.Length; ++j)
+                    for (var j = 0; j < additionalLocations.Length; ++j)
                     {
                         VerifyDiagnosticLocation(analyzer, actual, additionalLocations[j], expected.Locations[j + 1]);
                     }
@@ -165,23 +165,23 @@ namespace CodeDocumentor.Test
 
                 if (actual.Id != expected.Id)
                 {
-                   Assert.Fail(
-                        string.Format("Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Id, actual.Id, FormatDiagnostics(analyzer, actual)));
+                    Assert.Fail(
+                         string.Format("Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                             expected.Id, actual.Id, FormatDiagnostics(analyzer, actual)));
                 }
 
                 if (actual.Severity != expected.Severity)
                 {
-                   Assert.Fail(
-                        string.Format("Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Severity, actual.Severity, FormatDiagnostics(analyzer, actual)));
+                    Assert.Fail(
+                         string.Format("Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                             expected.Severity, actual.Severity, FormatDiagnostics(analyzer, actual)));
                 }
 
                 if (actual.GetMessage() != expected.Message)
                 {
-                   Assert.Fail(
-                        string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)));
+                    Assert.Fail(
+                         string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                             expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)));
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace CodeDocumentor.Test
         {
             var actualSpan = actual.GetLineSpan();
 
-            Assert.True(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
+            Assert.True(actualSpan.Path == expected.Path || (actualSpan.Path?.Contains("Test0.") == true && expected.Path.Contains("Test.")),
                 string.Format("Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                     expected.Path, actualSpan.Path, FormatDiagnostics(analyzer, diagnostic)));
 
@@ -209,9 +209,9 @@ namespace CodeDocumentor.Test
             {
                 if (actualLinePosition.Line + 1 != expected.Line)
                 {
-                   Assert.Fail(
-                        string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
+                    Assert.Fail(
+                         string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                             expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
                 }
             }
 
@@ -220,9 +220,9 @@ namespace CodeDocumentor.Test
             {
                 if (actualLinePosition.Character + 1 != expected.Column)
                 {
-                   Assert.Fail(
-                        string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
+                    Assert.Fail(
+                         string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                             expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
                 }
             }
         }
@@ -240,9 +240,9 @@ namespace CodeDocumentor.Test
         private static string FormatDiagnostics(DiagnosticAnalyzer analyzer, params Diagnostic[] diagnostics)
         {
             var builder = new StringBuilder();
-            for (int i = 0; i < diagnostics.Length; ++i)
+            for (var i = 0; i < diagnostics.Length; ++i)
             {
-                builder.AppendLine("// " + diagnostics[i].ToString());
+                builder.AppendLine("// " + diagnostics[i]);
 
                 var analyzerType = analyzer.GetType();
                 var rules = analyzer.SupportedDiagnostics;
@@ -261,7 +261,7 @@ namespace CodeDocumentor.Test
                             Assert.True(location.IsInSource,
                                 $"Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata: {diagnostics[i]}\r\n");
 
-                            string resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
+                            var resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
                             var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
                             builder.AppendFormat("{0}({1}, {2}, {3}.{4})",

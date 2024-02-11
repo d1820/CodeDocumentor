@@ -7,7 +7,7 @@ namespace CodeDocumentor.Helper
     /// <summary>
     ///  Verifies whether a member is private.
     /// </summary>
-    public class PrivateMemberVerifier
+    public static class PrivateMemberVerifier
     {
         /// <summary>
         ///  Are the private member.

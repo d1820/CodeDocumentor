@@ -8,6 +8,8 @@
 
 A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method. While VS2022 provides basic documentation capabilities this fills the gap in trying to populate the summary and return nodes. This also gives control over how the summaries are translated.
 
+In the age of copilots this extension is still valuable when working on projects where sending code to the cloud is not possible. This creates the documentation locally on your machine. Nothing is ever sent to the cloud. No Internet connection is required for this to work.
+
 ## Installation
 ---
 
@@ -81,6 +83,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Enable comments for non public fields|When documenting fields allow adding documentation headers if the item is not public. This only applies to const and static fields.|
 | Use natural language for return comments|When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example Enabled: ```<return>A List of Strings</return>``` Example Disabled: ``` <returns><![CDATA[Task<int>]]></returns>```|
 | Use TODO comment when summary can not be determined|When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated. |
+| Try to include return types in documentation|When documenting methods and properties (and Use natural language for return comments is enabled) try to include <cref/> in the return element. In methods that are named 2 words or less try and generate ```<cref/>``` elements for those types in the method comment |
 | Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |
 | Preserve Existing Summary Text|When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.|
 | Default Diagnostics | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change. |
@@ -104,7 +107,18 @@ As part of the settings WordMaps can be defined to help control how you want tex
 
 These are the recommended settings that create the best output experience
 
-![RecommenedSettings](./GifInstruction/RecommendedSettings.png)
+| Setting | Description |
+|--|--|
+| Exclude async wording from comments |False |
+| Include ```<value>``` node in property comments|False |
+| Enable comments for public members only|False |
+| Enable comments for non public fields|False|
+| Use natural language for return comments|False|
+| Use TODO comment when summary can not be determined|True |
+| Try to include return types in documentation|True |
+| Preserve Existing Summary Text|True|
+| Default Diagnostics | Warning |
+
 
 
 ## Also Supports

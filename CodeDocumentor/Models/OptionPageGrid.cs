@@ -167,7 +167,7 @@ namespace CodeDocumentor.Vsix2022
         /// <value> A bool. </value>
         [Category(SummarySubCategory)]
         [DisplayName("Try to include return types in documentation")]
-        [Description("When documenting methods and properties and natural language is enabled try to include <cref/> in the return element. In methods that are named 2 words or less try and generate <cref/> elements for those types in the method comment")]
+        [Description("When documenting methods and properties (and Use natural language for return comments is enabled) try to include <cref/> in the return element. In methods that are named 2 words or less try and generate <cref/> elements for those types in the method comment")]
         public bool TryToIncludeCrefsForReturnTypes { get; set; }
 
         //Any properties that need defaults should be mnanaged in the Settings Class. This is only a pass through for VS

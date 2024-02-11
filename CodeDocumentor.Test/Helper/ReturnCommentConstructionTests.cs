@@ -34,7 +34,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A read only collection of strings");
+            comment.Should().Be("A read only collection of strings.");
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A read only collection of list of strings");
+            comment.Should().Be("A read only collection of list of strings.");
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A read only collection of a read only collection of strings");
+            comment.Should().Be("A read only collection of a read only collection of strings.");
         }
 
         #endregion
@@ -78,7 +78,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of strings");
+            comment.Should().Be("A list of strings.");
         }
 
         [Fact]
@@ -92,7 +92,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of a list of strings");
+            comment.Should().Be("A list of a list of strings.");
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of a list of a list of strings");
+            comment.Should().Be("A list of a list of a list of strings.");
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of strings");
+            comment.Should().Be("A list of strings.");
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of a list of strings");
+            comment.Should().Be("A list of a list of strings.");
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of integers");
+            comment.Should().Be("A list of integers.");
         }
 
         [Fact]
@@ -158,7 +158,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of a list of integers");
+            comment.Should().Be("A list of a list of integers.");
         }
 
         #endregion
@@ -174,7 +174,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of strings");
+            comment.Should().Be("A list of strings.");
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of a list of strings");
+            comment.Should().Be("A list of a list of strings.");
         }
 
         #endregion
@@ -231,7 +231,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A dictionary with a key of type string and a value of type string");
+            comment.Should().Be("A dictionary with a key of type string and a value of type string.");
         }
 
         [Fact]
@@ -243,7 +243,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A dictionary with a key of type integer and a value of type integer");
+            comment.Should().Be("A dictionary with a key of type integer and a value of type integer.");
         }
 
         [Fact]
@@ -255,7 +255,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A dictionary with a key of type string and a value of type string");
+            comment.Should().Be("A dictionary with a key of type string and a value of type string.");
         }
 
         [Fact]
@@ -268,7 +268,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings.");
         }
 
         [Fact]
@@ -282,75 +282,110 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of a list of strings");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of a list of strings.");
         }
 
         #endregion
 
-        #region Task
+        #region Task & ActionResult & ValueTask
 
-        [Fact]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfString()
+        [Theory]
+        [InlineData("Task", true, "and return a")]
+        [InlineData("Task", false, "returns a", true)]
+        [InlineData("ValueTask", true, "and return a")]
+        [InlineData("ValueTask", false, "returns a", true)]
+        [InlineData("ActionResult", true, "and return an")]
+        [InlineData("ActionResult", false, "returns an", true)]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfString(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
-            var roc = TestFixture.BuildGenericNameSyntax("Task", SyntaxKind.StringKeyword);
+            var roc = TestFixture.BuildGenericNameSyntax(type, SyntaxKind.StringKeyword);
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = false
+                ReturnGenericTypeAsFullString = false,
+                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("and return a <see cref=\"Task\"/> of type string");
+            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type string" + (hasPeriod ? "." : ""));
         }
 
-        [Fact]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfList()
+        [Theory]
+        //[InlineData("Task", true, "and return a")]
+        //[InlineData("Task", false, "returns a", true)]
+        //[InlineData("ValueTask", true, "and return a")]
+        //[InlineData("ValueTask", false, "returns a", true)]
+        [InlineData("ActionResult", true, "and return an")]
+        [InlineData("ActionResult", false, "returns an", true)]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfList(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
-            var roc = TestFixture.BuildGenericNameSyntax("Task", list);
+            var roc = TestFixture.BuildGenericNameSyntax(type, list);
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = false
+                ReturnGenericTypeAsFullString = false,
+                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("and return a <see cref=\"Task\"/> of a list of strings");
+            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a list of strings" + (hasPeriod ? "." : ""));
         }
 
-        [Fact]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfDictionary()
+        [Theory]
+        [InlineData("Task", true, "and return a")]
+        [InlineData("Task", false, "returns a", true)]
+        [InlineData("ValueTask", true, "and return a")]
+        [InlineData("ValueTask", false, "returns a", true)]
+        [InlineData("ActionResult", true, "and return an")]
+        [InlineData("ActionResult", false, "returns an", true)]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfDictionary(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var dict = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
-            var roc = TestFixture.BuildGenericNameSyntax("Task", dict);
+            var roc = TestFixture.BuildGenericNameSyntax(type, dict);
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = false
+                ReturnGenericTypeAsFullString = false,
+                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("and return a <see cref=\"Task\"/> of a dictionary with a key of type string and a value of type list of strings");
+            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a dictionary with a key of type string and a value of type list of strings" + (hasPeriod ? "." : ""));
         }
 
-        [Fact]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomDoubleGenericType()
+        [Theory]
+        [InlineData("Task", true, "and return a")]
+        [InlineData("Task", false, "returns a", true)]
+        [InlineData("ValueTask", true, "and return a")]
+        [InlineData("ValueTask", false, "returns a", true)]
+        [InlineData("ActionResult", true, "and return an")]
+        [InlineData("ActionResult", false, "returns an", true)]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomDoubleGenericType(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var custom = TestFixture.BuildGenericNameSyntax("CustomDoubleGenericType", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
-            var roc = TestFixture.BuildGenericNameSyntax("Task", custom);
+            var roc = TestFixture.BuildGenericNameSyntax(type, custom);
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = false
+                ReturnGenericTypeAsFullString = false,
+                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("and return a <see cref=\"Task\"/> of type CustomDoubleGenericType");
+            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type CustomDoubleGenericType" + (hasPeriod ? "." : ""));
         }
 
-        [Fact]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomClass()
+        [Theory]
+        [InlineData("Task", true, "and return a")]
+        [InlineData("Task", false, "returns a", true)]
+        [InlineData("ValueTask", true, "and return a")]
+        [InlineData("ValueTask", false, "returns a", true)]
+        [InlineData("ActionResult", true, "and return an")]
+        [InlineData("ActionResult", false, "returns an", true)]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomClass(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
-            var roc = SyntaxFactory.ParseTypeName($"Task<CustomClass>");
+            var roc = SyntaxFactory.ParseTypeName($"{type}< CustomClass>");
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = false
+                ReturnGenericTypeAsFullString = false,
+                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("and return a <see cref=\"Task\"/> of type <see cref=\"CustomClass\"/>");
+            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));
         }
 
 

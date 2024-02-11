@@ -7,13 +7,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    public class ReturnTypeBuilderOptions
-    {
-        public bool ForcePredefinedTypeEvaluation { get; set; }
-        public bool ReturnGenericTypeAsFullString { get; set; }
-        public bool IsRootReturnType { get; set; } = true;
-        public bool UseProperCasing { get; set; }
-    }
     public abstract class BaseReturnTypeCommentConstruction
     {
         protected readonly bool UseProperCasing;
@@ -22,7 +15,7 @@ namespace CodeDocumentor.Helper
         /// Gets or Sets the array comment template.
         /// </summary>
         /// <value> A string. </value>
-        public abstract string ArrayCommentTemplate { get; }
+        public string ArrayCommentTemplate { get; } = "an array of {0}";
 
         /// <summary>
         /// Generates the comment.
@@ -34,19 +27,6 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <value> A string. </value>
         public abstract string DictionaryCommentTemplate { get; }
-
-        /// <summary>
-        /// Gets or Sets the list comment template.
-        /// </summary>
-        /// <value> A string. </value>
-        public abstract string ListCommentTemplate { get; }
-
-        /// <summary>
-        /// Gets or Sets the read only collection comment template.
-        /// </summary>
-        /// <value> A string. </value>
-        public abstract string ReadOnlyCollectionCommentTemplate { get; }
-
 
         /// <summary>
         /// Builds a comment
@@ -182,6 +162,7 @@ namespace CodeDocumentor.Helper
                 return returnType.ToString();
             }
 
+
             var genericTypeStr = returnType.Identifier.ValueText;
             if (returnType.IsReadOnlyCollection())
             {
@@ -195,7 +176,8 @@ namespace CodeDocumentor.Helper
 
                 var comment = items.ToLowerParts(true)
                                     .PluaralizeLastWord()
-                                    .Tap((parts) => {
+                                    .Tap((parts) =>
+                                    {
                                         for (var i = 0; i < parts.Count; i++)
                                         {
                                             parts[i] = parts[i].Replace(returnName, $"a {returnName}");
@@ -251,26 +233,30 @@ namespace CodeDocumentor.Helper
                     var argType2 = returnType.TypeArgumentList.Arguments.Last();
                     var items = new List<string>();
                     BuildChildrenGenericArgList(argType2, items); //pluaralizeIdentifierType: false
-                    var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
-                    items.Add(returnName);
+                    //var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
+                    //items.Add(returnName);
                     items.Reverse();
 
                     var comment = items.ToLowerParts(true)
-                                   .PluaralizeLastWord()
                                    .Tap((parts) =>
                                    {
-                                       for (var i = 0; i < parts.Count; i++)
+                                       if (parts.Count > 1)
                                        {
-                                           parts[i] = parts[i].Replace(returnName, $"a {returnName}");
+                                           parts.PluaralizeLastWord();
+                                       }
+                                       if (parts.Count > 2)
+                                       {
+                                           for (int i = 1; i < parts.Count - 1; i++)
+                                           {
+                                               parts[i] = "a " + parts[i];
+                                           }
                                        }
                                    })
                                    .JoinToString(" of ")
                                    .ApplyUserTranslations()
                                    .WithPeriod();
 
-
-                    //var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                    //var comment = string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), resultStr);
+                    comment = string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), comment);
                     if (options.IsRootReturnType)
                     {
                         //This ensure the return string has correct casing
@@ -283,14 +269,21 @@ namespace CodeDocumentor.Helper
 
             if (returnType.IsTask() || returnType.IsGenericActionResult() || returnType.IsGenericValueTask())
             {
-                var prefix = "and return a <see cref=\"Task\"/> of type ";
+                var comment = "";
+                var startingPrefix = "returns";
+                if (options.BuildWithAndPrefixForTaskTypes)
+                {
+                    startingPrefix = "and return";
+                }
+
+                var prefix = $"{startingPrefix} a <see cref=\"Task\"/> of type ";
                 if (returnType.IsGenericActionResult())
                 {
-                    prefix = "and return an <see cref=\"ActionResult\"/> of type ";
+                    prefix = $"{startingPrefix} an <see cref=\"ActionResult\"/> of type ";
                 }
                 if (returnType.IsGenericValueTask())
                 {
-                    prefix = "and return a <see cref=\"ValueTask\"/> of type ";
+                    prefix = $"{startingPrefix} a <see cref=\"ValueTask\"/> of type ";
                 }
                 if (returnType.TypeArgumentList.Arguments.Count == 1)
                 {
@@ -300,19 +293,21 @@ namespace CodeDocumentor.Helper
                         prefix = prefix.Replace("type ", "");
                     }
 
-                    //List<string> items = new List<string>();
-                    //BuildChildrenGenericArgList(firstType, items, false, false);
-                    //TODO: fix comments flow to support cref nodes
                     var newOptions = new ReturnTypeBuilderOptions
                     {
                         IsRootReturnType = false,
                         ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
                         UseProperCasing = options.UseProperCasing,
-                        ForcePredefinedTypeEvaluation = true //maybe??
+                        ForcePredefinedTypeEvaluation = true, //maybe??
+                        BuildWithAndPrefixForTaskTypes = options.BuildWithAndPrefixForTaskTypes
                     };
                     var buildComment = BuildComment(firstType, newOptions);
-                    var comment = prefix + buildComment;
-
+                    comment = prefix + buildComment;
+                    comment = comment.RemovePeriod();
+                    if (!options.BuildWithAndPrefixForTaskTypes)
+                    {
+                        return comment.WithPeriod();
+                    }
                     return comment;
                 }
                 //This should be impossible, but will handle just in case
@@ -329,7 +324,8 @@ namespace CodeDocumentor.Helper
                         IsRootReturnType = false,
                         ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
                         UseProperCasing = options.UseProperCasing,
-                        ForcePredefinedTypeEvaluation = true
+                        ForcePredefinedTypeEvaluation = true,
+                        BuildWithAndPrefixForTaskTypes = options.BuildWithAndPrefixForTaskTypes
                     };
                     builder.Append($"{BuildComment(item, newOptions)}");
                     if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
@@ -337,10 +333,14 @@ namespace CodeDocumentor.Helper
                         builder.Append(" and ");
                     }
                 }
-
-                return builder.ToString();
+                comment = builder.ToString();
+                comment = comment.RemovePeriod();
+                if (!options.BuildWithAndPrefixForTaskTypes)
+                {
+                    return comment.WithPeriod();
+                }
+                return comment;
             }
-
             return GenerateGeneralComment(genericTypeStr.AsSpan());
         }
 

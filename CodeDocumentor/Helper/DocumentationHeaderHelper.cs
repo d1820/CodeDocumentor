@@ -670,7 +670,8 @@ namespace CodeDocumentor.Helper
             {
                 var options = new ReturnTypeBuilderOptions
                 {
-                    ReturnGenericTypeAsFullString = false
+                    ReturnGenericTypeAsFullString = false,
+                    BuildWithAndPrefixForTaskTypes = false
                 };
                 var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));

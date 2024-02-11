@@ -8,21 +8,9 @@ namespace CodeDocumentor.Helper
     /// <summary> The return comment construction. </summary>
     public class ReturnCommentConstruction : BaseReturnTypeCommentConstruction
     {
-        /// <summary> Gets or Sets the array comment template. </summary>
-        /// <value> A string. </value>
-        public override string ArrayCommentTemplate { get; } = "an array of {0}";
-
         /// <summary> Gets or Sets the dictionary comment template. </summary>
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
-
-        /// <summary> Gets or Sets the list comment template. </summary>
-        /// <value> A string. </value>
-        public override string ListCommentTemplate { get; } = "a list of {0}";
-
-        /// <summary> Gets or Sets the read only collection comment template. </summary>
-        /// <value> A string. </value>
-        public override string ReadOnlyCollectionCommentTemplate { get; } = "a read only collection of {0}";
 
         //used for testing
         internal ReturnCommentConstruction()
@@ -34,7 +22,8 @@ namespace CodeDocumentor.Helper
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode
+                ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
+                BuildWithAndPrefixForTaskTypes = false
             };
             var comment = BuildComment(returnType, options);
             if (optionsService.UseNaturalLanguageForReturnNode)

@@ -468,6 +468,15 @@ namespace CodeDocumentor.Helper
             return text;
         }
 
+        public static string RemovePeriod(this string text)
+        {
+            if (text?.Trim().EndsWith(".") == true)
+            {
+                return text.Remove(text.Length - 1);
+            }
+            return text;
+        }
+
         internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
         {
             var i = forceFirstCharToLower ||

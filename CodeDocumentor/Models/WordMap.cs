@@ -23,11 +23,7 @@ namespace CodeDocumentor.Vsix2022
         /// <returns> A string. </returns>
         public string GetTranslation(string nextWord = null)
         {
-            if (WordEvaluator != null)
-            {
-                return WordEvaluator.Invoke(Translation, nextWord);
-            }
-            return Translation;
+            return WordEvaluator != null ? WordEvaluator.Invoke(Translation, nextWord) : Translation;
         }
     }
 }

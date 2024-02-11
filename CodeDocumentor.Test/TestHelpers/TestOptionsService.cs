@@ -18,6 +18,8 @@ namespace CodeDocumentor.Test.TestHelpers
 
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
+        public bool TryToIncludeCrefsForReturnTypes { get; set; }
+
         public WordMap[] WordMaps { get; set; } = Constants.DEFAULT_WORD_MAPS;
 
         public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;

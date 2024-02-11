@@ -22,7 +22,7 @@ namespace CodeDocumentor.Vsix2022
 
         public static string[] TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST { get; } = new[] { "an", "is", "if", "by", "do" };
 
-        public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has","yes", "its", "ass" };
+        public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has", "yes", "its", "ass" };
 
         public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "To", Translation = "Converts to" },
@@ -30,17 +30,13 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "Dto", Translation = "Data transfer object" },
             new WordMap { Word = "Is", Translation = "Checks if is" },
             new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
-                    if(!string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord)){
-                        return "Checks if";
-                    }
-                    return translation;
-                }
+                    return !string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord) ? "Checks if" : translation; }
             }
         };
 
         public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
 
-        public static readonly string CREF_MATCH_REGEX_TEMPLATE = @"<.*>";
+        public static readonly string CREF_MATCH_REGEX_TEMPLATE = "<.*>";
 
         public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },

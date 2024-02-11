@@ -73,7 +73,6 @@ namespace CodeDocumentor.Helper
         public static XmlNodeSyntax[] CreateParameterPartNodes(string parameterName, string parameterContent)
         {
             ///[0] <param name="parameterName"></param>[1][2]
-
             // [0] -- line start text
             var lineStartText = CreateLineStartTextSyntax();
 
@@ -112,11 +111,7 @@ namespace CodeDocumentor.Helper
             }
 
             var hasExclusion = attrs.Any();
-            if (!hasExclusion && recursive)
-            {
-                return HasAnalyzerExclusion(node.Parent, recursive, attrs);
-            }
-            return hasExclusion;
+            return !hasExclusion && recursive ? HasAnalyzerExclusion(node.Parent, recursive, attrs) : hasExclusion;
         }
 
         private static IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)
@@ -130,8 +125,7 @@ namespace CodeDocumentor.Helper
             return attrs.Where(w => w.ArgumentList != null)
                          .SelectMany(w => w.ArgumentList.Arguments
                                 .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
-                                .Select(ss => w));
-
+                                .Select(_ => w));
         }
 
         private static IEnumerable<AttributeSyntax> GetAttributes(MemberDeclarationSyntax node)
@@ -145,8 +139,7 @@ namespace CodeDocumentor.Helper
             return attrs.Where(w => w.ArgumentList != null)
                          .SelectMany(w => w.ArgumentList.Arguments
                                 .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
-                                .Select(ss => w));
-
+                                .Select(_ => w));
         }
 
         /// <summary> Checks if is dictionary. </summary>
@@ -195,8 +188,7 @@ namespace CodeDocumentor.Helper
             }
             else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
             {
-                var returnType = ((NullableTypeSyntax)declarationSyntax.Type).ElementType as PredefinedTypeSyntax;
-                if (returnType != null)
+                if (((NullableTypeSyntax)declarationSyntax.Type).ElementType is PredefinedTypeSyntax returnType)
                 {
                     isBoolean = returnType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
                 }
@@ -280,7 +272,6 @@ namespace CodeDocumentor.Helper
 
             /// <param name="parameterName"> [0][1] </param>
             /// [2]
-
             // [0] -- param start tag with attribute
             var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
             var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
@@ -315,14 +306,7 @@ namespace CodeDocumentor.Helper
                 return string.Empty;
             }
             var vowelChars = new List<char>() { 'a', 'e', 'i', 'o', 'u' };
-            if (vowelChars.Contains(char.ToLower(returnType[0])))
-            {
-                return useProperCasing ? "An" : "an";
-            }
-            else
-            {
-                return useProperCasing ? "A" : "a";
-            }
+            return vowelChars.Contains(char.ToLower(returnType[0])) ? useProperCasing ? "An" : "an" : useProperCasing ? "A" : "a";
         }
 
         /// <summary> Create the return element syntax. </summary>
@@ -334,7 +318,6 @@ namespace CodeDocumentor.Helper
             var xmlName = SyntaxFactory.XmlName(xmlNodeName);
             /// <returns> [0]xxx[1] </returns>
             /// [2]
-
             var startTag = SyntaxFactory.XmlElementStartTag(xmlName);
             var endTag = SyntaxFactory.XmlElementEndTag(xmlName);
 
@@ -355,7 +338,7 @@ namespace CodeDocumentor.Helper
             {
                 try
                 {
-                    var text = SyntaxFactory.XmlText($"A ");
+                    var text = SyntaxFactory.XmlText("A ");
                     var name = _typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
                     var typeParamNode = CreateTypeParameterRefElementSyntax(name);
 
@@ -437,7 +420,6 @@ namespace CodeDocumentor.Helper
             var paramName = SyntaxFactory.XmlName("typeparam");
 
             /// <typeparam name="parameterName"> [0][1] </param> [2]
-
             // [0] -- param start tag with attribute
             var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
             var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
@@ -455,7 +437,6 @@ namespace CodeDocumentor.Helper
             var paramName = SyntaxFactory.XmlName("typeparamref");
 
             /// <typeparamref name="parameterName"> [0][1] </typeparamref> [2]
-
             // [0] -- param start tag with attribute
             var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
             var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
@@ -475,7 +456,6 @@ namespace CodeDocumentor.Helper
             var paramName = SyntaxFactory.XmlName("see");
 
             /// <see cref="typeName" />
-
             // [0] -- param start tag with attribute
             var creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
             var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
@@ -483,7 +463,6 @@ namespace CodeDocumentor.Helper
             // [2] -- end tag
             var endTag = SyntaxFactory.XmlElementEndTag(paramName);
             return SyntaxFactory.XmlElement(startTag, endTag);
-
         }
 
         /// <summary> Gets the element syntax. </summary>
@@ -562,14 +541,9 @@ namespace CodeDocumentor.Helper
                             || f.node.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
                             || f.node.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia)
                         )?.index ?? -1;
-            if (existingIndex < 0)
-            {
-                return leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia));
-            }
-            else
-            {
-                return leadingTrivia.Replace(leadingTrivia[existingIndex], SyntaxFactory.Trivia(commentTrivia));
-            }
+            return existingIndex < 0
+                ? leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia))
+                : leadingTrivia.Replace(leadingTrivia[existingIndex], SyntaxFactory.Trivia(commentTrivia));
         }
 
         #region Builders
@@ -579,7 +553,6 @@ namespace CodeDocumentor.Helper
         /// <returns> <![CDATA[IEnumerable<string>]]> </returns>
         internal static IEnumerable<string> GetExceptions(string textToSearch)
         {
-
             if (string.IsNullOrEmpty(textToSearch))
             {
                 return Enumerable.Empty<string>();
@@ -670,7 +643,8 @@ namespace CodeDocumentor.Helper
                 var options = new ReturnTypeBuilderOptions
                 {
                     ReturnGenericTypeAsFullString = false,
-                    BuildWithAndPrefixForTaskTypes = false
+                    BuildWithPeriodAndPrefixForTaskTypes = false,
+                    TryToIncludeCrefsForReturnTypes = true
                 };
                 var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));
@@ -715,8 +689,7 @@ namespace CodeDocumentor.Helper
             {
                 summaryNodes = DocumentationHeaderHelper.CreateSummaryPartNodes(content);
             }
-            list = list.AddRange(summaryNodes);
-            return list;
+            return list.AddRange(summaryNodes);
         }
 
         /// <summary> With the type paramters. </summary>
@@ -805,7 +778,6 @@ namespace CodeDocumentor.Helper
         private static XmlNodeSyntax[] CreateReturnPartNodes(string content)
         {
             ///[0] <returns></returns>[1][2]
-
             var lineStartText = CreateLineStartTextSyntax();
 
             var returnElement = CreateReturnElementSyntax(content);
@@ -844,7 +816,6 @@ namespace CodeDocumentor.Helper
         private static XmlNodeSyntax[] CreateTypeParameterPartNodes(string parameterName)
         {
             ///[0] <param name="parameterName"></param>[1][2]
-
             // [0] -- line start text
             var lineStartText = CreateLineStartTextSyntax();
 
@@ -863,7 +834,6 @@ namespace CodeDocumentor.Helper
         private static XmlNodeSyntax[] CreateValuePartNodes(string content)
         {
             ///[0] <value></value>[1][2]
-
             var lineStartText = CreateLineStartTextSyntax();
 
             var returnElement = CreateReturnElementSyntax(content, "value");

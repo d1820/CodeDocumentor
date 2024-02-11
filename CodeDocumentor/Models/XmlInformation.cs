@@ -15,10 +15,10 @@ namespace CodeDocumentor.Vsix2022
             {
                 return;
             }
-            IsXml = Regex.IsMatch(text, @"CDATA");
+            IsXml = Regex.IsMatch(text, "CDATA");
             IsGeneric = Regex.IsMatch(text, @"(\w+\<)");
-            IsTypeParam = Regex.IsMatch(text, @"(<typeparam)");
-            IsSeeNode = Regex.IsMatch(text, @"(<see)");
+            IsTypeParam = Regex.IsMatch(text, "(<typeparam)");
+            IsSeeNode = Regex.IsMatch(text, "(<see)");
         }
 
         public bool IsXml { get; }

@@ -112,10 +112,10 @@ namespace CodeDocumentor.Helper
             var newWord = true;
             foreach (var c in text)
             {
-                if (newWord) { yield return Char.ToUpper(c); newWord = false; }
+                if (newWord) { yield return char.ToUpper(c); newWord = false; }
                 else
                 {
-                    yield return Char.ToLower(c);
+                    yield return char.ToLower(c);
                 }
 
                 if (c == ' ')
@@ -125,8 +125,8 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        private static readonly Regex _isLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
-        private static readonly Regex _isUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
+        private static readonly Regex _isLowerRegEx = new Regex("^[^A-Z]*$", RegexOptions.Compiled);
+        private static readonly Regex _isUpperRegEx = new Regex("^[^a-z]*$", RegexOptions.Compiled);
         private static readonly Regex _specailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary> Processes the char. </summary>

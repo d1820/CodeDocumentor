@@ -23,7 +23,8 @@ namespace CodeDocumentor.Helper
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
-                BuildWithAndPrefixForTaskTypes = false
+                BuildWithPeriodAndPrefixForTaskTypes = false,
+                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes
             };
             var comment = BuildComment(returnType, options);
             if (optionsService.UseNaturalLanguageForReturnNode)

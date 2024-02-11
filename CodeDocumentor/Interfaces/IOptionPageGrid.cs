@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
@@ -54,6 +54,10 @@ namespace CodeDocumentor.Vsix2022
         /// <summary> Gets or Sets a value indicating whether use to do comments on summary error. </summary>
         /// <value> A bool. </value>
         bool UseToDoCommentsOnSummaryError { get; set; }
+
+        /// <summary> Gets or Sets a value indicating whether use try and include return type crefs in documentation. </summary>
+        /// <value> A bool. </value>
+        bool TryToIncludeCrefsForReturnTypes { get; set; }
 
         /// <summary> Gets or Sets the word maps. </summary>
         /// <value> A list of wordmaps. </value>

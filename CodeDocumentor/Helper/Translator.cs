@@ -49,7 +49,6 @@ namespace CodeDocumentor.Helper
             return converted;
         }
 
-
         private static IOptionsService _optionsService;
     }
 }

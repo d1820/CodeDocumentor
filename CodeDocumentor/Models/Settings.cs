@@ -58,11 +58,13 @@ namespace CodeDocumentor.Vsix2022
         /// <value> A bool. </value>
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
+        /// <summary> Gets or Sets a value indicating whether use try and include crefs in method comments. </summary>
+        /// <value> A bool. </value>
+        public bool TryToIncludeCrefsForReturnTypes { get; set; }
+
         /// <summary> Gets or Sets the word maps. </summary>
         /// <value> An array of wordmaps. </value>
         public WordMap[] WordMaps { get; set; } = Constants.DEFAULT_WORD_MAPS;
-
-        //public const string RegistryPath = @"DialogPage\BlueOnionSoftware.VsColorOutputOptions";
 
         public static event EventHandler SettingsUpdated;
 

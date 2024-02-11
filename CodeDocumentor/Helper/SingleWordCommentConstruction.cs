@@ -11,12 +11,9 @@ namespace CodeDocumentor.Helper
 
         /// <summary> Initializes a new instance of the <see cref="SingleWordCommentConstruction" /> class. </summary>
         /// <param name="returnType"> The return type. </param>
-        public SingleWordCommentConstruction(TypeSyntax returnType)
+        public SingleWordCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
-            var comment = BuildComment(returnType, new ReturnTypeBuilderOptions {
-                UseProperCasing = false,
-                BuildWithAndPrefixForTaskTypes = true
-            }); //we dont need to translate or period here cause the caller of this does all that work
+            var comment = BuildComment(returnType, options); //we dont need to translate or period here cause the caller of this does all that work
             if (!string.IsNullOrEmpty(comment))
             {
                 Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), false), comment).Trim();

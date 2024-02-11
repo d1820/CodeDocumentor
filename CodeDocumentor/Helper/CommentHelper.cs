@@ -16,7 +16,7 @@ namespace CodeDocumentor.Helper
     /// <summary> The comment helper. </summary>
     public static class CommentHelper
     {
-        private static Regex _crefRegEx = new Regex(Constants.CREF_MATCH_REGEX_TEMPLATE);
+        private static readonly Regex _crefRegEx = new Regex(Constants.CREF_MATCH_REGEX_TEMPLATE);
 
         /// <summary> Creates the class comment. </summary>
         /// <param name="name"> The name. </param>
@@ -161,7 +161,7 @@ namespace CodeDocumentor.Helper
                          .Split(name)
                          .Tap((parts) =>
                          {
-                             is2partPlusAsync = (parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase)));
+                             is2partPlusAsync = parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase));
                              isBool = returnType.IsBoolReturnType();
                          })
                          .HandleAsyncKeyword()
@@ -202,10 +202,8 @@ namespace CodeDocumentor.Helper
             }
             else if (parameter.Type.IsKind(SyntaxKind.NullableType))
             {
-                var type = (parameter.Type as NullableTypeSyntax).ElementType as PredefinedTypeSyntax;
-
                 // If it is not predefined type syntax, it should be IdentifierNameSyntax.
-                if (type != null)
+                if ((parameter.Type as NullableTypeSyntax)?.ElementType is PredefinedTypeSyntax type)
                 {
                     isBoolean = type.Keyword.IsKind(SyntaxKind.BoolKeyword);
                 }
@@ -338,20 +336,12 @@ namespace CodeDocumentor.Helper
             {
                 return text;
             }
-            if (text.Length > 0)
-            {
-                return text + ".";
-            }
-            return text;
+            return text.Length > 0 ? text + "." : text;
         }
 
         public static string RemovePeriod(this string text)
         {
-            if (text?.Trim().EndsWith(".") == true)
-            {
-                return text.Remove(text.Length - 1);
-            }
-            return text;
+            return text?.Trim().EndsWith(".") == true ? text.Remove(text.Length - 1) : text;
         }
 
         internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
@@ -399,7 +389,7 @@ namespace CodeDocumentor.Helper
         private static List<string> AddPropertyBooleanPart(this List<string> parts)
         {
             var booleanPart = " a value indicating whether to";
-            if (parts[0].IsPastTense() || (parts[0].IsVerb()))
+            if (parts[0].IsPastTense() || parts[0].IsVerb())
             {
                 booleanPart = "a value indicating whether";
             }
@@ -477,11 +467,7 @@ namespace CodeDocumentor.Helper
 
         private static bool CanEvaluateWordMap(WordMap wordMap, int partIdx)
         {
-            if (wordMap.Word == "Is" && partIdx != 0)
-            {
-                return false;
-            }
-            return true;
+            return wordMap.Word != "Is" || partIdx == 0;
         }
 
         internal static List<string> TranslateParts(this List<string> parts)
@@ -519,7 +505,13 @@ namespace CodeDocumentor.Helper
             if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                var returnComment = new SingleWordCommentConstruction(returnType).Comment;
+                var options = new ReturnTypeBuilderOptions
+                {
+                    UseProperCasing = false,
+                    BuildWithPeriodAndPrefixForTaskTypes = true,
+                    TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes
+                };
+                var returnComment = new SingleWordCommentConstruction(returnType, options).Comment;
                 returnTapAction?.Invoke(returnComment);
                 if (!string.IsNullOrEmpty(returnComment))
                 {

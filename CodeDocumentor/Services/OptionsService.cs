@@ -42,6 +42,8 @@ namespace CodeDocumentor.Services
 
         public bool UseNaturalLanguageForReturnNode { get; set; }
 
+        public bool TryToIncludeCrefsForReturnTypes { get; set; }
+
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
         public WordMap[] WordMaps { get; set; }
@@ -80,6 +82,8 @@ namespace CodeDocumentor.Services
 
             UseToDoCommentsOnSummaryError = options?.UseToDoCommentsOnSummaryError ?? false;
 
+            TryToIncludeCrefsForReturnTypes = options?.TryToIncludeCrefsForReturnTypes ?? false;
+
             WordMaps = options?.WordMaps ?? Constants.DEFAULT_WORD_MAPS;
         }
 
@@ -102,6 +106,7 @@ namespace CodeDocumentor.Services
             PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
             RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
+            TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes;
         }
     }
 }

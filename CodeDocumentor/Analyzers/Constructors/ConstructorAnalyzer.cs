@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -35,8 +35,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as ConstructorDeclarationSyntax;
-            if (node == null)
+            if (!(context.Node is ConstructorDeclarationSyntax node))
             {
                 return;
             }

@@ -302,7 +302,7 @@ namespace CodeDocumentor.Test.Helper
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = false,
-                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
+                BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type string" + (hasPeriod ? "." : ""));
@@ -322,7 +322,7 @@ namespace CodeDocumentor.Test.Helper
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = false,
-                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
+                BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a list of strings" + (hasPeriod ? "." : ""));
@@ -343,7 +343,7 @@ namespace CodeDocumentor.Test.Helper
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = false,
-                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
+                BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a dictionary with a key of type string and a value of type list of strings" + (hasPeriod ? "." : ""));
@@ -363,7 +363,7 @@ namespace CodeDocumentor.Test.Helper
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = false,
-                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
+                BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type CustomDoubleGenericType" + (hasPeriod ? "." : ""));
@@ -382,7 +382,7 @@ namespace CodeDocumentor.Test.Helper
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = false,
-                BuildWithAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
+                BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));

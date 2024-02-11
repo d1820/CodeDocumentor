@@ -20,11 +20,9 @@ namespace CodeDocumentor
             get
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                if (optionsService.IsEnabledForPublicMembersOnly)
-                {
-                    return new List<DiagnosticDescriptor>().ToImmutableArray();
-                }
-                return ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
+                return optionsService.IsEnabledForPublicMembersOnly
+                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
+                    : ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
             }
         }
 

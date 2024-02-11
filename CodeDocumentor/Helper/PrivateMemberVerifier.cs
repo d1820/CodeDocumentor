@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -12,12 +12,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(ClassDeclarationSyntax node)
         {
-            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
-            {
-                return true;
-            }
-
-            return false;
+            return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
         }
 
         /// <summary> Is private member. </summary>
@@ -25,12 +20,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(RecordDeclarationSyntax node)
         {
-            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
-            {
-                return true;
-            }
-
-            return false;
+            return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
         }
 
         /// <summary> Are the private member. </summary>
@@ -38,12 +28,7 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(InterfaceDeclarationSyntax node)
         {
-            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
-            {
-                return true;
-            }
-
-            return false;
+            return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
         }
 
         /// <summary> Are the private member. </summary>
@@ -62,11 +47,7 @@ namespace CodeDocumentor.Helper
             {
                 return IsPrivateMember(cds);
             }
-            if (node.Parent is InterfaceDeclarationSyntax ids)
-            {
-                return IsPrivateMember(ids);
-            }
-            return false;
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
 
         /// <summary> Are the private member. </summary>
@@ -85,11 +66,7 @@ namespace CodeDocumentor.Helper
             {
                 return IsPrivateMember(cds);
             }
-            if (node.Parent is InterfaceDeclarationSyntax ids)
-            {
-                return IsPrivateMember(ids);
-            }
-            return false;
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
 
         /// <summary> Are the private member. </summary>
@@ -108,11 +85,7 @@ namespace CodeDocumentor.Helper
             {
                 return IsPrivateMember(cds);
             }
-            if (node.Parent is InterfaceDeclarationSyntax ids)
-            {
-                return IsPrivateMember(ids);
-            }
-            return false;
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
 
         /// <summary> Are the private member. </summary>
@@ -131,11 +104,7 @@ namespace CodeDocumentor.Helper
             {
                 return IsPrivateMember(cds);
             }
-            if (node.Parent is InterfaceDeclarationSyntax ids)
-            {
-                return IsPrivateMember(ids);
-            }
-            return false;
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
     }
 }

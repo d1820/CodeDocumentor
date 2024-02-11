@@ -20,11 +20,9 @@ namespace CodeDocumentor
             get
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                if (optionsService.IsEnabledForPublicMembersOnly)
-                {
-                    return new List<DiagnosticDescriptor>().ToImmutableArray();
-                }
-                return ImmutableArray.Create(PropertyAnalyzerSettings.GetRule());
+                return optionsService.IsEnabledForPublicMembersOnly
+                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
+                    : ImmutableArray.Create(PropertyAnalyzerSettings.GetRule());
             }
         }
 
@@ -41,8 +39,7 @@ namespace CodeDocumentor
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as PropertyDeclarationSyntax;
-            if (node == null)
+            if (!(context.Node is PropertyDeclarationSyntax node))
             {
                 return;
             }

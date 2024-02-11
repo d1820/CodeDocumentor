@@ -28,20 +28,7 @@ namespace CodeDocumentor.Helper
         public static bool IsPastTense(this string word)
         {
             // Check if the word ends with "-ed"
-            if (word.EndsWith("ed"))
-            {
-                return true;
-            }
-            // Add additional checks for irregular verbs here if needed
-            // Example:
-            // else if (word == "ate" || word == "ran")
-            // {
-            //     return true;
-            // }
-            else
-            {
-                return false;
-            }
+            return word.EndsWith("ed");
         }
 
         public static bool IsTwoLetterVerb(this string word)
@@ -110,7 +97,7 @@ namespace CodeDocumentor.Helper
 
         public static string Clean(this string word)
         {
-            string pattern = "[^a-zA-Z0-9 ]";
+            var pattern = "[^a-zA-Z0-9 ]";
             return Regex.Replace(word, pattern, "");
         }
     }

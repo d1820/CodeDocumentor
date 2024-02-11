@@ -15,21 +15,33 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary> The record code fix provider. </summary>
+    /// <summary>
+    ///  The record code fix provider.
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RecordCodeFixProvider)), Shared]
     public class RecordCodeFixProvider : BaseCodeFixProvider
     {
-        /// <summary> Gets the fixable diagnostic ids. </summary>
+        private const string Title = "Code Documentor this record";
+
+        private const string TitleRebuild = "Code Documentor update this record";
+
+        /// <summary>
+        ///  Gets the fixable diagnostic ids.
+        /// </summary>
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RecordAnalyzerSettings.DiagnosticId);
 
-        /// <summary> Gets fix all provider. </summary>
+        /// <summary>
+        ///  Gets fix all provider.
+        /// </summary>
         /// <returns> A FixAllProvider. </returns>
         public sealed override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary> Registers code fixes async. </summary>
+        /// <summary>
+        ///  Registers code fixes async.
+        /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -56,7 +68,9 @@ namespace CodeDocumentor
             await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
-        /// <summary> Adds documentation header async. </summary>
+        /// <summary>
+        ///  Adds documentation header async.
+        /// </summary>
         /// <param name="document"> The document. </param>
         /// <param name="root"> The root. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
@@ -72,7 +86,9 @@ namespace CodeDocumentor
             }, cancellationToken);
         }
 
-        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
+        /// <summary>
+        ///  Builds the comments. This is only used in the file level fixProvider.
+        /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
@@ -97,10 +113,6 @@ namespace CodeDocumentor
             }
             return neededCommentCount;
         }
-
-        private const string Title = "Code Documentor this record";
-
-        private const string TitleRebuild = "Code Documentor update this record";
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {

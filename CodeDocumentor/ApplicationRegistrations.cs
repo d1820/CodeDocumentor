@@ -8,7 +8,8 @@ namespace CodeDocumentor
     {
         public static void RegisterServices(this Container container)
         {
-            container.RegisterSingleton<IOptionsService>(() => {
+            container.RegisterSingleton<IOptionsService>(() =>
+            {
                 var opts = new OptionsService();
                 opts.SetDefaults(CodeDocumentorPackage.Options);
                 return opts;

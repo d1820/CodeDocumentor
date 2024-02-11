@@ -9,36 +9,56 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary> The documentation header helper. </summary>
+    /// <summary>
+    ///  The documentation header helper.
+    /// </summary>
     public static class DocumentationHeaderHelper
     {
-        /// <summary> The category of the diagnostic. </summary>
+        /// <summary>
+        ///  The category of the diagnostic.
+        /// </summary>
         public const string CATEGORY = "CodeDocumentor";
 
-        /// <summary> The example. </summary>
+        /// <summary>
+        ///  The example.
+        /// </summary>
         public const string EXAMPLE = "example";
 
-        /// <summary> The category to check for when excluding analyzer actions </summary>
+        /// <summary>
+        ///  The category to check for when excluding analyzer actions
+        /// </summary>
         public const string EXCLUSION_CATEGORY = "XMLDocumentation";
 
-        /// <summary> The inherit doc. </summary>
+        /// <summary>
+        ///  The inherit doc.
+        /// </summary>
         public const string INHERITDOC = "inheritdoc";
 
-        /// <summary> The remarks. </summary>
+        /// <summary>
+        ///  The remarks.
+        /// </summary>
         public const string REMARKS = "remarks";
 
-        /// <summary> The summary. </summary>
+        /// <summary>
+        ///  The summary.
+        /// </summary>
         public const string SUMMARY = "summary";
 
-        /// <summary> The reg ex. </summary>
+        /// <summary>
+        ///  The reg ex.
+        /// </summary>
         private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-        /// <summary> type param regex. </summary>
+        /// <summary>
+        ///  type param regex.
+        /// </summary>
         private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
 
-        /// <summary> Creates the exception nodes. </summary>
+        /// <summary>
+        ///  Creates the exception nodes.
+        /// </summary>
         /// <param name="exceptionType"> The exception type. </param>
         /// <returns> An array of XmlNodeSyntaxes </returns>
         public static XmlNodeSyntax[] CreateExceptionNodes(string exceptionType)
@@ -57,7 +77,9 @@ namespace CodeDocumentor.Helper
             return new XmlNodeSyntax[] { lineStartText, exceptionNode, lineEndText };
         }
 
-        /// <summary> Creates the only summary documentation comment trivia. </summary>
+        /// <summary>
+        ///  Creates the only summary documentation comment trivia.
+        /// </summary>
         /// <param name="content"> The content. </param>
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         public static DocumentationCommentTriviaSyntax CreateOnlySummaryDocumentationCommentTrivia(string content)
@@ -66,7 +88,9 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }
 
-        /// <summary> Creates the parameter part nodes. </summary>
+        /// <summary>
+        ///  Creates the parameter part nodes.
+        /// </summary>
         /// <param name="parameterName"> The parameter name. </param>
         /// <param name="parameterContent"> The parameter content. </param>
         /// <returns> An array of XmlNodeSyntaxes </returns>
@@ -85,7 +109,9 @@ namespace CodeDocumentor.Helper
             return new XmlNodeSyntax[] { lineStartText, parameterText, lineEndText };
         }
 
-        /// <summary> Has analyzer exclusion. </summary>
+        /// <summary>
+        ///  Has analyzer exclusion.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <param name="recursive"> If true, recursive. </param>
         /// <returns> A bool. </returns>
@@ -114,35 +140,9 @@ namespace CodeDocumentor.Helper
             return !hasExclusion && recursive ? HasAnalyzerExclusion(node.Parent, recursive, attrs) : hasExclusion;
         }
 
-        private static IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)
-        {
-            if (node == null)
-            {
-                return new SyntaxList<AttributeSyntax>();
-            }
-
-            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
-            return attrs.Where(w => w.ArgumentList != null)
-                         .SelectMany(w => w.ArgumentList.Arguments
-                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
-                                .Select(_ => w));
-        }
-
-        private static IEnumerable<AttributeSyntax> GetAttributes(MemberDeclarationSyntax node)
-        {
-            if (node == null)
-            {
-                return new SyntaxList<AttributeSyntax>();
-            }
-
-            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
-            return attrs.Where(w => w.ArgumentList != null)
-                         .SelectMany(w => w.ArgumentList.Arguments
-                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
-                                .Select(_ => w));
-        }
-
-        /// <summary> Checks if is dictionary. </summary>
+        /// <summary>
+        ///  Checks if is dictionary.
+        /// </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
         public static bool IsDictionary(this GenericNameSyntax nameSyntax)
@@ -159,7 +159,28 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.Contains("Dictionary");
         }
 
-        /// <summary> Checks if is list. </summary>
+        /// <summary>
+        ///  Checks if is generic action result.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsGenericActionResult(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("ActionResult", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
+        public static bool IsGenericValueTask(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("ValueTask", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
+        /// <summary>
+        ///  Checks if is list.
+        /// </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
         public static bool IsList(this GenericNameSyntax nameSyntax)
@@ -169,7 +190,9 @@ namespace CodeDocumentor.Helper
             return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
         }
 
-        /// <summary> Checks if is list. </summary>
+        /// <summary>
+        ///  Checks if is list.
+        /// </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
         public static bool IsList(this TypeSyntax nameSyntax)
@@ -197,7 +220,9 @@ namespace CodeDocumentor.Helper
             return isBoolean;
         }
 
-        /// <summary> Checks if is read only collection. </summary>
+        /// <summary>
+        ///  Checks if is read only collection.
+        /// </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
         public static bool IsReadOnlyCollection(this GenericNameSyntax nameSyntax)
@@ -205,7 +230,9 @@ namespace CodeDocumentor.Helper
             return nameSyntax.Identifier.ValueText.Contains("ReadOnlyCollection");
         }
 
-        /// <summary> Checks if is read only collection. </summary>
+        /// <summary>
+        ///  Checks if is read only collection.
+        /// </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
         public static bool IsReadOnlyCollection(this TypeSyntax nameSyntax)
@@ -213,7 +240,9 @@ namespace CodeDocumentor.Helper
             return nameSyntax.ToString().Contains("ReadOnlyCollection");
         }
 
-        /// <summary> Checks if is task. </summary>
+        /// <summary>
+        ///  Checks if is task.
+        /// </summary>
         /// <param name="nameSyntax"> The name syntax. </param>
         /// <returns> A bool. </returns>
         public static bool IsTask(this GenericNameSyntax nameSyntax)
@@ -221,25 +250,6 @@ namespace CodeDocumentor.Helper
             var genericTypeStr = nameSyntax.Identifier.ValueText;
 
             return genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
-        }
-
-        /// <summary>
-        /// Checks if is generic action result.
-        /// </summary>
-        /// <param name="nameSyntax">The name syntax.</param>
-        /// <returns>A bool.</returns>
-        public static bool IsGenericActionResult(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.IndexOf("ActionResult", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
-        }
-
-        public static bool IsGenericValueTask(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.IndexOf("ValueTask", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
         }
 
         public static bool PropertyHasSetter(this PropertyDeclarationSyntax declarationSyntax)
@@ -262,7 +272,9 @@ namespace CodeDocumentor.Helper
             return hasSetter;
         }
 
-        /// <summary> Creates the parameter element syntax. </summary>
+        /// <summary>
+        ///  Creates the parameter element syntax.
+        /// </summary>
         /// <param name="parameterName"> The parameter name. </param>
         /// <param name="parameterContent"> The parameter content. </param>
         /// <returns> A XmlElementSyntax. </returns>
@@ -285,31 +297,8 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Determines started word.
+        ///  Create the return element syntax.
         /// </summary>
-        /// <param name="returnType">The return type.</param>
-        /// <param name="useProperCasing">If true, use proper casing.</param>
-        /// <returns>A string.</returns>
-        internal static string DetermineStartingWord(ReadOnlySpan<char> returnType, bool useProperCasing = true)
-        {
-            if (returnType.IsEmpty)
-            {
-                return string.Empty;
-            }
-            var str = returnType.ToString();
-            //if the returnType alread starts with a or an then just return
-            if (str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
-                str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
-                str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase)
-                )
-            {
-                return string.Empty;
-            }
-            var vowelChars = new List<char>() { 'a', 'e', 'i', 'o', 'u' };
-            return vowelChars.Contains(char.ToLower(returnType[0])) ? useProperCasing ? "An" : "an" : useProperCasing ? "A" : "a";
-        }
-
-        /// <summary> Create the return element syntax. </summary>
         /// <param name="content"> The content. </param>
         /// <param name="xmlNodeName"> The xml node name. </param>
         /// <returns> A XmlNodeSyntax. </returns>
@@ -368,7 +357,28 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(SyntaxFactory.XmlText(cleanContent)), endTag);
         }
 
-        /// <summary> Creates the summary element syntax. </summary>
+        /// <summary>
+        ///  Creates the see C ref element syntax.
+        /// </summary>
+        /// <param name="typeName"> The type name. </param>
+        /// <returns> A <see cref="XmlElementSyntax"/>. </returns>
+        internal static XmlElementSyntax CreateSeeCRefElementSyntax(string typeName)
+        {
+            var paramName = SyntaxFactory.XmlName("see");
+
+            /// <see cref="typeName"/>
+            // [0] -- param start tag with attribute
+            var creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
+            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
+
+            // [2] -- end tag
+            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
+            return SyntaxFactory.XmlElement(startTag, endTag);
+        }
+
+        /// <summary>
+        ///  Creates the summary element syntax.
+        /// </summary>
         /// <param name="content"> The content. </param>
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateSummaryElementSyntax(string content)
@@ -383,7 +393,9 @@ namespace CodeDocumentor.Helper
                 summaryEndTag);
         }
 
-        /// <summary> Creates the summary text syntax. </summary>
+        /// <summary>
+        ///  Creates the summary text syntax.
+        /// </summary>
         /// <param name="content"> The content. </param>
         /// <returns> A XmlTextSyntax. </returns>
         internal static XmlTextSyntax CreateSummaryTextSyntax(string content)
@@ -412,7 +424,9 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlText(newLine0Token, text1Token, newLine2Token, text2Token);
         }
 
-        /// <summary> Create the type parameter element syntax. </summary>
+        /// <summary>
+        ///  Create the type parameter element syntax.
+        /// </summary>
         /// <param name="parameterName"> The parameter name. </param>
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
@@ -429,14 +443,17 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlElement(startTag, endTag);
         }
 
-        /// <summary> Create the type parameter ref element syntax. </summary>
+        /// <summary>
+        ///  Create the type parameter ref element syntax.
+        /// </summary>
         /// <param name="parameterName"> The parameter name. <see cref="XmlElementSyntax"/> </param>
         /// <returns> A XmlElementSyntax. </returns>
         internal static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
         {
             var paramName = SyntaxFactory.XmlName("typeparamref");
 
-            /// <typeparamref name="parameterName"> [0][1] </typeparamref> [2]
+            /// <typeparamref name="parameterName"> [0][1] </typeparamref>
+            /// [2]
             // [0] -- param start tag with attribute
             var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
             var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
@@ -447,25 +464,33 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Creates the see C ref element syntax.
+        ///  Determines started word.
         /// </summary>
-        /// <param name="typeName">The type name.</param>
-        /// <returns>A <see cref="XmlElementSyntax"/>.</returns>
-        internal static XmlElementSyntax CreateSeeCRefElementSyntax(string typeName)
+        /// <param name="returnType"> The return type. </param>
+        /// <param name="useProperCasing"> If true, use proper casing. </param>
+        /// <returns> A string. </returns>
+        internal static string DetermineStartingWord(ReadOnlySpan<char> returnType, bool useProperCasing = true)
         {
-            var paramName = SyntaxFactory.XmlName("see");
-
-            /// <see cref="typeName" />
-            // [0] -- param start tag with attribute
-            var creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
-            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
-
-            // [2] -- end tag
-            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
-            return SyntaxFactory.XmlElement(startTag, endTag);
+            if (returnType.IsEmpty)
+            {
+                return string.Empty;
+            }
+            var str = returnType.ToString();
+            //if the returnType alread starts with a or an then just return
+            if (str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
+                str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
+                str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase)
+                )
+            {
+                return string.Empty;
+            }
+            var vowelChars = new List<char>() { 'a', 'e', 'i', 'o', 'u' };
+            return vowelChars.Contains(char.ToLower(returnType[0])) ? useProperCasing ? "An" : "an" : useProperCasing ? "A" : "a";
         }
 
-        /// <summary> Gets the element syntax. </summary>
+        /// <summary>
+        ///  Gets the element syntax.
+        /// </summary>
         /// <param name="syntax"> The syntax. </param>
         /// <param name="name"> The name. </param>
         /// <returns> A XmlElementSyntax. </returns>
@@ -501,7 +526,9 @@ namespace CodeDocumentor.Helper
             return null;
         }
 
-        /// <summary> Has summary. </summary>
+        /// <summary>
+        ///  Has summary.
+        /// </summary>
         /// <param name="syntax"> The syntax. </param>
         /// <returns> A bool. </returns>
         internal static bool HasSummary(this CSharpSyntaxNode syntax)
@@ -511,7 +538,9 @@ namespace CodeDocumentor.Helper
             || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
         }
 
-        /// <summary> Checks if is private. </summary>
+        /// <summary>
+        ///  Checks if is private.
+        /// </summary>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> A bool. </returns>
         internal static bool IsPrivate(this BaseMethodDeclarationSyntax declarationSyntax)
@@ -524,7 +553,9 @@ namespace CodeDocumentor.Helper
             return isPrivate;
         }
 
-        /// <summary> Upserts the leading trivia. </summary>
+        /// <summary>
+        ///  Upserts the leading trivia.
+        /// </summary>
         /// <param name="leadingTrivia"> The leading trivia. </param>
         /// <param name="commentTrivia"> The comment trivia. </param>
         /// <returns> A SyntaxTriviaList. </returns>
@@ -546,9 +577,174 @@ namespace CodeDocumentor.Helper
                 : leadingTrivia.Replace(leadingTrivia[existingIndex], SyntaxFactory.Trivia(commentTrivia));
         }
 
+        /// <summary>
+        ///  Creates the comment exterior.
+        /// </summary>
+        /// <returns> A SyntaxTriviaList. </returns>
+        private static SyntaxTriviaList CreateCommentExterior()
+        {
+            return SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///"));
+        }
+
+        /// <summary>
+        ///  Creates the line end text syntax.
+        /// </summary>
+        /// <returns> A XmlTextSyntax. </returns>
+        private static XmlTextSyntax CreateLineEndTextSyntax()
+        {
+            /*
+                /// <summary>
+                ///  The code fix provider.
+                /// </summary>
+                /// [0]
+            */
+
+            // [0] end line token.
+            var xmlTextNewLineToken = CreateNewLineToken();
+            var xmlText = SyntaxFactory.XmlText(xmlTextNewLineToken);
+            return xmlText;
+        }
+
+        /// <summary>
+        ///  Creates the line start text syntax.
+        /// </summary>
+        /// <returns> A XmlTextSyntax. </returns>
+        private static XmlTextSyntax CreateLineStartTextSyntax()
+        {
+            /*
+                ///[0] <summary>
+                /// The code fix provider.
+                /// </summary>
+            */
+
+            // [0] " " + leading comment exterior trivia
+            var xmlText0Leading = CreateCommentExterior();
+            var xmlText0LiteralToken = SyntaxFactory.XmlTextLiteral(xmlText0Leading, " ", " ", SyntaxFactory.TriviaList());
+            var xmlText0 = SyntaxFactory.XmlText(xmlText0LiteralToken);
+            return xmlText0;
+        }
+
+        /// <summary>
+        ///  Creates the new line token.
+        /// </summary>
+        /// <returns> A SyntaxToken. </returns>
+        private static SyntaxToken CreateNewLineToken()
+        {
+            return SyntaxFactory.XmlTextNewLine(Environment.NewLine, false);
+        }
+
+        /// <summary>
+        ///  Create the return part nodes.
+        /// </summary>
+        /// <param name="content"> The content. </param>
+        /// <returns> An array of XmlNodeSyntaxes </returns>
+        private static XmlNodeSyntax[] CreateReturnPartNodes(string content)
+        {
+            ///[0] <returns></returns>[1][2]
+            var lineStartText = CreateLineStartTextSyntax();
+
+            var returnElement = CreateReturnElementSyntax(content);
+
+            var lineEndText = CreateLineEndTextSyntax();
+
+            return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
+        }
+
+        /// <summary>
+        ///  Creates the summary part nodes.
+        /// </summary>
+        /// <param name="content"> The content. </param>
+        /// <returns> An array of XmlNodeSyntaxes </returns>
+        private static XmlNodeSyntax[] CreateSummaryPartNodes(string content)
+        {
+            /*
+                 ///[0] <summary>
+                 /// The code fix provider.
+                 /// </summary>[1] [2]
+             */
+
+            // [0] " " + leading comment exterior trivia
+            var xmlText0 = CreateLineStartTextSyntax();
+
+            // [1] Summary
+            var xmlElement = CreateSummaryElementSyntax(content);
+
+            // [2] new line
+            var xmlText1 = CreateLineEndTextSyntax();
+
+            return new XmlNodeSyntax[] { xmlText0, xmlElement, xmlText1 };
+        }
+
+        /// <summary>
+        ///  Create the type parameter part nodes.
+        /// </summary>
+        /// <param name="parameterName"> The parameter name. </param>
+        /// <returns> An array of XmlNodeSyntaxes </returns>
+        private static XmlNodeSyntax[] CreateTypeParameterPartNodes(string parameterName)
+        {
+            ///[0] <param name="parameterName"></param>[1][2]
+            // [0] -- line start text
+            var lineStartText = CreateLineStartTextSyntax();
+
+            // [1] -- parameter text
+            var parameterText = CreateTypeParameterElementSyntax(parameterName);
+
+            // [2] -- line end text
+            var lineEndText = CreateLineEndTextSyntax();
+
+            return new XmlNodeSyntax[] { lineStartText, parameterText, lineEndText };
+        }
+
+        /// <summary>
+        ///  Creates the value part nodes.
+        /// </summary>
+        /// <param name="content"> The content. </param>
+        /// <returns> An array of XmlNodeSyntaxes </returns>
+        private static XmlNodeSyntax[] CreateValuePartNodes(string content)
+        {
+            ///[0] <value></value>[1][2]
+            var lineStartText = CreateLineStartTextSyntax();
+
+            var returnElement = CreateReturnElementSyntax(content, "value");
+
+            var lineEndText = CreateLineEndTextSyntax();
+
+            return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
+        }
+
+        private static IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)
+        {
+            if (node == null)
+            {
+                return new SyntaxList<AttributeSyntax>();
+            }
+
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            return attrs.Where(w => w.ArgumentList != null)
+                         .SelectMany(w => w.ArgumentList.Arguments
+                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
+                                .Select(_ => w));
+        }
+
+        private static IEnumerable<AttributeSyntax> GetAttributes(MemberDeclarationSyntax node)
+        {
+            if (node == null)
+            {
+                return new SyntaxList<AttributeSyntax>();
+            }
+
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            return attrs.Where(w => w.ArgumentList != null)
+                         .SelectMany(w => w.ArgumentList.Arguments
+                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(EXCLUSION_CATEGORY))
+                                .Select(_ => w));
+        }
+
         #region Builders
 
-        /// <summary> Gets the exceptions. </summary>
+        /// <summary>
+        ///  Gets the exceptions.
+        /// </summary>
         /// <param name="textToSearch"> The text to search. </param>
         /// <returns> <![CDATA[IEnumerable<string>]]> </returns>
         internal static IEnumerable<string> GetExceptions(string textToSearch)
@@ -568,7 +764,9 @@ namespace CodeDocumentor.Helper
             return exceptions.Distinct();
         }
 
-        /// <summary> Withs the exception types. </summary>
+        /// <summary>
+        ///  Withs the exception types.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
@@ -586,7 +784,9 @@ namespace CodeDocumentor.Helper
             return list;
         }
 
-        /// <summary> Withs the existing. </summary>
+        /// <summary>
+        ///  Withs the existing.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="xmlNodeName"> The xml node name. </param>
@@ -601,7 +801,9 @@ namespace CodeDocumentor.Helper
             return list;
         }
 
-        /// <summary> Withs the parameters. </summary>
+        /// <summary>
+        ///  Withs the parameters.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
@@ -631,7 +833,9 @@ namespace CodeDocumentor.Helper
             return list;
         }
 
-        /// <summary> Withs the property value types. </summary>
+        /// <summary>
+        ///  Withs the property value types.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="includeValueNodeInProperties"> If true, include value node in properties. </param>
@@ -652,7 +856,9 @@ namespace CodeDocumentor.Helper
             return list;
         }
 
-        /// <summary> With the return type. </summary>
+        /// <summary>
+        ///  With the return type.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
@@ -668,7 +874,9 @@ namespace CodeDocumentor.Helper
             return list;
         }
 
-        /// <summary> Withs the summary. </summary>
+        /// <summary>
+        ///  Withs the summary.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="content"> The content. </param>
@@ -692,7 +900,9 @@ namespace CodeDocumentor.Helper
             return list.AddRange(summaryNodes);
         }
 
-        /// <summary> With the type paramters. </summary>
+        /// <summary>
+        ///  With the type paramters.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
@@ -708,7 +918,9 @@ namespace CodeDocumentor.Helper
             return list;
         }
 
-        /// <summary> With the type paramters. </summary>
+        /// <summary>
+        ///  With the type paramters.
+        /// </summary>
         /// <param name="list"> The list. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> <![CDATA[SyntaxList<XmlNodeSyntax>]]> </returns>
@@ -726,124 +938,9 @@ namespace CodeDocumentor.Helper
 
         #endregion Builders
 
-        /// <summary> Creates the comment exterior. </summary>
-        /// <returns> A SyntaxTriviaList. </returns>
-        private static SyntaxTriviaList CreateCommentExterior()
-        {
-            return SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///"));
-        }
-
-        /// <summary> Creates the line end text syntax. </summary>
-        /// <returns> A XmlTextSyntax. </returns>
-        private static XmlTextSyntax CreateLineEndTextSyntax()
-        {
-            /*
-                /// <summary> The code fix provider. </summary>
-                /// [0]
-            */
-
-            // [0] end line token.
-            var xmlTextNewLineToken = CreateNewLineToken();
-            var xmlText = SyntaxFactory.XmlText(xmlTextNewLineToken);
-            return xmlText;
-        }
-
-        /// <summary> Creates the line start text syntax. </summary>
-        /// <returns> A XmlTextSyntax. </returns>
-        private static XmlTextSyntax CreateLineStartTextSyntax()
-        {
-            /*
-                ///[0] <summary>
-                /// The code fix provider.
-                /// </summary>
-            */
-
-            // [0] " " + leading comment exterior trivia
-            var xmlText0Leading = CreateCommentExterior();
-            var xmlText0LiteralToken = SyntaxFactory.XmlTextLiteral(xmlText0Leading, " ", " ", SyntaxFactory.TriviaList());
-            var xmlText0 = SyntaxFactory.XmlText(xmlText0LiteralToken);
-            return xmlText0;
-        }
-
-        /// <summary> Creates the new line token. </summary>
-        /// <returns> A SyntaxToken. </returns>
-        private static SyntaxToken CreateNewLineToken()
-        {
-            return SyntaxFactory.XmlTextNewLine(Environment.NewLine, false);
-        }
-
-        /// <summary> Create the return part nodes. </summary>
-        /// <param name="content"> The content. </param>
-        /// <returns> An array of XmlNodeSyntaxes </returns>
-        private static XmlNodeSyntax[] CreateReturnPartNodes(string content)
-        {
-            ///[0] <returns></returns>[1][2]
-            var lineStartText = CreateLineStartTextSyntax();
-
-            var returnElement = CreateReturnElementSyntax(content);
-
-            var lineEndText = CreateLineEndTextSyntax();
-
-            return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
-        }
-
-        /// <summary> Creates the summary part nodes. </summary>
-        /// <param name="content"> The content. </param>
-        /// <returns> An array of XmlNodeSyntaxes </returns>
-        private static XmlNodeSyntax[] CreateSummaryPartNodes(string content)
-        {
-            /*
-                 ///[0] <summary>
-                 /// The code fix provider.
-                 /// </summary>[1] [2]
-             */
-
-            // [0] " " + leading comment exterior trivia
-            var xmlText0 = CreateLineStartTextSyntax();
-
-            // [1] Summary
-            var xmlElement = CreateSummaryElementSyntax(content);
-
-            // [2] new line
-            var xmlText1 = CreateLineEndTextSyntax();
-
-            return new XmlNodeSyntax[] { xmlText0, xmlElement, xmlText1 };
-        }
-
-        /// <summary> Create the type parameter part nodes. </summary>
-        /// <param name="parameterName"> The parameter name. </param>
-        /// <returns> An array of XmlNodeSyntaxes </returns>
-        private static XmlNodeSyntax[] CreateTypeParameterPartNodes(string parameterName)
-        {
-            ///[0] <param name="parameterName"></param>[1][2]
-            // [0] -- line start text
-            var lineStartText = CreateLineStartTextSyntax();
-
-            // [1] -- parameter text
-            var parameterText = CreateTypeParameterElementSyntax(parameterName);
-
-            // [2] -- line end text
-            var lineEndText = CreateLineEndTextSyntax();
-
-            return new XmlNodeSyntax[] { lineStartText, parameterText, lineEndText };
-        }
-
-        /// <summary> Creates the value part nodes. </summary>
-        /// <param name="content"> The content. </param>
-        /// <returns> An array of XmlNodeSyntaxes </returns>
-        private static XmlNodeSyntax[] CreateValuePartNodes(string content)
-        {
-            ///[0] <value></value>[1][2]
-            var lineStartText = CreateLineStartTextSyntax();
-
-            var returnElement = CreateReturnElementSyntax(content, "value");
-
-            var lineEndText = CreateLineEndTextSyntax();
-
-            return new XmlNodeSyntax[] { lineStartText, returnElement, lineEndText };
-        }
-
-        /// <summary> Wrap element syntax in comment syntax. </summary>
+        /// <summary>
+        ///  Wrap element syntax in comment syntax.
+        /// </summary>
         /// <param name="element"> The element. </param>
         /// <returns> An array of XmlNodeSyntaxes </returns>
         private static XmlNodeSyntax[] WrapElementSyntaxInCommentSyntax(XmlElementSyntax element)

@@ -18,20 +18,22 @@ using Task = System.Threading.Tasks.Task;
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Vsix2022
 {
-    /// <summary> This is the class that implements the package exposed by this assembly. </summary>
+    /// <summary>
+    ///  This is the class that implements the package exposed by this assembly.
+    /// </summary>
     /// <remarks>
-    ///     <para>
-    ///         The minimum requirement for a class to be considered a valid package for Visual Studio is to implement
-    ///         the IVsPackage interface and register itself with the shell. This package uses the helper classes
-    ///         defined inside the Managed Package Framework (MPF) to do it: it derives from the Package class that
-    ///         provides the implementation of the IVsPackage interface and uses the registration attributes defined in
-    ///         the framework to register itself and its components with the shell. These attributes tell the pkgdef
-    ///         creation utility what data to put into .pkgdef file.
-    ///     </para>
-    ///     <para>
-    ///         To get loaded into VS, the package must be referred by &lt;Asset Type="Microsoft.VisualStudio.VsPackage"
-    ///         ...&gt; in .vsixmanifest file.
-    ///     </para>
+    ///  <para>
+    ///   The minimum requirement for a class to be considered a valid package for Visual Studio is to implement the
+    ///   IVsPackage interface and register itself with the shell. This package uses the helper classes defined inside
+    ///   the Managed Package Framework (MPF) to do it: it derives from the Package class that provides the
+    ///   implementation of the IVsPackage interface and uses the registration attributes defined in the framework to
+    ///   register itself and its components with the shell. These attributes tell the pkgdef creation utility what data
+    ///   to put into .pkgdef file.
+    ///  </para>
+    ///  <para>
+    ///   To get loaded into VS, the package must be referred by &lt;Asset Type="Microsoft.VisualStudio.VsPackage"
+    ///   ...&gt; in .vsixmanifest file.
+    ///  </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(VsixOptions.PackageGuidString)]
@@ -48,13 +50,13 @@ namespace CodeDocumentor.Vsix2022
 
         public static Container DIContainer()
         {
-            if(ContainerFactory != null)
+            if (ContainerFactory != null)
             {
                 return ContainerFactory();
             }
             if (_DIContainer == null)
             {
-                _DIContainer =  new Container();
+                _DIContainer = new Container();
                 _DIContainer.RegisterServices();
                 _DIContainer.Verify();
             }
@@ -64,14 +66,16 @@ namespace CodeDocumentor.Vsix2022
 #pragma warning disable IDE1006 // Naming Styles
         internal static IOptionPageGrid _options;
 #pragma warning restore IDE1006 // Naming Styles
-//        private static readonly object _syncRoot = new object();
+        // private static readonly object _syncRoot = new object();
 #pragma warning disable IDE1006 // Naming Styles
         private static Container _DIContainer;
 #pragma warning restore IDE1006 // Naming Styles
 
         #region Package Members
 
-        /// <summary> Gets the options. </summary>
+        /// <summary>
+        ///  Gets the options.
+        /// </summary>
         /// <value> An IOptionPageGrid. </value>
         public static IOptionPageGrid Options
         {
@@ -98,16 +102,16 @@ namespace CodeDocumentor.Vsix2022
         }
 
         /// <summary>
-        ///     Initialization of the package; this method is called right after the package is sited, so this is the
-        ///     place where you can put all the initialization code that rely on services provided by VisualStudio.
+        ///  Initialization of the package; this method is called right after the package is sited, so this is the place
+        ///  where you can put all the initialization code that rely on services provided by VisualStudio.
         /// </summary>
         /// <param name="cancellationToken">
-        ///     A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.
+        ///  A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.
         /// </param>
         /// <param name="progress"> A provider for progress updates. </param>
         /// <returns>
-        ///     A task representing the async work of package initialization, or an already completed task if there is
-        ///     none. Do not return null from this method.
+        ///  A task representing the async work of package initialization, or an already completed task if there is
+        ///  none. Do not return null from this method.
         /// </returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {

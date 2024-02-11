@@ -11,10 +11,14 @@ namespace CodeDocumentor
 {
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
-        /// <summary> The title. </summary>
+        /// <summary>
+        ///  The title.
+        /// </summary>
         protected const string FILE_FIX_TITLE = "Code Documentor this whole file";
 
-        /// <summary> Gets the fixable diagnostic ids. </summary>
+        /// <summary>
+        ///  Gets the fixable diagnostic ids.
+        /// </summary>
         protected ImmutableArray<string> FileFixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
@@ -31,7 +35,9 @@ namespace CodeDocumentor
             return null;
         }
 
-        /// <summary> Registers code fixes async. </summary>
+        /// <summary>
+        ///  Registers code fixes async.
+        /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)

@@ -7,18 +7,26 @@ namespace CodeDocumentor.Vsix2022
 {
     public class WordMap
     {
-        /// <summary> Gets or Sets the translation. </summary>
+        /// <summary>
+        ///  Gets or Sets the translation.
+        /// </summary>
         /// <value> A string. </value>
         public string Translation { get; set; }
 
-        /// <summary> Gets or Sets the word. </summary>
+        /// <summary>
+        ///  Gets or Sets the word.
+        /// </summary>
         /// <value> A string. </value>
         public string Word { get; set; }
 
-        /// <summary> Gets or Sets the word evaluator. </summary>
+        /// <summary>
+        ///  Gets or Sets the word evaluator.
+        /// </summary>
         public Func<string, string, string> WordEvaluator { get; set; }
 
-        /// <summary> Gets the translation. </summary>
+        /// <summary>
+        ///  Gets the translation.
+        /// </summary>
         /// <param name="nextWord"> The next word. </param>
         /// <returns> A string. </returns>
         public string GetTranslation(string nextWord = null)

@@ -5,44 +5,44 @@ namespace CodeDocumentor.Services
 {
     public interface IOptionsService : IOptionPageGrid
     {
-        void Update(Vsix2022.Settings settings);
-
         void SetDefaults(IOptionPageGrid options);
+
+        void Update(Vsix2022.Settings settings);
     }
 
     public class OptionsService : IOptionsService
     {
-        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
-
         public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
 
         public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; }
 
+        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; }
+
         public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; }
+
+        public bool ExcludeAsyncSuffix { get; set; }
 
         public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; }
 
+        public bool IncludeValueNodeInProperties { get; set; }
+
         public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; }
 
+        public bool IsEnabledForNonPublicFields { get; set; }
+
+        public bool IsEnabledForPublicMembersOnly { get; set; }
+
         public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
+
+        public bool PreserveExistingSummaryText { get; set; }
 
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
 
         public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
 
-        public bool ExcludeAsyncSuffix { get; set; }
-
-        public bool IncludeValueNodeInProperties { get; set; }
-
-        public bool IsEnabledForPublicMembersOnly { get; set; }
-
-        public bool IsEnabledForNonPublicFields { get; set; }
-
-        public bool PreserveExistingSummaryText { get; set; }
+        public bool TryToIncludeCrefsForReturnTypes { get; set; }
 
         public bool UseNaturalLanguageForReturnNode { get; set; }
-
-        public bool TryToIncludeCrefsForReturnTypes { get; set; }
 
         public bool UseToDoCommentsOnSummaryError { get; set; }
 

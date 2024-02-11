@@ -13,21 +13,33 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary> The interface code fix provider. </summary>
+    /// <summary>
+    ///  The interface code fix provider.
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(EnumCodeFixProvider)), Shared]
     public class EnumCodeFixProvider : BaseCodeFixProvider
     {
-        /// <summary> Gets the fixable diagnostic ids. </summary>
+        private const string Title = "Code Documentor this enum";
+
+        private const string TitleRebuild = "Code Documentor update this enum";
+
+        /// <summary>
+        ///  Gets the fixable diagnostic ids.
+        /// </summary>
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumAnalyzerSettings.DiagnosticId);
 
-        /// <summary> Gets fix all provider. </summary>
+        /// <summary>
+        ///  Gets fix all provider.
+        /// </summary>
         /// <returns> A FixAllProvider. </returns>
         public sealed override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary> Registers code fixes async. </summary>
+        /// <summary>
+        ///  Registers code fixes async.
+        /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -50,7 +62,9 @@ namespace CodeDocumentor
             await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
-        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
+        /// <summary>
+        ///  Builds the comments. This is only used in the file level fixProvider.
+        /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
@@ -70,9 +84,6 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
-        private const string Title = "Code Documentor this enum";
-        private const string TitleRebuild = "Code Documentor update this enum";
-
         private static EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
@@ -83,7 +94,9 @@ namespace CodeDocumentor
             return newDeclaration;
         }
 
-        /// <summary> Adds documentation header async. </summary>
+        /// <summary>
+        ///  Adds documentation header async.
+        /// </summary>
         /// <param name="document"> The document. </param>
         /// <param name="root"> The root. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>

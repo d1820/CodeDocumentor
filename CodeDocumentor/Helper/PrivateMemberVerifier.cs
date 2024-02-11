@@ -4,10 +4,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary> Verifies whether a member is private. </summary>
+    /// <summary>
+    ///  Verifies whether a member is private.
+    /// </summary>
     public class PrivateMemberVerifier
     {
-        /// <summary> Are the private member. </summary>
+        /// <summary>
+        ///  Are the private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(ClassDeclarationSyntax node)
@@ -15,7 +19,9 @@ namespace CodeDocumentor.Helper
             return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
         }
 
-        /// <summary> Is private member. </summary>
+        /// <summary>
+        ///  Is private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(RecordDeclarationSyntax node)
@@ -23,7 +29,9 @@ namespace CodeDocumentor.Helper
             return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
         }
 
-        /// <summary> Are the private member. </summary>
+        /// <summary>
+        ///  Are the private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(InterfaceDeclarationSyntax node)
@@ -31,7 +39,9 @@ namespace CodeDocumentor.Helper
             return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
         }
 
-        /// <summary> Are the private member. </summary>
+        /// <summary>
+        ///  Are the private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(FieldDeclarationSyntax node)
@@ -50,7 +60,9 @@ namespace CodeDocumentor.Helper
             return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
 
-        /// <summary> Are the private member. </summary>
+        /// <summary>
+        ///  Are the private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(ConstructorDeclarationSyntax node)
@@ -69,7 +81,9 @@ namespace CodeDocumentor.Helper
             return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
 
-        /// <summary> Are the private member. </summary>
+        /// <summary>
+        ///  Are the private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(PropertyDeclarationSyntax node)
@@ -88,7 +102,9 @@ namespace CodeDocumentor.Helper
             return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
 
-        /// <summary> Are the private member. </summary>
+        /// <summary>
+        ///  Are the private member.
+        /// </summary>
         /// <param name="node"> The node. </param>
         /// <returns> A bool. </returns>
         public static bool IsPrivateMember(MethodDeclarationSyntax node)

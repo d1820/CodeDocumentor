@@ -13,12 +13,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary> The comment helper. </summary>
+    /// <summary>
+    ///  The comment helper.
+    /// </summary>
     public static class CommentHelper
     {
         private static readonly Regex _crefRegEx = new Regex(Constants.CREF_MATCH_REGEX_TEMPLATE);
 
-        /// <summary> Creates the class comment. </summary>
+        /// <summary>
+        ///  Creates the class comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
         public static string CreateClassComment(string name)
@@ -44,7 +48,9 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        /// <summary> Creates the constructor comment. </summary>
+        /// <summary>
+        ///  Creates the constructor comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <param name="isPrivate"> If true, is private. </param>
         /// <returns> A string. </returns>
@@ -66,7 +72,9 @@ namespace CodeDocumentor.Helper
             return comment.ApplyUserTranslations().WithPeriod();
         }
 
-        /// <summary> Creates the enum comment. </summary>
+        /// <summary>
+        ///  Creates the enum comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
         public static string CreateEnumComment(string name)
@@ -88,7 +96,9 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        /// <summary> Creates the field comment. </summary>
+        /// <summary>
+        ///  Creates the field comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
         public static string CreateFieldComment(string name)
@@ -118,7 +128,9 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        /// <summary> Creates the interface comment. </summary>
+        /// <summary>
+        ///  Creates the interface comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
         public static string CreateInterfaceComment(string name)
@@ -144,7 +156,9 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        /// <summary> Creates the method comment. </summary>
+        /// <summary>
+        ///  Creates the method comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <param name="returnType"> The return type. </param>
         /// <returns> A string. </returns>
@@ -190,7 +204,9 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        /// <summary> Creates the parameter comment. </summary>
+        /// <summary>
+        ///  Creates the parameter comment.
+        /// </summary>
         /// <param name="parameter"> The parameter. </param>
         /// <returns> A string. </returns>
         public static string CreateParameterComment(ParameterSyntax parameter)
@@ -241,7 +257,9 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        /// <summary> Creates the property comment. </summary>
+        /// <summary>
+        ///  Creates the property comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <param name="isBoolean"> If true, is boolean. </param>
         /// <param name="hasSetter"> If true, has setter. </param>
@@ -283,7 +301,9 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        /// <summary> Create the record comment. </summary>
+        /// <summary>
+        ///  Create the record comment.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
         public static string CreateRecordComment(string name)
@@ -309,7 +329,9 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        /// <summary> Has comment. </summary>
+        /// <summary>
+        ///  Has comment.
+        /// </summary>
         /// <param name="commentTriviaSyntax"> The comment trivia syntax. </param>
         /// <returns> A bool. </returns>
         public static bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
@@ -327,7 +349,14 @@ namespace CodeDocumentor.Helper
             return hasSummary || hasInheritDoc;
         }
 
-        /// <summary> Withs the period. </summary>
+        public static string RemovePeriod(this string text)
+        {
+            return text?.Trim().EndsWith(".") == true ? text.Remove(text.Length - 1) : text;
+        }
+
+        /// <summary>
+        ///  Withs the period.
+        /// </summary>
         /// <param name="text"> The text. </param>
         /// <returns> A string. </returns>
         public static string WithPeriod(this string text)
@@ -339,9 +368,37 @@ namespace CodeDocumentor.Helper
             return text.Length > 0 ? text + "." : text;
         }
 
-        public static string RemovePeriod(this string text)
+        internal static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
         {
-            return text?.Trim().EndsWith(".") == true ? text.Remove(text.Length - 1) : text;
+            if (part is null)
+            {
+                return parts;
+            }
+            if (idx == -1)
+            {
+                parts.Add(part);
+                return parts;
+            }
+            parts.Insert(idx, part);
+            return parts;
+        }
+
+        internal static string JoinToString(this List<string> parts, string delimiter = " ")
+        {
+            return $"{string.Join(delimiter, parts)}";
+        }
+
+        internal static List<string> PluaralizeLastWord(this List<string> parts)
+        {
+            var lastIdx = parts.Count - 1;
+            parts[lastIdx] = Pluralizer.ForcePluralization(parts[lastIdx]);
+            return parts;
+        }
+
+        internal static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
+        {
+            tapAction?.Invoke(parts);
+            return parts;
         }
 
         internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
@@ -379,44 +436,26 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        internal static List<string> PluaralizeLastWord(this List<string> parts)
-        {
-            var lastIdx = parts.Count - 1;
-            parts[lastIdx] = Pluralizer.ForcePluralization(parts[lastIdx]);
-            return parts;
-        }
-
-        private static List<string> AddPropertyBooleanPart(this List<string> parts)
-        {
-            var booleanPart = " a value indicating whether to";
-            if (parts[0].IsPastTense() || parts[0].IsVerb())
-            {
-                booleanPart = "a value indicating whether";
-            }
-
-            //is messes up readability. Lets remove it. ex) IsEnabledForDays
-            var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
-            if (isTwoLettweWord)
-            {
-                parts.Remove(parts[0]);
-            }
-            parts.Insert(0, booleanPart);
-
-            return parts;
-        }
-
-        private static List<string> HandleAsyncKeyword(this List<string> parts)
+        internal static List<string> TranslateParts(this List<string> parts)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-
-            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
+            for (var i = 0; i < parts.Count; i++)
             {
-                parts.Remove(parts.Last());
-            }
-            var idx = parts.FindIndex(f => f.Equals("async", System.StringComparison.OrdinalIgnoreCase));
-            if (idx > -1)
-            {
-                parts[idx] = "asynchronously";
+                var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
+                var userMaps = optionsService.WordMaps ?? Array.Empty<WordMap>();
+                foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
+                {
+                    if (!CanEvaluateWordMap(wordMap, i))
+                    {
+                        continue;
+                    }
+                    //dont run an internal word map if the user has one for the same thing
+                    if (!userMaps.Any(a => a.Word == wordMap.Word))
+                    {
+                        var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
+                        parts[i] = Regex.Replace(parts[i], wordToLookFor, wordMap.GetTranslation(nextWord));
+                    }
+                }
             }
             return parts;
         }
@@ -447,22 +486,23 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> TryPluarizeFirstWord(this List<string> parts)
+        private static List<string> AddPropertyBooleanPart(this List<string> parts)
         {
-            if (parts.Count >= 2)
+            var booleanPart = " a value indicating whether to";
+            if (parts[0].IsPastTense() || parts[0].IsVerb())
             {
-                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+                booleanPart = "a value indicating whether";
             }
-            else
-            {
-                parts[0] = Pluralizer.Pluralize(parts[0]);
-            }
-            return parts;
-        }
 
-        internal static string JoinToString(this List<string> parts, string delimiter = " ")
-        {
-            return $"{string.Join(delimiter, parts)}";
+            //is messes up readability. Lets remove it. ex) IsEnabledForDays
+            var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
+            if (isTwoLettweWord)
+            {
+                parts.Remove(parts[0]);
+            }
+            parts.Insert(0, booleanPart);
+
+            return parts;
         }
 
         private static bool CanEvaluateWordMap(WordMap wordMap, int partIdx)
@@ -470,33 +510,36 @@ namespace CodeDocumentor.Helper
             return wordMap.Word != "Is" || partIdx == 0;
         }
 
-        internal static List<string> TranslateParts(this List<string> parts)
+        private static List<string> HandleAsyncKeyword(this List<string> parts)
         {
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            for (var i = 0; i < parts.Count; i++)
+
+            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
             {
-                var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
-                var userMaps = optionsService.WordMaps ?? Array.Empty<WordMap>();
-                foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
-                {
-                    if (!CanEvaluateWordMap(wordMap, i))
-                    {
-                        continue;
-                    }
-                    //dont run an internal word map if the user has one for the same thing
-                    if (!userMaps.Any(a => a.Word == wordMap.Word))
-                    {
-                        var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
-                        parts[i] = Regex.Replace(parts[i], wordToLookFor, wordMap.GetTranslation(nextWord));
-                    }
-                }
+                parts.Remove(parts.Last());
+            }
+            var idx = parts.FindIndex(f => f.Equals("async", System.StringComparison.OrdinalIgnoreCase));
+            if (idx > -1)
+            {
+                parts[idx] = "asynchronously";
             }
             return parts;
         }
 
-        internal static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
+        private static List<string> TryAddTodoSummary(this List<string> parts, string returnType)
         {
-            tapAction?.Invoke(parts);
+            if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
+            {
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                if (optionsService.UseToDoCommentsOnSummaryError)
+                {
+                    parts = new List<string> { "TODO: Add Summary" };
+                }
+                else
+                {
+                    parts = new List<string>();
+                }
+            }
             return parts;
         }
 
@@ -542,35 +585,16 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> TryAddTodoSummary(this List<string> parts, string returnType)
+        private static List<string> TryPluarizeFirstWord(this List<string> parts)
         {
-            if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
+            if (parts.Count >= 2)
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                if (optionsService.UseToDoCommentsOnSummaryError)
-                {
-                    parts = new List<string> { "TODO: Add Summary" };
-                }
-                else
-                {
-                    parts = new List<string>();
-                }
+                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
             }
-            return parts;
-        }
-
-        internal static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
-        {
-            if (part is null)
+            else
             {
-                return parts;
+                parts[0] = Pluralizer.Pluralize(parts[0]);
             }
-            if (idx == -1)
-            {
-                parts.Add(part);
-                return parts;
-            }
-            parts.Insert(idx, part);
             return parts;
         }
     }

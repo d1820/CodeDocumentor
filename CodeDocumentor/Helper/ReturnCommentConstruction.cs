@@ -5,17 +5,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary> The return comment construction. </summary>
+    /// <summary>
+    ///  The return comment construction.
+    /// </summary>
     public class ReturnCommentConstruction : BaseReturnTypeCommentConstruction
     {
-        /// <summary> Gets or Sets the dictionary comment template. </summary>
+        /// <summary>
+        ///  Gets or Sets the dictionary comment template.
+        /// </summary>
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
-
-        //used for testing
-        internal ReturnCommentConstruction()
-        {
-        }
 
         public ReturnCommentConstruction(TypeSyntax returnType)
         {
@@ -64,6 +63,11 @@ namespace CodeDocumentor.Helper
             {
                 Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();
             }
+        }
+
+        //used for testing
+        internal ReturnCommentConstruction()
+        {
         }
 
         internal override string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)

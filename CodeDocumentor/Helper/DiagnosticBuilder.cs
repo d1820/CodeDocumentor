@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +9,9 @@ namespace CodeDocumentor.Helper
 {
     public static class DiagnosticBuilder
     {
-        /// <summary> Builds the diagnostic. </summary>
+        /// <summary>
+        ///  Builds the diagnostic.
+        /// </summary>
         /// <param name="context"> The context. </param>
         /// <param name="node"> The node. </param>
         /// <param name="identifier"> The identifier. </param>

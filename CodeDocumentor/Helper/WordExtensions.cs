@@ -9,20 +9,25 @@ namespace CodeDocumentor.Helper
 {
     public static class WordExtensions
     {
+        public static string Clean(this string word)
+        {
+            var pattern = "[^a-zA-Z0-9 ]";
+            return Regex.Replace(word, pattern, "");
+        }
+
+        public static string GetWordFirstPart(this string word)
+        {
+            var checkWord = word;
+            if (word.Contains(" ")) //a translation already happened and swapped a word for a set of words. the first word is really what we are checking
+            {
+                checkWord = word.Split(' ').First();
+            }
+            return checkWord;
+        }
+
         public static bool IsBoolReturnType(this TypeSyntax returnType)
         {
             return returnType.ToString().IndexOf("bool", StringComparison.InvariantCultureIgnoreCase) > -1;
-        }
-
-        public static bool IsVerbCombo(this string word, string nextWord = null)
-        {
-            var skipWord = word.IsVerb();
-            var skipNextWord = false;
-            if (!string.IsNullOrEmpty(nextWord) && !skipWord)
-            {
-                skipNextWord = nextWord.IsVerb();
-            }
-            return skipWord || skipNextWord;
         }
 
         public static bool IsPastTense(this string word)
@@ -31,16 +36,16 @@ namespace CodeDocumentor.Helper
             return word.EndsWith("ed");
         }
 
-        public static bool IsTwoLetterVerb(this string word)
-        {
-            var checkWord = word.GetWordFirstPart().Clean();
-            return Constants.TWO_LETTER_WORD_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
-        }
-
         public static bool IsTwoLetterPropertyExclusionVerb(this string word)
         {
             var checkWord = word.GetWordFirstPart().Clean();
             return Constants.TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static bool IsTwoLetterVerb(this string word)
+        {
+            var checkWord = word.GetWordFirstPart().Clean();
+            return Constants.TWO_LETTER_WORD_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static bool IsVerb(this string word)
@@ -68,6 +73,22 @@ namespace CodeDocumentor.Helper
             );
         }
 
+        public static bool IsVerbCombo(this string word, string nextWord = null)
+        {
+            var skipWord = word.IsVerb();
+            var skipNextWord = false;
+            if (!string.IsNullOrEmpty(nextWord) && !skipWord)
+            {
+                skipNextWord = nextWord.IsVerb();
+            }
+            return skipWord || skipNextWord;
+        }
+
+        public static string ToTitleCase(this string txt)
+        {
+            return char.ToUpper(txt[0]) + txt.Substring(1);
+        }
+
         public static void TryAddSingleWord(this List<string> words, List<char> singleWord, bool clearSingleWord = false)
         {
             if (singleWord.Any())
@@ -78,27 +99,6 @@ namespace CodeDocumentor.Helper
             {
                 singleWord.Clear();
             }
-        }
-
-        public static string ToTitleCase(this string txt)
-        {
-            return char.ToUpper(txt[0]) + txt.Substring(1);
-        }
-
-        public static string GetWordFirstPart(this string word)
-        {
-            var checkWord = word;
-            if (word.Contains(" ")) //a translation already happened and swapped a word for a set of words. the first word is really what we are checking
-            {
-                checkWord = word.Split(' ').First();
-            }
-            return checkWord;
-        }
-
-        public static string Clean(this string word)
-        {
-            var pattern = "[^a-zA-Z0-9 ]";
-            return Regex.Replace(word, pattern, "");
         }
     }
 }

@@ -70,6 +70,7 @@ namespace CodeDocumentor.Test.Methods
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.UseNaturalLanguageForReturnNode = false;
+                o.TryToIncludeCrefsForReturnTypes = true;
             });
             var expected = new DiagnosticResult
             {

@@ -8,35 +8,11 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
-        public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
-
-        public static string[] EXCLUDE_THE_LIST_FOR_2PART_COMMENTS { get; set; } = new[] { "todo", "on" };
-
-        private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",
-                                                                    "has", "had", "having", "set", "get",
-                                                                    "did", "can", "shall", "will", "may", "might", "must",
-                                                                    "dare", "need", "used", "ought", "goes" };
-
-        public static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "am", "as", "ax", "an", "at", "be", "by", "do", "hi", "go", "if", "in", "is", "it", "me",
-                                                                       "my", "no", "of", "on", "or", "so", "to", "up", "us", "uh", "um", "we" };
-
-        public static string[] TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST { get; } = new[] { "an", "is", "if", "by", "do" };
-
-        public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has", "yes", "its", "ass" };
-
-        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
-            new WordMap { Word = "To", Translation = "Converts to" },
-            new WordMap { Word = "Do", Translation = "Does" },
-            new WordMap { Word = "Dto", Translation = "Data transfer object" },
-            new WordMap { Word = "Is", Translation = "Checks if is" },
-            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
-                    return !string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord) ? "Checks if" : translation; }
-            }
-        };
+        public static readonly string CREF_MATCH_REGEX_TEMPLATE = "<.*>";
 
         public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
 
-        public static readonly string CREF_MATCH_REGEX_TEMPLATE = "<.*>";
+        public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
         public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
@@ -53,6 +29,39 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" }
         };
 
+        public static string[] EXCLUDE_THE_LIST_FOR_2PART_COMMENTS { get; set; } = new[] { "todo", "on" };
+
+        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
+            new WordMap { Word = "To", Translation = "Converts to" },
+            new WordMap { Word = "Do", Translation = "Does" },
+            new WordMap { Word = "Dto", Translation = "Data transfer object" },
+            new WordMap { Word = "Is", Translation = "Checks if is" },
+            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
+                    return !string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord) ? "Checks if" : translation; }
+            }
+        };
+
+        public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has", "yes", "its", "ass" };
+
+        public static string[] TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST { get; } = new[] { "an", "is", "if", "by", "do" };
+
+        public static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "am", "as", "ax", "an", "at", "be", "by", "do", "hi", "go", "if", "in", "is", "it", "me",
+                                                                       "my", "no", "of", "on", "or", "so", "to", "up", "us", "uh", "um", "we" };
+
+        private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",
+                                                                    "has", "had", "having", "set", "get",
+                                                                    "did", "can", "shall", "will", "may", "might", "must",
+                                                                    "dare", "need", "used", "ought", "goes" };
+
+        public static IEnumerable<string> GetInternalVerbCheckList()
+        {
+            var items = new List<string>();
+            items.AddRange(INTERNAL_VERB_WORD_LIST);
+            items.AddRange(AXUILLARY_VERB_WORD_LIST);
+            items.AddRange(TWO_LETTER_WORD_LIST);
+            return items;
+        }
+
         public static class DiagnosticIds
         {
             public const string CLASS_DIAGNOSTIC_ID = "CD1600";
@@ -64,15 +73,6 @@ namespace CodeDocumentor.Vsix2022
             public const string METHOD_DIAGNOSTIC_ID = "CD1605";
             public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
             public const string RECORD_DIAGNOSTIC_ID = "CD1608";
-        }
-
-        public static IEnumerable<string> GetInternalVerbCheckList()
-        {
-            var items = new List<string>();
-            items.AddRange(INTERNAL_VERB_WORD_LIST);
-            items.AddRange(AXUILLARY_VERB_WORD_LIST);
-            items.AddRange(TWO_LETTER_WORD_LIST);
-            return items;
         }
 
         private static string[] INTERNAL_VERB_WORD_LIST { get; set; } = new[] {

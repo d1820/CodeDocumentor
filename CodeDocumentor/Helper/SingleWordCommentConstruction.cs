@@ -5,11 +5,15 @@ namespace CodeDocumentor.Helper
 {
     public class SingleWordCommentConstruction : BaseReturnTypeCommentConstruction
     {
-        /// <summary> Gets or Sets the dictionary comment template. </summary>
+        /// <summary>
+        ///  Gets or Sets the dictionary comment template.
+        /// </summary>
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "dictionary with a key of type {0} and a value of type {1}";
 
-        /// <summary> Initializes a new instance of the <see cref="SingleWordCommentConstruction" /> class. </summary>
+        /// <summary>
+        ///  Initializes a new instance of the <see cref="SingleWordCommentConstruction"/> class.
+        /// </summary>
         /// <param name="returnType"> The return type. </param>
         public SingleWordCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {

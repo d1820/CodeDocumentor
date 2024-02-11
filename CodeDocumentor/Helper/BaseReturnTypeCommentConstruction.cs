@@ -12,27 +12,27 @@ namespace CodeDocumentor.Helper
         protected readonly bool UseProperCasing;
 
         /// <summary>
-        /// Gets or Sets the array comment template.
+        ///  Gets or Sets the array comment template.
         /// </summary>
         /// <value> A string. </value>
         public string ArrayCommentTemplate { get; } = "an array of {0}";
 
         /// <summary>
-        /// Generates the comment.
+        ///  Generates the comment.
         /// </summary>
         public string Comment { get; protected set; }
 
         /// <summary>
-        /// Gets or Sets the dictionary comment template.
+        ///  Gets or Sets the dictionary comment template.
         /// </summary>
         /// <value> A string. </value>
         public abstract string DictionaryCommentTemplate { get; }
 
         /// <summary>
-        /// Builds a comment
+        ///  Builds a comment
         /// </summary>
         /// <param name="returnType"> The return type. </param>
-        /// <param name="options">The options </param>
+        /// <param name="options"> The options </param>
         /// <returns> The comment </returns>
         internal virtual string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
@@ -63,8 +63,44 @@ namespace CodeDocumentor.Helper
                 : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options.TryToIncludeCrefsForReturnTypes);
         }
 
+        private static string BuildPrefix(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        {
+            var startingPrefix = "returns";
+            if (options.BuildWithPeriodAndPrefixForTaskTypes)
+            {
+                startingPrefix = "and return";
+            }
+            string prefix;
+            if (options.TryToIncludeCrefsForReturnTypes)
+            {
+                prefix = $"{startingPrefix} a <see cref=\"Task\"/> of type ";
+                if (returnType.IsGenericActionResult())
+                {
+                    prefix = $"{startingPrefix} an <see cref=\"ActionResult\"/> of type ";
+                }
+                if (returnType.IsGenericValueTask())
+                {
+                    prefix = $"{startingPrefix} a <see cref=\"ValueTask\"/> of type ";
+                }
+
+                return prefix;
+            }
+
+            prefix = $"{startingPrefix} a Task of type ";
+            if (returnType.IsGenericActionResult())
+            {
+                prefix = $"{startingPrefix} an ActionResult of type ";
+            }
+            if (returnType.IsGenericValueTask())
+            {
+                prefix = $"{startingPrefix} a ValueTask of type ";
+            }
+
+            return prefix;
+        }
+
         /// <summary>
-        /// Finds the parent MethodDeclarationSyntax if exists
+        ///  Finds the parent MethodDeclarationSyntax if exists
         /// </summary>
         /// <param name="node"> </param>
         /// <returns> </returns>
@@ -76,7 +112,7 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Builds the children generic arg list.
+        ///  Builds the children generic arg list.
         /// </summary>
         /// <param name="argType"> The arg type. </param>
         /// <param name="items"> The items. </param>
@@ -94,7 +130,7 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Determines specific object name.
+        ///  Determines specific object name.
         /// </summary>
         /// <param name="specificType"> The specific type. </param>
         /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
@@ -125,7 +161,7 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Generates general comment.
+        ///  Generates general comment.
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
@@ -136,7 +172,7 @@ namespace CodeDocumentor.Helper
         }
 
         /// <summary>
-        /// Generates generic type comment.
+        ///  Generates generic type comment.
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The string </returns>
@@ -181,63 +217,6 @@ namespace CodeDocumentor.Helper
             return GenerateGeneralComment(genericTypeStr.AsSpan());
         }
 
-        private string ProcessSingleTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            var prefix = BuildPrefix(returnType, options);
-            string comment;
-            var firstType = returnType.TypeArgumentList.Arguments.First();
-            if (firstType.IsReadOnlyCollection() || firstType.IsDictionary() || firstType.IsList())
-            {
-                prefix = prefix.Replace("type ", "");
-            }
-
-            var newOptions = new ReturnTypeBuilderOptions
-            {
-                IsRootReturnType = false,
-                ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
-                UseProperCasing = options.UseProperCasing,
-                ForcePredefinedTypeEvaluation = true, //maybe??
-                BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
-                TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes
-            };
-            var buildComment = BuildComment(firstType, newOptions);
-            comment = prefix + buildComment;
-            comment = comment.RemovePeriod();
-            return options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
-        }
-
-        private string ProcessMultiTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            string comment;
-            //This should be impossible, but will handle just in case
-            var builder = new StringBuilder();
-            for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
-            {
-                var item = returnType.TypeArgumentList.Arguments[i];
-                if (i > 0)
-                {
-                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), UseProperCasing)}");
-                }
-                var newOptions = new ReturnTypeBuilderOptions
-                {
-                    IsRootReturnType = false,
-                    ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
-                    UseProperCasing = options.UseProperCasing,
-                    ForcePredefinedTypeEvaluation = true,
-                    BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
-                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes
-                };
-                builder.Append($"{BuildComment(item, newOptions)}");
-                if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
-                {
-                    builder.Append(" and ");
-                }
-            }
-            comment = builder.ToString();
-            comment = comment.RemovePeriod();
-            return options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
-        }
-
         private string ProcessDictionary(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var argType1 = returnType.TypeArgumentList.Arguments.First();
@@ -275,36 +254,6 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        private string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            var argType = returnType.TypeArgumentList.Arguments.First();
-
-            var items = new List<string>();
-            BuildChildrenGenericArgList(argType, items);
-            var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
-            items.Add(returnName);
-            items.Reverse();
-
-            var comment = items.ToLowerParts(true)
-                                .PluaralizeLastWord()
-                                .Tap((parts) =>
-                                {
-                                    for (var i = 0; i < parts.Count; i++)
-                                    {
-                                        parts[i] = parts[i].Replace(returnName, $"a {returnName}");
-                                    }
-                                })
-                                .JoinToString(" of ")
-                                .ApplyUserTranslations()
-                                .WithPeriod();
-            if (options.IsRootReturnType)
-            {
-                comment = comment.ToTitleCase();
-            }
-
-            return comment;
-        }
-
         private string ProcessList(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var argType = returnType.TypeArgumentList.Arguments.First();
@@ -335,40 +284,91 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        private static string BuildPrefix(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        private string ProcessMultiTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
-            var startingPrefix = "returns";
-            if (!options.BuildWithPeriodAndPrefixForTaskTypes)
+            string comment;
+            //This should be impossible, but will handle just in case
+            var builder = new StringBuilder();
+            for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
             {
-                startingPrefix = "and return";
-            }
-            string prefix;
-            if (options.TryToIncludeCrefsForReturnTypes)
-            {
-                prefix = $"{startingPrefix} a <see cref=\"Task\"/> of type ";
-                if (returnType.IsGenericActionResult())
+                var item = returnType.TypeArgumentList.Arguments[i];
+                if (i > 0)
                 {
-                    prefix = $"{startingPrefix} an <see cref=\"ActionResult\"/> of type ";
+                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), UseProperCasing)}");
                 }
-                if (returnType.IsGenericValueTask())
+                var newOptions = new ReturnTypeBuilderOptions
                 {
-                    prefix = $"{startingPrefix} a <see cref=\"ValueTask\"/> of type ";
+                    IsRootReturnType = false,
+                    ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
+                    UseProperCasing = options.UseProperCasing,
+                    ForcePredefinedTypeEvaluation = true,
+                    BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
+                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes
+                };
+                builder.Append($"{BuildComment(item, newOptions)}");
+                if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
+                {
+                    builder.Append(" and ");
                 }
-
-                return prefix;
             }
+            comment = builder.ToString();
+            comment = comment.RemovePeriod();
+            return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
+        }
 
-            prefix = $"{startingPrefix} a Task of type ";
-            if (returnType.IsGenericActionResult())
+        private string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        {
+            var argType = returnType.TypeArgumentList.Arguments.First();
+
+            var items = new List<string>();
+            BuildChildrenGenericArgList(argType, items);
+            var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
+            items.Add(returnName);
+            items.Reverse();
+
+            var comment = items.ToLowerParts(true)
+                                .PluaralizeLastWord()
+                                .Tap((parts) =>
+                                {
+                                    for (var i = 0; i < parts.Count; i++)
+                                    {
+                                        parts[i] = parts[i].Replace(returnName, $"a {returnName}");
+                                    }
+                                })
+                                .JoinToString(" of ")
+                                .ApplyUserTranslations()
+                                .WithPeriod();
+            if (options.IsRootReturnType)
             {
-                prefix = $"{startingPrefix} an ActionResult of type ";
-            }
-            if (returnType.IsGenericValueTask())
-            {
-                prefix = $"{startingPrefix} a ValueTask of type ";
+                comment = comment.ToTitleCase();
             }
 
-            return prefix;
+            return comment;
+        }
+
+        private string ProcessSingleTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        {
+            var prefix = BuildPrefix(returnType, options);
+            string comment;
+            var firstType = returnType.TypeArgumentList.Arguments.First();
+            if (firstType.IsReadOnlyCollection() || firstType.IsDictionary() || firstType.IsList())
+            {
+                prefix = prefix.Replace("type ", "");
+            }
+
+            var newOptions = new ReturnTypeBuilderOptions
+            {
+                IsRootReturnType = false,
+                ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
+                UseProperCasing = options.UseProperCasing,
+                ForcePredefinedTypeEvaluation = true, //maybe??
+                BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
+                TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes
+            };
+            var buildComment = BuildComment(firstType, newOptions);
+            comment = prefix + buildComment;
+            comment = comment.RemovePeriod();
+            return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
         }
     }
 }

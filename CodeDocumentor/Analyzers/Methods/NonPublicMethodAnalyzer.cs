@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
@@ -13,7 +13,9 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicMethodAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary> Gets the supported diagnostics. </summary>
+        /// <summary>
+        ///  Gets the supported diagnostics.
+        /// </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -25,7 +27,9 @@ namespace CodeDocumentor
             }
         }
 
-        /// <summary> Initializes. </summary>
+        /// <summary>
+        ///  Initializes.
+        /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
@@ -34,7 +38,9 @@ namespace CodeDocumentor
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.MethodDeclaration);
         }
 
-        /// <summary> Analyzes node. </summary>
+        /// <summary>
+        ///  Analyzes node.
+        /// </summary>
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {

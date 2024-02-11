@@ -10,8 +10,8 @@ namespace CodeDocumentor.Helper
 
         public bool ReturnGenericTypeAsFullString { get; set; }
 
-        public bool UseProperCasing { get; set; }
-
         public bool TryToIncludeCrefsForReturnTypes { get; set; }
+
+        public bool UseProperCasing { get; set; }
     }
 }

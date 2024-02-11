@@ -8,12 +8,11 @@ namespace CodeDocumentor.Helper
 {
     public static class Translator
     {
-        public static void Initialize(IOptionsService optionsService)
-        {
-            _optionsService = optionsService;
-        }
+        private static IOptionsService _optionsService;
 
-        /// <summary> Translates text replacing words from the WordMap settings </summary>
+        /// <summary>
+        ///  Translates text replacing words from the WordMap settings
+        /// </summary>
         /// <param name="node"> </param>
         /// <returns> A string </returns>
         public static string ApplyUserTranslations(this CSharpSyntaxNode node)
@@ -21,7 +20,9 @@ namespace CodeDocumentor.Helper
             return TranslateText(node.ToString());
         }
 
-        /// <summary> Translates text replacing words from the WordMap settings </summary>
+        /// <summary>
+        ///  Translates text replacing words from the WordMap settings
+        /// </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>
         public static string ApplyUserTranslations(this string text)
@@ -29,7 +30,14 @@ namespace CodeDocumentor.Helper
             return TranslateText(text);
         }
 
-        /// <summary> Translates text replacing words from the WordMap settings </summary>
+        public static void Initialize(IOptionsService optionsService)
+        {
+            _optionsService = optionsService;
+        }
+
+        /// <summary>
+        ///  Translates text replacing words from the WordMap settings
+        /// </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>
         internal static string TranslateText(string text)
@@ -48,7 +56,5 @@ namespace CodeDocumentor.Helper
             }
             return converted;
         }
-
-        private static IOptionsService _optionsService;
     }
 }

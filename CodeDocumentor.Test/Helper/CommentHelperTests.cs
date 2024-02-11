@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -9,7 +7,6 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -72,6 +69,39 @@ namespace CodeDocumentor.Test.Helper
             {
                 o.ExcludeAsyncSuffix = excludeAsyncSuffix;
                 o.UseToDoCommentsOnSummaryError = useToDoCommentsOnSummaryError;
+                o.TryToIncludeCrefsForReturnTypes = true;
+            });
+            _fixture.Initialize(_output);
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+
+            TypeSyntax typeSyntax;
+            if (!string.IsNullOrEmpty(genericReturnType))
+            {
+                typeSyntax = SyntaxFactory.ParseTypeName($"{genericReturnType}<{returnType}>");
+            }
+            else
+            {
+                typeSyntax = SyntaxFactory.ParseTypeName(returnType);
+            }
+
+            var comment = CommentHelper.CreateMethodComment(name, typeSyntax);
+            comment.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("Execute", "int", "Execute and return a task of type integer.", "Task")]
+        [InlineData("Execute", "int", "Execute and return an actionresult of type integer.", "ActionResult")]
+        [InlineData("Execute", "int", "Execute and return a valuetask of type integer.", "ValueTask")]
+        [InlineData("Execute", "Person", "Execute and return a valuetask of type person.", "ValueTask")]
+        [InlineData("ExecuteAsync", "string", "Execute and return a valuetask of type string.", "ValueTask", true, false)]
+        [InlineData("ExecuteAsync", "string", "Execute and return a valuetask type string asynchronously.", "ValueTask", false, false)]
+        public void CreateMethodComment_ReturnsValidNaturalLanguage(string name, string returnType, string expected, string genericReturnType = null, bool excludeAsyncSuffix = false, bool useToDoCommentsOnSummaryError = true)
+        {
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            {
+                o.ExcludeAsyncSuffix = excludeAsyncSuffix;
+                o.UseToDoCommentsOnSummaryError = useToDoCommentsOnSummaryError;
+                o.TryToIncludeCrefsForReturnTypes = false;
             });
             _fixture.Initialize(_output);
             Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());

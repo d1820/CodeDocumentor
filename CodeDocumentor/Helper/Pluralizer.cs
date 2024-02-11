@@ -10,17 +10,19 @@ namespace CodeDocumentor.Helper
             _netPluralizer.AddIrregularRule("error", "error");
         }
 
-        public static bool IsPlural(string word)
-        {
-            return _netPluralizer.IsPlural(word);
-        }
-
         public static string ForcePluralization(string word)
         {
             return _netPluralizer.Pluralize(word);
         }
 
-        /// <summary> Pluralizes word. </summary>
+        public static bool IsPlural(string word)
+        {
+            return _netPluralizer.IsPlural(word);
+        }
+
+        /// <summary>
+        ///  Pluralizes word.
+        /// </summary>
         /// <param name="word"> The word. </param>
         /// <returns> A plural word. </returns>
         public static string Pluralize(string word)

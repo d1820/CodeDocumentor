@@ -15,21 +15,33 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary> The constructor code fix provider. </summary>
+    /// <summary>
+    ///  The constructor code fix provider.
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConstructorCodeFixProvider)), Shared]
     public class ConstructorCodeFixProvider : BaseCodeFixProvider
     {
-        /// <summary> Gets the fixable diagnostic ids. </summary>
+        private const string Title = "Code Documentor this constructor";
+
+        private const string TitleRebuild = "Code Documentor update this constructor";
+
+        /// <summary>
+        ///  Gets the fixable diagnostic ids.
+        /// </summary>
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ConstructorAnalyzerSettings.DiagnosticId);
 
-        /// <summary> Gets fix all provider. </summary>
+        /// <summary>
+        ///  Gets fix all provider.
+        /// </summary>
         /// <returns> A FixAllProvider. </returns>
         public sealed override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary> Registers code fixes async. </summary>
+        /// <summary>
+        ///  Registers code fixes async.
+        /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -56,7 +68,9 @@ namespace CodeDocumentor
             await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
-        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
+        /// <summary>
+        ///  Builds the comments. This is only used in the file level fixProvider.
+        /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
         /// <returns> An int. </returns>
@@ -82,9 +96,6 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
-        private const string Title = "Code Documentor this constructor";
-        private const string TitleRebuild = "Code Documentor update this constructor";
-
         private static ConstructorDeclarationSyntax BuildNewDeclaration(ConstructorDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
@@ -93,7 +104,9 @@ namespace CodeDocumentor
             return newDeclaration;
         }
 
-        /// <summary> Creates documentation comment trivia syntax. </summary>
+        /// <summary>
+        ///  Creates documentation comment trivia syntax.
+        /// </summary>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ConstructorDeclarationSyntax declarationSyntax)
@@ -110,7 +123,9 @@ namespace CodeDocumentor
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }
 
-        /// <summary> Adds documentation header async. </summary>
+        /// <summary>
+        ///  Adds documentation header async.
+        /// </summary>
         /// <param name="document"> The document. </param>
         /// <param name="root"> The root. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>

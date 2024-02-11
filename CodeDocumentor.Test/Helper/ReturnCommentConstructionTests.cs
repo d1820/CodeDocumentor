@@ -309,10 +309,10 @@ namespace CodeDocumentor.Test.Helper
         }
 
         [Theory]
-        //[InlineData("Task", true, "and return a")]
-        //[InlineData("Task", false, "returns a", true)]
-        //[InlineData("ValueTask", true, "and return a")]
-        //[InlineData("ValueTask", false, "returns a", true)]
+        [InlineData("Task", true, "and return a")]
+        [InlineData("Task", false, "returns a", true)]
+        [InlineData("ValueTask", true, "and return a")]
+        [InlineData("ValueTask", false, "returns a", true)]
         [InlineData("ActionResult", true, "and return an")]
         [InlineData("ActionResult", false, "returns an", true)]
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfList(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)

@@ -84,17 +84,13 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="argType"> The arg type. </param>
         /// <param name="items"> The items. </param>
-        /// <param name="pluaralizeName"> If true, pluaralize name. </param>
         private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items)
         {
-            //bool shouldPluralize;
             if (argType is GenericNameSyntax genericArgType)
             {
                 var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
                 if (childArg != null)
                 {
-                    //we check the parent to see if the child needs to be pluralized
-                    //shouldPluralize = ShouldPluralize(argType, pluaralizeName);
                     BuildChildrenGenericArgList(childArg, items);
                 }
             }
@@ -162,7 +158,6 @@ namespace CodeDocumentor.Helper
                 return returnType.ToString();
             }
 
-
             var genericTypeStr = returnType.Identifier.ValueText;
             if (returnType.IsReadOnlyCollection())
             {
@@ -216,8 +211,6 @@ namespace CodeDocumentor.Helper
                                     .JoinToString(" of ")
                                     .ApplyUserTranslations()
                                     .WithPeriod();
-                //var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                //var comment = string.Format(ListCommentTemplate, resultStr);
                 if (options.IsRootReturnType)
                 {
                     comment = comment.ToTitleCase();
@@ -342,21 +335,6 @@ namespace CodeDocumentor.Helper
                 return comment;
             }
             return GenerateGeneralComment(genericTypeStr.AsSpan());
-        }
-
-        /// <summary>
-        /// Shoulds the pluralize.
-        /// </summary>
-        /// <param name="argType"> The arg type. </param>
-        /// <param name="defaultValue"> If true, default value. </param>
-        /// <returns> A bool. </returns>
-        private bool ShouldPluralize(TypeSyntax argType, bool defaultValue)
-        {
-            if (argType.IsList() || argType.IsReadOnlyCollection())
-            {
-                return true;
-            }
-            return defaultValue;
         }
     }
 }

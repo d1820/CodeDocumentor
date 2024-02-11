@@ -6,10 +6,6 @@ namespace CodeDocumentor.Helper
 
         static Pluralizer()
         {
-            //foreach (var item in Constants.INTERNAL_WORD_MAPS)
-            //{
-            //    UpsertIrregularRule(item.Word, item.Translation);
-            //}
             _netPluralizer = new Pluralize.NET.Pluralizer();
             _netPluralizer.AddIrregularRule("error", "error");
         }
@@ -35,8 +31,7 @@ namespace CodeDocumentor.Helper
         public static string Pluralize(string word, string nextWord)
         {
             var skipPlural = word.IsVerbCombo(nextWord); //we dont pluralize first work verb of if the second word is a verb
-            //var pluarlizeAnyway = Constants.PLURALIZE_ANYWAY_LIST().Any(w => w.Equals(word, StringComparison.InvariantCultureIgnoreCase));
-            if (!skipPlural) //|| pluarlizeAnyway
+            if (!skipPlural)
             {
                 var checkWord = word.GetWordFirstPart();
                 var pluraled = _netPluralizer.Pluralize(checkWord);
@@ -44,17 +39,5 @@ namespace CodeDocumentor.Helper
             }
             return word;
         }
-
-
-
-        //public string PluralizeCustom(string word, string nextWord = null)
-        //{
-        //    var convertCustom = Constants.PLURALIZE_CUSTOM_LIST.FirstOrDefault(f => f.Word.Equals(word, StringComparison.InvariantCultureIgnoreCase));
-        //    if (convertCustom == null)
-        //    {
-        //        return word;
-        //    }
-        //    return convertCustom.GetTranslation(nextWord);
-        //}
     }
 }

@@ -35,7 +35,6 @@ namespace CodeDocumentor.Helper
                               .JoinToString()
                               .ApplyUserTranslations()
                               .WithPeriod();
-                //comment = comment.ApplyUserTranslations().WithPeriod();
                 if (!string.IsNullOrEmpty(comment))
                 {
                     Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();

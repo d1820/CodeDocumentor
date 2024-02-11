@@ -29,36 +29,6 @@ namespace CodeDocumentor.Helper
             return TranslateText(text);
         }
 
-        ////This translates parts of the comment based on internal maps that should be applied for readabiity
-        //internal static List<string> InternalTranslateText(this List<string> parts)
-        //{
-
-        //    for (var i = 0; i < parts.Count; i++)
-        //    {
-        //        var p = parts[i];
-        //        var nextp = parts.Count <= i + 1 ? parts[i + 1] : null;
-        //        parts[i] = p.InternalTranslateText(i, nextp);
-        //    }
-
-
-        //    var converted = text;
-        //    var userMaps = _optionsService.WordMaps ?? Array.Empty<WordMap>();
-        //    foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
-        //    {
-        //        if(wordMap.OnlyIfInFirstPositon && textPosition != 0)
-        //        {
-        //            continue;
-        //        }
-        //        //dont run an internal word map if the user has one for the same thing
-        //        if(!userMaps.Any(a=>a.Word == wordMap.Word))
-        //        {
-        //            var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
-        //            converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation(nextWord));
-        //        }
-        //    }
-        //    return converted;
-        //}
-
         /// <summary> Translates text replacing words from the WordMap settings </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>

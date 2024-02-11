@@ -16,15 +16,11 @@ namespace CodeDocumentor.Vsix2022
                                                                     "dare", "need", "used", "ought", "goes" };
 
         public static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "am", "as", "ax", "an", "at", "be", "by", "do", "hi", "go", "if", "in", "is", "it", "me",
-                                                                       "my", "no", "of", "on", "or", "so", "to", "up", "us", "uh", "um", "we",
-                                                                     };
+                                                                       "my", "no", "of", "on", "or", "so", "to", "up", "us", "uh", "um", "we" };
 
         public static string[] TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST { get; } = new[] { "an", "is", "if", "by", "do" };
 
         public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has","yes", "its", "ass" };
-
-        //This checks for a set of words together being passed in as one word to evaluate. These sets of words together would could as a verb
-        //private static string[] PLURALIZATION_VERB_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", "checks if", };
 
         public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "To", Translation = "Converts to" },
@@ -44,10 +40,6 @@ namespace CodeDocumentor.Vsix2022
 
         public static readonly string CREF_MATCH_REGEX_TEMPLATE = @"<.*>";
 
-        //public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
-
-        //};
-
         public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
             new WordMap { Word = "Int32", Translation = "integer" },
@@ -62,12 +54,6 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "IReadOnlyCollection", Translation = "Read Only Collection" },
             new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" }
         };
-
-        //These should match the
-        //public static string[] PLURALIZE_ANYWAY_LIST()
-        //{
-        //    return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
-        //}
 
         public static class DiagnosticIds
         {
@@ -88,7 +74,6 @@ namespace CodeDocumentor.Vsix2022
             items.AddRange(INTERNAL_VERB_WORD_LIST);
             items.AddRange(AXUILLARY_VERB_WORD_LIST);
             items.AddRange(TWO_LETTER_WORD_LIST);
-            //items.AddRange(PLURALIZATION_VERB_CONVERSIONS);
             return items;
         }
 

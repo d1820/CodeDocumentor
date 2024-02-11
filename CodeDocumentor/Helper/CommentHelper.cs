@@ -30,7 +30,6 @@ namespace CodeDocumentor.Helper
             var comment = NameSplitter
                          .Split(name)
                          .TranslateParts()
-                         //.TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
                              if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -42,7 +41,6 @@ namespace CodeDocumentor.Helper
                          .JoinToString()
                          .ApplyUserTranslations()
                          .WithPeriod();
-            //return CreateCommonComment(name).ApplyUserTranslations().WithPeriod();
             return comment;
         }
 
@@ -87,7 +85,6 @@ namespace CodeDocumentor.Helper
                            .JoinToString()
                            .ApplyUserTranslations()
                            .WithPeriod();
-            //CreateCommonComment(name).ApplyUserTranslations().WithPeriod()
             return comment;
         }
 
@@ -118,42 +115,6 @@ namespace CodeDocumentor.Helper
                             .ApplyUserTranslations()
                             .WithPeriod();
 
-
-
-
-            //if (parts.Count >= 2)
-            //{
-            //    parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-            //}
-            //else
-            //{
-            //    parts[0] = Pluralizer.Pluralize(parts[0]);
-            //}
-
-            //var skipThe = parts[0].IsVerb();
-            //if (parts.Count == 1)
-            //{
-            //    if (!skipThe)
-            //    {
-            //        comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
-            //    }
-            //    else
-            //    {
-            //        comment = string.Join(" ", parts.Select(s => s.ToLowerInvariant()));
-            //    }
-            //}
-            //else
-            //{
-            //    if (!skipThe)
-            //    {
-            //        comment = $"The {string.Join(" ", parts.Select(s => s.ToLowerInvariant()))}";
-            //    }
-            //    else
-            //    {
-
-            //        comment = $"{string.Join(" ", parts)}";
-            //    }
-            //}
             return comment;
         }
 
@@ -174,7 +135,6 @@ namespace CodeDocumentor.Helper
                            })
                            .AddCustomPart("interface")
                            .TranslateParts()
-                           //.TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .JoinToString()
@@ -182,16 +142,6 @@ namespace CodeDocumentor.Helper
                            .WithPeriod();
 
             return comment;
-
-            //var parts = SpilitNameAndToLower(name);
-            //if (parts[0] == "I")
-            //{
-            //    parts.RemoveAt(0);
-            //}
-
-            //parts.Insert(0, "The");
-            //parts.Add("interface");
-            //return string.Join(" ", parts).ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Creates the method comment. </summary>
@@ -233,70 +183,6 @@ namespace CodeDocumentor.Helper
                          .ApplyUserTranslations()
                          .WithPeriod();
             return comment;
-
-            //var isBool2part = parts.Count == 2 && returnType.IsBoolReturnType();
-            //if (parts.Count >= 2)
-            //{
-            //    parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0], parts[1]), parts[1]);
-            //}
-            //else
-            //{
-            //    parts[0] = Pluralizer.PluralizeCustom(Pluralizer.Pluralize(parts[0]));
-            //}
-
-            //if (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"))
-            //{
-            //    var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            //    //try and use the return type for the value;
-            //    if (returnType.ToString() != "void")
-            //    {
-            //        var returnComment = new SingleWordMethodCommentConstruction(returnType).Comment;
-
-            //        if (!string.IsNullOrEmpty(returnComment))
-            //        {
-            //            if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) && !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase))
-            //            {
-            //                parts.Insert(1, "the");
-            //                parts.Insert(2, returnComment);
-            //            }
-            //            else
-            //            {
-            //                parts.Insert(1, returnComment);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (optionsService.UseToDoCommentsOnSummaryError)
-            //            {
-            //                return "TODO: Add Summary";
-            //            }
-            //            else
-            //            {
-            //                return returnComment.ApplyUserTranslations().WithPeriod();
-            //            }
-            //        }
-            //    }
-            //    else if (optionsService.UseToDoCommentsOnSummaryError)
-            //    {
-            //        return "TODO: Add Summary";
-            //    }
-            //    else
-            //    {
-            //        return string.Empty;
-            //    }
-            //}
-            //else
-            //{
-            //    //At this point we have already pluralized and converted
-            //    var skipThe = parts[0].IsVerb();
-            //    var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
-            //    if ((!skipThe && !isBool2part) || addTheAnyway)
-            //    {
-            //        parts.Insert(1, "the");
-            //    }
-            //}
-
-            //return string.Join(" ", parts).ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Creates the parameter comment. </summary>
@@ -330,7 +216,6 @@ namespace CodeDocumentor.Helper
                                 .JoinToString()
                                 .ApplyUserTranslations()
                                 .WithPeriod();
-                //return "If true, " + string.Join(" ", SpilitNameAndToLower(parameter.Identifier.ValueText, true)).WithPeriod();
                 return comment;
             }
             else
@@ -349,7 +234,6 @@ namespace CodeDocumentor.Helper
                                 .JoinToString()
                                 .ApplyUserTranslations()
                                 .WithPeriod();
-                //return CreateCommonComment(parameter.Identifier.ValueText).WithPeriod();
                 return comment;
             }
         }
@@ -366,12 +250,6 @@ namespace CodeDocumentor.Helper
                 return name;
             }
 
-            //var comment = "Gets";
-            //if (hasSetter)
-            //{
-            //    comment += " or Sets";
-            //}
-
             if (isBoolean)
             {
                 var comment = NameSplitter
@@ -384,7 +262,6 @@ namespace CodeDocumentor.Helper
                               .JoinToString()
                               .ApplyUserTranslations()
                               .WithPeriod();
-                //comment += CreatePropertyBooleanPart(name).ApplyUserTranslations();
                 return comment;
             }
             else
@@ -400,10 +277,7 @@ namespace CodeDocumentor.Helper
                               .ApplyUserTranslations()
                               .WithPeriod();
                 return comment;
-
-                //comment += " the " + string.Join(" ", SpilitNameAndToLower(name, true));
             }
-            //return comment.ApplyUserTranslations().WithPeriod();
         }
 
         /// <summary> Create the record comment. </summary>
@@ -418,7 +292,6 @@ namespace CodeDocumentor.Helper
             var comment = NameSplitter
                          .Split(name)
                          .TranslateParts()
-                         //.TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
                              if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -430,7 +303,6 @@ namespace CodeDocumentor.Helper
                          .JoinToString()
                          .ApplyUserTranslations()
                          .WithPeriod();
-            //return CreateCommonComment(name).ApplyUserTranslations().WithPeriod();
             return comment;
         }
 
@@ -507,7 +379,7 @@ namespace CodeDocumentor.Helper
             //First letter is always caps unless it was forced lower
             if (!forceFirstCharToLower && char.IsLower(parts[0], 0))
             {
-                parts[0] = parts[0].ToTitleCase();// char.ToUpper(parts[0][0]) + parts[0].Substring(1);
+                parts[0] = parts[0].ToTitleCase();
             }
             return parts;
         }
@@ -526,20 +398,15 @@ namespace CodeDocumentor.Helper
             {
                 booleanPart = "a value indicating whether";
             }
-            //var booleanPart = " a value indicating whether to ";
-
-            //var parts = SpilitNameAndToLower(name, true).ToList();
 
             //is messes up readability. Lets remove it. ex) IsEnabledForDays
             var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
             if (isTwoLettweWord)
             {
                 parts.Remove(parts[0]);
-                //parts.Insert(parts.Count - 1, isWord);
             }
             parts.Insert(0, booleanPart);
 
-            //booleanPart += string.Join(" ", parts);
             return parts;
         }
 

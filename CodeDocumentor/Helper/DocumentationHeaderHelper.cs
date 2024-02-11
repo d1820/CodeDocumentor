@@ -355,7 +355,6 @@ namespace CodeDocumentor.Helper
             {
                 try
                 {
-                    //var startingWord = DetermineStartingWord(cleanContent.AsSpan(), true);
                     var text = SyntaxFactory.XmlText($"A ");
                     var name = _typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
                     var typeParamNode = CreateTypeParameterRefElementSyntax(name);

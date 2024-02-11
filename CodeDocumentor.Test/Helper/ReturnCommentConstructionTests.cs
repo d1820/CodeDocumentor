@@ -62,7 +62,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A read only collection of read only collections of strings");
+            comment.Should().Be("A read only collection of a read only collection of strings");
         }
 
         #endregion
@@ -92,7 +92,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of list of strings");
+            comment.Should().Be("A list of a list of strings");
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of list of list of strings");
+            comment.Should().Be("A list of a list of a list of strings");
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of list of strings");
+            comment.Should().Be("A list of a list of strings");
         }
 
         [Fact]
@@ -158,7 +158,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of list of integers");
+            comment.Should().Be("A list of a list of integers");
         }
 
         #endregion
@@ -187,7 +187,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of list of strings");
+            comment.Should().Be("A list of a list of strings");
         }
 
         #endregion
@@ -203,7 +203,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of strings");
+            comment.Should().Be("A collection of strings.");
         }
 
         [Fact]
@@ -215,7 +215,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A list of strings");
+            comment.Should().Be("A collection of strings.");
         }
 
         #endregion
@@ -282,7 +282,7 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false
             };
             var comment = _returnCommentBuilder.BuildComment(roc, options);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of list of strings");
+            comment.Should().Be("A dictionary with a key of type string and a value of type list of a list of strings");
         }
 
         #endregion

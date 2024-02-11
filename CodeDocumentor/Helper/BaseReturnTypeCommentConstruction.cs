@@ -105,20 +105,20 @@ namespace CodeDocumentor.Helper
         /// <param name="argType"> The arg type. </param>
         /// <param name="items"> The items. </param>
         /// <param name="pluaralizeName"> If true, pluaralize name. </param>
-        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
+        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items)
         {
-            bool shouldPluralize;
+            //bool shouldPluralize;
             if (argType is GenericNameSyntax genericArgType)
             {
                 var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
                 if (childArg != null)
                 {
                     //we check the parent to see if the child needs to be pluralized
-                    shouldPluralize = ShouldPluralize(argType, pluaralizeName);
-                    BuildChildrenGenericArgList(childArg, items, shouldPluralize);
+                    //shouldPluralize = ShouldPluralize(argType, pluaralizeName);
+                    BuildChildrenGenericArgList(childArg, items);
                 }
             }
-            items.Add(DetermineSpecificObjectName(argType, pluaralizeName, pluaralizeIdentifierType));
+            items.Add(DetermineSpecificObjectName(argType, false, true));
         }
 
         /// <summary>
@@ -186,12 +186,24 @@ namespace CodeDocumentor.Helper
             if (returnType.IsReadOnlyCollection())
             {
                 var argType = returnType.TypeArgumentList.Arguments.First();
+
                 var items = new List<string>();
-                BuildChildrenGenericArgList(argType, items, true);
+                BuildChildrenGenericArgList(argType, items);
+                var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
+                items.Add(returnName);
                 items.Reverse();
 
-                var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                var comment = string.Format(ReadOnlyCollectionCommentTemplate, resultStr);
+                var comment = items.ToLowerParts(true)
+                                    .PluaralizeLastWord()
+                                    .Tap((parts) => {
+                                        for (var i = 0; i < parts.Count; i++)
+                                        {
+                                            parts[i] = parts[i].Replace(returnName, $"a {returnName}");
+                                        }
+                                    })
+                                    .JoinToString(" of ")
+                                    .ApplyUserTranslations()
+                                    .WithPeriod();
                 if (options.IsRootReturnType)
                 {
                     comment = comment.ToTitleCase();
@@ -204,10 +216,26 @@ namespace CodeDocumentor.Helper
             {
                 var argType = returnType.TypeArgumentList.Arguments.First();
                 var items = new List<string>();
-                BuildChildrenGenericArgList(argType, items, true);
+                BuildChildrenGenericArgList(argType, items);
+
+                var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
+                items.Add(returnName);
                 items.Reverse();
-                var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                var comment = string.Format(ListCommentTemplate, resultStr);
+
+                var comment = items.ToLowerParts(true)
+                                    .PluaralizeLastWord()
+                                    .Tap((parts) =>
+                                    {
+                                        for (var i = 0; i < parts.Count; i++)
+                                        {
+                                            parts[i] = parts[i].Replace(returnName, $"a {returnName}");
+                                        }
+                                    })
+                                    .JoinToString(" of ")
+                                    .ApplyUserTranslations()
+                                    .WithPeriod();
+                //var resultStr = string.Join(" of ", items).ToLowerInvariant();
+                //var comment = string.Format(ListCommentTemplate, resultStr);
                 if (options.IsRootReturnType)
                 {
                     comment = comment.ToTitleCase();
@@ -222,10 +250,27 @@ namespace CodeDocumentor.Helper
                     var argType1 = returnType.TypeArgumentList.Arguments.First();
                     var argType2 = returnType.TypeArgumentList.Arguments.Last();
                     var items = new List<string>();
-                    BuildChildrenGenericArgList(argType2, items, pluaralizeIdentifierType: false);
+                    BuildChildrenGenericArgList(argType2, items); //pluaralizeIdentifierType: false
+                    var returnName = DetermineSpecificObjectName(returnType, false, true).ToLower();
+                    items.Add(returnName);
                     items.Reverse();
-                    var resultStr = string.Join(" of ", items).ToLowerInvariant();
-                    var comment = string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), resultStr);
+
+                    var comment = items.ToLowerParts(true)
+                                   .PluaralizeLastWord()
+                                   .Tap((parts) =>
+                                   {
+                                       for (var i = 0; i < parts.Count; i++)
+                                       {
+                                           parts[i] = parts[i].Replace(returnName, $"a {returnName}");
+                                       }
+                                   })
+                                   .JoinToString(" of ")
+                                   .ApplyUserTranslations()
+                                   .WithPeriod();
+
+
+                    //var resultStr = string.Join(" of ", items).ToLowerInvariant();
+                    //var comment = string.Format(DictionaryCommentTemplate, argType1.ApplyUserTranslations(), resultStr);
                     if (options.IsRootReturnType)
                     {
                         //This ensure the return string has correct casing

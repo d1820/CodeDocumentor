@@ -9,9 +9,6 @@ using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Methods
 {
-    /// <summary>
-    /// The method unit test.
-    /// </summary>
     [SuppressMessage("XMLDocumentation", "")]
     public class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
@@ -22,10 +19,6 @@ namespace CodeDocumentor.Test.Methods
             _fixture = fixture;
             fixture.Initialize(output);
         }
-        /// <summary>
-        /// Nos diagnostics show.
-        /// </summary>
-        /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
         [InlineData("InheritDocTestCode.cs")]
@@ -53,29 +46,22 @@ namespace CodeDocumentor.Test.Methods
             }
         }
 
-        /// <summary>
-        /// Shows diagnostic and fix.
-        /// </summary>
-        /// <param name="testCode">The test code.</param>
-        /// <param name="fixCode">The fix code.</param>
-        /// <param name="line">The line.</param>
-        /// <param name="column">The column.</param>
         [Theory]
-        //[InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
-        //[InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
-        //[InlineData("MethodWithBooleanParameterTestCode", "MethodWithBooleanParameterTestFixCode", 9, 21)]
-        //[InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]
+        [InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
+        [InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
+        [InlineData("MethodWithBooleanParameterTestCode", "MethodWithBooleanParameterTestFixCode", 9, 21)]
+        [InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
-        //[InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
-        //[InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
-        //[InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
-        //[InlineData("MethodWithListIntReturnTestCode", "MethodWithListIntReturnTestFixCode", 9, 26)]
-        //[InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
-        //[InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
-        //[InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
-        //[InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
-        //[InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
-        //[InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
+        [InlineData("MethodWithListIntReturnTestCode", "MethodWithListIntReturnTestFixCode", 9, 26)]
+        [InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
+        [InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
+        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
+        [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
         public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
@@ -101,19 +87,11 @@ namespace CodeDocumentor.Test.Methods
             await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
-        /// <summary>
-        /// Gets c sharp code fix provider.
-        /// </summary>
-        /// <returns>A CodeFixProvider.</returns>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new MethodCodeFixProvider();
         }
 
-        /// <summary>
-        /// Gets c sharp diagnostic analyzer.
-        /// </summary>
-        /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
             if (diagType == "private")

@@ -62,7 +62,7 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
-        public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
+        public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column, bool includeCrefs = false)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
@@ -70,7 +70,7 @@ namespace CodeDocumentor.Test.Methods
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.UseNaturalLanguageForReturnNode = false;
-                o.TryToIncludeCrefsForReturnTypes = true;
+                o.TryToIncludeCrefsForReturnTypes = includeCrefs;
             });
             var expected = new DiagnosticResult
             {

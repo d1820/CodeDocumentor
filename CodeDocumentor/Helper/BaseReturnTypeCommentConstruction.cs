@@ -9,8 +9,6 @@ namespace CodeDocumentor.Helper
 {
     public abstract class BaseReturnTypeCommentConstruction
     {
-        protected readonly bool UseProperCasing;
-
         /// <summary>
         ///  Gets or Sets the array comment template.
         /// </summary>
@@ -290,39 +288,6 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
-        private string ProcessMultiTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            string comment;
-            //This should be impossible, but will handle just in case
-            var builder = new StringBuilder();
-            for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
-            {
-                var item = returnType.TypeArgumentList.Arguments[i];
-                if (i > 0)
-                {
-                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), UseProperCasing)}");
-                }
-                var newOptions = new ReturnTypeBuilderOptions
-                {
-                    IsRootReturnType = false,
-                    ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
-                    UseProperCasing = options.UseProperCasing,
-                    ForcePredefinedTypeEvaluation = true,
-                    BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
-                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
-                    IncludeReturnStatementInGeneralComments = false
-                };
-                builder.Append($"{BuildComment(item, newOptions)}");
-                if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
-                {
-                    builder.Append(" and ");
-                }
-            }
-            comment = builder.ToString();
-            comment = comment.RemovePeriod();
-            return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
-        }
-
         private string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var argType = returnType.TypeArgumentList.Arguments.First();
@@ -353,6 +318,41 @@ namespace CodeDocumentor.Helper
             return comment;
         }
 
+
+        private string ProcessMultiTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        {
+            string comment;
+            //This should be impossible, but will handle just in case
+            var builder = new StringBuilder();
+            for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
+            {
+                var item = returnType.TypeArgumentList.Arguments[i];
+                if (i > 0)
+                {
+                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), options.UseProperCasing)}");
+                }
+                var newOptions = new ReturnTypeBuilderOptions
+                {
+                    IsRootReturnType = false,
+                    ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
+                    UseProperCasing = false,
+                    ForcePredefinedTypeEvaluation = true,
+                    BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
+                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
+                    IncludeReturnStatementInGeneralComments = false
+                };
+                builder.Append($"{BuildComment(item, newOptions)}");
+                if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
+                {
+                    builder.Append(" and ");
+                }
+            }
+            comment = builder.ToString();
+            comment = comment.RemovePeriod();
+            return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
+        }
+
+
         private string ProcessSingleTypeTaskArguements(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var prefix = BuildPrefix(returnType, options);
@@ -367,7 +367,7 @@ namespace CodeDocumentor.Helper
             {
                 IsRootReturnType = false,
                 ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
-                UseProperCasing = options.UseProperCasing,
+                UseProperCasing = false,
                 ForcePredefinedTypeEvaluation = true, //maybe??
                 BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
                 TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,

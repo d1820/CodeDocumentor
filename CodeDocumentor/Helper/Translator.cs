@@ -47,13 +47,15 @@ namespace CodeDocumentor.Helper
             {
                 return converted;
             }
-
-            var mergedWorkMaps = new HashSet<WordMap>(_optionsService.WordMaps);
-            foreach (var wordMap in mergedWorkMaps)
+            converted = converted.SwapXmlTokens((line) =>
             {
-                var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
-                converted = Regex.Replace(converted, wordToLookFor, wordMap.GetTranslation());
-            }
+                foreach (var wordMap in _optionsService.WordMaps)
+                {
+                    var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
+                    line = Regex.Replace(line, wordToLookFor, wordMap.GetTranslation());
+                }
+                return line;
+            });
             return converted;
         }
     }

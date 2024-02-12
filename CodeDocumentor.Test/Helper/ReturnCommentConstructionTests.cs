@@ -304,8 +304,9 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax(type, SyntaxKind.StringKeyword);
 
             _options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
+            _options.TryToIncludeCrefsForReturnTypes = true;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type string" + (hasPeriod ? "." : ""));
+            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"string\"/>" + (hasPeriod ? "." : ""));
         }
 
         [Theory]

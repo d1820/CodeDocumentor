@@ -57,13 +57,15 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("EnsureWork", "int", "Checks if is the work.")]
         [InlineData("EnsureWork", "bool", "Checks if is work.")]
         [InlineData("EnsureExecutesQuick", "int", "Checks if executes quick.")]
-        [InlineData("Execute", "int", "Execute and return a <see cref=\"Task\"/> of type integer.", "Task")]
-        [InlineData("Execute", "int", "Execute and return an <see cref=\"ActionResult\"/> of type integer.", "ActionResult")]
-        [InlineData("Execute", "int", "Execute and return a <see cref=\"ValueTask\"/> of type integer.", "ValueTask")]
+        [InlineData("Execute", "int", "Execute and return a <see cref=\"Task\"/> of type <see cref=\"int\"/>.", "Task", false, true)]
+        [InlineData("Execute", "int", "Execute and return an <see cref=\"ActionResult\"/> of type <see cref=\"int\"/>.", "ActionResult", false, true)]
+        [InlineData("Execute", "int", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"int\"/>.", "ValueTask", false, true)]
         [InlineData("Execute", "Person", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"Person\"/>.", "ValueTask")]
-        [InlineData("ExecuteAsync", "string", "Execute and return a <see cref=\"ValueTask\"/> of type string.", "ValueTask", true, false)]
-        [InlineData("ExecuteAsync", "string", "Execute and return a <see cref=\"ValueTask\"/> of type string asynchronously.", "ValueTask", false, false)]
-        public void CreateMethodComment_ReturnsValidName(string name, string returnType, string expected, string genericReturnType = null, bool excludeAsyncSuffix = false, bool useToDoCommentsOnSummaryError = true)
+        [InlineData("ExecuteAsync", "string", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"string\"/>.", "ValueTask", true, false)]
+        [InlineData("ExecuteAsync", "string", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"string\"/> asynchronously.", "ValueTask", false, false)]
+        public void CreateMethodComment_ReturnsValidName(string name, string returnType, string expected, string genericReturnType = null, bool excludeAsyncSuffix = false,
+            bool useToDoCommentsOnSummaryError = true
+            )
         {
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
@@ -95,7 +97,10 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Execute", "Person", "Execute and return a valuetask of type person.", "ValueTask")]
         [InlineData("ExecuteAsync", "string", "Execute and return a valuetask of type string.", "ValueTask", true, false)]
         [InlineData("ExecuteAsync", "string", "Execute and return a valuetask of type string asynchronously.", "ValueTask", false, false)]
-        public void CreateMethodComment_ReturnsValidNaturalLanguage(string name, string returnType, string expected, string genericReturnType = null, bool excludeAsyncSuffix = false, bool useToDoCommentsOnSummaryError = true)
+        public void CreateMethodComment_ReturnsValidNaturalLanguage(string name, string returnType, string expected, string genericReturnType = null,
+            bool excludeAsyncSuffix = false,
+            bool useToDoCommentsOnSummaryError = true
+            )
         {
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {

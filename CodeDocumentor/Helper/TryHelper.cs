@@ -6,7 +6,7 @@ namespace CodeDocumentor.Helper
 {
     internal static class TryHelper
     {
-        internal static void Try(Action action, Action<Exception> exceptionCallback = null,  bool reThrow = false)
+        internal static void Try(Action action, Action<Exception> exceptionCallback = null, bool reThrow = false)
         {
             try
             {

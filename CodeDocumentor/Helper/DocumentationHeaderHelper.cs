@@ -372,27 +372,16 @@ namespace CodeDocumentor.Helper
             var xmlNodes = new List<XmlNodeSyntax>();
             TryHelper.Try(() =>
             {
-                Regex _xmlRegEx = new Regex(Constants.XML_ELEMENT_MATCH_REGEX_TEMPLATE);
-                var xmls = _xmlRegEx.Matches(cleanContent);
-                var swaps = new Dictionary<string, string>();
-                for (var i = 0; i < xmls.Count; i++)
-                {
-                    var xml = xmls[i];
-                    var key = $"{{xml{i}}}";
-                    swaps.Add(key, xml.Value);
-                    cleanContent = cleanContent.Replace(xml.Value, key);
-                }
-
-                var parts = cleanContent.Split(' ');
+                var (replacedString, tokens) = cleanContent.SwapXmlTokens();
+                var parts = replacedString.Split(' ');
                 for (var i = 0; i < parts.Length; i++)
                 {
                     var p = parts[i];
-
                     if (p.StartsWith("{"))
                     {
                         TryHelper.Try(() =>
                         {
-                            var swapStr = swaps[p];
+                            var swapStr = tokens[p];
                             var attributeNameMatch = Regex.Match(swapStr, $@"{attributeNameToMatchOn}=""(.*?)""");
                             if (attributeNameMatch.Success && attributeNameMatch.Groups.Count > 0)
                             {

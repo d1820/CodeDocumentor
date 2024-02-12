@@ -412,28 +412,16 @@ namespace CodeDocumentor.Helper
                     )
                 ? 0 : 1;
 
-            var swaps = new Dictionary<string, string>();
-            for (; i < parts.Count; i++)
+
+            parts.SwapXmlTokens((part) =>
             {
-                var part = parts[i];
-                var xmls = _xmlElementRegEx.Matches(part);
-                for (var j = 0; j < xmls.Count; j++)
-                {
-                    var xml = xmls[j];
-                    var key = $"{{xml{j}}}";
-                    swaps.Add(key, xml.Value);
-                    part = part.Replace(xml.Value, key);
-                }
                 if (!part.All(a => char.IsUpper(a)))
                 {
                     part = part.ToLower();
                 }
-                foreach (var kv in swaps)
-                {
-                    part = part.Replace(kv.Key, kv.Value);
-                }
-                parts[i] = part;
-            }
+                return part;
+            }, i);
+
             //First letter is always caps unless it was forced lower
             if (!forceFirstCharToLower && char.IsLower(parts[0], 0))
             {

@@ -8,7 +8,7 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
-        public static readonly string CREF_MATCH_REGEX_TEMPLATE = "<.*>";
+        public static readonly string XML_ELEMENT_MATCH_REGEX_TEMPLATE = "<.*?>";
 
         public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
 

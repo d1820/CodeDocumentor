@@ -8,6 +8,7 @@ using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.VisualStudio.VSConstants;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 
@@ -18,7 +19,7 @@ namespace CodeDocumentor.Helper
     /// </summary>
     public static class CommentHelper
     {
-        private static readonly Regex _crefRegEx = new Regex(Constants.CREF_MATCH_REGEX_TEMPLATE);
+        private static readonly Regex _xmlElementRegEx = new Regex(Constants.XML_ELEMENT_MATCH_REGEX_TEMPLATE);
 
         /// <summary>
         ///  Creates the class comment.
@@ -410,21 +411,26 @@ namespace CodeDocumentor.Helper
                         !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
                     )
                 ? 0 : 1;
+
+            var swaps = new Dictionary<string, string>();
             for (; i < parts.Count; i++)
             {
                 var part = parts[i];
-                var cref = _crefRegEx.Match(parts[i]);
-                if (cref.Success)
+                var xmls = _xmlElementRegEx.Matches(part);
+                for (var j = 0; j < xmls.Count; j++)
                 {
-                    part = _crefRegEx.Replace(part, "{cref}");
+                    var xml = xmls[j];
+                    var key = $"{{xml{j}}}";
+                    swaps.Add(key, xml.Value);
+                    part = part.Replace(xml.Value, key);
                 }
                 if (!part.All(a => char.IsUpper(a)))
                 {
                     part = part.ToLower();
                 }
-                if (cref.Success)
+                foreach (var kv in swaps)
                 {
-                    part = part.Replace("{cref}", cref.Value);
+                    part = part.Replace(kv.Key, kv.Value);
                 }
                 parts[i] = part;
             }
@@ -552,7 +558,9 @@ namespace CodeDocumentor.Helper
                 {
                     UseProperCasing = false,
                     BuildWithPeriodAndPrefixForTaskTypes = true,
-                    TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes
+                    TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
+                    IncludeReturnStatementInGeneralComments = false,
+                    ForcePredefinedTypeEvaluation = false
                 };
                 var returnComment = new SingleWordCommentConstruction(returnType, options).Comment;
                 returnTapAction?.Invoke(returnComment);

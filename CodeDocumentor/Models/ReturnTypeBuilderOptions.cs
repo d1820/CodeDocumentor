@@ -12,6 +12,8 @@ namespace CodeDocumentor.Helper
 
         public bool TryToIncludeCrefsForReturnTypes { get; set; }
 
+        public bool IncludeReturnStatementInGeneralComments { get; set; }
+
         public bool UseProperCasing { get; set; }
     }
 }

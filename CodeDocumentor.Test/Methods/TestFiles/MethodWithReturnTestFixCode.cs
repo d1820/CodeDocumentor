@@ -9,7 +9,7 @@ namespace ConsoleApp4
         /// <summary>
         /// Show method with return tester.
         /// </summary>
-        /// <returns><see cref="MethodTester"/></returns>
+        /// <returns>Returns a <see cref="MethodTester"/></returns>
         public MethodTester ShowMethodWithReturnTester()
         {
             return null;

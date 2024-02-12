@@ -52,11 +52,6 @@ namespace CodeDocumentor.Helper
         private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         /// <summary>
-        ///  type param regex.
-        /// </summary>
-        private static readonly Regex _typeParamRegex = new Regex(@"""\w+""");
-
-        /// <summary>
         ///  Creates the exception nodes.
         /// </summary>
         /// <param name="exceptionType"> The exception type. </param>
@@ -313,40 +308,55 @@ namespace CodeDocumentor.Helper
             var regex = $@"<{xmlNodeName}>(.+)<\/{xmlNodeName}>";
 
             var cleanContent = (content ?? string.Empty).Trim();
-            var plueckedReturnElemement = Regex.Match(cleanContent, regex);
-            //if we get in a full <returns>fff</returns> we pull the inner text from the node and create the corret XmlNodes
-            if (plueckedReturnElemement == null || plueckedReturnElemement.Groups.Count == 0)
-            {
-                var contentText = SyntaxFactory.XmlText(cleanContent);
-                return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(contentText), endTag);
-            }
-            cleanContent = plueckedReturnElemement.Success ? plueckedReturnElemement.Groups[0].Value : cleanContent;
+            var pluckedReturnElemement = Regex.Match(cleanContent, regex);
+
+            cleanContent = pluckedReturnElemement.Success ?
+                            pluckedReturnElemement.Groups.Count > 0 ?
+                                pluckedReturnElemement.Groups[0].Value
+                                : cleanContent
+                            : cleanContent;
 
             var xmlParseResponse = new XmlInformation(cleanContent);
-            if (xmlParseResponse.IsTypeParam)
+            if (xmlParseResponse.HasTypeParam)
             {
-                try
+                var text = SyntaxFactory.XmlText("A ");
+                var xmlNodes = ParseStringToXmlNodeSyntax(cleanContent, "typeparamref", "name");
+                if (xmlNodes.Count > 0)
                 {
-                    var text = SyntaxFactory.XmlText("A ");
-                    var name = _typeParamRegex.Match(cleanContent).Value.Replace("\"", string.Empty);
-                    var typeParamNode = CreateTypeParameterRefElementSyntax(name);
-
-                    var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
-                    list = list.Add(typeParamNode);
-                    return SyntaxFactory.XmlElement(startTag, list, endTag);
+                    xmlNodes.Insert(0, text);
                 }
-                catch (Exception ex)
-                {
-                    Log.LogError(ex.ToString());
-                    //If we fail then create empty return
-                    var text = SyntaxFactory.XmlText("");
-                    var list = SyntaxFactory.SingletonList<XmlNodeSyntax>(text);
-                    return SyntaxFactory.XmlElement(startTag, list, endTag);
-                }
+                var list = new SyntaxList<XmlNodeSyntax>(xmlNodes);
+                return SyntaxFactory.XmlElement(startTag, list, endTag);
             }
-            if (xmlParseResponse.IsGeneric || xmlParseResponse.IsXml)
+
+            if (xmlParseResponse.HasSeeCrefNode)
             {
-                //Wrap any xml thats not a typeParamRef to CDATA
+                var xmlNodes = ParseStringToXmlNodeSyntax(cleanContent, "see", "cref");
+                var list = new SyntaxList<XmlNodeSyntax>(xmlNodes);
+                return SyntaxFactory.XmlElement(startTag, list, endTag);
+            }
+
+            if (xmlParseResponse.IsCData)
+            {
+                var cDataContentRegEx = new Regex(@"\[.*\[(.*?)\]");
+                var cDataConentMatch = cDataContentRegEx.Match(cleanContent);
+                var cDataContent = cleanContent;
+                if (cDataConentMatch.Success && cDataConentMatch.Groups.Count > 0)
+                {
+                    cDataContent = cDataConentMatch.Groups[1].Value;
+                }
+
+                //Wrap any xml thats not a match above to CDATA
+                var text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cDataContent, cDataContent, SyntaxFactory.TriviaList());
+                var tokens = SyntaxFactory.TokenList().Add(text1Token);
+                var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
+
+                return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(cdata), endTag);
+            }
+
+            if (xmlParseResponse.IsGeneric)
+            {
+                //Wrap any xml thats not a match above to CDATA
                 var text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
                 var tokens = SyntaxFactory.TokenList().Add(text1Token);
                 var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
@@ -357,23 +367,60 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(SyntaxFactory.XmlText(cleanContent)), endTag);
         }
 
-        /// <summary>
-        ///  Creates the see C ref element syntax.
-        /// </summary>
-        /// <param name="typeName"> The type name. </param>
-        /// <returns> A <see cref="XmlElementSyntax"/>. </returns>
-        internal static XmlElementSyntax CreateSeeCRefElementSyntax(string typeName)
+        internal static List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent, string elementName, string attributeNameToMatchOn)
         {
-            var paramName = SyntaxFactory.XmlName("see");
+            var xmlNodes = new List<XmlNodeSyntax>();
+            TryHelper.Try(() =>
+            {
+                Regex _xmlRegEx = new Regex(Constants.XML_ELEMENT_MATCH_REGEX_TEMPLATE);
+                var xmls = _xmlRegEx.Matches(cleanContent);
+                var swaps = new Dictionary<string, string>();
+                for (var i = 0; i < xmls.Count; i++)
+                {
+                    var xml = xmls[i];
+                    var key = $"{{xml{i}}}";
+                    swaps.Add(key, xml.Value);
+                    cleanContent = cleanContent.Replace(xml.Value, key);
+                }
 
-            /// <see cref="typeName"/>
-            // [0] -- param start tag with attribute
-            var creftribute = SyntaxFactory.XmlTextAttribute("cref", typeName);
-            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(creftribute));
+                var parts = cleanContent.Split(' ');
+                for (var i = 0; i < parts.Length; i++)
+                {
+                    var p = parts[i];
 
-            // [2] -- end tag
-            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
-            return SyntaxFactory.XmlElement(startTag, endTag);
+                    if (p.StartsWith("{"))
+                    {
+                        TryHelper.Try(() =>
+                        {
+                            var swapStr = swaps[p];
+                            var attributeNameMatch = Regex.Match(swapStr, $@"{attributeNameToMatchOn}=""(.*?)""");
+                            if (attributeNameMatch.Success && attributeNameMatch.Groups.Count > 0)
+                            {
+                                var attributeValue = attributeNameMatch.Groups[1].Value;
+                                xmlNodes.Add(CreateElementWithAttributeSyntax(elementName, attributeNameToMatchOn, attributeValue));
+                                xmlNodes.Add(SyntaxFactory.XmlText(" "));
+                            }
+                        }, (_) =>
+                        {
+                            xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} xml"));
+                            xmlNodes.Add(SyntaxFactory.XmlText(" "));
+                        });
+                    }
+                    else
+                    {
+                        xmlNodes.Add(SyntaxFactory.XmlText(p));
+                        xmlNodes.Add(SyntaxFactory.XmlText(" "));
+                    }
+                }
+                xmlNodes.RemoveAt(xmlNodes.Count - 1);
+
+            }, (_) =>
+            {
+                xmlNodes.Clear();
+                xmlNodes.Add(SyntaxFactory.XmlText(""));
+            });
+
+            return xmlNodes;
         }
 
         /// <summary>
@@ -424,43 +471,14 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlText(newLine0Token, text1Token, newLine2Token, text2Token);
         }
 
-        /// <summary>
-        ///  Create the type parameter element syntax.
-        /// </summary>
-        /// <param name="parameterName"> The parameter name. </param>
-        /// <returns> A XmlElementSyntax. </returns>
-        internal static XmlElementSyntax CreateTypeParameterElementSyntax(string parameterName)
+        internal static XmlEmptyElementSyntax CreateElementWithAttributeSyntax(string elementName, string attributeName, string attributeValue)
         {
-            var paramName = SyntaxFactory.XmlName("typeparam");
-
-            /// <typeparam name="parameterName"> [0][1] </param> [2]
-            // [0] -- param start tag with attribute
-            var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
-            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
-
-            // [2] -- end tag
-            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
-            return SyntaxFactory.XmlElement(startTag, endTag);
-        }
-
-        /// <summary>
-        ///  Create the type parameter ref element syntax.
-        /// </summary>
-        /// <param name="parameterName"> The parameter name. <see cref="XmlElementSyntax"/> </param>
-        /// <returns> A XmlElementSyntax. </returns>
-        internal static XmlElementSyntax CreateTypeParameterRefElementSyntax(string parameterName)
-        {
-            var paramName = SyntaxFactory.XmlName("typeparamref");
-
-            /// <typeparamref name="parameterName"> [0][1] </typeparamref>
-            /// [2]
-            // [0] -- param start tag with attribute
-            var paramAttribute = SyntaxFactory.XmlNameAttribute(parameterName);
-            var startTag = SyntaxFactory.XmlElementStartTag(paramName, SyntaxFactory.SingletonList<XmlAttributeSyntax>(paramAttribute));
-
-            // [2] -- end tag
-            var endTag = SyntaxFactory.XmlElementEndTag(paramName);
-            return SyntaxFactory.XmlElement(startTag, endTag);
+            return SyntaxFactory.XmlEmptyElement(
+               SyntaxFactory.XmlName(elementName), // Element name
+               SyntaxFactory.SingletonList<XmlAttributeSyntax>( // Attributes
+                   SyntaxFactory.XmlTextAttribute(attributeName, attributeValue)
+               )
+           );
         }
 
         /// <summary>
@@ -687,7 +705,7 @@ namespace CodeDocumentor.Helper
             var lineStartText = CreateLineStartTextSyntax();
 
             // [1] -- parameter text
-            var parameterText = CreateTypeParameterElementSyntax(parameterName);
+            var parameterText = CreateElementWithAttributeSyntax("typeparam", "name", parameterName);
 
             // [2] -- line end text
             var lineEndText = CreateLineEndTextSyntax();
@@ -754,13 +772,22 @@ namespace CodeDocumentor.Helper
                 return Enumerable.Empty<string>();
             }
 
-            var exceptions = _regEx.Matches(textToSearch).OfType<Match>()
-                                                        .Select(m => m?.Groups[0]?.Value)
-                                                        .ToList();
+            List<string> exceptions = new List<string>();
 
-            var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
-                                                       .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
-            exceptions.AddRange(exceptionsInline);
+            TryHelper.Try(() =>
+            {
+                exceptions.AddRange(_regEx.Matches(textToSearch).OfType<Match>()
+                                                           .Select(m => m?.Groups[0]?.Value)
+                                                           .ToList());
+            });
+
+            TryHelper.Try(() =>
+            {
+                var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
+                                                               .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
+                exceptions.AddRange(exceptionsInline);
+            });
+
             return exceptions.Distinct();
         }
 
@@ -848,7 +875,8 @@ namespace CodeDocumentor.Helper
                 {
                     ReturnGenericTypeAsFullString = false,
                     BuildWithPeriodAndPrefixForTaskTypes = false,
-                    TryToIncludeCrefsForReturnTypes = true
+                    TryToIncludeCrefsForReturnTypes = true,
+                    IncludeReturnStatementInGeneralComments = true
                 };
                 var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
                 list = list.AddRange(DocumentationHeaderHelper.CreateValuePartNodes(returnComment));

@@ -72,6 +72,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\DiagnosticBuilder.cs" />
     <Compile Include="Helper\DictionaryExtensions.cs" />
+    <Compile Include="Helper\TryHelper.cs" />
     <Compile Include="Models\ReturnTypeBuilderOptions.cs" />
     <Compile Include="Helper\WordExtensions.cs" />
     <Compile Include="Models\Constants.cs" />

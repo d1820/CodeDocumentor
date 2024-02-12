@@ -23,7 +23,9 @@ namespace CodeDocumentor.Helper
             {
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
                 BuildWithPeriodAndPrefixForTaskTypes = false,
-                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes
+                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
+                IncludeReturnStatementInGeneralComments = returnType.GetType() != typeof(GenericNameSyntax)
+
             };
             var comment = BuildComment(returnType, options);
             if (optionsService.UseNaturalLanguageForReturnNode)

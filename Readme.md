@@ -213,6 +213,14 @@ How fast comments can be added
 <img src="./GifInstruction/short cut to quick add.gif" />
 
 
+## Errors and Crashes
+
+If you are finding the code documentor is crashing or causing errors. 
+All errors are written to the EventLog in windows. Check there for causes, and use this information to file a bug.
+
+**Source**: "Microsoft Visual Studio"
+
+**Message Prefix**: "CodeDocumentor: "
 
 
 ## Special Thanks

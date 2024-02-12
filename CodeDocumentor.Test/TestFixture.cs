@@ -136,6 +136,34 @@ namespace CodeDocumentor.Test
             return item;
         }
 
+        public static QualifiedNameSyntax BuildQualifiedNameSyntax(string part1, string part2)
+        {
+            // Create the left identifier
+            var leftIdentifier = SyntaxFactory.IdentifierName(part1);
+
+            // Create the right identifier
+            var rightIdentifier = SyntaxFactory.IdentifierName(part2);
+
+            // Create the qualified name syntax
+            return SyntaxFactory.QualifiedName(leftIdentifier, rightIdentifier);
+
+        }
+
+        public static PredefinedTypeSyntax BuildPredefinedTypeSyntax(SyntaxKind kind)
+        {
+            return SyntaxFactory.PredefinedType(SyntaxFactory.Token(kind));
+        }
+
+        public static ArrayTypeSyntax BuildArrayTypeSyntax(SyntaxKind kind)
+        {
+            // Create the element type (e.g., int)
+            var elementType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(kind));
+
+            // Create the array type syntax with a single dimension
+            return SyntaxFactory.ArrayType(elementType, SyntaxFactory.SingletonList(SyntaxFactory.ArrayRankSpecifier()));
+        }
+
+
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKind)
         {
             var stringNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKind));

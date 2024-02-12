@@ -25,8 +25,77 @@ namespace CodeDocumentor.Test.Helper
             {
                 ReturnGenericTypeAsFullString = false,
                 TryToIncludeCrefsForReturnTypes = true,
+                IncludeReturnStatementInGeneralComments = true
             };
         }
+
+        #region QualifiedNameSyntax
+
+        [Fact]
+        public void GenerateQualifiedNameComment_CreatesValidStringFromName()
+        {
+            var roc = TestFixture.BuildQualifiedNameSyntax("System", "String");
+
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns a <see cref=\"System.String\"/>");
+        }
+
+        [Fact]
+        public void GenerateQualifiedNameComment_CreatesValidStringFromCustomInterface()
+        {
+            var roc = TestFixture.BuildQualifiedNameSyntax("Angler", "IClass");
+
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns an <see cref=\"Angler.IClass\"/>");
+        }
+        #endregion
+
+        #region ArrayTypeSyntax
+
+        [Fact]
+        public void GenerateArrayTypeComment_CreatesValidStringFromName()
+        {
+            var roc = TestFixture.BuildArrayTypeSyntax(SyntaxKind.StringKeyword);
+
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns an array of strings");
+        }
+        #endregion
+
+        #region PredefinedTypeSyntax
+
+        [Fact]
+        public void GeneratePredefinedTypeSyntaxComment_CreatesValidStringFromName()
+        {
+            var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.StringKeyword);
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns a <see cref=\"string\"/>");
+        }
+
+        [Fact]
+        public void GeneratePredefinedTypeSyntaxComment_CreatesValidStringFromInt()
+        {
+            var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.IntKeyword);
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns an <see cref=\"int\"/>");
+        }
+
+        [Fact]
+        public void GeneratePredefinedTypeSyntaxCommentWithCref_CreatesValidStringFromName()
+        {
+            var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.StringKeyword);
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns a <see cref=\"string\"/>");
+        }
+
+        [Fact]
+        public void GeneratePredefinedTypeSyntaxCommentWithCref_CreatesValidStringFromInt()
+        {
+            var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.IntKeyword);
+            var comment = _returnCommentBuilder.BuildComment(roc, _options);
+            comment.Should().Be("Returns an <see cref=\"int\"/>");
+        }
+        #endregion
 
         #region ReadOnlyCollection
 
@@ -345,7 +414,7 @@ namespace CodeDocumentor.Test.Helper
             returnType.Should().NotBeNull();
 
             var comment = _returnCommentBuilder.BuildComment(returnType, _options);
-            comment.Should().Be("<typeparamref name=\"CustomClass\"></typeparamref>");
+            comment.Should().Be("<typeparamref name=\"CustomClass\"/>");
         }
 
         #endregion

@@ -12,8 +12,8 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateReturnElementSyntax_ReturnsTypeParamRefAsEmbeddedNodeInReturn()
         {
-            const string str = "<typeparamref name=\"TResult\"></typeparamref>";
-            const string expected = "<returns>A <typeparamref name=\"TResult\"></typeparamref></returns>";
+            const string str = "<typeparamref name=\"TResult\"/>";
+            const string expected = "<returns>A <typeparamref name=\"TResult\"/></returns>";
             var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
             result.ToFullString().Should().Be(expected);
         }
@@ -23,6 +23,50 @@ namespace CodeDocumentor.Test.Helper
         {
             const string str = "Task<int>";
             const string expected = "<returns><![CDATA[Task<int>]]></returns>";
+            var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
+            result.ToFullString().Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnElementSyntax_ReturnsCDATAOfCDATATaskInReturn()
+        {
+            const string str = "<![CDATA[Task<int>]]>";
+            const string expected = "<returns><![CDATA[Task<int>]]></returns>";
+            var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
+            result.ToFullString().Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnElementSyntax_ReturnsCRefOfTypeInReturn()
+        {
+            const string str = "<see cref=\"MasterClass\"/>";
+            const string expected = "<returns><see cref=\"MasterClass\"/></returns>";
+            var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
+            result.ToFullString().Should().Be(expected);
+        }
+        [Fact]
+        public void CreateReturnElementSyntax_ReturnsStringAndCRefOfTypeInReturn()
+        {
+            const string str = "Returns a <see cref=\"MasterClass\"/>";
+            const string expected = "<returns>Returns a <see cref=\"MasterClass\"/></returns>";
+            var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
+            result.ToFullString().Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnElementSyntax_ReturnsStringAndCRefOfInterfaceTypeInReturn()
+        {
+            const string str = "Returns an <see cref=\"IMasterClass\"I/>";
+            const string expected = "<returns>Returns an <see cref=\"IMasterClass\"/></returns>";
+            var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
+            result.ToFullString().Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnElementSyntax_ReturnsStringAnd2CRefOfTypesInReturn()
+        {
+            const string str = "Returns a <see cref=\"Task\"/> of type <see cref=\"MasterClass\"/>";
+            const string expected = "<returns>Returns a <see cref=\"Task\"/> of type <see cref=\"MasterClass\"/></returns>";
             var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
             result.ToFullString().Should().Be(expected);
         }
@@ -88,6 +132,27 @@ namespace ConsoleApp4
 	}
 }";
 
+        private const string MethodWithExceptionAndThrowIfHelperException = @"
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp4
+{
+	public class MethodTester
+	{
+        /// <summary>
+        /// Shows the method with list list int return tester.
+        /// </summary>
+        /// <returns><![CDATA[List<List<int>>]]></returns>
+        public List<List<int>> ShowMethodWithListListIntReturnTester()
+		{
+			throw new Exception(""test"");
+            ArgumentNullException.ThrowIfNull("");
+		}
+	}
+}";
+
         [Fact]
         public void GetExceptions_ReturnsMatches()
         {
@@ -108,6 +173,13 @@ namespace ConsoleApp4
         {
             var exceptions = DocumentationHeaderHelper.GetExceptions(MethodWithDuplicateException);
             Assert.Single(exceptions.ToList());
+        }
+
+        [Fact]
+        public void GetExceptions_ReturnsTwoMatches_WhenExceptionAndThrowIfHelperException()
+        {
+            var exceptions = DocumentationHeaderHelper.GetExceptions(MethodWithExceptionAndThrowIfHelperException);
+            Assert.Equal(2, exceptions.ToList().Count);
         }
         #endregion
     }

@@ -7,15 +7,23 @@ namespace CodeDocumentor.Vsix2022
 {
     public class XmlInformation
     {
-        //bool isXml, bool isGeneric, bool isTypeParam
-
         public bool IsGeneric { get; }
 
-        public bool IsSeeNode { get; }
+        public string GenericMatch { get; }
 
-        public bool IsTypeParam { get; }
+        public bool HasSeeCrefNode { get; }
 
-        public bool IsXml { get; }
+        public string SeeCrefMatch { get; }
+
+        public bool HasTypeParam { get; }
+
+        public string TypeParamMatch { get; }
+
+        public bool IsCData { get; }
+
+        public string CDataMatch { get; }
+
+        public bool HasText { get; }
 
         public XmlInformation(string text)
         {
@@ -23,10 +31,23 @@ namespace CodeDocumentor.Vsix2022
             {
                 return;
             }
-            IsXml = Regex.IsMatch(text, "CDATA");
-            IsGeneric = Regex.IsMatch(text, @"(\w+\<)");
-            IsTypeParam = Regex.IsMatch(text, "(<typeparam)");
-            IsSeeNode = Regex.IsMatch(text, "(<see)");
+            var match = Regex.Match(text, @"<!\[CDATA\[.*\]\]>");
+            IsCData = match.Success;
+            CDataMatch = match?.Value;
+
+            match = Regex.Match(text, @"(^\w+<.*>$)");
+            IsGeneric = match.Success;
+            GenericMatch = match?.Value;
+
+            match = Regex.Match(text, @"(<typeparamref.*?>)");
+            HasTypeParam = match.Success;
+            TypeParamMatch = match?.Value;
+
+            match = Regex.Match(text, @"(<see.*?>)");
+            HasSeeCrefNode = match.Success;
+            SeeCrefMatch = match?.Value;
+
+            HasText = Regex.IsMatch(text, @"^\w*|\w*$");
         }
     }
 }

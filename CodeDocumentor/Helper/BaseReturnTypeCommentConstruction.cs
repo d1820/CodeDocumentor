@@ -15,7 +15,7 @@ namespace CodeDocumentor.Helper
         ///  Gets or Sets the array comment template.
         /// </summary>
         /// <value> A string. </value>
-        public string ArrayCommentTemplate { get; } = "an array of {0}";
+        public string ArrayCommentTemplate { get; } = "array of {0}";
 
         /// <summary>
         ///  Generates the comment.
@@ -41,14 +41,14 @@ namespace CodeDocumentor.Helper
                 var parent = GetMethodDeclarationSyntax(returnType);
                 if (parent != null && parent.TypeParameterList?.Parameters.Any(a => a.Identifier.ValueText == identifier.Identifier.ValueText) == true)
                 {
-                    var typeParamNode = DocumentationHeaderHelper.CreateTypeParameterRefElementSyntax(identifier.Identifier.ValueText);
+                    var typeParamNode = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparamref", "name", identifier.Identifier.ValueText);
                     return typeParamNode.ToFullString();
                 }
-                return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options.TryToIncludeCrefsForReturnTypes);
+                return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments);
             }
             if (returnType is QualifiedNameSyntax qst)
             {
-                return GenerateGeneralComment(qst.ToString().AsSpan(), options.TryToIncludeCrefsForReturnTypes);
+                return GenerateGeneralComment(qst.ToString().AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments);
             }
             if (returnType is GenericNameSyntax gst)
             {
@@ -56,11 +56,12 @@ namespace CodeDocumentor.Helper
             }
             if (returnType is ArrayTypeSyntax ast)
             {
-                return string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(ast.ElementType, options.TryToIncludeCrefsForReturnTypes));
+                var comment = string.Format(ArrayCommentTemplate, DetermineSpecificObjectName(ast.ElementType, options.TryToIncludeCrefsForReturnTypes));
+                return GenerateGeneralComment(comment.AsSpan(), false, options.TryToIncludeCrefsForReturnTypes);
             }
             return returnType is PredefinedTypeSyntax pst
-                ? GenerateGeneralComment(pst.Keyword.ValueText.AsSpan())
-                : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options.TryToIncludeCrefsForReturnTypes);
+                ? GenerateGeneralComment(pst.Keyword.ValueText.AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments)
+                : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments);
         }
 
         private static string BuildPrefix(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
@@ -165,9 +166,14 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
-        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, bool returnCref = false)
+        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, bool returnCref = false, bool includeReturnStatement = false)
         {
             var rt = returnType.ToString();
+            if (includeReturnStatement)
+            {
+                var startWord = DocumentationHeaderHelper.DetermineStartingWord(rt.AsSpan(), false);
+                return returnCref ? $"Returns {startWord} <see cref=\"{rt}\"/>" : $"Returns {startWord} {rt}";
+            }
             return returnCref ? $"<see cref=\"{rt}\"/>" : rt;
         }
 
@@ -303,7 +309,8 @@ namespace CodeDocumentor.Helper
                     UseProperCasing = options.UseProperCasing,
                     ForcePredefinedTypeEvaluation = true,
                     BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
-                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes
+                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
+                    IncludeReturnStatementInGeneralComments = false
                 };
                 builder.Append($"{BuildComment(item, newOptions)}");
                 if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
@@ -363,7 +370,8 @@ namespace CodeDocumentor.Helper
                 UseProperCasing = options.UseProperCasing,
                 ForcePredefinedTypeEvaluation = true, //maybe??
                 BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
-                TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes
+                TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
+                IncludeReturnStatementInGeneralComments = false
             };
             var buildComment = BuildComment(firstType, newOptions);
             comment = prefix + buildComment;

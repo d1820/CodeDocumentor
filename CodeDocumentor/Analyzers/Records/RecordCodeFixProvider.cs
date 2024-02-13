@@ -116,13 +116,16 @@ namespace CodeDocumentor
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            var list = SyntaxFactory.List<XmlNodeSyntax>();
+            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
-            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+
+            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
 
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

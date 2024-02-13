@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Managers;
 using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
@@ -72,6 +73,8 @@ namespace CodeDocumentor.Test
                     Translator.Initialize(os);
                     return os;
                 }, Lifestyle.Transient);
+                _testContainer.Register<DocumentationBuilder>();
+                _testContainer.RegisterSingleton<GenericCommentManager>();
                 _testContainer.Verify();
                 return _testContainer;
             };

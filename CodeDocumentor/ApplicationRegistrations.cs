@@ -1,3 +1,5 @@
+using CodeDocumentor.Helper;
+using CodeDocumentor.Managers;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using SimpleInjector;
@@ -14,6 +16,9 @@ namespace CodeDocumentor
                 opts.SetDefaults(CodeDocumentorPackage.Options);
                 return opts;
             });
+            //NOTE keep these in sync with unit test container
+            container.RegisterSingleton<GenericCommentManager>();
+            container.Register<DocumentationBuilder>();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -89,7 +90,12 @@ namespace CodeDocumentor
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
             var comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText);
-            var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
+
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+
+            var summaryNodes = builder.WithSummary(comment).Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
+            //var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
             var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }

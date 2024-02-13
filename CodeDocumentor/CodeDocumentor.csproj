@@ -72,6 +72,8 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\DiagnosticBuilder.cs" />
     <Compile Include="Helper\DictionaryExtensions.cs" />
+    <Compile Include="Helper\DocumentationBuilder.cs" />
+    <Compile Include="Managers\GenericCommentManager.cs" />
     <Compile Include="Helper\TokenHelper.cs" />
     <Compile Include="Helper\TryHelper.cs" />
     <Compile Include="Models\ReturnTypeBuilderOptions.cs" />
@@ -83,14 +85,14 @@
     <Compile Include="Analyzers\Enums\EnumCodeFixProvider.cs" />
     <Compile Include="Analyzers\Fields\FieldAnalyzer.cs" />
     <Compile Include="Analyzers\Fields\FieldCodeFixProvider.cs" />
-    <Compile Include="Helper\BaseReturnTypeCommentConstruction.cs" />
+    <Compile Include="Constructors\BaseReturnTypeCommentConstruction.cs" />
     <Compile Include="Helper\CommentHelper.cs" />
     <Compile Include="Helper\DocumentationHeaderHelper.cs" />
     <Compile Include="Helper\NameSplitter.cs" />
     <Compile Include="Helper\Pluralizer.cs" />
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
-    <Compile Include="Helper\ReturnCommentConstruction.cs" />
-    <Compile Include="Helper\SingleWordCommentConstruction.cs" />
+    <Compile Include="Constructors\ReturnCommentConstruction.cs" />
+    <Compile Include="Constructors\SingleWordCommentConstruction.cs" />
     <Compile Include="Helper\Translator.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />

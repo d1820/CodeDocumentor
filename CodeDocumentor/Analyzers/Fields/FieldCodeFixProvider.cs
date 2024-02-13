@@ -101,7 +101,13 @@ namespace CodeDocumentor
 
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             var comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText);
-            var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
+
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+
+            var summaryNodes = builder.WithSummary(comment).Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
+
+            //var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
 
             var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;

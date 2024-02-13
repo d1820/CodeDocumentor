@@ -1,7 +1,8 @@
 using System;
+using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Constructors
 {
     public class SingleWordCommentConstruction : BaseReturnTypeCommentConstruction
     {

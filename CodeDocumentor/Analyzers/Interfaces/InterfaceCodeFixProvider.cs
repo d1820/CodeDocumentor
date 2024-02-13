@@ -88,12 +88,13 @@ namespace CodeDocumentor
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
-            var list = SyntaxFactory.List<XmlNodeSyntax>();
+            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText);
-
-            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
-                        .WithTypeParamters(declarationSyntax);
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+                        .WithTypeParamters(declarationSyntax)
+                        .Build();
 
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

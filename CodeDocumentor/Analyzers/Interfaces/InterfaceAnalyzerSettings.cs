@@ -1,4 +1,3 @@
-using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -10,7 +9,7 @@ namespace CodeDocumentor
         /// <summary>
         ///  The category.
         /// </summary>
-        internal const string Category = DocumentationHeaderHelper.CATEGORY;
+        internal const string Category = Constants.CATEGORY;
 
         /// <summary>
         ///  The diagnostic id.

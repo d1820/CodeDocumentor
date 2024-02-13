@@ -98,18 +98,19 @@ namespace CodeDocumentor
 
         private static PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax)
         {
-            var list = SyntaxFactory.List<XmlNodeSyntax>();
+            //var list = SyntaxFactory.List<XmlNodeSyntax>();
 
             var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
 
             var hasSetter = declarationSyntax.PropertyHasSetter();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
-
-            list = list.WithSummary(declarationSyntax, propertyComment, optionsService.PreserveExistingSummaryText)
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+            var list = builder.WithSummary(declarationSyntax, propertyComment, optionsService.PreserveExistingSummaryText)
                         .WithPropertyValueTypes(declarationSyntax, optionsService.IncludeValueNodeInProperties)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
 
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 

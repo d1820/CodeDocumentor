@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using CodeDocumentor.Constructors;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Microsoft.VisualStudio.VSConstants;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 
@@ -340,12 +340,12 @@ namespace CodeDocumentor.Helper
             var hasSummary = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlElementSyntax>()
-                .Any(o => o.StartTag.Name.ToString().Equals(DocumentationHeaderHelper.SUMMARY));
+                .Any(o => o.StartTag.Name.ToString().Equals(Constants.SUMMARY));
 
             var hasInheritDoc = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlEmptyElementSyntax>()
-                .Any(o => o.Name.ToString().Equals(DocumentationHeaderHelper.INHERITDOC));
+                .Any(o => o.Name.ToString().Equals(Constants.INHERITDOC));
 
             return hasSummary || hasInheritDoc;
         }

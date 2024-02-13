@@ -14,6 +14,38 @@ namespace CodeDocumentor.Vsix2022
 
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
+        public static string NEWLINE = "\r\n";
+
+        /// <summary>
+        ///  The category of the diagnostic.
+        /// </summary>
+        public const string CATEGORY = "CodeDocumentor";
+
+        /// <summary>
+        ///  The example.
+        /// </summary>
+        public const string EXAMPLE = "example";
+
+        /// <summary>
+        ///  The category to check for when excluding analyzer actions
+        /// </summary>
+        public const string EXCLUSION_CATEGORY = "XMLDocumentation";
+
+        /// <summary>
+        ///  The inherit doc.
+        /// </summary>
+        public const string INHERITDOC = "inheritdoc";
+
+        /// <summary>
+        ///  The remarks.
+        /// </summary>
+        public const string REMARKS = "remarks";
+
+        /// <summary>
+        ///  The summary.
+        /// </summary>
+        public const string SUMMARY = "summary";
+
         public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
             new WordMap { Word = "Int32", Translation = "integer" },

@@ -110,17 +110,19 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
-            var list = SyntaxFactory.List<XmlNodeSyntax>();
+            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
 
-            list = list.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
+            var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .WithParameters(declarationSyntax)
                         .WithExceptionTypes(declarationSyntax)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE)
-                        .WithReturnType(declarationSyntax);
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .WithReturnType(declarationSyntax)
+                        .Build();
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
         }

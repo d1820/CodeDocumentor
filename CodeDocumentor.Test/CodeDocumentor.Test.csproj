@@ -75,6 +75,8 @@
     <Compile Remove="Methods\TestFiles\MethodWithReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestFixCode.cs" />
     <Compile Remove="Properties\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTester.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTesterFix.cs" />
@@ -163,6 +165,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

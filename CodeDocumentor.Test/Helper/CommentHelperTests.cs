@@ -108,6 +108,24 @@ namespace CodeDocumentor.Test.Helper
             comment.Should().Be("Work and return a <see cref=\"Task\"/> of a list of a list of strings.");
         }
 
+        [Fact]
+        public void CreateMethodComment_ReturnsValidCommentWhenReturnIsTask_ActionResult_CustomType()
+        {
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            {
+                o.ExcludeAsyncSuffix = false;
+                o.UseToDoCommentsOnSummaryError = false;
+                o.TryToIncludeCrefsForReturnTypes = false;
+            });
+            _fixture.Initialize(_output);
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+
+            TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
+
+            var comment = CommentHelper.CreateMethodComment("CreateAsync", typeSyntax);
+            comment.Should().Be("Creates and return a task of type actionresult of type clientdto asynchronously.");
+        }
+
         [Theory]
         [InlineData("Execute", "int", "Execute and return a task of type integer.", "Task")]
         [InlineData("Execute", "int", "Execute and returns an actionresult of type integer.", "ActionResult")]

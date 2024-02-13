@@ -165,29 +165,48 @@ namespace CodeDocumentor.Managers
         private static string BuildPrefix(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             string prefix;
-            if (options.TryToIncludeCrefsForReturnTypes)
+            var startWord = "";
+            if (options.IncludeStartingWordInText)
             {
-                prefix = "a <see cref=\"Task\"/> of type ";
+                if (returnType.IsTask())
+                {
+                    startWord = "a ";
+                }
+                else
                 if (returnType.IsGenericActionResult())
                 {
-                    prefix = "an <see cref=\"ActionResult\"/> of type ";
+                    startWord = "an ";
+                }
+                else
+                if (returnType.IsGenericValueTask())
+                {
+                    startWord = "a ";
+                }
+            }
+
+            if (options.TryToIncludeCrefsForReturnTypes)
+            {
+                prefix = $"{startWord}<see cref=\"Task\"/> of type ";
+                if (returnType.IsGenericActionResult())
+                {
+                    prefix = $"{startWord}<see cref=\"ActionResult\"/> of type ";
                 }
                 if (returnType.IsGenericValueTask())
                 {
-                    prefix = "a <see cref=\"ValueTask\"/> of type ";
+                    prefix = $"{startWord}<see cref=\"ValueTask\"/> of type ";
                 }
 
                 return prefix;
             }
 
-            prefix = "a Task of type ";
+            prefix = $"{startWord}Task of type ";
             if (returnType.IsGenericActionResult())
             {
-                prefix = "an ActionResult of type ";
+                prefix = $"{startWord}ActionResult of type ";
             }
             if (returnType.IsGenericValueTask())
             {
-                prefix = "a ValueTask of type ";
+                prefix = $"{startWord}ValueTask of type ";
             }
             if (options.UseProperCasing)
             {

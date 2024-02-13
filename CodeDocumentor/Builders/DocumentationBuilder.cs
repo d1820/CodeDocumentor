@@ -136,14 +136,12 @@ namespace CodeDocumentor.Builders
                     Reset().WithTripleSlashSpace()
                         .WithElement(summary) //this already contains the rest of the /// for all the line <summary>...</summary>
                         .WithLineEndTextSyntax();
+                    return this;
                 }
             }
-            else
-            {
-                Reset().WithTripleSlashSpace().WithStartingTag(Constants.SUMMARY).WithLineEndTextSyntax()
-                       .WithTripleSlashSpace().WithContent(content).WithLineEndTextSyntax()
-                       .WithTripleSlashSpace().WithEndingTag(Constants.SUMMARY).WithLineEndTextSyntax();
-            }
+            Reset().WithTripleSlashSpace().WithStartingTag(Constants.SUMMARY).WithLineEndTextSyntax()
+                        .WithTripleSlashSpace().WithContent(content).WithLineEndTextSyntax()
+                        .WithTripleSlashSpace().WithEndingTag(Constants.SUMMARY).WithLineEndTextSyntax();
 
             return this;
         }

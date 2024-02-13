@@ -13,7 +13,7 @@ namespace CodeDocumentor
             container.RegisterSingleton<IOptionsService>(() =>
             {
                 var opts = new OptionsService();
-                opts.SetDefaults(CodeDocumentorPackage.Options);
+                //opts.SetDefaults(CodeDocumentorPackage.Options);
                 return opts;
             });
             //NOTE keep these in sync with unit test container

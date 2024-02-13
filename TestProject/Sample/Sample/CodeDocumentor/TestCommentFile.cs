@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -289,7 +289,7 @@ namespace Sample.CodeDocumentor
         }
     }
 
-    public interface TestInt
+    public interface ITestInt
     {
         public int MyPropertyPublic { get; set; }
 

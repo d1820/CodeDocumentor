@@ -58,7 +58,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("EnsureWork", "bool", "Checks if is work.")]
         [InlineData("EnsureExecutesQuick", "int", "Checks if executes quick.")]
         [InlineData("Execute", "int", "Execute and return a <see cref=\"Task\"/> of type <see cref=\"int\"/>.", "Task", false, true)]
-        [InlineData("Execute", "int", "Execute and return an <see cref=\"ActionResult\"/> of type <see cref=\"int\"/>.", "ActionResult", false, true)]
+        [InlineData("Execute", "int", "Execute and returns an <see cref=\"ActionResult\"/> of type <see cref=\"int\"/>.", "ActionResult", false, true)]
         [InlineData("Execute", "int", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"int\"/>.", "ValueTask", false, true)]
         [InlineData("Execute", "Person", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"Person\"/>.", "ValueTask")]
         [InlineData("ExecuteAsync", "string", "Execute and return a <see cref=\"ValueTask\"/> of type <see cref=\"string\"/>.", "ValueTask", true, false)]
@@ -90,9 +90,27 @@ namespace CodeDocumentor.Test.Helper
             comment.Should().Be(expected);
         }
 
+        [Fact]
+        public void CreateMethodComment_ReturnsValidCommentWhenOneWordMethodAndLayeredList()
+        {
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            {
+                o.ExcludeAsyncSuffix = false;
+                o.UseToDoCommentsOnSummaryError = false;
+                o.TryToIncludeCrefsForReturnTypes = true;
+            });
+            _fixture.Initialize(_output);
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+
+            TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
+
+            var comment = CommentHelper.CreateMethodComment("Work", typeSyntax);
+            comment.Should().Be("Work and return a <see cref=\"Task\"/> of a list of a list of strings.");
+        }
+
         [Theory]
         [InlineData("Execute", "int", "Execute and return a task of type integer.", "Task")]
-        [InlineData("Execute", "int", "Execute and return an actionresult of type integer.", "ActionResult")]
+        [InlineData("Execute", "int", "Execute and returns an actionresult of type integer.", "ActionResult")]
         [InlineData("Execute", "int", "Execute and return a valuetask of type integer.", "ValueTask")]
         [InlineData("Execute", "Person", "Execute and return a valuetask of type person.", "ValueTask")]
         [InlineData("ExecuteAsync", "string", "Execute and return a valuetask of type string.", "ValueTask", true, false)]

@@ -375,11 +375,8 @@ namespace CodeDocumentor.Helper
                 return string.Empty;
             }
             var str = returnType.ToString();
-            //if the returnType alread starts with a or an then just return
-            if (str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
-                str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
-                str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase)
-                )
+            //if the returnType already starts with a or an then just return
+            if (str.StartsWith_A_An_And())
             {
                 return string.Empty;
             }

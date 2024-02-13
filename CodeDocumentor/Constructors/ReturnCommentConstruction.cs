@@ -23,24 +23,33 @@ namespace CodeDocumentor.Constructors
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
-                BuildWithPeriodAndPrefixForTaskTypes = false,
+                //BuildWithPeriodAndPrefixForTaskTypes = false,
                 TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                IncludeReturnStatementInGeneralComments = returnType.GetType() != typeof(GenericNameSyntax)
-
+                //IncludeReturnStatementInGeneralComments = returnType.GetType() != typeof(GenericNameSyntax)
+                IncludeStartingWordInText = true,
+                ReturnBuildType = ReturnBuildType.ReturnXmlElement,
+                UseProperCasing = true
             };
-            var comment = BuildComment(returnType, options);
-            if (optionsService.UseNaturalLanguageForReturnNode)
+            BuildReturnComment(returnType, options);
+        }
+
+        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        {
+            BuildReturnComment(returnType, options);
+        }
+
+        private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        {
+            var comment = BuildComment(returnType, options).Trim();
+            if (!options.ReturnGenericTypeAsFullString)
             {
-                comment = NameSplitter
-                              .Split(comment)
-                              .TranslateParts()
-                              .ToLowerParts()
-                              .JoinToString()
-                              .ApplyUserTranslations()
-                              .WithPeriod();
                 if (!string.IsNullOrEmpty(comment))
                 {
                     Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();
+                    if (options.UseProperCasing)
+                    {
+                        Comment = Comment.ToTitleCase();
+                    }
                 }
             }
             else
@@ -49,33 +58,9 @@ namespace CodeDocumentor.Constructors
             }
         }
 
-        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            options.UseProperCasing = true;
-            var comment = BuildComment(returnType, options);
-
-            comment = NameSplitter
-                              .Split(comment)
-                              .TranslateParts()
-                              .ToLowerParts()
-                              .JoinToString()
-                              .ApplyUserTranslations()
-                              .WithPeriod();
-
-            if (!string.IsNullOrEmpty(comment))
-            {
-                Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();
-            }
-        }
-
         //used for testing
         internal ReturnCommentConstruction()
         {
-        }
-
-        internal override string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            return base.BuildComment(returnType, options).Trim();
         }
     }
 }

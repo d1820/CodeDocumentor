@@ -10,7 +10,7 @@ namespace ConsoleApp4
         /// Show method with string return tester.
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>string</returns>
+        /// <returns>A string</returns>
         public string ShowMethodWithStringReturnTester()
         {
             ArgumentNullException.ThrowIfNull("test", "test");

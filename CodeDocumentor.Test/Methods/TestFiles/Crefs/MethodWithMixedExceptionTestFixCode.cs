@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp4
+namespace ConsoleApp40
 {
     public class MethodTester
     {
@@ -11,7 +11,7 @@ namespace ConsoleApp4
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        /// <returns>A string</returns>
+        /// <returns>A <see cref="string"/></returns>
         public string ShowMethodWithStringReturnTester()
         {
             ArgumentNullException.ThrowIfNull("test", "test");

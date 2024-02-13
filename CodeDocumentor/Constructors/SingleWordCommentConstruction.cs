@@ -21,20 +21,36 @@ namespace CodeDocumentor.Constructors
             var comment = BuildComment(returnType, options); //we dont need to translate or period here cause the caller of this does all that work
             if (!string.IsNullOrEmpty(comment))
             {
-                Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), false), comment).Trim();
+                var startWord = "";
+                if (options.IncludeStartingWordInText)
+                {
+                    startWord = DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), false);
+                }
+                var builtComment = string.Format("{0} {1}", startWord, comment).Trim();
+                if (!string.IsNullOrEmpty(builtComment))
+                {
+                    if (builtComment.StartsWith("an "))
+                    {
+                        Comment = "and returns " + builtComment;
+                        return;
+                    }
+                    Comment = "and return " + builtComment;
+                    return;
+                }
+                Comment = null;
             }
         }
 
         internal override string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
-            if (options.ForcePredefinedTypeEvaluation)
-            {
-                return base.BuildComment(returnType, options);
-            }
-            if (returnType is PredefinedTypeSyntax)
-            {
-                return string.Empty;
-            }
+            //if (options.ForcePredefinedTypeEvaluation)
+            //{
+            //    return base.BuildComment(returnType, options);
+            //}
+            //if (returnType is PredefinedTypeSyntax)
+            //{
+            //    return string.Empty;
+            //}
             var comment = base.BuildComment(returnType, options);
             return comment;
         }

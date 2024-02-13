@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeDocumentor.Constructors;
+using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Builders
 {
     public class DocumentationBuilder
     {
         private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
         private XmlElementSyntax _currentElement;
-
 
         internal SyntaxList<XmlNodeSyntax> Build()
         {
@@ -102,9 +102,9 @@ namespace CodeDocumentor.Helper
                 var options = new ReturnTypeBuilderOptions
                 {
                     ReturnGenericTypeAsFullString = false,
-                    BuildWithPeriodAndPrefixForTaskTypes = false,
+                    //BuildWithPeriodAndPrefixForTaskTypes = false,
                     TryToIncludeCrefsForReturnTypes = true,
-                    IncludeReturnStatementInGeneralComments = true
+                    //IncludeReturnStatementInGeneralComments = true
                 };
                 var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
                 var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment);

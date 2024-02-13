@@ -45,11 +45,11 @@ namespace CodeDocumentor.Constructors
                     var typeParamNode = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparamref", "name", identifier.Identifier.ValueText);
                     return typeParamNode.ToFullString();
                 }
-                return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments);
+                return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options);
             }
             if (returnType is QualifiedNameSyntax qst)
             {
-                return GenerateGeneralComment(qst.ToString().AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments);
+                return GenerateGeneralComment(qst.ToString().AsSpan(), options);
             }
             if (returnType is GenericNameSyntax gst)
             {
@@ -58,11 +58,14 @@ namespace CodeDocumentor.Constructors
             if (returnType is ArrayTypeSyntax ast)
             {
                 var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, options.TryToIncludeCrefsForReturnTypes));
-                return GenerateGeneralComment(comment.AsSpan(), false, options.TryToIncludeCrefsForReturnTypes);
+                var arrayOptions = options.Clone();
+                arrayOptions.IncludeStartingWordInText = true;
+                arrayOptions.TryToIncludeCrefsForReturnTypes = false;
+                return GenerateGeneralComment(comment.AsSpan(), arrayOptions);
             }
             return returnType is PredefinedTypeSyntax pst
-                ? GenerateGeneralComment(pst.Keyword.ValueText.AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments)
-                : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options.TryToIncludeCrefsForReturnTypes, options.IncludeReturnStatementInGeneralComments);
+                ? GenerateGeneralComment(pst.Keyword.ValueText.AsSpan(), options)
+                : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options);
         }
 
         /// <summary>
@@ -82,15 +85,23 @@ namespace CodeDocumentor.Constructors
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
-        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, bool returnCref = false, bool includeReturnStatement = false)
+        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, ReturnTypeBuilderOptions options
+            //, bool includeReturnStatement = false
+            )
         {
             var rt = returnType.ToString();
-            if (includeReturnStatement)
+            //if (includeReturnStatement)
+            //{
+            //    var startWord = DocumentationHeaderHelper.DetermineStartingWord(rt.AsSpan(), false);
+            //    return returnCref ? $"Returns {startWord} <see cref=\"{rt}\"/>" : $"Returns {startWord} {rt}";
+            //}
+            //return returnCref ? $"<see cref=\"{rt}\"/>" : rt;
+            string startWord = "";
+            if (options.IncludeStartingWordInText)
             {
-                var startWord = DocumentationHeaderHelper.DetermineStartingWord(rt.AsSpan(), false);
-                return returnCref ? $"Returns {startWord} <see cref=\"{rt}\"/>" : $"Returns {startWord} {rt}";
+                startWord = DocumentationHeaderHelper.DetermineStartingWord(rt.AsSpan(), options.UseProperCasing);
             }
-            return returnCref ? $"<see cref=\"{rt}\"/>" : rt;
+            return (options.TryToIncludeCrefsForReturnTypes ? $"{startWord} <see cref=\"{rt}\"/>" : $"{startWord} {rt}").Trim();
         }
 
         /// <summary>
@@ -127,7 +138,7 @@ namespace CodeDocumentor.Constructors
                     var comment = GenericCommentManager.ProcessDictionary(returnType, options, DictionaryCommentTemplate);
                     return comment;
                 }
-                return GenerateGeneralComment(genericTypeStr.AsSpan());
+                return GenerateGeneralComment(genericTypeStr.AsSpan(), new ReturnTypeBuilderOptions());
             }
 
             if (returnType.IsTask() || returnType.IsGenericActionResult() || returnType.IsGenericValueTask())
@@ -136,7 +147,7 @@ namespace CodeDocumentor.Constructors
                     ? GenericCommentManager.ProcessSingleTypeTaskArguments(returnType, options, (typeSyntax, opts) => BuildComment(typeSyntax, opts))
                     : GenericCommentManager.ProcessMultiTypeTaskArguments(returnType, options, (typeSyntax, opts) => BuildComment(typeSyntax, opts));
             }
-            return GenerateGeneralComment(genericTypeStr.AsSpan());
+            return GenerateGeneralComment(genericTypeStr.AsSpan(), new ReturnTypeBuilderOptions());
         }
     }
 }

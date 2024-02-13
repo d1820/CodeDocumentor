@@ -26,75 +26,71 @@ namespace CodeDocumentor.Test.Helper
             {
                 ReturnGenericTypeAsFullString = false,
                 TryToIncludeCrefsForReturnTypes = true,
-                IncludeReturnStatementInGeneralComments = true
+                IncludeStartingWordInText = true,
+                //IncludeReturnStatementInGeneralComments = true
             };
         }
 
         #region QualifiedNameSyntax
 
-        [Fact]
-        public void GenerateQualifiedNameComment_CreatesValidStringFromName()
+        [Theory]
+        [InlineData(true, "a ")]
+        [InlineData(false, "")]
+        public void GenerateQualifiedNameComment_CreatesValidStringFromName(bool includeStartingWordInText, string startWord)
         {
             var roc = TestFixture.BuildQualifiedNameSyntax("System", "String");
-
+            _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns a <see cref=\"System.String\"/>");
+            comment.Should().Be(startWord + "<see cref=\"System.String\"/>");
         }
 
-        [Fact]
-        public void GenerateQualifiedNameComment_CreatesValidStringFromCustomInterface()
+        [Theory]
+        [InlineData(true, "an ")]
+        [InlineData(false, "")]
+        public void GenerateQualifiedNameComment_CreatesValidStringFromCustomInterface(bool includeStartingWordInText, string startWord)
         {
             var roc = TestFixture.BuildQualifiedNameSyntax("Angler", "IClass");
-
+            _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns an <see cref=\"Angler.IClass\"/>");
+            comment.Should().Be(startWord + "<see cref=\"Angler.IClass\"/>");
         }
         #endregion
 
         #region ArrayTypeSyntax
 
-        [Fact]
-        public void GenerateArrayTypeComment_CreatesValidStringFromName()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GenerateArrayTypeComment_CreatesValidStringFromNameAndForcesAnPrefix(bool includeStartingWordInText)
         {
             var roc = TestFixture.BuildArrayTypeSyntax(SyntaxKind.StringKeyword);
-
+            _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns an array of strings");
+            comment.Should().Be("an array of strings");
         }
         #endregion
 
         #region PredefinedTypeSyntax
-
-        [Fact]
-        public void GeneratePredefinedTypeSyntaxComment_CreatesValidStringFromName()
+        [Theory]
+        [InlineData(true, "a ")]
+        [InlineData(false, "")]
+        public void GeneratePredefinedTypeSyntaxCommentWithCref_CreatesValidStringFromString(bool includeStartingWordInText, string startWord)
         {
             var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.StringKeyword);
+            _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns a <see cref=\"string\"/>");
+            comment.Should().Be(startWord + "<see cref=\"string\"/>");
         }
 
-        [Fact]
-        public void GeneratePredefinedTypeSyntaxComment_CreatesValidStringFromInt()
+        [Theory]
+        [InlineData(true, "an ")]
+        [InlineData(false, "")]
+        public void GeneratePredefinedTypeSyntaxCommentWithCref_CreatesValidStringFromInt(bool includeStartingWordInText, string startWord)
         {
             var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.IntKeyword);
+            _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns an <see cref=\"int\"/>");
-        }
-
-        [Fact]
-        public void GeneratePredefinedTypeSyntaxCommentWithCref_CreatesValidStringFromName()
-        {
-            var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.StringKeyword);
-            var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns a <see cref=\"string\"/>");
-        }
-
-        [Fact]
-        public void GeneratePredefinedTypeSyntaxCommentWithCref_CreatesValidStringFromInt()
-        {
-            var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.IntKeyword);
-            var comment = _returnCommentBuilder.BuildComment(roc, _options);
-            comment.Should().Be("Returns an <see cref=\"int\"/>");
+            comment.Should().Be(startWord + "<see cref=\"int\"/>");
         }
         #endregion
 
@@ -294,82 +290,67 @@ namespace CodeDocumentor.Test.Helper
         #region Task & ActionResult & ValueTask
 
         [Theory]
-        [InlineData("Task", true, "and return a")]
-        [InlineData("Task", false, "returns a", true)]
-        [InlineData("ValueTask", true, "and return a")]
-        [InlineData("ValueTask", false, "returns a", true)]
-        [InlineData("ActionResult", true, "and return an")]
-        [InlineData("ActionResult", false, "returns an", true)]
+        [InlineData("Task", true, "a")]
+        [InlineData("ValueTask", true, "a")]
+        [InlineData("ActionResult", true, "an")]
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfString(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var roc = TestFixture.BuildGenericNameSyntax(type, SyntaxKind.StringKeyword);
 
-            _options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
+            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             _options.TryToIncludeCrefsForReturnTypes = true;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"string\"/>" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "and return a")]
-        [InlineData("Task", false, "returns a", true)]
-        [InlineData("ValueTask", true, "and return a")]
-        [InlineData("ValueTask", false, "returns a", true)]
-        [InlineData("ActionResult", true, "and return an")]
-        [InlineData("ActionResult", false, "returns an", true)]
+        [InlineData("Task", true, "a")]
+        [InlineData("ValueTask", true, "a")]
+        [InlineData("ActionResult", true, "an")]
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfList(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax(type, list);
-            _options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
+            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a list of strings" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "and return a")]
-        [InlineData("Task", false, "returns a", true)]
-        [InlineData("ValueTask", true, "and return a")]
-        [InlineData("ValueTask", false, "returns a", true)]
-        [InlineData("ActionResult", true, "and return an")]
-        [InlineData("ActionResult", false, "returns an", true)]
+        [InlineData("Task", true, "a")]
+        [InlineData("ValueTask", true, "a")]
+        [InlineData("ActionResult", true, "an")]
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfDictionary(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var dict = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
             var roc = TestFixture.BuildGenericNameSyntax(type, dict);
-            _options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
+            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a dictionary with a key of type string and a value of type list of strings" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "and return a")]
-        [InlineData("Task", false, "returns a", true)]
-        [InlineData("ValueTask", true, "and return a")]
-        [InlineData("ValueTask", false, "returns a", true)]
-        [InlineData("ActionResult", true, "and return an")]
-        [InlineData("ActionResult", false, "returns an", true)]
+        [InlineData("Task", true, "a")]
+        [InlineData("ValueTask", true, "a")]
+        [InlineData("ActionResult", true, "an")]
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomDoubleGenericType(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
             var custom = TestFixture.BuildGenericNameSyntax("CustomDoubleGenericType", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax(type, custom);
-            _options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
+            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type CustomDoubleGenericType" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "and return a")]
-        [InlineData("Task", false, "returns a", true)]
-        [InlineData("ValueTask", true, "and return a")]
-        [InlineData("ValueTask", false, "returns a", true)]
-        [InlineData("ActionResult", true, "and return an")]
-        [InlineData("ActionResult", false, "returns an", true)]
+        [InlineData("Task", true, "a")]
+        [InlineData("ValueTask", true, "a")]
+        [InlineData("ActionResult", true, "an")]
         public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomClass(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
         {
-            var roc = SyntaxFactory.ParseTypeName($"{type}< CustomClass>");
-            _options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
+            var roc = SyntaxFactory.ParseTypeName($"{type}<CustomClass>");
+            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));
         }

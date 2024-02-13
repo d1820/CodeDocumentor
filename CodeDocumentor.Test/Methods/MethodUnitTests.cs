@@ -58,11 +58,10 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithListIntReturnTestCode", "MethodWithListIntReturnTestFixCode", 9, 26)]
         [InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
         [InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
-        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
         [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
-        public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column, bool includeCrefs = false)
+        public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
@@ -70,7 +69,44 @@ namespace CodeDocumentor.Test.Methods
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.UseNaturalLanguageForReturnNode = false;
-                o.TryToIncludeCrefsForReturnTypes = includeCrefs;
+                o.TryToIncludeCrefsForReturnTypes = false;
+            });
+            var expected = new DiagnosticResult
+            {
+                Id = MethodAnalyzerSettings.DiagnosticId,
+                Message = MethodAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
+
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+        }
+
+
+        [Theory]
+        [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
+        [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
+        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35, false)]
+        [InlineData("MethodWithCrefTestCodeNaturalLang", "MethodWithCrefTestFixCodeNaturalLang", 10, 35)]
+        [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
+        public async Task ShowMethodDiagnosticAndFixWhenCrefsIsTrue(string testCode, string fixCode, int line, int column, bool useNaturalLanguageForReturnNode = true)
+        {
+            var fix = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{fixCode}.cs");
+            var test = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{testCode}.cs");
+
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            {
+                o.UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode;
+                o.TryToIncludeCrefsForReturnTypes = true;
             });
             var expected = new DiagnosticResult
             {

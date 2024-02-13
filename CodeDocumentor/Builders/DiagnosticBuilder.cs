@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
+using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Builders
 {
     public static class DiagnosticBuilder
     {

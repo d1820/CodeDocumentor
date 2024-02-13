@@ -89,6 +89,13 @@ namespace CodeDocumentor.Helper
             return char.ToUpper(txt[0]) + txt.Substring(1);
         }
 
+        public static bool StartsWith_A_An_And(this string str)
+        {
+            return str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
+                str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
+                str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public static void TryAddSingleWord(this List<string> words, List<char> singleWord, bool clearSingleWord = false)
         {
             if (singleWord.Any())

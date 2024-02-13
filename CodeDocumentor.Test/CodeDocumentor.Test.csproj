@@ -26,11 +26,31 @@
     <Compile Remove="Interfaces\TestFiles\TestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\BasicTestCode.cs" />
     <Compile Remove="Methods\TestFiles\BasicTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestCodeNaturalLang.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestFixCodeNaturalLang.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithCrefTestCodeNaturalLang.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithCrefTestFixCodeNaturalLang.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithExceptionTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithExceptionTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithInlineExceptionTestCode.cs" />
@@ -68,6 +88,60 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\BasicTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestFixCodeNaturalLang.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestCodeNaturalLang.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithIntReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\InheritDocTestCode.cs">
@@ -140,12 +214,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Methods\TestFiles\MethodWithCrefTestCode.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Methods\TestFiles\MethodWithCrefTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithIntReturnTestCode.cs">

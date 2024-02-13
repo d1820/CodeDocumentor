@@ -542,21 +542,36 @@ namespace CodeDocumentor.Helper
             if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                //if return type is not a generic type then just force the Todo comment cause what ever we do here will not be a good summary anyway
+                if (returnType.GetType() != typeof(GenericNameSyntax))
+                {
+                    if (optionsService.UseToDoCommentsOnSummaryError)
+                    {
+                        parts = new List<string> { "TODO: Add Summary" };
+                    }
+                    else
+                    {
+                        parts.Clear();
+                    }
+                    return parts;
+                }
+
                 var options = new ReturnTypeBuilderOptions
                 {
+                    ReturnBuildType = ReturnBuildType.SummaryXmlElement,
                     UseProperCasing = false,
-                    BuildWithPeriodAndPrefixForTaskTypes = true,
+                    //BuildWithPeriodAndPrefixForTaskTypes = true,
                     TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                    IncludeReturnStatementInGeneralComments = false,
-                    ForcePredefinedTypeEvaluation = false
+                    //IncludeReturnStatementInGeneralComments = false,
+                    ForcePredefinedTypeEvaluation = false,
+                    IncludeStartingWordInText = true
+
                 };
                 var returnComment = new SingleWordCommentConstruction(returnType, options).Comment;
                 returnTapAction?.Invoke(returnComment);
                 if (!string.IsNullOrEmpty(returnComment))
                 {
-                    if (!returnComment.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) &&
-                        !returnComment.StartsWith("an", StringComparison.InvariantCultureIgnoreCase) &&
-                        !returnComment.StartsWith("and", StringComparison.InvariantCultureIgnoreCase))
+                    if (!returnComment.StartsWith_A_An_And())
                     {
                         parts.Insert(1, "the");
                         parts.Insert(2, returnComment);

@@ -53,7 +53,6 @@ namespace CodeDocumentor
                 return;
             }
 
-            // Only const field.
             if (!node.Modifiers.Any(SyntaxKind.ConstKeyword))
             {
                 return;

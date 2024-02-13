@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -42,10 +41,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-#if DEBUG
-            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            return;
-#endif
+            //#if DEBUG
+            //            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            //            return;
+            //#endif
             //build it up, but check for counts if anything actually needs to be shown
             var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             var tempDoc = context.Document;

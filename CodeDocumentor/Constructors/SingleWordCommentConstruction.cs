@@ -40,19 +40,5 @@ namespace CodeDocumentor.Constructors
                 Comment = null;
             }
         }
-
-        internal override string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
-        {
-            //if (options.ForcePredefinedTypeEvaluation)
-            //{
-            //    return base.BuildComment(returnType, options);
-            //}
-            //if (returnType is PredefinedTypeSyntax)
-            //{
-            //    return string.Empty;
-            //}
-            var comment = base.BuildComment(returnType, options);
-            return comment;
-        }
     }
 }

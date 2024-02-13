@@ -99,8 +99,6 @@ namespace CodeDocumentor
 
         private static PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax)
         {
-            //var list = SyntaxFactory.List<XmlNodeSyntax>();
-
             var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
 
             var hasSetter = declarationSyntax.PropertyHasSetter();

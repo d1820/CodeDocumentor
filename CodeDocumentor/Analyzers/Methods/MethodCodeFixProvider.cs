@@ -111,7 +111,6 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
-            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();

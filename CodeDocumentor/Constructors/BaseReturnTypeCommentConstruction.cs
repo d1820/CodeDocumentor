@@ -85,17 +85,9 @@ namespace CodeDocumentor.Constructors
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The comment. </returns>
-        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, ReturnTypeBuilderOptions options
-            //, bool includeReturnStatement = false
-            )
+        private string GenerateGeneralComment(ReadOnlySpan<char> returnType, ReturnTypeBuilderOptions options)
         {
             var rt = returnType.ToString();
-            //if (includeReturnStatement)
-            //{
-            //    var startWord = DocumentationHeaderHelper.DetermineStartingWord(rt.AsSpan(), false);
-            //    return returnCref ? $"Returns {startWord} <see cref=\"{rt}\"/>" : $"Returns {startWord} {rt}";
-            //}
-            //return returnCref ? $"<see cref=\"{rt}\"/>" : rt;
             string startWord = "";
             if (options.IncludeStartingWordInText)
             {

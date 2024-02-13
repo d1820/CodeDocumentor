@@ -75,6 +75,38 @@ namespace CodeDocumentor.Managers
             return comment;
         }
 
+        public string ProcessMultiTypeTaskArguments(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, Func<TypeSyntax, ReturnTypeBuilderOptions, string> commentBuilderCallback)
+        {
+            string comment;
+            //This should be impossible, but will handle just in case
+            var builder = new StringBuilder();
+            for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
+            {
+                var item = returnType.TypeArgumentList.Arguments[i];
+                if (i > 0)
+                {
+                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), options.UseProperCasing)}");
+                }
+                var newOptions = new ReturnTypeBuilderOptions
+                {
+                    IsRootReturnType = false,
+                    ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
+                    UseProperCasing = false,
+                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
+                    IncludeStartingWordInText = false
+                };
+                builder.Append($"{commentBuilderCallback.Invoke(item, newOptions)}");
+                if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
+                {
+                    builder.Append(" and ");
+                }
+            }
+            comment = builder.ToString();
+            comment = comment.RemovePeriod();
+            return comment;
+            //return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
+        }
+
         public string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var argType = returnType.TypeArgumentList.Arguments.First();
@@ -105,41 +137,6 @@ namespace CodeDocumentor.Managers
             return comment;
         }
 
-        public string ProcessMultiTypeTaskArguments(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, Func<TypeSyntax, ReturnTypeBuilderOptions, string> commentBuilderCallback)
-        {
-            string comment;
-            //This should be impossible, but will handle just in case
-            var builder = new StringBuilder();
-            for (var i = 0; i < returnType.TypeArgumentList.Arguments.Count; i++)
-            {
-                var item = returnType.TypeArgumentList.Arguments[i];
-                if (i > 0)
-                {
-                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), options.UseProperCasing)}");
-                }
-                var newOptions = new ReturnTypeBuilderOptions
-                {
-                    IsRootReturnType = false,
-                    ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
-                    UseProperCasing = false,
-                    ForcePredefinedTypeEvaluation = true,
-                    //BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
-                    TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
-                    //IncludeReturnStatementInGeneralComments = false
-                    IncludeStartingWordInText = false
-                };
-                builder.Append($"{commentBuilderCallback.Invoke(item, newOptions)}");
-                if (i + 1 < returnType.TypeArgumentList.Arguments.Count)
-                {
-                    builder.Append(" and ");
-                }
-            }
-            comment = builder.ToString();
-            comment = comment.RemovePeriod();
-            return comment;
-            //return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
-        }
-
         public string ProcessSingleTypeTaskArguments(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, Func<TypeSyntax, ReturnTypeBuilderOptions, string> commentBuilderCallback)
         {
             var prefix = BuildPrefix(returnType, options);
@@ -155,10 +152,7 @@ namespace CodeDocumentor.Managers
                 IsRootReturnType = false,
                 ReturnGenericTypeAsFullString = options.ReturnGenericTypeAsFullString,
                 UseProperCasing = false,
-                ForcePredefinedTypeEvaluation = true, //maybe??
-                //BuildWithPeriodAndPrefixForTaskTypes = options.BuildWithPeriodAndPrefixForTaskTypes,
                 TryToIncludeCrefsForReturnTypes = options.TryToIncludeCrefsForReturnTypes,
-                //IncludeReturnStatementInGeneralComments = false
                 IncludeStartingWordInText = false
             };
             var buildComment = commentBuilderCallback.Invoke(firstType, newOptions);
@@ -168,31 +162,8 @@ namespace CodeDocumentor.Managers
             //return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
         }
 
-        /// <summary>
-        ///  Builds the children generic arg list.
-        /// </summary>
-        /// <param name="argType"> The arg type. </param>
-        /// <param name="items"> The items. </param>
-        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items)
-        {
-            if (argType is GenericNameSyntax genericArgType)
-            {
-                var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
-                if (childArg != null)
-                {
-                    BuildChildrenGenericArgList(childArg, items);
-                }
-            }
-            items.Add(DocumentationHeaderHelper.DetermineSpecificObjectName(argType, false, true));
-        }
-
         private static string BuildPrefix(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
         {
-            //var startingPrefix = "returns";
-            //if (options.BuildWithPeriodAndPrefixForTaskTypes)
-            //{
-            //    startingPrefix = "and return";
-            //}
             string prefix;
             if (options.TryToIncludeCrefsForReturnTypes)
             {
@@ -223,6 +194,24 @@ namespace CodeDocumentor.Managers
                 return prefix.ToTitleCase();
             }
             return prefix;
+        }
+
+        /// <summary>
+        ///  Builds the children generic arg list.
+        /// </summary>
+        /// <param name="argType"> The arg type. </param>
+        /// <param name="items"> The items. </param>
+        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items)
+        {
+            if (argType is GenericNameSyntax genericArgType)
+            {
+                var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
+                if (childArg != null)
+                {
+                    BuildChildrenGenericArgList(childArg, items);
+                }
+            }
+            items.Add(DocumentationHeaderHelper.DetermineSpecificObjectName(argType, false, true));
         }
     }
 }

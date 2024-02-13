@@ -412,7 +412,6 @@ namespace CodeDocumentor.Helper
                     )
                 ? 0 : 1;
 
-
             parts.SwapXmlTokens((part) =>
             {
                 if (!part.All(a => char.IsUpper(a)))
@@ -560,12 +559,8 @@ namespace CodeDocumentor.Helper
                 {
                     ReturnBuildType = ReturnBuildType.SummaryXmlElement,
                     UseProperCasing = false,
-                    //BuildWithPeriodAndPrefixForTaskTypes = true,
                     TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                    //IncludeReturnStatementInGeneralComments = false,
-                    ForcePredefinedTypeEvaluation = false,
                     IncludeStartingWordInText = true
-
                 };
                 var returnComment = new SingleWordCommentConstruction(returnType, options).Comment;
                 returnTapAction?.Invoke(returnComment);

@@ -119,7 +119,6 @@ namespace CodeDocumentor
 
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
-            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();

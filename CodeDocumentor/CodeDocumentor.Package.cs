@@ -64,7 +64,7 @@ namespace CodeDocumentor.Vsix2022
 #pragma warning disable IDE1006 // Naming Styles
         internal static IOptionPageGrid _options;
 #pragma warning restore IDE1006 // Naming Styles
-        // private static readonly object _syncRoot = new object();
+
 #pragma warning disable IDE1006 // Naming Styles
         private static Container _DIContainer;
 #pragma warning restore IDE1006 // Naming Styles

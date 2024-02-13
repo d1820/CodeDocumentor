@@ -117,7 +117,6 @@ namespace CodeDocumentor
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();

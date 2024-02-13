@@ -107,9 +107,6 @@ namespace CodeDocumentor
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
-
-            //var commentTrivia = DocumentationHeaderHelper.CreateOnlySummaryDocumentationCommentTrivia(comment);
-
             var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }

@@ -11,8 +11,8 @@ namespace CodeDocumentor.Builders
 {
     public class DocumentationBuilder
     {
-        private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
         private XmlElementSyntax _currentElement;
+        private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
 
         internal SyntaxList<XmlNodeSyntax> Build()
         {
@@ -39,8 +39,6 @@ namespace CodeDocumentor.Builders
                     Reset().WithTripleSlashSpace()
                           .WithElement(exceptionElement) //this already contains the rest of the /// for all the line <summary>...</summary>
                           .WithLineEndTextSyntax();
-
-                    //_list = _list.AddRange(CreateExceptionNodes(exception));
                 }
             }
             return this;
@@ -70,8 +68,6 @@ namespace CodeDocumentor.Builders
                     Reset().WithTripleSlashSpace()
                                 .WithElement(parameterElement)
                                 .WithLineEndTextSyntax();
-
-                    //_list = _list.AddRange(CreateParameterPartNodes(parameter.Identifier.ValueText, parameterComment));
                 }
             }
             return this;
@@ -102,9 +98,7 @@ namespace CodeDocumentor.Builders
                 var options = new ReturnTypeBuilderOptions
                 {
                     ReturnGenericTypeAsFullString = false,
-                    //BuildWithPeriodAndPrefixForTaskTypes = false,
                     TryToIncludeCrefsForReturnTypes = true,
-                    //IncludeReturnStatementInGeneralComments = true
                 };
                 var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
                 var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment);
@@ -112,7 +106,6 @@ namespace CodeDocumentor.Builders
                 Reset().WithTripleSlashSpace()
                             .WithElement(returnElement) //this already contains the rest of the /// for all the line <summary>...</summary>
                             .WithLineEndTextSyntax();
-
             }
             return this;
         }
@@ -194,6 +187,46 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
+        private SyntaxToken CreateNewLine()
+        {
+            return SyntaxFactory.XmlTextNewLine(Constants.NEWLINE, false);
+        }
+
+        private SyntaxTrivia CreateTripleSlash()
+        {
+            return SyntaxFactory.DocumentationCommentExterior("///");
+        }
+
+        private DocumentationBuilder WithContent(string content)
+        {
+            if (_currentElement != null)
+            {
+                var currentContent = _currentElement.Content;
+                if (currentContent != null)
+                {
+                    var contentLine = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), content, content, SyntaxFactory.TriviaList());
+                    var contentXml = SyntaxFactory.XmlText(contentLine);
+                    currentContent = currentContent.Add(contentXml);
+                }
+                _currentElement = _currentElement.WithContent(currentContent);
+            }
+            return this;
+        }
+
+        private DocumentationBuilder WithElement(XmlNodeSyntax element)
+        {
+            _list.Add(element);
+            return this;
+        }
+
+        private DocumentationBuilder WithEndingTag(string tagName)
+        {
+            var clone = _currentElement.Update(_currentElement.StartTag, _currentElement.Content, _currentElement.EndTag);
+            _list.Add(clone);
+            _currentElement = null;
+            return this;
+        }
+
         private DocumentationBuilder WithLineEndTextSyntax()
         {
             if (_currentElement != null)
@@ -209,7 +242,8 @@ namespace CodeDocumentor.Builders
             /*
                 /// <summary>
                 ///  The code fix provider.
-                /// </summary>[0]
+                /// </summary>
+                /// [0]
             */
 
             // [0] end line token.
@@ -222,6 +256,14 @@ namespace CodeDocumentor.Builders
                 var xmlTextNewLineToken = CreateNewLine();
                 return SyntaxFactory.XmlText(xmlTextNewLineToken);
             }
+        }
+
+        private DocumentationBuilder WithStartingTag(string tagName)
+        {
+            var elementName = SyntaxFactory.XmlName(tagName);
+
+            _currentElement = SyntaxFactory.XmlElement(elementName, new SyntaxList<XmlNodeSyntax>());
+            return this;
         }
 
         private DocumentationBuilder WithTripleSlashSpace()
@@ -253,54 +295,6 @@ namespace CodeDocumentor.Builders
                 var xmlText0LiteralToken = SyntaxFactory.XmlTextLiteral(xmlText0Leading, " ", " ", SyntaxFactory.TriviaList());
                 return SyntaxFactory.XmlText(xmlText0LiteralToken);
             }
-        }
-
-        private DocumentationBuilder WithStartingTag(string tagName)
-        {
-            var elementName = SyntaxFactory.XmlName(tagName);
-
-            _currentElement = SyntaxFactory.XmlElement(elementName, new SyntaxList<XmlNodeSyntax>());
-            return this;
-        }
-
-        private DocumentationBuilder WithEndingTag(string tagName)
-        {
-            var clone = _currentElement.Update(_currentElement.StartTag, _currentElement.Content, _currentElement.EndTag);
-            _list.Add(clone);
-            _currentElement = null;
-            return this;
-        }
-
-        private DocumentationBuilder WithElement(XmlNodeSyntax element)
-        {
-            _list.Add(element);
-            return this;
-        }
-
-        private DocumentationBuilder WithContent(string content)
-        {
-            if (_currentElement != null)
-            {
-                var currentContent = _currentElement.Content;
-                if (currentContent != null)
-                {
-                    var contentLine = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), content, content, SyntaxFactory.TriviaList());
-                    var contentXml = SyntaxFactory.XmlText(contentLine);
-                    currentContent = currentContent.Add(contentXml);
-                }
-                _currentElement = _currentElement.WithContent(currentContent);
-            }
-            return this;
-        }
-
-        private SyntaxToken CreateNewLine()
-        {
-            return SyntaxFactory.XmlTextNewLine(Constants.NEWLINE, false);
-        }
-
-        private SyntaxTrivia CreateTripleSlash()
-        {
-            return SyntaxFactory.DocumentationCommentExterior("///");
         }
     }
 }

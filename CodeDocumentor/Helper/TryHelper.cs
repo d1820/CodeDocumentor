@@ -1,7 +1,6 @@
 using System;
 using CodeDocumentor.Vsix2022;
 
-
 namespace CodeDocumentor.Helper
 {
     internal static class TryHelper

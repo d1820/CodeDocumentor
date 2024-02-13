@@ -7,23 +7,23 @@ namespace CodeDocumentor.Vsix2022
 {
     public class XmlInformation
     {
-        public bool IsGeneric { get; }
+        public string CDataMatch { get; }
 
         public string GenericMatch { get; }
 
         public bool HasSeeCrefNode { get; }
 
-        public string SeeCrefMatch { get; }
+        public bool HasText { get; }
 
         public bool HasTypeParam { get; }
 
-        public string TypeParamMatch { get; }
-
         public bool IsCData { get; }
 
-        public string CDataMatch { get; }
+        public bool IsGeneric { get; }
 
-        public bool HasText { get; }
+        public string SeeCrefMatch { get; }
+
+        public string TypeParamMatch { get; }
 
         public XmlInformation(string text)
         {

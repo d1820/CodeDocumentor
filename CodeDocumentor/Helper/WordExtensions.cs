@@ -84,16 +84,16 @@ namespace CodeDocumentor.Helper
             return skipWord || skipNextWord;
         }
 
-        public static string ToTitleCase(this string txt)
-        {
-            return char.ToUpper(txt[0]) + txt.Substring(1);
-        }
-
         public static bool StartsWith_A_An_And(this string str)
         {
             return str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
                 str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
                 str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static string ToTitleCase(this string txt)
+        {
+            return char.ToUpper(txt[0]) + txt.Substring(1);
         }
 
         public static void TryAddSingleWord(this List<string> words, List<char> singleWord, bool clearSingleWord = false)

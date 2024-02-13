@@ -23,9 +23,7 @@ namespace CodeDocumentor.Constructors
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
-                //BuildWithPeriodAndPrefixForTaskTypes = false,
                 TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                //IncludeReturnStatementInGeneralComments = returnType.GetType() != typeof(GenericNameSyntax)
                 IncludeStartingWordInText = true,
                 ReturnBuildType = ReturnBuildType.ReturnXmlElement,
                 UseProperCasing = true
@@ -36,6 +34,11 @@ namespace CodeDocumentor.Constructors
         public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
             BuildReturnComment(returnType, options);
+        }
+
+        //used for testing
+        internal ReturnCommentConstruction()
+        {
         }
 
         private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
@@ -56,11 +59,6 @@ namespace CodeDocumentor.Constructors
             {
                 Comment = comment;
             }
-        }
-
-        //used for testing
-        internal ReturnCommentConstruction()
-        {
         }
     }
 }

@@ -290,67 +290,62 @@ namespace CodeDocumentor.Test.Helper
         #region Task & ActionResult & ValueTask
 
         [Theory]
-        [InlineData("Task", true, "a")]
-        [InlineData("ValueTask", true, "a")]
-        [InlineData("ActionResult", true, "an")]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfString(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
+        [InlineData("Task",  "a")]
+        [InlineData("ValueTask",  "a")]
+        [InlineData("ActionResult",  "an")]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfString(string type, string prefix, bool hasPeriod = false)
         {
             var roc = TestFixture.BuildGenericNameSyntax(type, SyntaxKind.StringKeyword);
 
-            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             _options.TryToIncludeCrefsForReturnTypes = true;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"string\"/>" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "a")]
-        [InlineData("ValueTask", true, "a")]
-        [InlineData("ActionResult", true, "an")]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfList(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
+        [InlineData("Task", "a")]
+        [InlineData("ValueTask", "a")]
+        [InlineData("ActionResult", "an")]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfList(string type,  string prefix, bool hasPeriod = false)
         {
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax(type, list);
-            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a list of strings" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "a")]
-        [InlineData("ValueTask", true, "a")]
-        [InlineData("ActionResult", true, "an")]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfDictionary(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
+        [InlineData("Task", "a")]
+        [InlineData("ValueTask", "a")]
+        [InlineData("ActionResult", "an")]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfDictionary(string type,  string prefix, bool hasPeriod = false)
         {
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var dict = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
             var roc = TestFixture.BuildGenericNameSyntax(type, dict);
-            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a dictionary with a key of type string and a value of type list of strings" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "a")]
-        [InlineData("ValueTask", true, "a")]
-        [InlineData("ActionResult", true, "an")]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomDoubleGenericType(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
+        [InlineData("Task", "a")]
+        [InlineData("ValueTask", "a")]
+        [InlineData("ActionResult", "an")]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomDoubleGenericType(string type, string prefix, bool hasPeriod = false)
         {
             var custom = TestFixture.BuildGenericNameSyntax("CustomDoubleGenericType", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax(type, custom);
-            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type CustomDoubleGenericType" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
-        [InlineData("Task", true, "a")]
-        [InlineData("ValueTask", true, "a")]
-        [InlineData("ActionResult", true, "an")]
-        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomClass(string type, bool buildWithAndPrefixForTaskTypes, string prefix, bool hasPeriod = false)
+        [InlineData("Task", "a")]
+        [InlineData("ValueTask", "a")]
+        [InlineData("ActionResult", "an")]
+        public void GenerateGenericTypeComment_CreatesValidStringFromTaskOfCustomClass(string type, string prefix, bool hasPeriod = false)
         {
             var roc = SyntaxFactory.ParseTypeName($"{type}<CustomClass>");
-            //_options.BuildWithPeriodAndPrefixForTaskTypes = buildWithAndPrefixForTaskTypes;
             var comment = _returnCommentBuilder.BuildComment(roc, _options);
             comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));
         }

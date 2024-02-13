@@ -181,6 +181,16 @@ namespace CodeDocumentor.Helper
             return hasSetter;
         }
 
+        internal static XmlEmptyElementSyntax CreateElementWithAttributeSyntax(string elementName, string attributeName, string attributeValue)
+        {
+            return SyntaxFactory.XmlEmptyElement(
+               SyntaxFactory.XmlName(elementName), // Element name
+               SyntaxFactory.SingletonList<XmlAttributeSyntax>( // Attributes
+                   SyntaxFactory.XmlTextAttribute(attributeName, attributeValue)
+               )
+           );
+        }
+
         /// <summary>
         ///  Creates the parameter element syntax.
         /// </summary>
@@ -281,85 +291,32 @@ namespace CodeDocumentor.Helper
             return SyntaxFactory.XmlElement(startTag, SyntaxFactory.SingletonList<XmlNodeSyntax>(SyntaxFactory.XmlText(cleanContent)), endTag);
         }
 
-        internal static List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent, string elementName, string attributeNameToMatchOn)
+        /// <summary>
+        ///  Determines specific object name.
+        /// </summary>
+        /// <param name="specificType"> The specific type. </param>
+        /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
+        /// <returns> The comment. </returns>
+        internal static string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
         {
-            var xmlNodes = new List<XmlNodeSyntax>();
-            TryHelper.Try(() =>
+            string value;
+            switch (specificType)
             {
-                var (replacedString, tokens) = cleanContent.SwapXmlTokens();
-                var parts = replacedString.Split(' ');
-                for (var i = 0; i < parts.Length; i++)
-                {
-                    var p = parts[i];
-                    if (p.StartsWith("{"))
-                    {
-                        TryHelper.Try(() =>
-                        {
-                            var swapStr = tokens[p];
-                            var attributeNameMatch = Regex.Match(swapStr, $@"{attributeNameToMatchOn}=""(.*?)""");
-                            if (attributeNameMatch.Success && attributeNameMatch.Groups.Count > 0)
-                            {
-                                var attributeValue = attributeNameMatch.Groups[1].Value;
-                                xmlNodes.Add(CreateElementWithAttributeSyntax(elementName, attributeNameToMatchOn, attributeValue));
-                                xmlNodes.Add(SyntaxFactory.XmlText(" "));
-                            }
-                        }, (_) =>
-                        {
-                            xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} xml"));
-                            xmlNodes.Add(SyntaxFactory.XmlText(" "));
-                        });
-                    }
-                    else
-                    {
-                        xmlNodes.Add(SyntaxFactory.XmlText(p));
-                        xmlNodes.Add(SyntaxFactory.XmlText(" "));
-                    }
-                }
-                xmlNodes.RemoveAt(xmlNodes.Count - 1);
+                case IdentifierNameSyntax identifierNameSyntax:
+                    value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations();
+                    return pluaralizeIdentifierType ? Pluralizer.Pluralize(value) : value;
 
-            }, (_) =>
-            {
-                xmlNodes.Clear();
-                xmlNodes.Add(SyntaxFactory.XmlText(""));
-            });
+                case PredefinedTypeSyntax predefinedTypeSyntax:
+                    value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations();
+                    return pluaralizeName ? Pluralizer.Pluralize(value) : value;
 
-            return xmlNodes;
-        }
+                case GenericNameSyntax genericNameSyntax:
+                    value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations();
+                    return pluaralizeName ? Pluralizer.Pluralize(value) : value;
 
-        internal static IEnumerable<string> GetExceptions(string textToSearch)
-        {
-            if (string.IsNullOrEmpty(textToSearch))
-            {
-                return Enumerable.Empty<string>();
+                default:
+                    return specificType.ToFullString().ApplyUserTranslations();
             }
-
-            List<string> exceptions = new List<string>();
-
-            TryHelper.Try(() =>
-            {
-                exceptions.AddRange(_regEx.Matches(textToSearch).OfType<Match>()
-                                                           .Select(m => m?.Groups[0]?.Value)
-                                                           .ToList());
-            });
-
-            TryHelper.Try(() =>
-            {
-                var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
-                                                               .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
-                exceptions.AddRange(exceptionsInline);
-            });
-
-            return exceptions.Distinct();
-        }
-
-        internal static XmlEmptyElementSyntax CreateElementWithAttributeSyntax(string elementName, string attributeName, string attributeValue)
-        {
-            return SyntaxFactory.XmlEmptyElement(
-               SyntaxFactory.XmlName(elementName), // Element name
-               SyntaxFactory.SingletonList<XmlAttributeSyntax>( // Attributes
-                   SyntaxFactory.XmlTextAttribute(attributeName, attributeValue)
-               )
-           );
         }
 
         /// <summary>
@@ -412,6 +369,32 @@ namespace CodeDocumentor.Helper
             return null;
         }
 
+        internal static IEnumerable<string> GetExceptions(string textToSearch)
+        {
+            if (string.IsNullOrEmpty(textToSearch))
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            List<string> exceptions = new List<string>();
+
+            TryHelper.Try(() =>
+            {
+                exceptions.AddRange(_regEx.Matches(textToSearch).OfType<Match>()
+                                                           .Select(m => m?.Groups[0]?.Value)
+                                                           .ToList());
+            });
+
+            TryHelper.Try(() =>
+            {
+                var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
+                                                               .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
+                exceptions.AddRange(exceptionsInline);
+            });
+
+            return exceptions.Distinct();
+        }
+
         /// <summary>
         ///  Has summary.
         /// </summary>
@@ -439,6 +422,50 @@ namespace CodeDocumentor.Helper
             return isPrivate;
         }
 
+        internal static List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent, string elementName, string attributeNameToMatchOn)
+        {
+            var xmlNodes = new List<XmlNodeSyntax>();
+            TryHelper.Try(() =>
+            {
+                var (replacedString, tokens) = cleanContent.SwapXmlTokens();
+                var parts = replacedString.Split(' ');
+                for (var i = 0; i < parts.Length; i++)
+                {
+                    var p = parts[i];
+                    if (p.StartsWith("{"))
+                    {
+                        TryHelper.Try(() =>
+                        {
+                            var swapStr = tokens[p];
+                            var attributeNameMatch = Regex.Match(swapStr, $@"{attributeNameToMatchOn}=""(.*?)""");
+                            if (attributeNameMatch.Success && attributeNameMatch.Groups.Count > 0)
+                            {
+                                var attributeValue = attributeNameMatch.Groups[1].Value;
+                                xmlNodes.Add(CreateElementWithAttributeSyntax(elementName, attributeNameToMatchOn, attributeValue));
+                                xmlNodes.Add(SyntaxFactory.XmlText(" "));
+                            }
+                        }, (_) =>
+                        {
+                            xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} xml"));
+                            xmlNodes.Add(SyntaxFactory.XmlText(" "));
+                        });
+                    }
+                    else
+                    {
+                        xmlNodes.Add(SyntaxFactory.XmlText(p));
+                        xmlNodes.Add(SyntaxFactory.XmlText(" "));
+                    }
+                }
+                xmlNodes.RemoveAt(xmlNodes.Count - 1);
+            }, (_) =>
+            {
+                xmlNodes.Clear();
+                xmlNodes.Add(SyntaxFactory.XmlText(""));
+            });
+
+            return xmlNodes;
+        }
+
         /// <summary>
         ///  Upserts the leading trivia.
         /// </summary>
@@ -461,31 +488,6 @@ namespace CodeDocumentor.Helper
             return existingIndex < 0
                 ? leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia))
                 : leadingTrivia.Replace(leadingTrivia[existingIndex], SyntaxFactory.Trivia(commentTrivia));
-        }
-
-        /// <summary>
-        ///  Determines specific object name.
-        /// </summary>
-        /// <param name="specificType"> The specific type. </param>
-        /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
-        /// <returns> The comment. </returns>
-        internal static string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
-        {
-            string value;
-            switch (specificType)
-            {
-                case IdentifierNameSyntax identifierNameSyntax:
-                    value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations();
-                    return pluaralizeIdentifierType ? Pluralizer.Pluralize(value) : value;
-                case PredefinedTypeSyntax predefinedTypeSyntax:
-                    value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations();
-                    return pluaralizeName ? Pluralizer.Pluralize(value) : value;
-                case GenericNameSyntax genericNameSyntax:
-                    value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations();
-                    return pluaralizeName ? Pluralizer.Pluralize(value) : value;
-                default:
-                    return specificType.ToFullString().ApplyUserTranslations();
-            }
         }
 
         private static IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)

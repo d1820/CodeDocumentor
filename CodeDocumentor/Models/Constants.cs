@@ -8,14 +8,6 @@ namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
-        public static readonly string XML_ELEMENT_MATCH_REGEX_TEMPLATE = "<.*?>";
-
-        public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
-
-        public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
-
-        public static string NEWLINE = "\r\n";
-
         /// <summary>
         ///  The category of the diagnostic.
         /// </summary>
@@ -45,6 +37,12 @@ namespace CodeDocumentor.Vsix2022
         ///  The summary.
         /// </summary>
         public const string SUMMARY = "summary";
+
+        public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
+        public static readonly string XML_ELEMENT_MATCH_REGEX_TEMPLATE = "<.*?>";
+        public static string NEWLINE = "\r\n";
+
+        public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
         public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
@@ -84,28 +82,6 @@ namespace CodeDocumentor.Vsix2022
                                                                     "has", "had", "having", "set", "get",
                                                                     "did", "can", "shall", "will", "may", "might", "must",
                                                                     "dare", "need", "used", "ought", "goes" };
-
-        public static IEnumerable<string> GetInternalVerbCheckList()
-        {
-            var items = new List<string>();
-            items.AddRange(INTERNAL_VERB_WORD_LIST);
-            items.AddRange(AXUILLARY_VERB_WORD_LIST);
-            items.AddRange(TWO_LETTER_WORD_LIST);
-            return items;
-        }
-
-        public static class DiagnosticIds
-        {
-            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
-            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
-            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
-            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
-            public const string FILE_DIAGNOSTIC_ID = "CD1607";
-            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
-            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
-            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
-            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
-        }
 
         private static string[] INTERNAL_VERB_WORD_LIST { get; set; } = new[] {
 "accept",
@@ -781,5 +757,27 @@ namespace CodeDocumentor.Vsix2022
 "yell",
 "zip",
 "zoom" };
+
+        public static IEnumerable<string> GetInternalVerbCheckList()
+        {
+            var items = new List<string>();
+            items.AddRange(INTERNAL_VERB_WORD_LIST);
+            items.AddRange(AXUILLARY_VERB_WORD_LIST);
+            items.AddRange(TWO_LETTER_WORD_LIST);
+            return items;
+        }
+
+        public static class DiagnosticIds
+        {
+            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
+            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
+            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
+            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
+            public const string FILE_DIAGNOSTIC_ID = "CD1607";
+            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
+            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
+            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
+            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
+        }
     }
 }

@@ -89,7 +89,6 @@ namespace CodeDocumentor
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
-            //var list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();

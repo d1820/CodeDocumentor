@@ -10,6 +10,15 @@ namespace CodeDocumentor.Test.Helper
     public class DocumentationHeaderHelperTests
     {
         [Fact]
+        public void CreateReturnElementSyntax_ReturnsMultipleCRefAsEmbeddedNodeInReturn()
+        {
+            const string str = "A <see cref=\"Task\"/> of type <typeparamref name=\"TResult\"/>";
+            const string expected = "<returns>A <see cref=\"Task\"/> of type <typeparamref name=\"TResult\"/></returns>";
+            var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
+            result.ToFullString().Should().Be(expected);
+        }
+
+        [Fact]
         public void CreateReturnElementSyntax_ReturnsTypeParamRefAsEmbeddedNodeInReturn()
         {
             const string str = "<typeparamref name=\"TResult\"/>";

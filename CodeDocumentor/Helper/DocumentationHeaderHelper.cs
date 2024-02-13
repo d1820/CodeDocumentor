@@ -18,6 +18,8 @@ namespace CodeDocumentor.Helper
 
         private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
+        private static readonly Regex _regExParseXmlElement = new Regex(@"<(.*?)\s(\w*)=""(.*?)""\s*/>", RegexOptions.IgnoreCase);
+
         /// <summary>
         ///  Has analyzer exclusion.
         /// </summary>
@@ -219,7 +221,7 @@ namespace CodeDocumentor.Helper
         ///  Create the return element syntax.
         /// </summary>
         /// <param name="content"> The content. </param>
-        /// <param name="xmlNodeName"> The xml node name. </param>
+        /// <param name="xmlNodeName"> The XML node name. </param>
         /// <returns> A XmlNodeSyntax. </returns>
         internal static XmlNodeSyntax CreateReturnElementSyntax(string content, string xmlNodeName = "returns")
         {
@@ -240,24 +242,11 @@ namespace CodeDocumentor.Helper
                                 : cleanContent
                             : cleanContent;
 
-            //TODO:TEST THIS
-            //A <see cref="Task"/> of type <typeparamref name="TResult"/>
             var xmlParseResponse = new XmlInformation(cleanContent);
-            if (xmlParseResponse.HasTypeParam)
-            {
-                var xmlNodes = ParseStringToXmlNodeSyntax(cleanContent, "typeparamref", "name");
-                if (xmlNodes.Count > 0 && !cleanContent.StartsWith_A_An_And())
-                {
-                    var text = SyntaxFactory.XmlText("A ");
-                    xmlNodes.Insert(0, text);
-                }
-                var list = new SyntaxList<XmlNodeSyntax>(xmlNodes);
-                return SyntaxFactory.XmlElement(startTag, list, endTag);
-            }
 
-            if (xmlParseResponse.HasSeeCrefNode)
+            if (xmlParseResponse.HasSeeCrefNode || xmlParseResponse.HasTypeParam)
             {
-                var xmlNodes = ParseStringToXmlNodeSyntax(cleanContent, "see", "cref");
+                var xmlNodes = ParseStringToXmlNodeSyntax(cleanContent);
                 var list = new SyntaxList<XmlNodeSyntax>(xmlNodes);
                 return SyntaxFactory.XmlElement(startTag, list, endTag);
             }
@@ -272,7 +261,7 @@ namespace CodeDocumentor.Helper
                     cDataContent = cDataConentMatch.Groups[1].Value;
                 }
 
-                //Wrap any xml thats not a match above to CDATA
+                //Wrap any XML thats not a match above to CDATA
                 var text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cDataContent, cDataContent, SyntaxFactory.TriviaList());
                 var tokens = SyntaxFactory.TokenList().Add(text1Token);
                 var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
@@ -282,7 +271,7 @@ namespace CodeDocumentor.Helper
 
             if (xmlParseResponse.IsGeneric)
             {
-                //Wrap any xml thats not a match above to CDATA
+                //Wrap any XML thats not a match above to CDATA
                 var text1Token = SyntaxFactory.XmlTextLiteral(SyntaxFactory.TriviaList(), cleanContent, cleanContent, SyntaxFactory.TriviaList());
                 var tokens = SyntaxFactory.TokenList().Add(text1Token);
                 var cdata = SyntaxFactory.XmlCDataSection(SyntaxFactory.Token(SyntaxKind.XmlCDataStartToken), tokens, SyntaxFactory.Token(SyntaxKind.XmlCDataEndToken));
@@ -424,7 +413,7 @@ namespace CodeDocumentor.Helper
             return isPrivate;
         }
 
-        internal static List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent, string elementName, string attributeNameToMatchOn)
+        internal static List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent)
         {
             var xmlNodes = new List<XmlNodeSyntax>();
             TryHelper.Try(() =>
@@ -436,19 +425,22 @@ namespace CodeDocumentor.Helper
                     var p = parts[i];
                     if (p.StartsWith("{"))
                     {
+                        var elementName = "missing";
                         TryHelper.Try(() =>
                         {
                             var swapStr = tokens[p];
-                            var attributeNameMatch = Regex.Match(swapStr, $@"{attributeNameToMatchOn}=""(.*?)""");
-                            if (attributeNameMatch.Success && attributeNameMatch.Groups.Count > 0)
+                            var xmlParseMatch = _regExParseXmlElement.Match(swapStr);
+                            if (xmlParseMatch.Success && xmlParseMatch.Groups.Count > 3)
                             {
-                                var attributeValue = attributeNameMatch.Groups[1].Value;
-                                xmlNodes.Add(CreateElementWithAttributeSyntax(elementName, attributeNameToMatchOn, attributeValue));
+                                elementName = xmlParseMatch.Groups[1].Value;
+                                var attributeName = xmlParseMatch.Groups[2].Value;
+                                var attributeValue = xmlParseMatch.Groups[3].Value;
+                                xmlNodes.Add(CreateElementWithAttributeSyntax(elementName, attributeName, attributeValue));
                                 xmlNodes.Add(SyntaxFactory.XmlText(" "));
                             }
                         }, (_) =>
                         {
-                            xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} xml"));
+                            xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} XML"));
                             xmlNodes.Add(SyntaxFactory.XmlText(" "));
                         });
                     }

@@ -7,10 +7,6 @@ namespace CodeDocumentor.Vsix2022
 {
     public class XmlInformation
     {
-        public string CDataMatch { get; }
-
-        public string GenericMatch { get; }
-
         public bool HasSeeCrefNode { get; }
 
         public bool HasText { get; }
@@ -21,10 +17,6 @@ namespace CodeDocumentor.Vsix2022
 
         public bool IsGeneric { get; }
 
-        public string SeeCrefMatch { get; }
-
-        public string TypeParamMatch { get; }
-
         public XmlInformation(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -33,21 +25,17 @@ namespace CodeDocumentor.Vsix2022
             }
             var match = Regex.Match(text, @"<!\[CDATA\[.*\]\]>");
             IsCData = match.Success;
-            CDataMatch = match?.Value;
 
             match = Regex.Match(text, @"(^\w+<.*>$)");
             IsGeneric = match.Success;
-            GenericMatch = match?.Value;
 
-            match = Regex.Match(text, @"(<typeparamref.*?>)");
+            match = Regex.Match(text, "(<typeparamref.*?>)");
             HasTypeParam = match.Success;
-            TypeParamMatch = match?.Value;
 
-            match = Regex.Match(text, @"(<see.*?>)");
+            match = Regex.Match(text, "(<see.*?>)");
             HasSeeCrefNode = match.Success;
-            SeeCrefMatch = match?.Value;
 
-            HasText = Regex.IsMatch(text, @"^\w*|\w*$");
+            HasText = !string.IsNullOrEmpty(Regex.Match(text, @"^\w*|\w*$")?.Value.Trim());
         }
     }
 }

@@ -240,6 +240,8 @@ namespace CodeDocumentor.Helper
                                 : cleanContent
                             : cleanContent;
 
+            //TODO:TEST THIS
+            //A <see cref="Task"/> of type <typeparamref name="TResult"/>
             var xmlParseResponse = new XmlInformation(cleanContent);
             if (xmlParseResponse.HasTypeParam)
             {

@@ -243,10 +243,10 @@ namespace CodeDocumentor.Helper
             var xmlParseResponse = new XmlInformation(cleanContent);
             if (xmlParseResponse.HasTypeParam)
             {
-                var text = SyntaxFactory.XmlText("A ");
                 var xmlNodes = ParseStringToXmlNodeSyntax(cleanContent, "typeparamref", "name");
-                if (xmlNodes.Count > 0)
+                if (xmlNodes.Count > 0 && !cleanContent.StartsWith_A_An_And())
                 {
+                    var text = SyntaxFactory.XmlText("A ");
                     xmlNodes.Insert(0, text);
                 }
                 var list = new SyntaxList<XmlNodeSyntax>(xmlNodes);

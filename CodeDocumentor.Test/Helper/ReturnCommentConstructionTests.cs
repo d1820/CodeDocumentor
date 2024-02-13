@@ -287,6 +287,18 @@ namespace CodeDocumentor.Test.Helper
 
         #endregion
 
+        #region GenericReturnTypeDefResult
+        [Fact]
+        public void GenericTypeDefResult_CreatesValidStringFromString()
+        {
+            var method = TestFixture.BuildMethodDeclarationSyntax("TResult", "Tester");
+            _options.IncludeStartingWordInText = true;
+            var comment = _returnCommentBuilder.BuildComment(method.ReturnType, _options);
+            comment.Should().Be("<typeparamref name=\"TResult\"/>");
+        }
+
+        #endregion
+
         #region Task & ActionResult & ValueTask
 
         [Theory]

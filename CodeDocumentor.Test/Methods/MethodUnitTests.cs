@@ -62,6 +62,7 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithTaskAndComplexTypeReturnTypeTestCode", "MethodWithTaskAndComplexTypeReturnTypeTestFixCode", 9, 46)]
+        [InlineData("MethodWithStartingVerbReturnTestCode", "MethodWithStartingVerbReturnTestFixCode", 9, 23)]
         public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");

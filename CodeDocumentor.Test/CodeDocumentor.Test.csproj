@@ -73,6 +73,8 @@
     <Compile Remove="Methods\TestFiles\MethodWithParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithStartingVerbReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithStartingVerbReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestCode.cs" />
@@ -106,6 +108,8 @@
     <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeTestFixCode.cs" />
     <Compile Remove="Properties\TestFiles\PublicPropertyInterfaceTestCode.cs" />
     <Compile Remove="Properties\TestFiles\PublicPropertyInterfaceTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\TaskPropertyTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\TaskPropertyTestFixCode.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTester.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTesterFix.cs" />
     <Compile Remove="Records\TestFiles\RecordTester.cs" />
@@ -195,6 +199,12 @@
     <Content Include="Methods\TestFiles\MethodWithExceptionTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\MethodWithStartingVerbReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithStartingVerbReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -205,6 +215,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Properties\TestFiles\BooleanPropertyTest2FixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\TaskPropertyTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\TaskPropertyTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Properties\TestFiles\BooleanPropertyTestCode.cs">

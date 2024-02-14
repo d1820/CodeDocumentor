@@ -265,6 +265,8 @@ All errors are written to the EventLog in windows. Check there for causes, and u
 
 **Message Prefix**: "CodeDocumentor: "
 
+![Event Log](./GifInstruction/EventLog.png)
+
 
 
 ## Changelog

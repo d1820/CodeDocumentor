@@ -37,6 +37,12 @@ namespace CodeDocumentor.Helper
             return word.EndsWith("ed");
         }
 
+        public static bool IsIngVerb(this string word)
+        {
+            // Check if the word ends with "-ed"
+            return word.EndsWith("ing") && !word.Equals("string", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public static bool IsTwoLetterPropertyExclusionVerb(this string word)
         {
             var checkWord = word.GetWordFirstPart().Clean();
@@ -54,11 +60,15 @@ namespace CodeDocumentor.Helper
             var checkWord = word.GetWordFirstPart().Clean();
             var variations = new List<string>();
             var baseWord = checkWord;
-            if (checkWord.EndsWith("ing") && !checkWord.Equals("string", StringComparison.InvariantCultureIgnoreCase))
+            if (checkWord.IsIngVerb())
             {
-                baseWord = word.Substring(0, checkWord.Length - 3);
+                return true;
             }
-            else if (baseWord.EndsWith("ed"))
+            else if (Constants.PAST_TENSE_WORDS_NOT_VERBS.Any(a => a.Equals(checkWord, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return false;
+            }
+            else if (baseWord.IsPastTense()) //remove "ed"
             {
                 baseWord = baseWord.Substring(0, checkWord.Length - 2);
             }
@@ -66,11 +76,13 @@ namespace CodeDocumentor.Helper
             {
                 baseWord = baseWord.Substring(0, checkWord.Length - 1);
             }
-            return Constants.GetInternalVerbCheckList().Any(w => w.Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
-            || (w + "ed").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
-            || (w + "ing").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
-            || ((w + "s").Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
-                && !Constants.LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER.Any(a => a.Equals(w, StringComparison.InvariantCultureIgnoreCase)))
+
+            return Constants.GetInternalVerbCheckList().Any(w =>
+                w.Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
+                || checkWord.Equals((w + "ed"), System.StringComparison.InvariantCultureIgnoreCase)
+                //|| checkWord.Equals((w + "ing"), System.StringComparison.InvariantCultureIgnoreCase)
+                || (checkWord.Equals((w + "s"), System.StringComparison.InvariantCultureIgnoreCase)
+                    && !Constants.LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER.Any(a => a.Equals(w, StringComparison.InvariantCultureIgnoreCase)))
             );
         }
 

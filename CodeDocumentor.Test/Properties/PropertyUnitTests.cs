@@ -60,6 +60,7 @@ namespace CodeDocumentor.Test.Properties
         [InlineData("NullableDateTimePropertyTestCode", "NullableDateTimePropertyTestFixCode", 9, 26, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         [InlineData("PublicPropertyInterfaceTestCode", "PublicPropertyInterfaceTestFixCode", 9, 23, TestFixture.DIAG_TYPE_PUBLIC)]
         [InlineData("PrivatePropertyInterfaceTestCode", "PrivatePropertyInterfaceTestFixCode", 9, 16, TestFixture.DIAG_TYPE_PRIVATE)]
+        [InlineData("TaskPropertyTestCode", "TaskPropertyTestFixCode", 9, 26, TestFixture.DIAG_TYPE_PUBLIC)]
         public async Task ShowPropertyDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($"./Properties/TestFiles/{fixCode}.cs");

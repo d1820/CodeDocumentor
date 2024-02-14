@@ -54,9 +54,9 @@ jobs:
 
     - name: Update assembly version
       run: |
-        (Get-Content -Path CodeDocumentor\Properties\AssemblyInfo.cs) |
+        (Get-Content -Path CodeDocumentor\Settings\VsixOptions.cs) |
           ForEach-Object {$_ -Replace '${{ env.BaseVersion }}', '${{ env.Version }}'} |
-            Set-Content -Path CodeDocumentor\Properties\AssemblyInfo.cs
+            Set-Content -Path CodeDocumentor\Settings\VsixOptions.cs
 
     - name: Restore dependencies
       run: nuget restore CodeDocumentor.sln

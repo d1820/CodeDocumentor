@@ -51,7 +51,7 @@ jobs:
       with:
         version: ${{ env.Version }}
         vsix-manifest-file: 'src\CodeDocumentor\Manifests\vs2022\source.extension.vsixmanifest'
-        
+
     - name: Update assembly version
       run: |
         (Get-Content -Path CodeDocumentor\Properties\AssemblyInfo.cs) |

@@ -67,7 +67,7 @@ jobs:
     - name: Test
       run: vstest.console.exe CodeDocumentor.Test\bin\Release\net48\CodeDocumentor.Test.dll
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4.3.1
       name: "Pack"
       with:
         name: "CodeDocumentor.vsix"

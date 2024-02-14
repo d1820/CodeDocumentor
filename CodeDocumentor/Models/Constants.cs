@@ -1,43 +1,70 @@
-﻿// For definitions of XML nodes see:
+// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using CodeDocumentor.Helper;
+using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
+        public const DiagnosticSeverity DefaultDiagnosticSeverityOnError = DiagnosticSeverity.Info;
+
+        public static class EventIds
+        {
+            public const int ANALYZER = 1000;
+            public const int FIXER = 1100;
+            public const int HEADER_HELPER = 1200;
+            public const int FILE_FIXER = 1300;
+
+            public static class Categories
+            {
+                public const short BUILD_COMMENTS = 10;
+                public const short ADD_DOCUMENTATION_HEADER = 20;
+                public const short EXCEPTION_BUILDER = 30;
+                public const short XML_STRING_PARSER = 40;
+            }
+        }
+
+        /// <summary>
+        ///  The category of the diagnostic.
+        /// </summary>
+        public const string CATEGORY = "CodeDocumentor";
+
+        /// <summary>
+        ///  The example.
+        /// </summary>
+        public const string EXAMPLE = "example";
+
+        /// <summary>
+        ///  The category to check for when excluding analyzer actions
+        /// </summary>
+        public const string EXCLUSION_CATEGORY = "XMLDocumentation";
+
+        /// <summary>
+        ///  The inherit doc.
+        /// </summary>
+        public const string INHERITDOC = "inheritdoc";
+
+        /// <summary>
+        ///  The remarks.
+        /// </summary>
+        public const string REMARKS = "remarks";
+
+        /// <summary>
+        ///  The summary.
+        /// </summary>
+        public const string SUMMARY = "summary";
+
+        public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
+        public static readonly string XML_ELEMENT_MATCH_REGEX_TEMPLATE = "<.*?>";
+        public static readonly string XML_ELEMENT_ONLY_MATCH_REGEX_TEMPLATE = "^<.*?>$";
+        public static string NEWLINE = "\r\n";
+
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };
 
-        private static string[] AXUILLARY_SPECIAL_WORD_LIST { get; set; } = new[] {"are", "was", "were", "been", "being", "have", "does",
-                                                                    "has", "had", "having",
-                                                                    "did", "can", "shall", "will", "may", "might", "must",
-                                                                    "dare", "need", "used", "ought", "goes" };
-
-        private static string[] TWO_LETTER_WORD_LIST { get; set; } = new[] { "on", "by", "an", "in", "at", "of", "is", "am" };
-
-        private static string[] PLURALIZATION_CONVERSIONS { get; set; } = new[] { "converts to", "checks if is", };
-
-        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
-            new WordMap { Word = "To", Translation = "Converts to" },
-            new WordMap { Word = "Do", Translation = "Does" }
-        };
-
-        public static WordMap[] PLURALIZE_CUSTOM_LIST { get; set; } = new[] {
-            new WordMap { Word = "Is", Translation = "Checks if is" },
-            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
-                    if(!string.IsNullOrEmpty( nextWord) && Pluralizer.IsPlural(nextWord)){
-                        return "Checks if";
-                    }
-                    return translation;
-                }
-            }
-        };
-
-        public static WordMap[] WORD_MAPS { get; set; } = new[] {
+        public static WordMap[] DEFAULT_WORD_MAPS { get; set; } = new[] {
             new WordMap { Word = "int", Translation = "integer" },
             new WordMap { Word = "Int32", Translation = "integer" },
             new WordMap { Word = "Int64", Translation = "integer" },
@@ -52,36 +79,84 @@ namespace CodeDocumentor.Vsix2022
             new WordMap { Word = "IReadOnlyDictionary", Translation = "Read Only Dictionary" }
         };
 
-        //These should match the
-        public static string[] PLURALIZE_ANYWAY_LIST()
-        {
-            return INTERNAL_WORD_MAPS.Select(s => s.Word.ToLowerInvariant()).ToArray();
-        }
+        public static string[] EXCLUDE_THE_LIST_FOR_2PART_COMMENTS { get; set; } = new[] { "todo", "on" };
 
-        public static class DiagnosticIds
-        {
-            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
-            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
-            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
-            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
-            public const string FILE_DIAGNOSTIC_ID = "CD1607";
-            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
-            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
-            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
-            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
-        }
+        public static WordMap[] INTERNAL_WORD_MAPS { get; set; } = new[] {
+            new WordMap { Word = "To", Translation = "Converts to" },
+            new WordMap { Word = "Do", Translation = "Does" },
+            new WordMap { Word = "Dto", Translation = "Data transfer object" },
+            new WordMap { Word = "Is", Translation = "Checks if is" },
+            new WordMap { Word = "Ensure", Translation = "Checks if is", WordEvaluator = (translation, nextWord)=>{
+                    return !string.IsNullOrEmpty(nextWord) && Pluralizer.IsPlural(nextWord) ? "Checks if" : translation; }
+            }
+        };
 
-        public static IEnumerable<string> GetInternalWordList()
-        {
-            var items = new List<string>();
-            items.AddRange(INTERNAL_SPECIAL_WORD_LIST);
-            items.AddRange(AXUILLARY_SPECIAL_WORD_LIST);
-            items.AddRange(TWO_LETTER_WORD_LIST);
-            items.AddRange(PLURALIZATION_CONVERSIONS);
-            return items;
-        }
+        public static string[] LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER { get; } = new[] { "as", "is", "his", "has", "yes", "its", "ass" };
 
-        private static string[] INTERNAL_SPECIAL_WORD_LIST { get; set; } = new[] {
+        public static string[] TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST { get; } = new[] { "an", "is", "if", "by", "do" };
+
+        public static string[] TWO_LETTER_WORD_LIST { get; } = new[] { "am", "as", "ax", "an", "at", "be", "by", "do", "hi", "go", "if", "in", "is", "it", "me",
+                                                                       "my", "no", "of", "on", "or", "so", "to", "up", "us", "uh", "um", "we" };
+
+        private static string[] AXUILLARY_VERB_WORD_LIST { get; } = new[] {"are", "was", "were", "been", "being", "have", "does",
+                                                                    "has", "had", "having", "set", "get",
+                                                                    "did", "can", "shall", "will", "may", "might", "must",
+                                                                    "dare", "need", "used", "ought", "goes" };
+
+        public static string[] PAST_TENSE_WORDS_NOT_VERBS = {
+    "aged",
+    "alleged",
+    "assumed",
+    "blessed",
+    "breasted",
+    "burred",
+    "cluttered",
+    "concluded",
+    "confused",
+    "creased",
+    "crooked",
+    "crossed",
+    "cursed",
+    "damned",
+    "exposed",
+    "famed",
+    "finned",
+    "furred",
+    "gilded",
+    "grained",
+    "groomed",
+    "hazed",
+    "hitched",
+    "iced",
+    "ill-used",
+    "jagged",
+    "jinxed",
+    "joined",
+    "jumbled",
+    "labeled",
+    "lettered",
+    "looped",
+    "mangled",
+    "marked",
+    "mated",
+    "mixed",
+    "named",
+    "nicked",
+    "oiled",
+    "owned",
+    "played",
+    "priced",
+    "pronged",
+    "purled",
+    "ranked",
+    "reared",
+    "reckoned",
+    "refined",
+    "ringed"
+};
+
+
+        private static string[] INTERNAL_VERB_WORD_LIST { get; set; } = new[] {
 "accept",
 "access",
 "add",
@@ -113,6 +188,7 @@ namespace CodeDocumentor.Vsix2022
 "attempt",
 "attend",
 "attract",
+"await",
 "avoid",
 "back",
 "bake",
@@ -150,6 +226,7 @@ namespace CodeDocumentor.Vsix2022
 "bruise",
 "brush",
 "bubble",
+"build",
 "bump",
 "burn",
 "bury",
@@ -246,6 +323,7 @@ namespace CodeDocumentor.Vsix2022
 "dislike",
 "display",
 "divide",
+"done",
 "double",
 "doubt",
 "drag",
@@ -408,6 +486,7 @@ namespace CodeDocumentor.Vsix2022
 "long",
 "look",
 "love",
+"make",
 "man",
 "manage",
 "march",
@@ -506,6 +585,7 @@ namespace CodeDocumentor.Vsix2022
 "promise",
 "protect",
 "provide",
+"publish",
 "pull",
 "pump",
 "punch",
@@ -523,7 +603,7 @@ namespace CodeDocumentor.Vsix2022
 "realise",
 "receive",
 "recognise",
-"record",
+"recording",
 "reduce",
 "reflect",
 "refuse",
@@ -677,6 +757,7 @@ namespace CodeDocumentor.Vsix2022
 "tip",
 "tire",
 "to",
+"todo",
 "touch",
 "tour",
 "tow",
@@ -750,5 +831,26 @@ namespace CodeDocumentor.Vsix2022
 "zip",
 "zoom" };
 
+        public static IEnumerable<string> GetInternalVerbCheckList()
+        {
+            var items = new List<string>();
+            items.AddRange(INTERNAL_VERB_WORD_LIST);
+            items.AddRange(AXUILLARY_VERB_WORD_LIST);
+            items.AddRange(TWO_LETTER_WORD_LIST);
+            return items;
+        }
+
+        public static class DiagnosticIds
+        {
+            public const string CLASS_DIAGNOSTIC_ID = "CD1600";
+            public const string CONSTRUCTOR_DIAGNOSTIC_ID = "CD1601";
+            public const string ENUM_DIAGNOSTIC_ID = "CD1602";
+            public const string FIELD_DIAGNOSTIC_ID = "CD1603";
+            public const string FILE_DIAGNOSTIC_ID = "CD1607";
+            public const string INTERFACE_DIAGNOSTIC_ID = "CD1604";
+            public const string METHOD_DIAGNOSTIC_ID = "CD1605";
+            public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
+            public const string RECORD_DIAGNOSTIC_ID = "CD1608";
+        }
     }
 }

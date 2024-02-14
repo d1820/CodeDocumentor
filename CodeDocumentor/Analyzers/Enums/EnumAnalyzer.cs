@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -7,14 +8,20 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    /// <summary> The enum analyzer. </summary>
+    /// <summary>
+    ///  The enum analyzer.
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class EnumAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary> Gets the supported diagnostics. </summary>
+        /// <summary>
+        ///  Gets the supported diagnostics.
+        /// </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EnumAnalyzerSettings.GetRule());
 
-        /// <summary> Initializes action. </summary>
+        /// <summary>
+        ///  Initializes action.
+        /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
@@ -23,12 +30,13 @@ namespace CodeDocumentor
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.EnumDeclaration);
         }
 
-        /// <summary> Analyzes node. </summary>
+        /// <summary>
+        ///  Analyzes node.
+        /// </summary>
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            EnumDeclarationSyntax node = context.Node as EnumDeclarationSyntax;
-            if (node == null)
+            if (!(context.Node is EnumDeclarationSyntax node))
             {
                 return;
             }

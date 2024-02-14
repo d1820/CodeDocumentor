@@ -9,9 +9,6 @@ using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Methods
 {
-    /// <summary>
-    /// The method unit test.
-    /// </summary>
     [SuppressMessage("XMLDocumentation", "")]
     public class MethodUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
@@ -22,16 +19,12 @@ namespace CodeDocumentor.Test.Methods
             _fixture = fixture;
             fixture.Initialize(output);
         }
-        /// <summary>
-        /// Nos diagnostics show.
-        /// </summary>
-        /// <param name="testCode">The test code.</param>
         [Theory]
         [InlineData("")]
         [InlineData("InheritDocTestCode.cs")]
         public async Task NoDiagnosticsShow(string testCode)
         {
-            if (testCode == string.Empty)
+            if (testCode?.Length == 0)
             {
                 await VerifyCSharpDiagnosticAsync(testCode, TestFixture.DIAG_TYPE_PUBLIC);
             }
@@ -53,13 +46,6 @@ namespace CodeDocumentor.Test.Methods
             }
         }
 
-        /// <summary>
-        /// Shows diagnostic and fix.
-        /// </summary>
-        /// <param name="testCode">The test code.</param>
-        /// <param name="fixCode">The fix code.</param>
-        /// <param name="line">The line.</param>
-        /// <param name="column">The column.</param>
         [Theory]
         [InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
         [InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
@@ -72,10 +58,11 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithListIntReturnTestCode", "MethodWithListIntReturnTestFixCode", 9, 26)]
         [InlineData("MethodWithListListIntReturnTestCode", "MethodWithListListIntReturnTestFixCode", 9, 32)]
         [InlineData("MethodWithListQualifiedNameReturnTestCode", "MethodWithListQualifiedNameReturnTestFixCode", 9, 26)]
-        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35)]
         [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
         [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithTaskAndComplexTypeReturnTypeTestCode", "MethodWithTaskAndComplexTypeReturnTypeTestFixCode", 9, 46)]
+        [InlineData("MethodWithStartingVerbReturnTestCode", "MethodWithStartingVerbReturnTestFixCode", 9, 23)]
         public async Task ShowMethodDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
@@ -84,6 +71,7 @@ namespace CodeDocumentor.Test.Methods
             _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
             {
                 o.UseNaturalLanguageForReturnNode = false;
+                o.TryToIncludeCrefsForReturnTypes = false;
             });
             var expected = new DiagnosticResult
             {
@@ -101,19 +89,48 @@ namespace CodeDocumentor.Test.Methods
             await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
-        /// <summary>
-        /// Gets c sharp code fix provider.
-        /// </summary>
-        /// <returns>A CodeFixProvider.</returns>
+
+        [Theory]
+        [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
+        [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
+        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35, false)]
+        [InlineData("MethodWithCrefTestCodeNaturalLang", "MethodWithCrefTestFixCodeNaturalLang", 10, 35)]
+        [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
+        [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
+        public async Task ShowMethodDiagnosticAndFixWhenCrefsIsTrue(string testCode, string fixCode, int line, int column, bool useNaturalLanguageForReturnNode = true)
+        {
+            var fix = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{fixCode}.cs");
+            var test = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{testCode}.cs");
+
+            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            {
+                o.UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode;
+                o.TryToIncludeCrefsForReturnTypes = true;
+            });
+            var expected = new DiagnosticResult
+            {
+                Id = MethodAnalyzerSettings.DiagnosticId,
+                Message = MethodAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
+
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
+
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new MethodCodeFixProvider();
         }
 
-        /// <summary>
-        /// Gets c sharp diagnostic analyzer.
-        /// </summary>
-        /// <returns>A DiagnosticAnalyzer.</returns>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer(string diagType)
         {
             if (diagType == "private")

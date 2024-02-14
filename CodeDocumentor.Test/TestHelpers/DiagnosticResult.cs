@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Test.TestHelpers
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public struct DiagnosticResultLocation
+    public readonly struct DiagnosticResultLocation
     {
         public DiagnosticResultLocation(string path, int line, int column)
         {
@@ -40,13 +40,8 @@ namespace CodeDocumentor.Test.TestHelpers
         {
             get
             {
-                if (locations == null)
-                {
-                    locations = new DiagnosticResultLocation[] { };
-                }
-                return locations;
+                return locations ?? (locations = new DiagnosticResultLocation[] { });
             }
-
             set
             {
                 locations = value;

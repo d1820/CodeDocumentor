@@ -8,6 +8,8 @@
 
 A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method. While VS2022 provides basic documentation capabilities this fills the gap in trying to populate the summary and return nodes. This also gives control over how the summaries are translated.
 
+In the age of copilots this extension is still valuable when working on projects where sending code to the cloud is not possible. This creates the documentation locally on your machine. Nothing is ever sent to the cloud. No Internet connection is required for this to work.
+
 ## Installation
 ---
 
@@ -17,22 +19,27 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 <!-- toc -->
 
-- [Instruction](#instruction)
-- [Known Issues](#known-issues)
-- [Comment Ordering](#comment-ordering)
-- [Supported Comment Refactorings](#supported-comment-refactorings)
-- [Settings](#settings)
-  - [Word Translations](#word-translations)
-  - [Recommended Settings](#recommended-settings)
-  - [Example Options Screen](#example-options-screen)
-- [Also Supports](#also-supports)
-- [Excluding ErrorList Messages](#excluding-errorlist-messages)
-  - [Available DiagnosticId Codes](#available-diagnosticid-codes)
-  - [Supported Members](#supported-members)
-  - [Attribute](#attribute)
-  - [Example](#example)
-- [Usage Examples](#usage-examples)
-- [Special Thanks](#special-thanks)
+- [CodeDocumentor](#codedocumentor)
+  - [Installation](#installation)
+  - [Table of Contents](#table-of-contents)
+  - [Instruction](#instruction)
+  - [Known Issues](#known-issues)
+  - [Comment Ordering](#comment-ordering)
+  - [Supported Comment Refactorings](#supported-comment-refactorings)
+  - [Settings](#settings)
+    - [Word Translations](#word-translations)
+    - [Recommended Settings](#recommended-settings)
+  - [Also Supports](#also-supports)
+  - [Excluding ErrorList Messages](#excluding-errorlist-messages)
+    - [Available DiagnosticId Codes](#available-diagnosticid-codes)
+    - [Supported Members](#supported-members)
+    - [Attribute](#attribute)
+    - [Example](#example)
+  - [Usage Examples](#usage-examples)
+  - [Errors and Crashes](#errors-and-crashes)
+  - [Changelog](#changelog)
+      - [Example Cref Support](#example-cref-support)
+  - [Special Thanks](#special-thanks)
 
 <!-- tocstop -->
 
@@ -51,6 +58,11 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
   **Please disable this setting to allow CodeDocumentor to work correctly.**
 
+- As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect _Run code analysis on latest .NET_.
+
+   ![Out Of Process Latest](./GifInstruction/OutOfProessLatest.png)
+
+
 ## Comment Ordering
 
 Comments are structured in the following order
@@ -63,7 +75,7 @@ Comments are structured in the following order
 - Remarks
 - Examples
 - Return Types *if applies
- 
+
 ## Supported Comment Refactorings
 
 Code Documentor supports creating, updating, and recreating on a given type. There is also an avaialble fix at eny level to comment the whole file.
@@ -73,25 +85,26 @@ Code Documentor supports creating, updating, and recreating on a given type. The
 
 To adjust these defaults go to Tools > Options > CodeDocumentor
 
-| Setting | Description |
-|--|--|
-| Exclude async wording from comments|When documenting members skip adding asynchronously to the comment. |
-| Include ```<value>``` node in property comments|When documenting properties add the value node with the return type |
-| Enable comments for public members only|When documenting classes, fields, methods, and properties only add documentation headers if the item is public |
-| Enable comments for non public fields|When documenting fields allow adding documentation headers if the item is not public. This only applies to const and static fields.|
-| Use natural language for return comments|When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example Enabled: ```<return>A List of Strings</return>``` Example Disabled: ``` <returns><![CDATA[Task<int>]]></returns>```|
-| Use TODO comment when summary can not be determined|When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated. |
-| Word mappings for creating comments|When documenting if certain word are matched it will swap out to the translated mapping. |
-| Preserve Existing Summary Text|When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.|
-| Default Diagnostics | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change. |
-| Class Diagnostics | Allows setting a new default diagnostic level for evaluation for classes. A restart of Visual Studio is required on change. |
-| Constructor Diagnostics | Allows setting a new default diagnostic level for evaluation for constructors. A restart of Visual Studio is required on change. |
-| Enum Diagnostics | Allows setting a new default diagnostic level for evaluation for enums. A restart of Visual Studio is required on change. |
-| Field Diagnostics | Allows setting a new default diagnostic level for evaluation for fields. A restart of Visual Studio is required on change. |
-| Interface Diagnostics | Allows setting a new default diagnostic level for evaluation for interfaces. A restart of Visual Studio is required on change. |
-| Method Diagnostics | Allows setting a new default diagnostic level for evaluation for methods. A restart of Visual Studio is required on change. |
-| Property Diagnostics | Allows setting a new default diagnostic level for evaluation for properties. A restart of Visual Studio is required on change. |
-| Record Diagnostics | Allows setting a new default diagnostic level for evaluation for records. A restart of Visual Studio is required on change. |
+| Setting                                             | Description                                                                                                                                                                                                                                                                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Exclude async wording from comments                 | When documenting members skip adding asynchronously to the comment.                                                                                                                                                                                                                                    |
+| Include ```<value>``` node in property comments     | When documenting properties add the value node with the return type                                                                                                                                                                                                                                    |
+| Enable comments for public members only             | When documenting classes, fields, methods, and properties only add documentation headers if the item is public                                                                                                                                                                                         |
+| Enable comments for non public fields               | When documenting fields allow adding documentation headers if the item is not public. This only applies to const and static fields.                                                                                                                                                                    |
+| Use natural language for return comments            | When documenting members if the return type contains a generic then translate that item into natural language. The default uses CDATA nodes to show the exact return type. Example Enabled: ```<return>A List of Strings</return>``` Example Disabled: ``` <returns><![CDATA[Task<int>]]></returns>``` |
+| Use TODO comment when summary can not be determined | When documenting methods that can not create a valid summary insert TODO instead. Async is ignored in evaluation. Using this in conjunction with the vs2022 Task Window you can quickly find all summaries that could not be generated.                                                                |
+| Try to include return types in documentation        | When documenting methods and properties (and Use natural language for return comments is enabled) try to include <cref/> in the return element. In methods that are named 2 words or less try and generate ```<cref/>``` elements for those types in the method comment                                |
+| Word mappings for creating comments                 | When documenting if certain word are matched it will swap out to the translated mapping.                                                                                                                                                                                                               |
+| Preserve Existing Summary Text                      | When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.                                                                                                                                                                     |
+| Default Diagnostics                                 | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change.                                                                                                                                                                    |
+| Class Diagnostics                                   | Allows setting a new default diagnostic level for evaluation for classes. A restart of Visual Studio is required on change.                                                                                                                                                                            |
+| Constructor Diagnostics                             | Allows setting a new default diagnostic level for evaluation for constructors. A restart of Visual Studio is required on change.                                                                                                                                                                       |
+| Enum Diagnostics                                    | Allows setting a new default diagnostic level for evaluation for enums. A restart of Visual Studio is required on change.                                                                                                                                                                              |
+| Field Diagnostics                                   | Allows setting a new default diagnostic level for evaluation for fields. A restart of Visual Studio is required on change.                                                                                                                                                                             |
+| Interface Diagnostics                               | Allows setting a new default diagnostic level for evaluation for interfaces. A restart of Visual Studio is required on change.                                                                                                                                                                         |
+| Method Diagnostics                                  | Allows setting a new default diagnostic level for evaluation for methods. A restart of Visual Studio is required on change.                                                                                                                                                                            |
+| Property Diagnostics                                | Allows setting a new default diagnostic level for evaluation for properties. A restart of Visual Studio is required on change.                                                                                                                                                                         |
+| Record Diagnostics                                  | Allows setting a new default diagnostic level for evaluation for records. A restart of Visual Studio is required on change.                                                                                                                                                                            |
 
 
 
@@ -104,7 +117,18 @@ As part of the settings WordMaps can be defined to help control how you want tex
 
 These are the recommended settings that create the best output experience
 
-![RecommenedSettings](./GifInstruction/RecommendedSettings.png)
+| Setting                                             | Description |
+| --------------------------------------------------- | ----------- |
+| Exclude async wording from comments                 | False       |
+| Include ```<value>``` node in property comments     | False       |
+| Enable comments for public members only             | False       |
+| Enable comments for non public fields               | False       |
+| Use natural language for return comments            | False       |
+| Use TODO comment when summary can not be determined | True        |
+| Try to include return types in documentation        | True        |
+| Preserve Existing Summary Text                      | True        |
+| Default Diagnostics                                 | Warning     |
+
 
 
 ## Also Supports
@@ -116,6 +140,39 @@ These are the recommended settings that create the best output experience
 - Whole file, project and solution comment adding
 
 To adjust these defaults go to Tools > Options > CodeDocumentor
+
+### One Word Methods
+
+In an attempt to create valid summary statements when a method is only 1 word (plus Async suffix) we will read the return type of the method. If the method is a generic type an attempt will be 
+made to create text representing that string. In the example below in the summary line CodeDocumentor added ```and return a <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/>```
+This is leveraging the new setting **Try to include return types in documentation** to generate those ```<see cref=""/>``` elements.
+
+#### Example
+
+With **Try to include return types in documentation** enabled
+
+```csharp
+/// <summary>
+/// Creates and return a <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/> asynchronously.
+/// </summary>
+/// <returns>A <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/></returns>
+internal Task<ActionResult<ClientDto>> CreateAsync()
+{
+}
+```
+
+With **Try to include return types in documentation** disabled
+
+```csharp
+/// <summary>
+/// Creates and return a task of type actionresult of type clientdto asynchronously.
+/// </summary>
+/// <returns>A <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/></returns>
+internal Task<ActionResult<ClientDto>> CreateAsync()
+{
+}
+```
+
 
 
 ## Excluding ErrorList Messages
@@ -160,7 +217,7 @@ There are 2 ways to exclude analyzer messaging. Defauly level is set to **Warnin
 //This will remove the analyzer messaging for entire class and all child members
 [System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
 public class Test<T>
-{		
+{
 	public string GetAsync(string name)
     {
 		return name;
@@ -199,7 +256,43 @@ How fast comments can be added
 <img src="./GifInstruction/short cut to quick add.gif" />
 
 
+## Errors and Crashes
 
+If you are finding the code documentor is crashing or causing errors.
+All errors are written to the EventLog in windows. Check there for causes, and use this information to file a bug.
+
+**Source**: "Visual Studio"
+
+**Message Prefix**: "CodeDocumentor: "
+
+![Event Log](./GifInstruction/EventLog.png)
+
+
+
+## Changelog
+
+| Date       | Change                                                                  | Version |
+| ---------- | ----------------------------------------------------------------------- | ------- |
+| 02/13/2024 | Rewrote document generator to builder pattern                           | 2.0.2.X |
+|            | Increased code coverage for tests                                       |         |
+|            | Added support for ```<see cref=""/>``` tags in summary and return nodes |         |
+|            | Bug fixes                                                               |         |
+| 02/1/2024  | Added support for ArgumentNullException.ThrowIf statements              | 2.0.1.1 |
+
+#### Example Cref Support
+
+```csharp
+/// <summary>
+/// Creates and return a <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/> asynchronously.
+/// </summary>
+/// <param name="clientDto">The client data transfer object.</param>
+/// <exception cref="ArgumentException"></exception>
+/// <returns>A <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/></returns>
+internal Task<ActionResult<ClientDto>> CreateAsync(CreateClientDto clientDto)
+{
+throw new ArgumentException("test");
+}
+```
 
 ## Special Thanks
 This was forked and modified from [jinyafeng](https://github.com/jinyafeng/DocumentationAssistant)

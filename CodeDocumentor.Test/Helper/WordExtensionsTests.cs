@@ -1,4 +1,4 @@
-﻿using CodeDocumentor.Helper;
+using CodeDocumentor.Helper;
 using FluentAssertions;
 using Xunit;
 
@@ -9,6 +9,7 @@ namespace CodeDocumentor.Test.Helper
         [Theory]
         [InlineData("Do", "Work", true)]
         [InlineData("To", "Uppercase", true)]
+        [InlineData("check", "if", true)]
         public void IsVerbCombo_HandlesWordCorrectly(string first, string second, bool result)
         {
             var isVerb = first.IsVerbCombo(second);

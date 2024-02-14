@@ -26,11 +26,31 @@
     <Compile Remove="Interfaces\TestFiles\TestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\BasicTestCode.cs" />
     <Compile Remove="Methods\TestFiles\BasicTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestCodeNaturalLang.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithCrefTestFixCodeNaturalLang.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithCrefTestCodeNaturalLang.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithCrefTestFixCodeNaturalLang.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithExceptionTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithExceptionTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithInlineExceptionTestCode.cs" />
@@ -53,9 +73,43 @@
     <Compile Remove="Methods\TestFiles\MethodWithParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithStartingVerbReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithStartingVerbReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithStringReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\BooleanPropertyTest2Code.cs" />
+    <Compile Remove="Properties\TestFiles\BooleanPropertyTest2FixCode.cs" />
+    <Compile Remove="Properties\TestFiles\BooleanPropertyTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\BooleanPropertyTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\ExpressionBodyPropertyTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\ExpressionBodyPropertyTestFixCode.cs" />
     <Compile Remove="Properties\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\NullableBooleanPropertyTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\NullableBooleanPropertyTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\NullableDateTimePropertyTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\NullableDateTimePropertyTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PrivatePropertyInterfaceTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PrivatePropertyInterfaceTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyInternalGetterTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyInternalGetterTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyOnlyGetterTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyOnlyGetterTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyPrivateGetterTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyPrivateGetterTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeActionResultTypeTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeActionResultTypeTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeGenericTypeTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeGenericTypeTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PropertyWithGetterSetterValueNodeTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\PublicPropertyInterfaceTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\PublicPropertyInterfaceTestFixCode.cs" />
+    <Compile Remove="Properties\TestFiles\TaskPropertyTestCode.cs" />
+    <Compile Remove="Properties\TestFiles\TaskPropertyTestFixCode.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTester.cs" />
     <Compile Remove="Records\TestFiles\PublicRecordTesterFix.cs" />
     <Compile Remove="Records\TestFiles\RecordTester.cs" />
@@ -68,6 +122,60 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\BasicTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestFixCodeNaturalLang.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithCrefTestCodeNaturalLang.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithInlineExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithIntReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\InheritDocTestCode.cs">
@@ -89,6 +197,108 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithStartingVerbReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithStartingVerbReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithTaskAndComplexTypeReturnTypeTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\BooleanPropertyTest2Code.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\BooleanPropertyTest2FixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\TaskPropertyTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\TaskPropertyTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\BooleanPropertyTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\BooleanPropertyTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\ExpressionBodyPropertyTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\ExpressionBodyPropertyTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\NullableBooleanPropertyTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\NullableBooleanPropertyTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\NullableDateTimePropertyTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\NullableDateTimePropertyTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PrivatePropertyInterfaceTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PrivatePropertyInterfaceTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyInternalGetterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyInternalGetterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyOnlyGetterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyOnlyGetterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyPrivateGetterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyPrivateGetterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterValueNodeActionResultTypeTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterValueNodeGenericTypeTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterValueNodeActionResultTypeTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterValueNodeGenericTypeTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterValueNodeTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterValueNodeTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PropertyWithGetterSetterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PublicPropertyInterfaceTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Properties\TestFiles\PublicPropertyInterfaceTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -140,12 +350,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Methods\TestFiles\MethodWithCrefTestCode.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Methods\TestFiles\MethodWithCrefTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithIntReturnTestCode.cs">
@@ -202,9 +406,9 @@
     <Content Include="Methods\TestFiles\MethodWithStringReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\TestFiles\InheritDocTestCode.cs">
+    <Content Include="Properties\TestFiles\InheritDocTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -247,16 +451,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.8.37222" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.8.37221" />
     <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
     <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="xunit" Version="2.6.5" />
+    <PackageReference Include="xunit" Version="2.6.6" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

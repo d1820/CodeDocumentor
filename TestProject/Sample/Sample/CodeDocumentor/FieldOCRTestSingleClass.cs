@@ -88,11 +88,12 @@ namespace Sample.CodeDocumentor
             throw new ArgumentException("");
         }
 
+
         internal string WorkWithTypesWithInlineException(string test, string we)
         {
             ArgumentException.ThrowIfNullOrEmpty(test, nameof(test));
             ArgumentNullException.ThrowIfNull(we, nameof(we));
-            return "";
+            throw new Exception("test");
         }
     }
 

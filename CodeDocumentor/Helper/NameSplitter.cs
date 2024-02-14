@@ -5,10 +5,20 @@ using System.Text.RegularExpressions;
 
 namespace CodeDocumentor.Helper
 {
-    /// <summary> The name splitter. </summary>
+    /// <summary>
+    ///  The name splitter.
+    /// </summary>
     public static class NameSplitter
     {
-        /// <summary> Checks if is all lower case. </summary>
+        private static readonly Regex _isLowerRegEx = new Regex("^[^A-Z]*$", RegexOptions.Compiled);
+
+        private static readonly Regex _isUpperRegEx = new Regex("^[^a-z]*$", RegexOptions.Compiled);
+
+        private static readonly Regex _specailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
+        ///  Checks if is all lower case.
+        /// </summary>
         /// <param name="text"> The text. </param>
         /// <returns> A bool. </returns>
         public static bool IsAllLowerCase(string text)
@@ -16,7 +26,9 @@ namespace CodeDocumentor.Helper
             return _isLowerRegEx.IsMatch(text);
         }
 
-        /// <summary> Checks if is all upper case. </summary>
+        /// <summary>
+        ///  Checks if is all upper case.
+        /// </summary>
         /// <param name="text"> The text. </param>
         /// <returns> A bool. </returns>
         public static bool IsAllUpperCase(string text)
@@ -24,17 +36,19 @@ namespace CodeDocumentor.Helper
             return _isUpperRegEx.IsMatch(text);
         }
 
-        /// <summary> Splits name by upper character. </summary>
+        /// <summary>
+        ///  Splits name by upper character.
+        /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A list of words. </returns>
         public static List<string> Split(string name)
         {
-            List<string> words = new List<string>();
-            List<char> singleWord = new List<char>();
-            List<char> upperGroup = new List<char>();
+            var words = new List<string>();
+            var singleWord = new List<char>();
+            var upperGroup = new List<char>();
 
-            bool allUpperCase = IsAllUpperCase(name);
-            bool allLowerCase = IsAllLowerCase(name);
+            var allUpperCase = IsAllUpperCase(name);
+            var allLowerCase = IsAllLowerCase(name);
 
             if (allUpperCase || allLowerCase)
             {
@@ -58,12 +72,12 @@ namespace CodeDocumentor.Helper
 
             var splitName = name.AsSpan();
 
-            for (int i = 0; i < splitName.Length; i++)
+            for (var i = 0; i < splitName.Length; i++)
             {
                 var lookahead = i + 1;
 
                 //search for whole group of uppercase
-                char nextChar = splitName[i];
+                var nextChar = splitName[i];
                 upperGroup.Clear();
                 while (char.IsUpper(nextChar))
                 {
@@ -104,18 +118,24 @@ namespace CodeDocumentor.Helper
             return words;
         }
 
-        /// <summary> Upper the to title case. </summary>
+        /// <summary>
+        ///  Upper the to title case.
+        /// </summary>
         /// <param name="text"> The text. </param>
         /// <returns> <![CDATA[IEnumerable<char>]]> </returns>
         public static IEnumerable<char> UpperToTitleCase(string text)
         {
-            bool newWord = true;
-            foreach (char c in text)
+            var newWord = true;
+            foreach (var c in text)
             {
-                if (newWord) { yield return Char.ToUpper(c); newWord = false; }
+                if (newWord)
+                {
+                    yield return char.ToUpper(c);
+                    newWord = false;
+                }
                 else
                 {
-                    yield return Char.ToLower(c);
+                    yield return char.ToLower(c);
                 }
 
                 if (c == ' ')
@@ -125,11 +145,9 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        private static readonly Regex _isLowerRegEx = new Regex(@"^[^A-Z]*$", RegexOptions.Compiled);
-        private static readonly Regex _isUpperRegEx = new Regex(@"^[^a-z]*$", RegexOptions.Compiled);
-        private static readonly Regex _specailCharRegEx = new Regex(@"[^\@_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        /// <summary> Processes the char. </summary>
+        /// <summary>
+        ///  Processes the char.
+        /// </summary>
         /// <param name="i"> The i. </param>
         /// <param name="name"> The name. </param>
         /// <param name="singleWord"> The single word. </param>

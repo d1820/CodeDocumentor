@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -13,21 +14,23 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicConstructorAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary> Gets the supported diagnostics. </summary>
+        /// <summary>
+        ///  Gets the supported diagnostics.
+        /// </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                if (optionsService.IsEnabledForPublicMembersOnly)
-                {
-                    return new List<DiagnosticDescriptor>().ToImmutableArray();
-                }
-                return ImmutableArray.Create(ConstructorAnalyzerSettings.GetRule());
+                return optionsService.IsEnabledForPublicMembersOnly
+                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
+                    : ImmutableArray.Create(ConstructorAnalyzerSettings.GetRule());
             }
         }
 
-        /// <summary> Initializes. </summary>
+        /// <summary>
+        ///  Initializes.
+        /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
@@ -36,11 +39,13 @@ namespace CodeDocumentor
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ConstructorDeclaration);
         }
 
-        /// <summary> Analyzes node. </summary>
+        /// <summary>
+        ///  Analyzes node.
+        /// </summary>
         /// <param name="context"> The context. </param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            ConstructorDeclarationSyntax node = context.Node as ConstructorDeclarationSyntax;
+            var node = context.Node as ConstructorDeclarationSyntax;
             if (!PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;

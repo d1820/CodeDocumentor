@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -10,25 +11,29 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    /// <summary> The property analyzer. </summary>
+    /// <summary>
+    ///  The property analyzer.
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicPropertyAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary> Gets the supported diagnostics. </summary>
+        /// <summary>
+        ///  Gets the supported diagnostics.
+        /// </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
                 var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                if (optionsService.IsEnabledForPublicMembersOnly)
-                {
-                    return new List<DiagnosticDescriptor>().ToImmutableArray();
-                }
-                return ImmutableArray.Create(PropertyAnalyzerSettings.GetRule());
+                return optionsService.IsEnabledForPublicMembersOnly
+                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
+                    : ImmutableArray.Create(PropertyAnalyzerSettings.GetRule());
             }
         }
 
-        /// <summary> Initializes. </summary>
+        /// <summary>
+        ///  Initializes.
+        /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
@@ -37,12 +42,13 @@ namespace CodeDocumentor
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.PropertyDeclaration);
         }
 
-        /// <summary> Analyzes node. </summary>
+        /// <summary>
+        ///  Analyzes node.
+        /// </summary>
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            PropertyDeclarationSyntax node = context.Node as PropertyDeclarationSyntax;
-            if (node == null)
+            if (!(context.Node is PropertyDeclarationSyntax node))
             {
                 return;
             }

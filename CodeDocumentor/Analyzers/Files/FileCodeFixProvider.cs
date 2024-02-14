@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,10 +56,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            //if (CodeDocumentorPackage.IsDebugMode)
-            //{
-            //    return;
-            //}
+#if DEBUG
+            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            return;
+#endif
             Diagnostic diagnostic = context.Diagnostics.First();
 
             //build it up, but check for counts if anything actually needs to be shown
@@ -84,7 +85,7 @@ namespace CodeDocumentor
             {
                 return _nodesTempToReplace[n1];
             });
-            if(neededCommentCount == 0)
+            if (neededCommentCount == 0)
             {
                 return;
             }

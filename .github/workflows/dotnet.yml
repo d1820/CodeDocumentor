@@ -8,6 +8,20 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  release:
+    types:
+      - published    # Run the workflow when a new GitHub release is published
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  VisxDirectory: ${{github.workspace}}/vsix
+  Version: '2.1.0.${{ github.run_number }}'
+  BaseVersion: '2.1.0.0'
+
+defaults:
+  run:
+    shell: pwsh
 
 jobs:
   build:
@@ -15,10 +29,12 @@ jobs:
     runs-on: [windows-latest]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.1.1
+      with:
+       fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
 
     - name: Setup MsBuild
-      uses: microsoft/setup-msbuild@v1.3.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Setup VSTest.console.exe
         # You may pin to the exact commit or the version.
@@ -28,13 +44,51 @@ jobs:
     - name: Setup NuGet.exe
       # You may pin to the exact commit or the version.
       # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
-      uses: NuGet/setup-nuget@v1.2.0
+      uses: NuGet/setup-nuget@v2.0.0
+
+    - name: Update Visual Studio Extension version
+      uses: cezarypiatek/VsixVersionAction@1.1
+      with:
+        version: ${{ env.Version }}
+        vsix-manifest-file: 'Manifests\vs2022\source.extension.vsixmanifest'
+
+    - name: Update assembly version
+      run: |
+        (Get-Content -Path CodeDocumentor\Settings\VsixOptions.cs) |
+          ForEach-Object {$_ -Replace '${{ env.BaseVersion }}', '${{ env.Version }}'} |
+            Set-Content -Path CodeDocumentor\Settings\VsixOptions.cs
 
     - name: Restore dependencies
       run: nuget restore CodeDocumentor.sln
 
     - name: Build
-      run: msbuild CodeDocumentor.sln /p:platform="Any CPU" /p:configuration="Debug"
+      run: msbuild CodeDocumentor.sln /p:configuration="Release" /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal
 
     - name: Test
-      run: vstest.console.exe CodeDocumentor.Test\bin\Debug\net48\CodeDocumentor.Test.dll
+      run: vstest.console.exe CodeDocumentor.Test\bin\Release\net48\CodeDocumentor.Test.dll
+
+    - uses: actions/upload-artifact@v4.3.1
+      name: "Pack"
+      with:
+        name: "CodeDocumentor.vsix"
+        path: CodeDocumentor\bin\Release\CodeDocumentor.vsix
+
+  deploy:
+    # Publish only when creating a GitHub Release
+    # https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+    # You can update this logic if you want to manage releases differently
+    if: github.event_name == 'release'
+    runs-on: [windows-latest]
+    needs: [ build ]
+    steps:
+      # Download the NuGet package created in the previous job
+      - uses: actions/download-artifact@v4.1.2
+        with:
+          name: "CodeDocumentor.vsix"
+
+      - name: Publish extension to Marketplace
+        uses: cezarypiatek/VsixPublisherAction@1.1
+        with:
+          extension-file: 'CodeDocumentor.vsix'
+          publish-manifest-file: 'CodeDocumentor.vsix\manifest.json'
+          personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}

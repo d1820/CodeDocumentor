@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace CodeDocumentor.Helper
 {
     public static class DictionaryExtensions
     {
-        public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+        public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            if (!dict.ContainsKey(key))
+            if (!dictionary.ContainsKey(key))
             {
-                dict.Add(key, value);
+                dictionary.Add(key, value);
                 return true;
             }
             return false;

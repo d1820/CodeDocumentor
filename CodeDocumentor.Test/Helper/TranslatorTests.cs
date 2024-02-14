@@ -43,16 +43,17 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            _testFixure.RegisterCallback(_testFixure.CurrentTestName, (o) => {
+            _testFixure.RegisterCallback(_testFixure.CurrentTestName, (o) =>
+            {
                 var temp = o.WordMaps.ToList();
                 temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
                 temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+                temp.AddRange(Constants.INTERNAL_WORD_MAPS);
                 o.WordMaps = temp.ToArray();
             });
-            var translated = input.Translate();
+            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            var translated = input.ApplyUserTranslations();
             translated.Should().Be(output);
-            var ff = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            _output.WriteLine(ff.ExcludeAsyncSuffix.ToString());
         }
     }
 }

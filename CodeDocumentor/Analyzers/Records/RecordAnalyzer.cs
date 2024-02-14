@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -7,11 +8,15 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    /// <summary> The class analyzer. </summary>
+    /// <summary>
+    ///  The class analyzer.
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class RecordAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary> Gets the supported diagnostics. </summary>
+        /// <summary>
+        ///  Gets the supported diagnostics.
+        /// </summary>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -20,7 +25,9 @@ namespace CodeDocumentor
             }
         }
 
-        /// <summary> Initializes action. </summary>
+        /// <summary>
+        ///  Initializes action.
+        /// </summary>
         /// <param name="context"> The context. </param>
         public override void Initialize(AnalysisContext context)
         {
@@ -29,12 +36,13 @@ namespace CodeDocumentor
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.RecordDeclaration);
         }
 
-        /// <summary> Analyzes node. </summary>
+        /// <summary>
+        ///  Analyzes node.
+        /// </summary>
         /// <param name="context"> The context. </param>
         internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            RecordDeclarationSyntax node = context.Node as RecordDeclarationSyntax;
-            if (node == null)
+            if (!(context.Node is RecordDeclarationSyntax node))
             {
                 return;
             }

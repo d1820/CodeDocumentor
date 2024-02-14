@@ -4,6 +4,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -15,31 +16,47 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
 {
-    /// <summary> The class code fix provider. </summary>
+    /// <summary>
+    ///  The class code fix provider.
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ClassCodeFixProvider)), Shared]
     public class ClassCodeFixProvider : BaseCodeFixProvider
     {
-        /// <summary> Gets the fixable diagnostic ids. </summary>
+        private const string Title = "Code Documentor this class";
+
+        private const string TitleRebuild = "Code Documentor update this class";
+
+        /// <summary>
+        ///  Gets the fixable diagnostic ids.
+        /// </summary>
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ClassAnalyzerSettings.DiagnosticId);
 
-        /// <summary> Gets fix all provider. </summary>
+        /// <summary>
+        ///  Gets fix all provider.
+        /// </summary>
         /// <returns> A FixAllProvider. </returns>
         public sealed override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <summary> Registers code fixes async. </summary>
+        /// <summary>
+        ///  Registers code fixes async.
+        /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            Diagnostic diagnostic = context.Diagnostics.First();
-            Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+            var declaration = root?.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            if (declaration == null)
+            {
+                return;
+            }
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
 
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
@@ -57,70 +74,73 @@ namespace CodeDocumentor
             await RegisterFileCodeFixesAsync(context, diagnostic);
         }
 
-        /// <summary> Adds documentation header async. </summary>
+        /// <summary>
+        ///  Adds documentation header async.
+        /// </summary>
         /// <param name="document"> The document. </param>
         /// <param name="root"> The root. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        internal static async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        internal static Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            return await Task.Run(() =>
-            {
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                SyntaxNode newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
-
-                return document.WithSyntaxRoot(newRoot);
-            }, cancellationToken);
+            return Task.Run(() => TryHelper.Try(() =>
+                {
+                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
+                    return document.WithSyntaxRoot(newRoot);
+                }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
 
-        /// <summary> Builds the comments. This is only used in the file level fixProvider. </summary>
+        /// <summary>
+        ///  Builds the comments. This is only used in the file level fixProvider.
+        /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
         internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
-            foreach (var declarationSyntax in declarations)
+            TryHelper.Try(() =>
             {
-                if (optionsService.IsEnabledForPublicMembersOnly
-                    && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                foreach (var declarationSyntax in declarations)
                 {
-                    continue;
+                    if (optionsService.IsEnabledForPublicMembersOnly
+                        && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary()) //if the class has comments dont redo it. User should update manually
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
                 }
-                if (declarationSyntax.HasSummary()) //if the class has comments dont redo it. User should update manually
-                {
-                    continue;
-                }
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
-                neededCommentCount++;
-            }
+            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
-        private const string Title = "Code Documentor this class";
-
-        private const string TitleRebuild = "Code Documentor update this class";
-
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
-            SyntaxList<XmlNodeSyntax> list = SyntaxFactory.List<XmlNodeSyntax>();
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            string comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
+            var comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
+            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+                            .WithTypeParamters(declarationSyntax)
+                            .WithParameters(declarationSyntax)
+                            .WithExisting(declarationSyntax, Constants.REMARKS)
+                            .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                            .Build();
 
-            list = list.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText).WithTypeParamters(declarationSyntax)
-                        .WithParameters(declarationSyntax)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.REMARKS)
-                        .WithExisting(declarationSyntax, DocumentationHeaderHelper.EXAMPLE);
-
-            DocumentationCommentTriviaSyntax commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
 
             //append to any existing leading trivia [attributes, decorators, etc)
-            SyntaxTriviaList leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            ClassDeclarationSyntax newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+            var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
             return newDeclaration;
         }
     }

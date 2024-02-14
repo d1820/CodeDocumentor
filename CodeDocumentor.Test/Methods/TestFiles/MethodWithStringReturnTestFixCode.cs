@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,7 +9,7 @@ namespace ConsoleApp4
         /// <summary>
         /// Show method with string return tester.
         /// </summary>
-        /// <returns>string</returns>
+        /// <returns>A string</returns>
         public string ShowMethodWithStringReturnTester()
         {
             return null;

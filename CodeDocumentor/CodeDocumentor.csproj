@@ -38,7 +38,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CreateVsixContainer>False</CreateVsixContainer>
+    <CreateVsixContainer>True</CreateVsixContainer>
+    <DeployExtension>True</DeployExtension>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
+    <CopyVsixExtensionLocation>
+    </CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +53,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Analyzers\BaseAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Files\BaseCodeFixProvider.cs" />
     <Compile Include="Analyzers\Records\RecordAnalyzer.cs" />
     <Compile Include="Analyzers\Records\RecordAnalyzerSettings.cs" />
@@ -66,9 +71,13 @@
     <Compile Include="Analyzers\Fields\FieldAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Methods\MethodAnalyzerSettings.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Helper\CustomPluralizer.cs" />
-    <Compile Include="Helper\DiagnosticBuilder.cs" />
+    <Compile Include="Builders\DiagnosticBuilder.cs" />
     <Compile Include="Helper\DictionaryExtensions.cs" />
+    <Compile Include="Builders\DocumentationBuilder.cs" />
+    <Compile Include="Managers\GenericCommentManager.cs" />
+    <Compile Include="Helper\TokenHelper.cs" />
+    <Compile Include="Helper\TryHelper.cs" />
+    <Compile Include="Models\ReturnTypeBuilderOptions.cs" />
     <Compile Include="Helper\WordExtensions.cs" />
     <Compile Include="Models\Constants.cs" />
     <Compile Include="Analyzers\Constructors\ConstructorAnalyzer.cs" />
@@ -77,14 +86,14 @@
     <Compile Include="Analyzers\Enums\EnumCodeFixProvider.cs" />
     <Compile Include="Analyzers\Fields\FieldAnalyzer.cs" />
     <Compile Include="Analyzers\Fields\FieldCodeFixProvider.cs" />
-    <Compile Include="Helper\BaseReturnTypeCommentConstruction.cs" />
+    <Compile Include="Constructors\BaseReturnTypeCommentConstruction.cs" />
     <Compile Include="Helper\CommentHelper.cs" />
     <Compile Include="Helper\DocumentationHeaderHelper.cs" />
     <Compile Include="Helper\NameSplitter.cs" />
     <Compile Include="Helper\Pluralizer.cs" />
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
-    <Compile Include="Helper\ReturnCommentConstruction.cs" />
-    <Compile Include="Helper\SingleWordMethodCommentConstruction.cs" />
+    <Compile Include="Constructors\ReturnCommentConstruction.cs" />
+    <Compile Include="Constructors\SingleWordCommentSummaryConstruction.cs" />
     <Compile Include="Helper\Translator.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />
@@ -138,6 +147,7 @@
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.MD" />
     <None Include="tools\install.ps1" />
     <None Include="tools\uninstall.ps1" />
   </ItemGroup>

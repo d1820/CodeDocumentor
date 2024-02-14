@@ -25,7 +25,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GifInstruction", "GifInstruction", "{71CE4E03-2814-4AC9-88D4-968D55686C30}"
 	ProjectSection(SolutionItems) = preProject
 		GifInstruction\outOfProcess.png = GifInstruction\outOfProcess.png
-		GifInstruction\RecommendedSettings.png = GifInstruction\RecommendedSettings.png
 		GifInstruction\Settings.PNG = GifInstruction\Settings.PNG
 		GifInstruction\short cut to quick add.gif = GifInstruction\short cut to quick add.gif
 		GifInstruction\SingleTypeAddComments.gif = GifInstruction\SingleTypeAddComments.gif

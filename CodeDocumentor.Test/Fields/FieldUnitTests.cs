@@ -51,7 +51,6 @@ namespace CodeDocumentor.Test.Fields
                 };
 
                 await VerifyCSharpDiagnosticAsync(file, TestFixture.DIAG_TYPE_PUBLIC, expected);
-
             }
         }
 

@@ -5,6 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CodeDocumentor.Builders;
+using CodeDocumentor.Helper;
+using CodeDocumentor.Managers;
 using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
@@ -68,8 +71,11 @@ namespace CodeDocumentor.Test
                     {
                         callback.Invoke(os);
                     }
+                    Translator.Initialize(os);
                     return os;
                 }, Lifestyle.Transient);
+                _testContainer.Register<DocumentationBuilder>();
+                _testContainer.RegisterSingleton<GenericCommentManager>();
                 _testContainer.Verify();
                 return _testContainer;
             };
@@ -113,8 +119,8 @@ namespace CodeDocumentor.Test
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, SyntaxKind innerKindValue)
         {
-            PredefinedTypeSyntax keyNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKindKey));
-            PredefinedTypeSyntax valueNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKindValue));
+            var keyNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKindKey));
+            var valueNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKindValue));
             var nodes = new List<TypeSyntax> { keyNode, valueNode };
             var seperatedSyntaxList = SyntaxFactory.SeparatedList(nodes);
             var args = SyntaxFactory.TypeArgumentList(seperatedSyntaxList);
@@ -125,7 +131,7 @@ namespace CodeDocumentor.Test
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, GenericNameSyntax innerNode)
         {
-            PredefinedTypeSyntax keyNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKindKey));
+            var keyNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKindKey));
             var nodes = new List<TypeSyntax> { keyNode, innerNode };
             var seperatedSyntaxList = SyntaxFactory.SeparatedList(nodes);
             var args = SyntaxFactory.TypeArgumentList(seperatedSyntaxList);
@@ -134,9 +140,37 @@ namespace CodeDocumentor.Test
             return item;
         }
 
+        public static QualifiedNameSyntax BuildQualifiedNameSyntax(string part1, string part2)
+        {
+            // Create the left identifier
+            var leftIdentifier = SyntaxFactory.IdentifierName(part1);
+
+            // Create the right identifier
+            var rightIdentifier = SyntaxFactory.IdentifierName(part2);
+
+            // Create the qualified name syntax
+            return SyntaxFactory.QualifiedName(leftIdentifier, rightIdentifier);
+
+        }
+
+        public static PredefinedTypeSyntax BuildPredefinedTypeSyntax(SyntaxKind kind)
+        {
+            return SyntaxFactory.PredefinedType(SyntaxFactory.Token(kind));
+        }
+
+        public static ArrayTypeSyntax BuildArrayTypeSyntax(SyntaxKind kind)
+        {
+            // Create the element type (e.g., int)
+            var elementType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(kind));
+
+            // Create the array type syntax with a single dimension
+            return SyntaxFactory.ArrayType(elementType, SyntaxFactory.SingletonList(SyntaxFactory.ArrayRankSpecifier()));
+        }
+
+
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKind)
         {
-            PredefinedTypeSyntax stringNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKind));
+            var stringNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(innerKind));
             var nodes = new List<TypeSyntax> { stringNode };
             var seperatedSyntaxList = SyntaxFactory.SeparatedList(nodes);
             var args = SyntaxFactory.TypeArgumentList(seperatedSyntaxList);

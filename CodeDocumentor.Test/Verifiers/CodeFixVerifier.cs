@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -21,7 +21,6 @@ namespace CodeDocumentor.Test
     {
         protected CodeFixVerifier()
         {
-
         }
 
         /// <summary>
@@ -95,10 +94,10 @@ namespace CodeDocumentor.Test
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document);
             var attempts = analyzerDiagnostics.Length;
 
-            for (int i = 0; i < attempts; ++i)
+            for (var i = 0; i < attempts; ++i)
             {
                 var actions = new List<CodeAction>();
-                var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), CancellationToken.None);
+                var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, _) => actions.Add(a), CancellationToken.None);
 
                 await codeFixProvider.RegisterCodeFixesAsync(context);
 
@@ -140,7 +139,7 @@ namespace CodeDocumentor.Test
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocumentAsync(document);
-           Assert.Equal(newSource, actual);
+            Assert.Equal(newSource, actual);
         }
     }
 }

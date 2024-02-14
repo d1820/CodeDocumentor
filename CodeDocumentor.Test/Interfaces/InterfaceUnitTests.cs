@@ -8,7 +8,6 @@ using Xunit;
 
 namespace CodeDocumentor.Test.Interfaces
 {
-
     /// <summary>
     /// The interface unit test.
     /// </summary>

@@ -1,24 +1,24 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CodeDocumentor.Test.Enums
 {
     /// <summary>
     /// The enum unit test.
     /// </summary>
-
     public class EnumUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
 
-        public EnumUnitTest(TestFixture fixture)
+        public EnumUnitTest(TestFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
+            fixture.Initialize(output);
         }
 
         /// <summary>

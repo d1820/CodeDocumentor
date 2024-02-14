@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
@@ -14,11 +14,11 @@ namespace CodeDocumentor.Test.Constructors
     /// The constructor unit test.
     /// </summary>
     [SuppressMessage("XMLDocumentation", "")]
-    public class ConstrcutorUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
+    public class ConstructorUnitTest : CodeFixVerifier, IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
 
-        public ConstrcutorUnitTest(TestFixture fixture, ITestOutputHelper output)
+        public ConstructorUnitTest(TestFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             fixture.Initialize(output);

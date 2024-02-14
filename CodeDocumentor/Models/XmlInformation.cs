@@ -1,4 +1,4 @@
-﻿// For definitions of XML nodes see:
+// For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System.Text.RegularExpressions;
@@ -7,7 +7,15 @@ namespace CodeDocumentor.Vsix2022
 {
     public class XmlInformation
     {
-        //bool isXml, bool isGeneric, bool isTypeParam
+        public bool HasSeeCrefNode { get; }
+
+        public bool HasText { get; }
+
+        public bool HasTypeParam { get; }
+
+        public bool IsCData { get; }
+
+        public bool IsGeneric { get; }
 
         public XmlInformation(string text)
         {
@@ -15,15 +23,19 @@ namespace CodeDocumentor.Vsix2022
             {
                 return;
             }
-            IsXml = Regex.IsMatch(text, @"CDATA");
-            IsGeneric = Regex.IsMatch(text, @"(\w+\<)");
-            IsTypeParam = Regex.IsMatch(text, @"(<typeparam)");
-            IsSeeNode = Regex.IsMatch(text, @"(<see)");
-        }
+            var match = Regex.Match(text, @"<!\[CDATA\[.*\]\]>");
+            IsCData = match.Success;
 
-        public bool IsXml { get; }
-        public bool IsGeneric { get; }
-        public bool IsTypeParam { get; }
-        public bool IsSeeNode { get; }
+            match = Regex.Match(text, @"(^\w+<.*>$)");
+            IsGeneric = match.Success;
+
+            match = Regex.Match(text, "(<typeparamref.*?>)");
+            HasTypeParam = match.Success;
+
+            match = Regex.Match(text, "(<see.*?>)");
+            HasSeeCrefNode = match.Success;
+
+            HasText = !string.IsNullOrEmpty(Regex.Match(text, @"^\w*|\w*$")?.Value.Trim());
+        }
     }
 }

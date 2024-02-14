@@ -11,7 +11,7 @@ namespace ConsoleApp4
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        /// <returns>string</returns>
+        /// <returns>A string</returns>
         public string ShowMethodWithStringReturnTester()
         {
             ArgumentNullException.ThrowIfNull("test", "test");

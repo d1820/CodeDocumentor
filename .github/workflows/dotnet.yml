@@ -16,6 +16,8 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   VisxDirectory: ${{github.workspace}}/vsix
+  Version: '2.1.0.${{ github.run_number }}'
+  BaseVersion: '2.1.0.0'
 
 defaults:
   run:
@@ -44,13 +46,16 @@ jobs:
       # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
       uses: NuGet/setup-nuget@v1.2.0
 
-    - name: Update version
+    - name: Update Visual Studio Extension version
+      uses: cezarypiatek/VsixVersionAction@1.0
+      with:
+        version: ${{ env.Version }}
+        vsix-manifest-file: 'src\CodeDocumentor\Manifests\vs2022\source.extension.vsixmanifest'
+        
+    - name: Update assembly version
       run: |
-        (Get-Content -Path CodeDocumentor\Manifests\vs2022\source.extension.vsixmanifest) |
-          ForEach-Object {$_ -Replace '2.0.2.0', '2.0.2.${{ github.run_number }}'} |
-            Set-Content -Path CodeDocumentor\Manifests\vs2022\source.extension.vsixmanifest
         (Get-Content -Path CodeDocumentor\Properties\AssemblyInfo.cs) |
-          ForEach-Object {$_ -Replace '2.0.2.0', '2.0.2.${{ github.run_number }}'} |
+          ForEach-Object {$_ -Replace '${{ env.BaseVersion }}', '${{ env.Version }}'} |
             Set-Content -Path CodeDocumentor\Properties\AssemblyInfo.cs
 
     - name: Restore dependencies
@@ -68,25 +73,22 @@ jobs:
         name: "CodeDocumentor.vsix"
         path: CodeDocumentor\bin\Release\CodeDocumentor.vsix
 
-  # deploy:
-  #   # Publish only when creating a GitHub Release
-  #   # https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
-  #   # You can update this logic if you want to manage releases differently
-  #   if: github.event_name == 'release'
-  #   runs-on: ubuntu-latest
-  #   needs: [ build ]
-  #   steps:
-  #     # Download the NuGet package created in the previous job
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: "CodeDocumentor.vsix"
+  deploy:
+    # Publish only when creating a GitHub Release
+    # https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+    # You can update this logic if you want to manage releases differently
+    if: github.event_name == 'release'
+    runs-on: [windows-latest]
+    needs: [ build ]
+    steps:
+      # Download the NuGet package created in the previous job
+      - uses: actions/download-artifact@v3
+        with:
+          name: "CodeDocumentor.vsix"
 
-  #     # Publish all NuGet packages to NuGet.org
-  #     # Use --skip-duplicate to prevent errors if a package with the same version already exists.
-  #     # If you retry a failed workflow, already published packages will be skipped without error.
-  #     - name: Publish NuGet package
-  #       run: |
-  #         foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
-  #             dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-  #         }
-
+      - name: Publish extension to Marketplace
+        uses: cezarypiatek/VsixPublisherAction@0.1
+        with:
+          extension-file: 'CodeDocumentor.vsix'
+          publish-manifest-file: 'CodeDocumentor.vsix\manifest.json'
+          personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}

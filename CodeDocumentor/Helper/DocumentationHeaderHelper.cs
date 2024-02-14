@@ -374,14 +374,14 @@ namespace CodeDocumentor.Helper
                 exceptions.AddRange(_regEx.Matches(textToSearch).OfType<Match>()
                                                            .Select(m => m?.Groups[0]?.Value)
                                                            .ToList());
-            });
+            }, eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.EXCEPTION_BUILDER);
 
             TryHelper.Try(() =>
             {
                 var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
                                                                .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
                 exceptions.AddRange(exceptionsInline);
-            });
+            }, eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.EXCEPTION_BUILDER);
 
             return exceptions.Distinct();
         }
@@ -442,7 +442,7 @@ namespace CodeDocumentor.Helper
                         {
                             xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} XML"));
                             xmlNodes.Add(SyntaxFactory.XmlText(" "));
-                        });
+                        }, eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.XML_STRING_PARSER);
                     }
                     else
                     {
@@ -455,7 +455,7 @@ namespace CodeDocumentor.Helper
             {
                 xmlNodes.Clear();
                 xmlNodes.Add(SyntaxFactory.XmlText(""));
-            });
+            }, eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.XML_STRING_PARSER);
 
             return xmlNodes;
         }

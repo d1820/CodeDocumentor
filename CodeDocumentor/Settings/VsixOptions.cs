@@ -8,8 +8,8 @@ namespace CodeDocumentor.Settings
         public const string PackageGuidString = "88F29096-CA4C-4F88-A260-705D8BBFCF2A";
 
         /// <summary>
-        ///  The version.
+        ///  The version. This needs to be kept in sync with Manifest version
         /// </summary>
-        public const string Version = "2.1";
+        public const string Version = "2.0.2.0";
     }
 }

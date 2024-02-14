@@ -59,7 +59,6 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
   **Please disable this setting to allow CodeDocumentor to work correctly.**
 
 - As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect _Run code analysis on latest .NET_.
-    - I also needed to change the _Run background code analysis for_ to **Entire Solution**
 
    ![Out Of Process Latest](./GifInstruction/OutOfProessLatest.png)
 
@@ -262,7 +261,7 @@ How fast comments can be added
 If you are finding the code documentor is crashing or causing errors.
 All errors are written to the EventLog in windows. Check there for causes, and use this information to file a bug.
 
-**Source**: "Microsoft Visual Studio"
+**Source**: "Visual Studio"
 
 **Message Prefix**: "CodeDocumentor: "
 

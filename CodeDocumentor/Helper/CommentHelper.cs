@@ -335,6 +335,10 @@ namespace CodeDocumentor.Helper
         /// <returns> A bool. </returns>
         public static bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
         {
+            if (commentTriviaSyntax == null)
+            {
+                return false;
+            }
             var hasSummary = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlElementSyntax>()

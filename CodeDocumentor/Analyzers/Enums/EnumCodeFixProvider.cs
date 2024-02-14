@@ -51,8 +51,11 @@ namespace CodeDocumentor
             var diagnostic = context.Diagnostics.First();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<EnumDeclarationSyntax>().First();
-
+            var declaration = root?.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<EnumDeclarationSyntax>().FirstOrDefault();
+            if (declaration == null)
+            {
+                return;
+            }
             var displayTitle = declaration.HasSummary() ? TitleRebuild : Title;
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -73,16 +76,19 @@ namespace CodeDocumentor
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.EnumDeclaration)).OfType<EnumDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
-            foreach (var declarationSyntax in declarations)
+            TryHelper.Try(() =>
             {
-                if (declarationSyntax.HasSummary())
+                foreach (var declarationSyntax in declarations)
                 {
-                    continue;
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
                 }
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
-                neededCommentCount++;
-            }
+            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
@@ -108,14 +114,14 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, EnumDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, EnumDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            return await Task.Run(() =>
+            return Task.Run(() => TryHelper.Try(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, cancellationToken);
+            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

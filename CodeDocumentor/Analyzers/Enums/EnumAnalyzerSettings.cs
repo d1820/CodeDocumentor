@@ -1,16 +1,11 @@
-using CodeDocumentor.Services;
+using CodeDocumentor.Analyzers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal static class EnumAnalyzerSettings
+    internal class EnumAnalyzerSettings : BaseAnalyzerSettings
     {
-        /// <summary>
-        ///  The category.
-        /// </summary>
-        internal const string Category = Constants.CATEGORY;
-
         /// <summary>
         ///  The diagnostic id.
         /// </summary>
@@ -31,10 +26,9 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             return new DiagnosticDescriptor(EnumAnalyzerSettings.DiagnosticId, EnumAnalyzerSettings.Title,
                 EnumAnalyzerSettings.MessageFormat, EnumAnalyzerSettings.Category,
-                hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.EnumDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity, true);
+                hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId), true);
         }
     }
 }

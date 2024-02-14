@@ -5,7 +5,7 @@ namespace CodeDocumentor.Helper
 {
     internal static class TryHelper
     {
-        internal static void Try(Action action, Action<Exception> exceptionCallback = null, bool reThrow = false)
+        internal static void Try(Action action, Action<Exception> exceptionCallback = null, bool reThrow = false, int eventId = 0, short category = 0)
         {
             try
             {
@@ -13,7 +13,7 @@ namespace CodeDocumentor.Helper
             }
             catch (Exception ex)
             {
-                Log.LogError(ex.ToString());
+                Log.LogError(ex.ToString(), eventId, category);
                 exceptionCallback?.Invoke(ex);
                 if (reThrow)
                 {
@@ -22,7 +22,7 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        internal static TResult Try<TResult>(Func<TResult> action, Func<Exception, TResult> exceptionCallback, bool reThrow = false)
+        internal static TResult Try<TResult>(Func<TResult> action, Func<Exception, TResult> exceptionCallback, bool reThrow = false, int eventId = 0, short category = 0)
         {
             try
             {
@@ -30,8 +30,7 @@ namespace CodeDocumentor.Helper
             }
             catch (Exception ex)
             {
-                Log.LogError(ex.ToString());
-
+                Log.LogError(ex.ToString(), eventId, category);
                 if (reThrow)
                 {
                     throw;
@@ -40,7 +39,7 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        internal static TResult Try<TResult>(Func<TResult> action, Action<Exception> exceptionCallback = null, bool reThrow = false)
+        internal static TResult Try<TResult>(Func<TResult> action, Action<Exception> exceptionCallback = null, bool reThrow = false, int eventId = 0, short category = 0)
         {
             try
             {
@@ -48,7 +47,7 @@ namespace CodeDocumentor.Helper
             }
             catch (Exception ex)
             {
-                Log.LogError(ex.ToString());
+                Log.LogError(ex.ToString(), eventId, category);
                 exceptionCallback?.Invoke(ex);
                 if (reThrow)
                 {

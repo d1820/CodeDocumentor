@@ -1,16 +1,11 @@
-using CodeDocumentor.Services;
+using CodeDocumentor.Analyzers;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal static class PropertyAnalyzerSettings
+    internal class PropertyAnalyzerSettings: BaseAnalyzerSettings
     {
-        /// <summary>
-        ///  The category.
-        /// </summary>
-        internal const string Category = Constants.CATEGORY;
-
         /// <summary>
         ///  The diagnostic id.
         /// </summary>
@@ -31,10 +26,9 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             return new DiagnosticDescriptor(PropertyAnalyzerSettings.DiagnosticId, PropertyAnalyzerSettings.Title,
                 PropertyAnalyzerSettings.MessageFormat, PropertyAnalyzerSettings.Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : optionsService.PropertyDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity, true);
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId), true);
         }
     }
 }

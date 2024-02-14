@@ -53,6 +53,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Analyzers\BaseAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Files\BaseCodeFixProvider.cs" />
     <Compile Include="Analyzers\Records\RecordAnalyzer.cs" />
     <Compile Include="Analyzers\Records\RecordAnalyzerSettings.cs" />

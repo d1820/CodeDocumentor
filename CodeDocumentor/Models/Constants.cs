@@ -3,11 +3,30 @@
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System.Collections.Generic;
 using CodeDocumentor.Helper;
+using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Vsix2022
 {
     public static class Constants
     {
+        public const DiagnosticSeverity DefaultDiagnosticSeverityOnError = DiagnosticSeverity.Info;
+
+        public static class EventIds
+        {
+            public const int ANALYZER = 1000;
+            public const int FIXER = 1100;
+            public const int HEADER_HELPER = 1200;
+            public const int FILE_FIXER = 1300;
+
+            public static class Categories
+            {
+                public const short BUILD_COMMENTS = 10;
+                public const short ADD_DOCUMENTATION_HEADER = 20;
+                public const short EXCEPTION_BUILDER = 30;
+                public const short XML_STRING_PARSER = 40;
+            }
+        }
+
         /// <summary>
         ///  The category of the diagnostic.
         /// </summary>

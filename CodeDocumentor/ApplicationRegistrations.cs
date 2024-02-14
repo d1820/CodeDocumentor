@@ -1,7 +1,6 @@
 using CodeDocumentor.Builders;
 using CodeDocumentor.Managers;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using SimpleInjector;
 
 namespace CodeDocumentor

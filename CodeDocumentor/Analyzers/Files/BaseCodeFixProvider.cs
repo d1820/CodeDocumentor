@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CodeDocumentor.Helper;
+using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -42,44 +44,46 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-#if DEBUG
-            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            return;
-#endif
+            //#if DEBUG
+            //            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            //            return;
+            //#endif
             //build it up, but check for counts if anything actually needs to be shown
-            var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
-            //Order Matters
-            var neededCommentCount = 0;
-            neededCommentCount += PropertyCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += ConstructorCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += EnumCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += FieldCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += MethodCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
-            {
-                return _nodesTempToReplace[n1];
-            });
-            _nodesTempToReplace.Clear();
-            neededCommentCount += InterfaceCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += ClassCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += RecordCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
-            {
-                return _nodesTempToReplace[n1];
-            });
-            if (neededCommentCount == 0)
+            if (root == null)
             {
                 return;
             }
+            TryHelper.Try(() =>
+            {
+                var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
 
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: FILE_FIX_TITLE,
-                    createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
-                    equivalenceKey: FILE_FIX_TITLE),
-                diagnostic);
+                //Order Matters
+                var neededCommentCount = 0;
+                neededCommentCount += PropertyCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += ConstructorCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += EnumCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += FieldCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += MethodCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
+                _nodesTempToReplace.Clear();
+                neededCommentCount += InterfaceCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += ClassCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += RecordCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
+                if (neededCommentCount == 0)
+                {
+                    return;
+                }
+
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        title: FILE_FIX_TITLE,
+                        createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
+                        equivalenceKey: FILE_FIX_TITLE),
+                    diagnostic);
+            }, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
         }
     }
 }

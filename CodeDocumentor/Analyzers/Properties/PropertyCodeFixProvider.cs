@@ -52,8 +52,11 @@ namespace CodeDocumentor
             var diagnostic = context.Diagnostics.First();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
-
+            var declaration = root?.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().FirstOrDefault();
+            if (declaration == null)
+            {
+                return;
+            }
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
@@ -79,21 +82,24 @@ namespace CodeDocumentor
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.PropertyDeclaration)).OfType<PropertyDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            foreach (var declarationSyntax in declarations)
+            TryHelper.Try(() =>
             {
-                if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                foreach (var declarationSyntax in declarations)
                 {
-                    continue;
+                    if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
                 }
-                if (declarationSyntax.HasSummary())
-                {
-                    continue;
-                }
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
-                nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
-                neededCommentCount++;
-            }
+            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
@@ -135,14 +141,14 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        private async Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
-            return await Task.Run(() =>
+            return Task.Run(() => TryHelper.Try(() =>
             {
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, cancellationToken);
+            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

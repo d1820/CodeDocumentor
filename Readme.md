@@ -56,12 +56,13 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
   ![OutOfProcess](./GifInstruction/outOfProcess.png)
 
+  **Please disable this setting to allow CodeDocumentor to work correctly.**
+
 - As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect _Run code analysis on latest .NET_.
     - I also needed to change the _Run background code analysis for_ to **Entire Solution**
 
-   ![Out Of Process Latest](GifInstruction/OutOfProessLatest.png)
+   ![Out Of Process Latest](./GifInstruction/OutOfProessLatest.png)
 
-  **Please disable this setting to allow CodeDocumentor to work correctly.**
 
 ## Comment Ordering
 

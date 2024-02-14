@@ -27,7 +27,6 @@ namespace CodeDocumentor.Test.Helper
                 ReturnGenericTypeAsFullString = false,
                 TryToIncludeCrefsForReturnTypes = true,
                 IncludeStartingWordInText = true,
-                //IncludeReturnStatementInGeneralComments = true
             };
         }
 

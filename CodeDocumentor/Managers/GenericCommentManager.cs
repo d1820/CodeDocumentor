@@ -104,7 +104,6 @@ namespace CodeDocumentor.Managers
             comment = builder.ToString();
             comment = comment.RemovePeriod();
             return comment;
-            //return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
         }
 
         public string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
@@ -159,7 +158,6 @@ namespace CodeDocumentor.Managers
             comment = prefix + buildComment;
             comment = comment.RemovePeriod();
             return comment;
-            //return !options.BuildWithPeriodAndPrefixForTaskTypes ? comment.WithPeriod() : comment;
         }
 
         private static string BuildPrefix(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)

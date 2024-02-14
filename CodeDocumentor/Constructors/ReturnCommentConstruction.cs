@@ -25,7 +25,6 @@ namespace CodeDocumentor.Constructors
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
                 TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
                 IncludeStartingWordInText = true,
-                //ReturnBuildType = ReturnBuildType.ReturnXmlElement,
                 UseProperCasing = true
             };
             BuildReturnComment(returnType, options);

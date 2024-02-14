@@ -29,12 +29,12 @@ jobs:
     runs-on: [windows-latest]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.1.1
       with:
        fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
 
     - name: Setup MsBuild
-      uses: microsoft/setup-msbuild@v1.3.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Setup VSTest.console.exe
         # You may pin to the exact commit or the version.
@@ -44,10 +44,10 @@ jobs:
     - name: Setup NuGet.exe
       # You may pin to the exact commit or the version.
       # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
-      uses: NuGet/setup-nuget@v1.2.0
+      uses: NuGet/setup-nuget@v2.0.0
 
     - name: Update Visual Studio Extension version
-      uses: cezarypiatek/VsixVersionAction@1.0
+      uses: cezarypiatek/VsixVersionAction@1.1
       with:
         version: ${{ env.Version }}
         vsix-manifest-file: 'Manifests\vs2022\source.extension.vsixmanifest'
@@ -82,12 +82,12 @@ jobs:
     needs: [ build ]
     steps:
       # Download the NuGet package created in the previous job
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.2
         with:
           name: "CodeDocumentor.vsix"
 
       - name: Publish extension to Marketplace
-        uses: cezarypiatek/VsixPublisherAction@0.1
+        uses: cezarypiatek/VsixPublisherAction@1.1
         with:
           extension-file: 'CodeDocumentor.vsix'
           publish-manifest-file: 'CodeDocumentor.vsix\manifest.json'

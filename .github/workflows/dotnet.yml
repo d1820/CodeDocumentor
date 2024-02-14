@@ -90,5 +90,5 @@ jobs:
         uses: cezarypiatek/VsixPublisherAction@1.1
         with:
           extension-file: 'CodeDocumentor.vsix'
-          publish-manifest-file: 'CodeDocumentor.vsix\manifest.json'
+          publish-manifest-file: 'CodeDocumentor\CodeDocumentor.vsix\manifest.json'
           personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}

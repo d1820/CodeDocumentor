@@ -10,6 +10,6 @@ namespace CodeDocumentor.Settings
         /// <summary>
         ///  The version. This needs to be kept in sync with Manifest version
         /// </summary>
-        public const string Version = "2.0.2.0";
+        public const string Version = "2.1.0.0";
     }
 }

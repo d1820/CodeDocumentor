@@ -1,6 +1,6 @@
 # CodeDocumentor
 ---
-![GitHub CI](https://github.com/d1820/CodeDocumentor/actions/workflows/dotnet.yml/badge.svg)
+![GitHub CI](https://img.shields.io/github/actions/workflow/status/d1820/CodeDocumentor/dotnet.yml)
 ![GitHub License](https://img.shields.io/github/license/d1820/CodeDocumentor?logo=github&logoColor=green)
 ![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/DanTurco.CodeDocumentor)
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.CodeDocumentor)

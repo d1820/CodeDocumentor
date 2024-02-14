@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 namespace CodeDocumentor.Helper
 {
     public static class WordExtensions
     {
+        private static readonly Regex _xmlElementRegEx = new Regex(Constants.XML_ELEMENT_ONLY_MATCH_REGEX_TEMPLATE);
+
         public static string Clean(this string word)
         {
             var pattern = "[^a-zA-Z0-9 ]";
@@ -75,6 +76,10 @@ namespace CodeDocumentor.Helper
 
         public static bool IsVerbCombo(this string word, string nextWord = null)
         {
+            if (string.IsNullOrEmpty(word))
+            {
+                return false;
+            }
             var skipWord = word.IsVerb();
             var skipNextWord = false;
             if (!string.IsNullOrEmpty(nextWord) && !skipWord)
@@ -84,8 +89,21 @@ namespace CodeDocumentor.Helper
             return skipWord || skipNextWord;
         }
 
+        public static bool IsXml(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return false;
+            }
+            return _xmlElementRegEx.IsMatch(str);
+        }
+
         public static bool StartsWith_A_An_And(this string str)
         {
+            if (string.IsNullOrEmpty(str))
+            {
+                return false;
+            }
             return str.StartsWith("a ", StringComparison.InvariantCultureIgnoreCase) ||
                 str.StartsWith("an ", StringComparison.InvariantCultureIgnoreCase) ||
                 str.StartsWith("and ", StringComparison.InvariantCultureIgnoreCase);
@@ -93,6 +111,11 @@ namespace CodeDocumentor.Helper
 
         public static string ToTitleCase(this string txt)
         {
+            if (string.IsNullOrEmpty(txt))
+            {
+                return txt;
+            }
+
             return char.ToUpper(txt[0]) + txt.Substring(1);
         }
 

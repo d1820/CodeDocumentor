@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -37,6 +38,22 @@ namespace CodeDocumentor.Test.TestHelpers
 
         public void SetDefaults(IOptionPageGrid options)
         {
+            IsEnabledForPublicMembersOnly = options.IsEnabledForPublicMembersOnly;
+            UseNaturalLanguageForReturnNode = options.UseNaturalLanguageForReturnNode;
+            ExcludeAsyncSuffix = options.ExcludeAsyncSuffix;
+            IncludeValueNodeInProperties = options.IncludeValueNodeInProperties;
+            UseToDoCommentsOnSummaryError = options.UseToDoCommentsOnSummaryError;
+            WordMaps = options.WordMaps;
+            DefaultDiagnosticSeverity = options.DefaultDiagnosticSeverity;
+            PreserveExistingSummaryText = options.PreserveExistingSummaryText;
+            ClassDiagnosticSeverity = options.ClassDiagnosticSeverity;
+            ConstructorDiagnosticSeverity = options.ConstructorDiagnosticSeverity;
+            EnumDiagnosticSeverity = options.EnumDiagnosticSeverity;
+            FieldDiagnosticSeverity = options.FieldDiagnosticSeverity;
+            InterfaceDiagnosticSeverity = options.InterfaceDiagnosticSeverity;
+            MethodDiagnosticSeverity = options.MethodDiagnosticSeverity;
+            PropertyDiagnosticSeverity = options.PropertyDiagnosticSeverity;
+            RecordDiagnosticSeverity = options.RecordDiagnosticSeverity;
         }
 
         public void Update(Vsix2022.Settings settings)

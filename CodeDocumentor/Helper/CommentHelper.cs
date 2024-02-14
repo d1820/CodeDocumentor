@@ -19,8 +19,6 @@ namespace CodeDocumentor.Helper
     /// </summary>
     public static class CommentHelper
     {
-        private static readonly Regex _xmlElementRegEx = new Regex(Constants.XML_ELEMENT_MATCH_REGEX_TEMPLATE);
-
         /// <summary>
         ///  Creates the class comment.
         /// </summary>
@@ -557,12 +555,12 @@ namespace CodeDocumentor.Helper
 
                 var options = new ReturnTypeBuilderOptions
                 {
-                    ReturnBuildType = ReturnBuildType.SummaryXmlElement,
+                    //ReturnBuildType = ReturnBuildType.SummaryXmlElement,
                     UseProperCasing = false,
                     TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
                     IncludeStartingWordInText = true
                 };
-                var returnComment = new SingleWordCommentConstruction(returnType, options).Comment;
+                var returnComment = new SingleWordCommentSummaryConstruction(returnType, options).Comment;
                 returnTapAction?.Invoke(returnComment);
                 if (!string.IsNullOrEmpty(returnComment))
                 {

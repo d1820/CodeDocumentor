@@ -1,19 +1,23 @@
 namespace CodeDocumentor.Helper
 {
-    public enum ReturnBuildType
-    {
-        ReturnXmlElement,
-        SummaryXmlElement
-    }
+    //public enum ReturnBuildType
+    //{
+    //    ReturnXmlElement,
+    //    SummaryXmlElement,
+    //    PropertyXmlElement
+    //}
 
     public class ReturnTypeBuilderOptions
     {
         public bool IncludeStartingWordInText { get; set; }
 
+        //This is really only checed from the property comment analyzer to determine if should show a <value> node
+        public bool GenerateReturnStatement { get; set; } = true;
+
         //This controls if TitleCase needs to be applied to the return text
         public bool IsRootReturnType { get; set; } = true;
 
-        public ReturnBuildType ReturnBuildType { get; set; }
+        //public ReturnBuildType ReturnBuildType { get; set; }
 
         //This controls if we just return the type as a string and not process it
         public bool ReturnGenericTypeAsFullString { get; set; }
@@ -30,9 +34,10 @@ namespace CodeDocumentor.Helper
             clone.ReturnGenericTypeAsFullString = ReturnGenericTypeAsFullString;
             clone.TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes;
             clone.IsRootReturnType = IsRootReturnType;
-            clone.ReturnBuildType = ReturnBuildType;
+            //clone.ReturnBuildType = ReturnBuildType;
             clone.IncludeStartingWordInText = IncludeStartingWordInText;
             clone.UseProperCasing = UseProperCasing;
+            clone.GenerateReturnStatement = GenerateReturnStatement;
             return clone;
         }
     }

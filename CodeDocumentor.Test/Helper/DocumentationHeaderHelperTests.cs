@@ -21,7 +21,7 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateReturnElementSyntax_ReturnsTypeParamRefAsEmbeddedNodeInReturn()
         {
-            const string str = "<typeparamref name=\"TResult\"/>";
+            const string str = "A <typeparamref name=\"TResult\"/>";
             const string expected = "<returns>A <typeparamref name=\"TResult\"/></returns>";
             var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
             result.ToFullString().Should().Be(expected);
@@ -65,7 +65,7 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateReturnElementSyntax_ReturnsStringAndCRefOfInterfaceTypeInReturn()
         {
-            const string str = "Returns an <see cref=\"IMasterClass\"I/>";
+            const string str = "Returns an <see cref=\"IMasterClass\"/>";
             const string expected = "<returns>Returns an <see cref=\"IMasterClass\"/></returns>";
             var result = DocumentationHeaderHelper.CreateReturnElementSyntax(str);
             result.ToFullString().Should().Be(expected);

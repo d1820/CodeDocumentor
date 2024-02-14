@@ -91,17 +91,13 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithPropertyValueTypes(BasePropertyDeclarationSyntax declarationSyntax, bool includeValueNodeInProperties)
+        internal DocumentationBuilder WithPropertyValueTypes(BasePropertyDeclarationSyntax declarationSyntax,
+                                                                ReturnTypeBuilderOptions options)
         {
-            if (includeValueNodeInProperties)
+            if (options.GenerateReturnStatement)
             {
-                var options = new ReturnTypeBuilderOptions
-                {
-                    ReturnGenericTypeAsFullString = false,
-                    TryToIncludeCrefsForReturnTypes = true,
-                };
                 var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
-                var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment);
+                var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment, "value");
 
                 Reset().WithTripleSlashSpace()
                             .WithElement(returnElement) //this already contains the rest of the /// for all the line <summary>...</summary>

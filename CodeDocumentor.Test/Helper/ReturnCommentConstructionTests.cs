@@ -294,7 +294,7 @@ namespace CodeDocumentor.Test.Helper
             var method = TestFixture.BuildMethodDeclarationSyntax("TResult", "Tester");
             _options.IncludeStartingWordInText = true;
             var comment = _returnCommentBuilder.BuildComment(method.ReturnType, _options);
-            comment.Should().Be("<typeparamref name=\"TResult\"/>");
+            comment.Should().Be("a <typeparamref name=\"TResult\"/>");
         }
 
         #endregion
@@ -404,7 +404,7 @@ namespace CodeDocumentor.Test.Helper
             returnType.Should().NotBeNull();
 
             var comment = _returnCommentBuilder.BuildComment(returnType, _options);
-            comment.Should().Be("<typeparamref name=\"CustomClass\"/>");
+            comment.Should().Be("a <typeparamref name=\"CustomClass\"/>");
         }
 
         #endregion

@@ -43,6 +43,14 @@ namespace CodeDocumentor.Constructors
                 if (parent != null && parent.TypeParameterList?.Parameters.Any(a => a.Identifier.ValueText == identifier.Identifier.ValueText) == true)
                 {
                     var typeParamNode = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparamref", "name", identifier.Identifier.ValueText);
+                    if (options.IncludeStartingWordInText)
+                    {
+                        var startWord = DocumentationHeaderHelper.DetermineStartingWord(identifier.Identifier.ValueText.AsSpan(), options.UseProperCasing);
+                        if (!string.IsNullOrEmpty(startWord))
+                        {
+                            return $"{startWord} {typeParamNode.ToFullString()}";
+                        }
+                    }
                     return typeParamNode.ToFullString();
                 }
                 return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options);

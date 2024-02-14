@@ -25,7 +25,7 @@ namespace CodeDocumentor.Constructors
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
                 TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
                 IncludeStartingWordInText = true,
-                ReturnBuildType = ReturnBuildType.ReturnXmlElement,
+                //ReturnBuildType = ReturnBuildType.ReturnXmlElement,
                 UseProperCasing = true
             };
             BuildReturnComment(returnType, options);
@@ -44,20 +44,20 @@ namespace CodeDocumentor.Constructors
         private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var comment = BuildComment(returnType, options).Trim();
-            if (!options.ReturnGenericTypeAsFullString)
+            if (options.IncludeStartingWordInText && !options.ReturnGenericTypeAsFullString)
             {
                 if (!string.IsNullOrEmpty(comment))
                 {
                     Comment = string.Format("{0} {1}", DocumentationHeaderHelper.DetermineStartingWord(comment.AsSpan(), true), comment).Trim();
-                    if (options.UseProperCasing)
-                    {
-                        Comment = Comment.ToTitleCase();
-                    }
                 }
             }
             else
             {
                 Comment = comment;
+            }
+            if (options.UseProperCasing && !Comment.IsXml())
+            {
+                Comment = Comment.ToTitleCase();
             }
         }
     }

@@ -40,6 +40,7 @@ namespace CodeDocumentor.Vsix2022
 
         public static readonly string WORD_MATCH_REGEX_TEMPLATE = @"\b({0})\b";
         public static readonly string XML_ELEMENT_MATCH_REGEX_TEMPLATE = "<.*?>";
+        public static readonly string XML_ELEMENT_ONLY_MATCH_REGEX_TEMPLATE = "^<.*?>$";
         public static string NEWLINE = "\r\n";
 
         public static string[] ADD_THE_ANYWAY_LIST { get; set; } = new[] { "does" };

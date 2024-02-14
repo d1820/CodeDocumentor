@@ -92,7 +92,7 @@
     <Compile Include="Helper\Pluralizer.cs" />
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
     <Compile Include="Constructors\ReturnCommentConstruction.cs" />
-    <Compile Include="Constructors\SingleWordCommentConstruction.cs" />
+    <Compile Include="Constructors\SingleWordCommentSummaryConstruction.cs" />
     <Compile Include="Helper\Translator.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />

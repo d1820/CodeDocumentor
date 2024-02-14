@@ -324,7 +324,7 @@ namespace CodeDocumentor.Helper
             }
             var str = returnType.ToString();
             //if the returnType already starts with a or an then just return
-            if (str.StartsWith_A_An_And())
+            if (str.StartsWith_A_An_And() || str.IsXml())
             {
                 return string.Empty;
             }

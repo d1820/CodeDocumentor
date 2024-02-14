@@ -105,8 +105,17 @@ namespace CodeDocumentor
             var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+
+            var returnOptions = new ReturnTypeBuilderOptions
+            {
+                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
+                GenerateReturnStatement = optionsService.IncludeValueNodeInProperties,
+                ReturnGenericTypeAsFullString = false,
+                IncludeStartingWordInText = true,
+                UseProperCasing = true
+            };
             var list = builder.WithSummary(declarationSyntax, propertyComment, optionsService.PreserveExistingSummaryText)
-                        .WithPropertyValueTypes(declarationSyntax, optionsService.IncludeValueNodeInProperties)
+                        .WithPropertyValueTypes(declarationSyntax, returnOptions)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
                         .Build();

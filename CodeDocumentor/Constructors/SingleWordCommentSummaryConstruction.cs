@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Constructors
 {
-    public class SingleWordCommentConstruction : BaseReturnTypeCommentConstruction
+    public class SingleWordCommentSummaryConstruction : BaseReturnTypeCommentConstruction
     {
         /// <summary>
         ///  Gets or Sets the dictionary comment template.
@@ -13,10 +13,10 @@ namespace CodeDocumentor.Constructors
         public override string DictionaryCommentTemplate { get; } = "dictionary with a key of type {0} and a value of type {1}";
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="SingleWordCommentConstruction"/> class.
+        ///  Initializes a new instance of the <see cref="SingleWordCommentSummaryConstruction"/> class.
         /// </summary>
         /// <param name="returnType"> The return type. </param>
-        public SingleWordCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        public SingleWordCommentSummaryConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
             var comment = BuildComment(returnType, options); //we dont need to translate or period here cause the caller of this does all that work
             if (!string.IsNullOrEmpty(comment))

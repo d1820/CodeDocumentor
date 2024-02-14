@@ -32,10 +32,9 @@ namespace CodeDocumentor.Test.Builders
         }
 
         [Fact]
-        public void CreateFieldComment_ReturnsValidName()
+        public void CreateReturnComment__ReturnsValidNameWithStartingWord_WhenUseNaturalLanguageForReturnNodeIsTrue()
         {
             var method = TestFixture.BuildMethodDeclarationSyntax("TResult", "Tester");
-
             var comment = _builder.WithReturnType(method).Build();
             comment.Count.Should().Be(3);
             comment[1].ToFullString().Should().Be(@"<returns>A <typeparamref name=""TResult""/></returns>");

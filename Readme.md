@@ -54,13 +54,13 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 - As of VS2022 verison 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
 
-  ![OutOfProcess](./GifInstruction/outOfProcess.png)
+  ![Out of process](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/outOfProcess.png?raw=true)
 
   **Please disable this setting to allow CodeDocumentor to work correctly.**
 
 - As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect _Run code analysis on latest .NET_.
 
-   ![Out Of Process Latest](./GifInstruction/OutOfProessLatest.png)
+   ![Out Of Process Latest](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/OutOfProessLatest.png?raw=true)
 
 
 ## Comment Ordering
@@ -235,25 +235,26 @@ public class Test<T>
 
 Inline code notification
 
-<img src="./GifInstruction/warning wave line.gif" />
+![Wavy line](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/warning%20wave%20line.gif?raw=true)
 
 Add comments to a single type
-<img src="./GifInstruction/SingleTypeAddComments.gif" />
+![Single type add](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeAddComments.gif?raw=true)
 
 Update comments to a single type
-<img src="./GifInstruction/SingleTypeUpdateComments.gif" />
+![Single type update](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeUpdateComments.gif?raw=true)
 
 Update comments to a single type when preserving the summary setting is true
-<img src="./GifInstruction/SingleTypeUpdatePreserveComments.gif" />
+![Single type preserve comment](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeUpdatePreserveComments.gif?raw=true)
 
 Update comments to a single type when preserving the summary setting is false
-<img src="./GifInstruction/SingleTypeUpdatePreserveCommentsDisabled.gif" />
+![Single type preserve comment disabled](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeUpdatePreserveCommentsDisabled.gif?raw=true)
 
 Update the whole file at once
-<img src="./GifInstruction/UpdateWholeFile.gif" />
+![Update whole file](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/UpdateWholeFile.gif?raw=true)
 
 How fast comments can be added
-<img src="./GifInstruction/short cut to quick add.gif" />
+
+![Quick add](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/short%20cut%20to%20quick%20add.gif?raw=true)
 
 
 ## Errors and Crashes
@@ -265,7 +266,7 @@ All errors are written to the EventLog in windows. Check there for causes, and u
 
 **Message Prefix**: "CodeDocumentor: "
 
-![Event Log](./GifInstruction/EventLog.png)
+![Event Log](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/EventLog.png?raw=true)
 
 
 
@@ -273,7 +274,7 @@ All errors are written to the EventLog in windows. Check there for causes, and u
 
 | Date       | Change                                                                  | Version |
 | ---------- | ----------------------------------------------------------------------- | ------- |
-| 02/13/2024 | Rewrote document generator to builder pattern                           | 2.0.2.X |
+| 02/13/2024 | Rewrote document generator to builder pattern                           | 2.1.0.X |
 |            | Increased code coverage for tests                                       |         |
 |            | Added support for ```<see cref=""/>``` tags in summary and return nodes |         |
 |            | Bug fixes                                                               |         |

@@ -5,13 +5,25 @@ name: .NET
 
 on:
   workflow_dispatch:
+    inputs:
+      is_release:
+        description: 'Should the deploy action be ran'
+        required: false
+        default: false
+        type: boolean
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/Readme.md'
+      - '**/GifInstruction/'
+      - '**/.gitignore'
+      - '**/.editorconfig'
+      - 'workflows/dotnet.yml'
   pull_request:
     branches: [ "main" ]
-  # release:
-  #   types:
-  #     - published    # Run the workflow when a new GitHub release is published
+  release:
+    types:
+      - published    # Run the workflow when a new GitHub release is published
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -74,11 +86,12 @@ jobs:
         name: "CodeDocumentor.vsix"
         path: CodeDocumentor\bin\Release\CodeDocumentor.vsix
 
+  # This is not enabled because it needs a publish manifest which is the form when you upload a VSIX
   # deploy:
   #   # Publish only when creating a GitHub Release
   #   # https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
   #   # You can update this logic if you want to manage releases differently
-  #   if: github.event_name == 'release'
+  #   if: github.event_name == 'release' || github.event.inputs.is_release == true
   #   runs-on: [windows-latest]
   #   needs: [ build ]
   #   steps:

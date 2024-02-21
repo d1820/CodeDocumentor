@@ -60,7 +60,7 @@ jobs:
       uses: NuGet/setup-nuget@v2.0.0
 
     - name: Update Visual Studio Extension version
-      uses: cezarypiatek/VsixVersionAction@1.1
+      uses: cezarypiatek/VsixVersionAction@1.2
       with:
         version: ${{ env.Version }}
         vsix-manifest-file: 'Manifests\vs2022\source.extension.vsixmanifest'

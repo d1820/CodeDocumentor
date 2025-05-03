@@ -35,7 +35,7 @@ namespace CodeDocumentor.Helper
                          .TranslateParts()
                          .TryInsertTheWord((parts) =>
                          {
-                             if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                             if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
                              {
                                  parts.Insert(0, "The"); //for records we always force "The"
                              }
@@ -113,7 +113,7 @@ namespace CodeDocumentor.Helper
                             .HandleAsyncKeyword()
                             .Tap((parts) =>
                             {
-                                if (char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
+                                if (parts.Count > 0 && char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
                                 {
                                     parts[0] = parts[0].ToTitleCase();
                                 }
@@ -243,7 +243,7 @@ namespace CodeDocumentor.Helper
                                 .TranslateParts()
                                 .TryInsertTheWord((parts) =>
                                 {
-                                    if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                                    if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         parts.Insert(0, "The"); //for parameters we always force "The"
                                     }
@@ -318,7 +318,7 @@ namespace CodeDocumentor.Helper
                          .TranslateParts()
                          .TryInsertTheWord((parts) =>
                          {
-                             if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                             if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
                              {
                                  parts.Insert(0, "The"); //for records we always force "The"
                              }
@@ -410,6 +410,7 @@ namespace CodeDocumentor.Helper
         {
             var i = forceFirstCharToLower ||
                     (
+                        parts.Count > 0 &&
                         !parts[0].Equals("The", StringComparison.InvariantCultureIgnoreCase) &&
                         !parts[0].Equals("If true,", StringComparison.InvariantCultureIgnoreCase) &&
                         !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
@@ -426,7 +427,7 @@ namespace CodeDocumentor.Helper
             }, i);
 
             //First letter is always caps unless it was forced lower
-            if (!forceFirstCharToLower && char.IsLower(parts[0], 0))
+            if (!forceFirstCharToLower && parts.Count > 0 && char.IsLower(parts[0], 0))
             {
                 parts[0] = parts[0].ToTitleCase();
             }
@@ -463,7 +464,7 @@ namespace CodeDocumentor.Helper
             {
                 customInsertCallback.Invoke(parts);
             }
-            else
+            else if (parts.Count > 0)
             {
                 var checkWord = parts[0].GetWordFirstPart();
                 var skipThe = checkWord.IsVerb();
@@ -485,19 +486,22 @@ namespace CodeDocumentor.Helper
 
         private static List<string> AddPropertyBooleanPart(this List<string> parts)
         {
-            var booleanPart = " a value indicating whether to";
-            if (parts[0].IsPastTense() || parts[0].IsVerb())
+            if (parts.Count > 0)
             {
-                booleanPart = "a value indicating whether";
-            }
+                var booleanPart = " a value indicating whether to";
+                if (parts[0].IsPastTense() || parts[0].IsVerb())
+                {
+                    booleanPart = "a value indicating whether";
+                }
 
-            //is messes up readability. Lets remove it. ex) IsEnabledForDays
-            var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
-            if (isTwoLettweWord)
-            {
-                parts.Remove(parts[0]);
+                //is messes up readability. Lets remove it. ex) IsEnabledForDays
+                var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
+                if (isTwoLettweWord)
+                {
+                    parts.Remove(parts[0]);
+                }
+                parts.Insert(0, booleanPart);
             }
-            parts.Insert(0, booleanPart);
 
             return parts;
         }
@@ -597,13 +601,16 @@ namespace CodeDocumentor.Helper
 
         private static List<string> TryPluarizeFirstWord(this List<string> parts)
         {
-            if (parts.Count >= 2)
+            if (parts.Count > 0)
             {
-                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-            }
-            else
-            {
-                parts[0] = Pluralizer.Pluralize(parts[0]);
+                if (parts.Count >= 2)
+                {
+                    parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
+                }
+                else
+                {
+                    parts[0] = Pluralizer.Pluralize(parts[0]);
+                }
             }
             return parts;
         }

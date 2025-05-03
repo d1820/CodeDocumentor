@@ -108,7 +108,7 @@ namespace CodeDocumentor.Builders
 
         internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax)
         {
-            var returnType = declarationSyntax.ReturnType.ToString();
+            var returnType = declarationSyntax.ReturnType.ToString().Replace("?",string.Empty);
             if (returnType != "void")
             {
                 var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);

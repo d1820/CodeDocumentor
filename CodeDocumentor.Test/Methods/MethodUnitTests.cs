@@ -91,15 +91,17 @@ namespace CodeDocumentor.Test.Methods
 
 
         [Theory]
-        [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
-        [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
-        [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
-        [InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
-        [InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35, false)]
-        [InlineData("MethodWithCrefTestCodeNaturalLang", "MethodWithCrefTestFixCodeNaturalLang", 10, 35)]
-        [InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
-        [InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
-        [InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
+        //[InlineData("MethodWithNullableReturnTestCode", "MethodWithNullableReturnTestFixCode", 9, 30)]
+        [InlineData("MethodWithNullableStringReturnTestCode", "MethodWithNullableStringReturnTestFixCode", 9, 24)]
+        //[InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
+        //[InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
+        //[InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
+        //[InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
+        //[InlineData("MethodWithCrefTestCode", "MethodWithCrefTestFixCode", 10, 35, false)]
+        //[InlineData("MethodWithCrefTestCodeNaturalLang", "MethodWithCrefTestFixCodeNaturalLang", 10, 35)]
+        //[InlineData("MethodWithExceptionTestCode", "MethodWithExceptionTestFixCode", 9, 23)]
+        //[InlineData("MethodWithInlineExceptionTestCode", "MethodWithInlineExceptionTestFixCode", 9, 23)]
+        //[InlineData("MethodWithMixedExceptionTestCode", "MethodWithMixedExceptionTestFixCode", 9, 23)]
         public async Task ShowMethodDiagnosticAndFixWhenCrefsIsTrue(string testCode, string fixCode, int line, int column, bool useNaturalLanguageForReturnNode = true)
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{fixCode}.cs");

@@ -37,6 +37,7 @@ namespace CodeDocumentor.Constructors
         /// <returns> The comment </returns>
         internal virtual string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
         {
+            var returnComment = string.Empty;
             if (returnType is IdentifierNameSyntax identifier)
             {
                 var parent = GetMethodDeclarationSyntax(returnType);
@@ -48,32 +49,73 @@ namespace CodeDocumentor.Constructors
                         var startWord = DocumentationHeaderHelper.DetermineStartingWord(identifier.Identifier.ValueText.AsSpan(), options.UseProperCasing);
                         if (!string.IsNullOrEmpty(startWord))
                         {
-                            return $"{startWord} {typeParamNode.ToFullString()}";
+                            returnComment = $"{startWord} {typeParamNode.ToFullString()}";
+                        }
+                        else
+                        {
+                            returnComment = typeParamNode.ToFullString();
                         }
                     }
-                    return typeParamNode.ToFullString();
+                    else
+                    {
+                        returnComment = typeParamNode.ToFullString();
+                    }
                 }
-                return GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options);
+                else
+                {
+                    returnComment = GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options);
+                }
             }
-            if (returnType is QualifiedNameSyntax qst)
+            else if (returnType is NullableTypeSyntax nts)
             {
-                return GenerateGeneralComment(qst.ToString().AsSpan(), options);
+                returnComment = BuildComment(nts.ElementType, options);
             }
-            if (returnType is GenericNameSyntax gst)
+            else if (returnType is QualifiedNameSyntax qst)
             {
-                return GenerateGenericTypeComment(gst, options);
+                returnComment = GenerateGeneralComment(qst.ToString().AsSpan(), options);
             }
-            if (returnType is ArrayTypeSyntax ast)
+            else if (returnType is GenericNameSyntax gst)
+            {
+                returnComment = GenerateGenericTypeComment(gst, options);
+            }
+            else if (returnType is ArrayTypeSyntax ast)
             {
                 var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, options.TryToIncludeCrefsForReturnTypes));
                 var arrayOptions = options.Clone();
                 arrayOptions.IncludeStartingWordInText = true;
                 arrayOptions.TryToIncludeCrefsForReturnTypes = false;
-                return GenerateGeneralComment(comment.AsSpan(), arrayOptions);
+                returnComment = GenerateGeneralComment(comment.AsSpan(), arrayOptions);
             }
-            return returnType is PredefinedTypeSyntax pst
+            else
+            {
+                returnComment = returnType is PredefinedTypeSyntax pst
                 ? GenerateGeneralComment(pst.Keyword.ValueText.AsSpan(), options)
                 : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options);
+            }
+
+            if (returnType is NullableTypeSyntax)
+            {
+                var returnParts = returnComment.Split(new[] { ' ' }, 2).ToList();
+                if (returnParts.Count > 1)
+                {
+                    //insert "nullable" in second to last position
+                    returnParts.Insert(1, "nullable");
+                }
+                else
+                {
+                    if (options.UseProperCasing)
+                    {
+                        returnParts.Insert(0, "Nullable");
+                    }
+                    else
+                    {
+                        returnParts.Insert(0, "nullable");
+                    }
+                }
+                returnComment = string.Join(" ", returnParts);
+                returnComment = returnComment.Replace("?", string.Empty);
+            }
+            return returnComment;
         }
 
         /// <summary>

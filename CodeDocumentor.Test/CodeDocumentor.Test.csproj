@@ -38,6 +38,10 @@
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs" />
@@ -166,13 +170,25 @@
     <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs">

@@ -44,7 +44,12 @@ namespace CodeDocumentor.Vsix2022
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
+        /// <summary>
+        /// Gets or sets the container factory. This is used ONLY in unit testing
+        /// </summary>
         public static Func<Container> ContainerFactory { get; set; }
+
+        private static readonly object _lock = new object();
 
         public static Container DIContainer()
         {
@@ -54,9 +59,16 @@ namespace CodeDocumentor.Vsix2022
             }
             if (_DIContainer == null)
             {
-                _DIContainer = new Container();
-                _DIContainer.RegisterServices();
-                _DIContainer.Verify();
+                lock (_lock)
+                {
+                    if (_DIContainer == null)
+                    {
+                        var c = new Container();
+                        c.RegisterServices();
+                        c.Verify();
+                        _DIContainer = c;
+                    }
+                }
             }
             return _DIContainer;
         }

@@ -9,7 +9,7 @@ namespace ConsoleApp40
         /// <summary>
         /// Show method with return tester.
         /// </summary>
-        /// <returns>A nullable <see cref="MethodTester"/></returns>
+        /// <returns>A <see cref="MethodTester?"/></returns>
         public MethodTester? ShowMethodWithReturnTester()
         {
             return null;

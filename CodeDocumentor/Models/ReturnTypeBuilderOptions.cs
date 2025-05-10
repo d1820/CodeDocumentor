@@ -1,3 +1,4 @@
+
 namespace CodeDocumentor.Helper
 {
     public class ReturnTypeBuilderOptions

@@ -60,6 +60,7 @@ namespace CodeDocumentor.Helper
             {
                 return name;
             }
+            name = name.Trim();
             if (isPrivate)
             {
                 comment = $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created";

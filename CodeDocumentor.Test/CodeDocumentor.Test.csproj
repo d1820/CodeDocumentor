@@ -38,6 +38,8 @@
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestCode.cs" />
@@ -162,6 +164,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs">

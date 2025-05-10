@@ -7,10 +7,10 @@ namespace ConsoleApp40
     public class MethodTester
     {
         /// <summary>
-        /// Show method with string return tester.
+        /// Show method with return tester.
         /// </summary>
-        /// <returns>A <see cref="string?"/></returns>
-        public string? ShowMethodWithStringReturnTester()
+        /// <returns><![CDATA[Dictionary<string, string?>]]></returns>
+        public Dictionary<string, string?>? ShowMethodWithReturnTester()
         {
             return null;
         }

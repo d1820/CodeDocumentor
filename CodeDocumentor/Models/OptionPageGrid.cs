@@ -251,7 +251,7 @@ namespace CodeDocumentor.Vsix2022
                 IsEnabledForNonPublicFields = IsEnabledForNonPublicFields
             };
             settings.Save();
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = CodeDocumentorPackage._optService;
             optionsService.Update(settings);
         }
     }

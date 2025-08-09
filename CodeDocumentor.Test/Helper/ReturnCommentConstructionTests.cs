@@ -5,6 +5,7 @@ using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,12 +16,12 @@ namespace CodeDocumentor.Test.Helper
     {
         private readonly ReturnCommentConstruction _returnCommentBuilder;
         private readonly ReturnTypeBuilderOptions _options;
+        private Mock<IOptionsService> _mockOptionsService;
 
         public ReturnCommentConstructionTests(TestFixture testFixture, ITestOutputHelper output)
         {
             _returnCommentBuilder = new ReturnCommentConstruction();
             testFixture.Initialize(output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
 
             _options = new ReturnTypeBuilderOptions
             {

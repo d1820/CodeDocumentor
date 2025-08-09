@@ -98,7 +98,7 @@ namespace CodeDocumentor
 
             var comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, OptionsService);
 
-            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+            var builder = DocumentationBuilder;
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

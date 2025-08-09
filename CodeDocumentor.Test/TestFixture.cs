@@ -15,6 +15,7 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Moq;
 using SimpleInjector;
 using Xunit;
 using Xunit.Abstractions;
@@ -50,6 +51,7 @@ namespace CodeDocumentor.Test
 
         public string CurrentTestName { get; set; }
 
+        protected Mock<IOptionsService> _mockOptionsService;
         protected static ConcurrentDictionary<string, Action<IOptionsService>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<IOptionsService>>();
 
         public TestFixture()
@@ -61,24 +63,8 @@ namespace CodeDocumentor.Test
         {
             CurrentTestName = output.GetTestName();
 
-            CodeDocumentorPackage.ContainerFactory = () =>
-            {
-                var _testContainer = new Container();
-                _testContainer.Register<IOptionsService>(() =>
-                {
-                    var os = new TestOptionsService();
-                    if (CurrentTestName != null && RegisteredCallBacks.TryGetValue(CurrentTestName, out var callback))
-                    {
-                        callback.Invoke(os);
-                    }
-                    Translator.Initialize(os);
-                    return os;
-                }, Lifestyle.Transient);
-                _testContainer.Register<DocumentationBuilder>();
-                _testContainer.RegisterSingleton<GenericCommentManager>();
-                _testContainer.Verify();
-                return _testContainer;
-            };
+            _mockOptionsService = new Mock<IOptionsService>();
+            Translator.Initialize(_mockOptionsService.Object);
         }
 
         public void RegisterCallback(string name, Action<IOptionsService> callback)

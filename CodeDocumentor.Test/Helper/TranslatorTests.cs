@@ -4,6 +4,7 @@ using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -51,7 +52,6 @@ namespace CodeDocumentor.Test.Helper
                 temp.AddRange(Constants.INTERNAL_WORD_MAPS);
                 o.WordMaps = temp.ToArray();
             });
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
             var translated = input.ApplyUserTranslations();
             translated.Should().Be(output);
         }

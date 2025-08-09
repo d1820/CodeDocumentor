@@ -27,7 +27,7 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public abstract string DictionaryCommentTemplate { get; }
 
-        public GenericCommentManager GenericCommentManager => CodeDocumentorPackage.DIContainer().GetInstance<GenericCommentManager>();
+        public GenericCommentManager GenericCommentManager => new GenericCommentManager();
 
         /// <summary>
         ///  Builds a comment

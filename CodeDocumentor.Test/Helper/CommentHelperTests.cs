@@ -25,8 +25,6 @@ namespace CodeDocumentor.Test.Helper
             _fixture = fixture;
             _output = output;
             _fixture.Initialize(output);
-            _mockOptionsService = new Mock<IOptionsService>();
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
         }
 
         [Theory]
@@ -77,7 +75,6 @@ namespace CodeDocumentor.Test.Helper
                 o.TryToIncludeCrefsForReturnTypes = true;
             });
             _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
 
             TypeSyntax typeSyntax;
             if (!string.IsNullOrEmpty(genericReturnType))
@@ -103,7 +100,6 @@ namespace CodeDocumentor.Test.Helper
                 o.TryToIncludeCrefsForReturnTypes = true;
             });
             _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
 
             TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
 
@@ -121,7 +117,6 @@ namespace CodeDocumentor.Test.Helper
                 o.TryToIncludeCrefsForReturnTypes = false;
             });
             _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
 
             TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
 
@@ -148,7 +143,6 @@ namespace CodeDocumentor.Test.Helper
                 o.TryToIncludeCrefsForReturnTypes = false;
             });
             _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
 
             TypeSyntax typeSyntax;
             if (!string.IsNullOrEmpty(genericReturnType))
@@ -248,7 +242,6 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Dto", "Data transfer object")]
         public void InternalTranslate_ConvertsCorrectly(string word, string converted)
         {
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
             var result = CommentHelper.TranslateParts(new List<string> { word }, _mockOptionsService.Object);
             result.Should().Contain(converted);
         }

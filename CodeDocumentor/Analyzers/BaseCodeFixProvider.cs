@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -25,10 +26,16 @@ namespace CodeDocumentor
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
         protected static IOptionsService OptionsService;
+        protected static DocumentationBuilder DocumentationBuilder;
 
         public static void SetOptionsService(IOptionsService optionsService)
         {
             OptionsService = optionsService;
+        }
+
+        public static void SetDocumentationBuilder(DocumentationBuilder documentationBuilder)
+        {
+            DocumentationBuilder = documentationBuilder;
         }
         /// <summary>
         ///  The title.

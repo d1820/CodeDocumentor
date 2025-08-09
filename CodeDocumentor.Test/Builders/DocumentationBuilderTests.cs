@@ -22,6 +22,7 @@ namespace CodeDocumentor.Test.Builders
         private readonly TestFixture _fixture;
         private readonly ITestOutputHelper _output;
         private DocumentationBuilder _builder;
+        private Mock<IOptionsService> _mockOptionsService;
 
         public DocumentationBuilderTests(TestFixture fixture, ITestOutputHelper output)
         {
@@ -29,7 +30,6 @@ namespace CodeDocumentor.Test.Builders
             _output = output;
             _fixture.Initialize(output);
             _builder = new DocumentationBuilder();
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
         }
 
         [Fact]

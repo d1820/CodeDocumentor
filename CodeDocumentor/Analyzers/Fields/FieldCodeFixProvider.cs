@@ -110,7 +110,7 @@ namespace CodeDocumentor
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             var comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText, OptionsService);
 
-            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+            var builder = DocumentationBuilder;
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

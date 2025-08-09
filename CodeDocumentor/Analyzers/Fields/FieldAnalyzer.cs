@@ -15,7 +15,7 @@ namespace CodeDocumentor
     ///  The field analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class FieldAnalyzer : DiagnosticAnalyzer
+    public class FieldAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.
@@ -49,7 +49,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (!optionsService.IsEnabledForNonPublicFields && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;

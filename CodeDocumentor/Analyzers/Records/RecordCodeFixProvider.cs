@@ -57,7 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -88,7 +88,7 @@ namespace CodeDocumentor
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, RecordAnalyzerSettings.DiagnosticId, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly
@@ -118,14 +118,14 @@ namespace CodeDocumentor
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, RecordAnalyzerSettings.DiagnosticId, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText);
+            var optionsService = OptionsService;
+            var comment = CommentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText, OptionsService);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
 
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)

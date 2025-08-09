@@ -57,7 +57,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+
+            var optionsService = OptionsService;
 
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
@@ -89,7 +90,7 @@ namespace CodeDocumentor
                     var newDeclaration = BuildNewDeclaration(declarationSyntax);
                     var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                     return document.WithSyntaxRoot(newRoot);
-                }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+                }, ClassAnalyzerSettings.DiagnosticId, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly
@@ -119,18 +120,18 @@ namespace CodeDocumentor
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, ClassAnalyzerSettings.DiagnosticId, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText);
+            var optionsService = OptionsService;
+            var comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, OptionsService);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                             .WithTypeParamters(declarationSyntax)
-                            .WithParameters(declarationSyntax)
+                            .WithParameters(declarationSyntax, OptionsService)
                             .WithExisting(declarationSyntax, Constants.REMARKS)
                             .WithExisting(declarationSyntax, Constants.EXAMPLE)
                             .Build();

@@ -14,7 +14,7 @@ namespace CodeDocumentor
     ///  The constructor analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ConstructorAnalyzer : DiagnosticAnalyzer
+    public class ConstructorAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.
@@ -52,7 +52,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;

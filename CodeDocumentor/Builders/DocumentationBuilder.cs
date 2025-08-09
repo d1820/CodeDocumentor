@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -56,13 +57,13 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithParameters(BaseMethodDeclarationSyntax declarationSyntax)
+        internal DocumentationBuilder WithParameters(BaseMethodDeclarationSyntax declarationSyntax, IOptionsService optionsService)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = CommentHelper.CreateParameterComment(parameter);
+                    var parameterComment = CommentHelper.CreateParameterComment(parameter, optionsService);
                     var parameterElement = DocumentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
@@ -73,13 +74,13 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithParameters(TypeDeclarationSyntax declarationSyntax)
+        internal DocumentationBuilder WithParameters(TypeDeclarationSyntax declarationSyntax, IOptionsService optionsService)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = CommentHelper.CreateParameterComment(parameter);
+                    var parameterComment = CommentHelper.CreateParameterComment(parameter, optionsService);
 
                     var parameterElement = DocumentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
@@ -106,12 +107,12 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax)
+        internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax, IOptionsService optionsService)
         {
             var returnType = declarationSyntax.ReturnType.ToString().Replace("?",string.Empty);
             if (returnType != "void")
             {
-                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType, optionsService);
                 var returnComment = commentConstructor.Comment;
                 var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment);
 

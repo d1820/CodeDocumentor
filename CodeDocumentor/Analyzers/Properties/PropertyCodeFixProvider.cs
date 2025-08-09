@@ -57,7 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -84,7 +84,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -99,7 +99,7 @@ namespace CodeDocumentor
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, PropertyAnalyzerSettings.DiagnosticId, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
@@ -108,8 +108,8 @@ namespace CodeDocumentor
             var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
 
             var hasSetter = declarationSyntax.PropertyHasSetter();
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter);
+            var optionsService = OptionsService;
+            var propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter, OptionsService);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
 
             var returnOptions = new ReturnTypeBuilderOptions
@@ -148,7 +148,7 @@ namespace CodeDocumentor
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, PropertyAnalyzerSettings.DiagnosticId , (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

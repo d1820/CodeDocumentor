@@ -34,15 +34,6 @@ namespace CodeDocumentor.Helper
             _optionsService = optionsService;
         }
 
-        private static IOptionsService EnsureOptionsService()
-        {
-            if (_optionsService == null)
-            {
-                _optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            }
-            return _optionsService;
-        }
-
         /// <summary>
         ///  Translates text replacing words from the WordMap settings
         /// </summary>
@@ -50,7 +41,10 @@ namespace CodeDocumentor.Helper
         /// <returns> A string </returns>
         internal static string TranslateText(string text)
         {
-            EnsureOptionsService();
+            if (_optionsService == null)
+            {
+                return text;
+            }
             var converted = text;
             if (_optionsService.WordMaps == null)
             {

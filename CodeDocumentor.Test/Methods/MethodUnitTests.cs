@@ -48,6 +48,7 @@ namespace CodeDocumentor.Test.Methods
 
         [Theory]
         [InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
+        [InlineData("InterfacePrivateMethods", "InterfacePrivateMethodsFix", 9, 21)]
         [InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithBooleanParameterTestCode", "MethodWithBooleanParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]

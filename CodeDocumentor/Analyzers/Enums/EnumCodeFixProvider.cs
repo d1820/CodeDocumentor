@@ -88,7 +88,7 @@ namespace CodeDocumentor
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, EnumAnalyzerSettings.DiagnosticId, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
@@ -96,7 +96,7 @@ namespace CodeDocumentor
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
-            var comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText);
+            var comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, OptionsService);
 
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
 
@@ -121,7 +121,7 @@ namespace CodeDocumentor
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, EnumAnalyzerSettings.DiagnosticId, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateClassComment(string name)
+        public static string CreateClassComment(string name, IOptionsService optionsService)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -32,7 +32,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts()
+                         .TranslateParts(optionsService)
                          .TryInsertTheWord((parts) =>
                          {
                              if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -77,7 +77,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateEnumComment(string name)
+        public static string CreateEnumComment(string name, IOptionsService optionsService)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -85,7 +85,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                            .Split(name)
-                           .TranslateParts()
+                           .TranslateParts(optionsService)
                            .TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
@@ -101,7 +101,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateFieldComment(string name)
+        public static string CreateFieldComment(string name, IOptionsService optionsService)
         {
             //string comment;
             if (string.IsNullOrEmpty(name))
@@ -111,7 +111,7 @@ namespace CodeDocumentor.Helper
             //order matters. fields are special in the sense there is not action attached and we dont need to do translations
             var comment = NameSplitter
                             .Split(name)
-                            .HandleAsyncKeyword()
+                            .HandleAsyncKeyword(optionsService)
                             .Tap((parts) =>
                             {
                                 if (parts.Count > 0 && char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateInterfaceComment(string name)
+        public static string CreateInterfaceComment(string name, IOptionsService optionsService)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -146,7 +146,7 @@ namespace CodeDocumentor.Helper
                                parts.Remove("I");
                            })
                            .AddCustomPart("interface")
-                           .TranslateParts()
+                           .TranslateParts(optionsService)
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .JoinToString()
@@ -162,7 +162,7 @@ namespace CodeDocumentor.Helper
         /// <param name="name"> The name. </param>
         /// <param name="returnType"> The return type. </param>
         /// <returns> A string. </returns>
-        public static string CreateMethodComment(string name, TypeSyntax returnType)
+        public static string CreateMethodComment(string name, TypeSyntax returnType, IOptionsService optionsService)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -178,13 +178,13 @@ namespace CodeDocumentor.Helper
                              is2partPlusAsync = parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase));
                              isBool = returnType.IsBoolReturnType();
                          })
-                         .HandleAsyncKeyword()
-                         .TryIncudeReturnType(returnType, (returnComment) =>
+                         .HandleAsyncKeyword(optionsService)
+                         .TryIncudeReturnType(optionsService, returnType, (returnComment) =>
                          {
                              hasReturnComment = !string.IsNullOrEmpty(returnComment);
                          })
-                         .TryAddTodoSummary(returnType.ToString())
-                         .TranslateParts()
+                         .TryAddTodoSummary(returnType.ToString(), optionsService)
+                         .TranslateParts(optionsService)
                          .TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
@@ -209,7 +209,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="parameter"> The parameter. </param>
         /// <returns> A string. </returns>
-        public static string CreateParameterComment(ParameterSyntax parameter)
+        public static string CreateParameterComment(ParameterSyntax parameter, IOptionsService optionsService)
         {
             var isBoolean = false;
             if (parameter.Type.IsKind(SyntaxKind.PredefinedType))
@@ -230,7 +230,7 @@ namespace CodeDocumentor.Helper
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
                                 .AddCustomPart("If true,", 0)
-                                .TranslateParts()
+                                .TranslateParts(optionsService)
                                 .ToLowerParts()
                                 .JoinToString()
                                 .ApplyUserTranslations()
@@ -241,7 +241,7 @@ namespace CodeDocumentor.Helper
             {
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
-                                .TranslateParts()
+                                .TranslateParts(optionsService)
                                 .TryInsertTheWord((parts) =>
                                 {
                                     if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -264,7 +264,7 @@ namespace CodeDocumentor.Helper
         /// <param name="isBoolean"> If true, is boolean. </param>
         /// <param name="hasSetter"> If true, has setter. </param>
         /// <returns> A string. </returns>
-        public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter)
+        public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter, IOptionsService optionsService)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -278,8 +278,8 @@ namespace CodeDocumentor.Helper
                               .AddPropertyBooleanPart() //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts()
-                              .HandleAsyncKeyword()
+                              .TranslateParts(optionsService)
+                              .HandleAsyncKeyword(optionsService)
                               .ToLowerParts()
                               .JoinToString()
                               .ApplyUserTranslations()
@@ -293,8 +293,8 @@ namespace CodeDocumentor.Helper
                               .AddCustomPart("the", 0) //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts()
-                              .HandleAsyncKeyword()
+                              .TranslateParts(optionsService)
+                              .HandleAsyncKeyword(optionsService)
                               .ToLowerParts()
                               .JoinToString()
                               .ApplyUserTranslations()
@@ -308,7 +308,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateRecordComment(string name)
+        public static string CreateRecordComment(string name, IOptionsService optionsService)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -316,7 +316,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts()
+                         .TranslateParts(optionsService)
                          .TryInsertTheWord((parts) =>
                          {
                              if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -435,9 +435,8 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        internal static List<string> TranslateParts(this List<string> parts)
+        internal static List<string> TranslateParts(this List<string> parts, IOptionsService optionsService)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             for (var i = 0; i < parts.Count; i++)
             {
                 var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
@@ -512,15 +511,14 @@ namespace CodeDocumentor.Helper
             return wordMap.Word != "Is" || partIdx == 0;
         }
 
-        private static List<string> HandleAsyncKeyword(this List<string> parts)
+        private static List<string> HandleAsyncKeyword(this List<string> parts, IOptionsService optionsService)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
 
-            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
+            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 parts.Remove(parts.Last());
             }
-            var idx = parts.FindIndex(f => f.Equals("async", System.StringComparison.OrdinalIgnoreCase));
+            var idx = parts.FindIndex(f => f.Equals("async", StringComparison.OrdinalIgnoreCase));
             if (idx > -1)
             {
                 parts[idx] = "asynchronously";
@@ -528,11 +526,10 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> TryAddTodoSummary(this List<string> parts, string returnType)
+        private static List<string> TryAddTodoSummary(this List<string> parts, string returnType, IOptionsService optionsService)
         {
             if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 if (optionsService.UseToDoCommentsOnSummaryError)
                 {
                     parts = new List<string> { "TODO: Add Summary" };
@@ -545,11 +542,10 @@ namespace CodeDocumentor.Helper
             return parts;
         }
 
-        private static List<string> TryIncudeReturnType(this List<string> parts, TypeSyntax returnType, Action<string> returnTapAction = null)
+        private static List<string> TryIncudeReturnType(this List<string> parts, IOptionsService optionsService, TypeSyntax returnType, Action<string> returnTapAction = null)
         {
             if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 //if return type is not a generic type then just force the Todo comment cause what ever we do here will not be a good summary anyway
                 if (returnType.GetType() != typeof(GenericNameSyntax))
                 {

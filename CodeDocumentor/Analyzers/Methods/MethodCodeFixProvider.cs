@@ -57,7 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -84,7 +84,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -100,7 +100,7 @@ namespace CodeDocumentor
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, MethodAnalyzerSettings.DiagnosticId, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
@@ -118,17 +118,17 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
+            var optionsService = OptionsService;
+            var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType, OptionsService);
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
 
             var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
-                        .WithParameters(declarationSyntax)
+                        .WithParameters(declarationSyntax, optionsService)
                         .WithExceptionTypes(declarationSyntax)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
-                        .WithReturnType(declarationSyntax)
+                        .WithReturnType(declarationSyntax, OptionsService)
                         .Build();
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
@@ -149,7 +149,7 @@ namespace CodeDocumentor
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, MethodAnalyzerSettings.DiagnosticId, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

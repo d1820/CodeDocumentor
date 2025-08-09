@@ -2,6 +2,8 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using CodeDocumentor.Analyzers;
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Settings;
@@ -122,6 +124,9 @@ namespace CodeDocumentor.Vsix2022
 
             var optService = DIContainer().GetInstance<IOptionsService>();
             optService.SetDefaults(_options);
+            BaseCodeFixProvider.SetOptionsService(optService);
+            BaseDiagnosticAnalyzer.SetOptionsService(optService);
+            BaseAnalyzerSettings.SetOptionsService(optService);
             Translator.Initialize(optService);
         }
 

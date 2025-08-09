@@ -10,6 +10,8 @@
     <Compile Remove="Classes\ClassTesterInheritDoc.cs" />
     <Compile Remove="Classes\PublicClassTester.cs" />
     <Compile Remove="Classes\PublicClassTesterFix.cs" />
+    <Compile Remove="Classes\TestFiles\ClassConstructorTester.cs" />
+    <Compile Remove="Classes\TestFiles\ClassConstructorTesterFix.cs" />
     <Compile Remove="Constructors\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Constructors\TestFiles\PrivateConstructorTestCode.cs" />
     <Compile Remove="Constructors\TestFiles\PrivateContructorTestFixCode.cs" />
@@ -22,6 +24,8 @@
     <Compile Remove="Fields\TestFiles\ConstFieldTestCode.cs" />
     <Compile Remove="Fields\TestFiles\ConstFieldTestFixCode.cs" />
     <Compile Remove="Fields\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Interfaces\TestFiles\InterfaceMethods.cs" />
+    <Compile Remove="Interfaces\TestFiles\InterfaceMethodsFIx.cs" />
     <Compile Remove="Interfaces\TestFiles\TestCode.cs" />
     <Compile Remove="Interfaces\TestFiles\TestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\BasicTestCode.cs" />
@@ -51,6 +55,8 @@
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\InterfacePrivateMethods.cs" />
+    <Compile Remove="Methods\TestFiles\InterfacePrivateMethodsFix.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestCode.cs" />
@@ -124,7 +130,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Methods\TestFiles\InterfacePrivateMethods.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\BasicTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\InterfacePrivateMethodsFix.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\BasicTestFixCode.cs">
@@ -328,6 +340,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Classes\TestFiles\ClassConstructorTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassConstructorTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Constructors\TestFiles\InheritDocTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

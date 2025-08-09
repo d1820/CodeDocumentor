@@ -1,5 +1,6 @@
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace CodeDocumentor.Services
 {
@@ -107,6 +108,8 @@ namespace CodeDocumentor.Services
             RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
             TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes;
+
+            Log.LogInfo(JsonConvert.SerializeObject(this), 200, 0, "Options updated");
         }
     }
 }

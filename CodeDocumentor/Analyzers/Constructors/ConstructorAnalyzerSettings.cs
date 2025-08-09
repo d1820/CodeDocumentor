@@ -23,8 +23,8 @@ namespace CodeDocumentor
 
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            return new DiagnosticDescriptor(ConstructorAnalyzerSettings.DiagnosticId, ConstructorAnalyzerSettings.Title,
-                ConstructorAnalyzerSettings.MessageFormat, ConstructorAnalyzerSettings.Category,
+            return new DiagnosticDescriptor(DiagnosticId, Title,
+                MessageFormat, Category,
                  hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId), true);
         }
     }

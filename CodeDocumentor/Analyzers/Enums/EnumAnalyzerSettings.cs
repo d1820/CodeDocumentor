@@ -26,8 +26,8 @@ namespace CodeDocumentor
         /// </summary>
         internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
-            return new DiagnosticDescriptor(EnumAnalyzerSettings.DiagnosticId, EnumAnalyzerSettings.Title,
-                EnumAnalyzerSettings.MessageFormat, EnumAnalyzerSettings.Category,
+            return new DiagnosticDescriptor(DiagnosticId, Title,
+                MessageFormat, Category,
                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId), true);
         }
     }

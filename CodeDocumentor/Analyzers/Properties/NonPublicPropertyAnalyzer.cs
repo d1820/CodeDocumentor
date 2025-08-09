@@ -15,7 +15,7 @@ namespace CodeDocumentor
     ///  The property analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicPropertyAnalyzer : DiagnosticAnalyzer
+    public class NonPublicPropertyAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.
@@ -24,7 +24,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 return optionsService.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
                     : ImmutableArray.Create(PropertyAnalyzerSettings.GetRule());
@@ -56,7 +56,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;

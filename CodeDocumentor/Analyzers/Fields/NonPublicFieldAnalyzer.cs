@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicFieldAnalyzer : DiagnosticAnalyzer
+    public class NonPublicFieldAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.
@@ -22,7 +22,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 return optionsService.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
                     : ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
@@ -57,7 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;

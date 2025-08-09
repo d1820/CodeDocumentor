@@ -50,6 +50,7 @@ namespace CodeDocumentor.Test.Classes
         [Theory]
         [InlineData("ClassTester.cs", "ClassTesterFix.cs", 3, 19, TestFixture.DIAG_TYPE_PRIVATE)]
         [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 3, 26, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("ClassConstructorTester.cs", "ClassConstructorTesterFix.cs", 3, 18, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         public async Task ShowClassDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($"./Classes/TestFiles/{fixCode}");

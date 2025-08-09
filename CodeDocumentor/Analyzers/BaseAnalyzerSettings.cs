@@ -12,12 +12,23 @@ namespace CodeDocumentor.Analyzers
         /// </summary>
         internal const string Category = Constants.CATEGORY;
 
+        protected static IOptionsService OptionsService;
+
+        public static void SetOptionsService(IOptionsService optionsService)
+        {
+            OptionsService = optionsService;
+        }
+
 
         internal static DiagnosticSeverity LookupSeverity(string diagnosticId)
         {
+            if (OptionsService == null)
+            {
+                return Constants.DefaultDiagnosticSeverityOnError;
+            }
             return TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 switch (diagnosticId)
                 {
                     case Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID:
@@ -38,7 +49,7 @@ namespace CodeDocumentor.Analyzers
                         return optionsService.RecordDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
                 }
                 return Constants.DefaultDiagnosticSeverityOnError;
-            }, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
+            }, diagnosticId, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
         }
     }
 }

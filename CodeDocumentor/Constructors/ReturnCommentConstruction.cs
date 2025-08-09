@@ -17,9 +17,8 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
 
-        public ReturnCommentConstruction(TypeSyntax returnType)
+        public ReturnCommentConstruction(TypeSyntax returnType, IOptionsService optionsService)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var options = new ReturnTypeBuilderOptions
             {
                 ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,

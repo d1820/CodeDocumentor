@@ -10,6 +10,7 @@ using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -35,7 +36,12 @@ namespace CodeDocumentor.Test.Builders
         public void CreateReturnComment__ReturnsValidNameWithStartingWord_WhenUseNaturalLanguageForReturnNodeIsTrue()
         {
             var method = TestFixture.BuildMethodDeclarationSyntax("TResult", "Tester");
-            var comment = _builder.WithReturnType(method).Build();
+            var mockOptionService = new Mock<IOptionsService>();
+            mockOptionService.Setup(s=>s.UseNaturalLanguageForReturnNode)
+                .Returns(true);
+            mockOptionService.Setup(s => s.TryToIncludeCrefsForReturnTypes)
+                .Returns(false);
+            var comment = _builder.WithReturnType(method, mockOptionService.Object).Build();
             comment.Count.Should().Be(3);
             comment[1].ToFullString().Should().Be(@"<returns>A <typeparamref name=""TResult""/></returns>");
         }

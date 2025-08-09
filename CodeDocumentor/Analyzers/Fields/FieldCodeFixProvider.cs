@@ -57,7 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
             if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -84,7 +84,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -99,7 +99,7 @@ namespace CodeDocumentor
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, FieldAnalyzerSettings.DiagnosticId, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
@@ -108,7 +108,7 @@ namespace CodeDocumentor
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-            var comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText);
+            var comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText, OptionsService);
 
             var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
 
@@ -133,7 +133,7 @@ namespace CodeDocumentor
                 var newDeclaration = BuildNewDeclaration(declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, FieldAnalyzerSettings.DiagnosticId, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

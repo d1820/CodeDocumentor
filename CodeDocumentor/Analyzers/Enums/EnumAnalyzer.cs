@@ -12,7 +12,7 @@ namespace CodeDocumentor
     ///  The enum analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class EnumAnalyzer : DiagnosticAnalyzer
+    public class EnumAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.

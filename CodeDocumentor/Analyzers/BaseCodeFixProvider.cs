@@ -3,16 +3,33 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
+    public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer {
+        protected static IOptionsService OptionsService;
+
+        public static void SetOptionsService(IOptionsService optionsService)
+        {
+            OptionsService = optionsService;
+        }
+    }
+
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
+        protected static IOptionsService OptionsService;
+
+        public static void SetOptionsService(IOptionsService optionsService)
+        {
+            OptionsService = optionsService;
+        }
         /// <summary>
         ///  The title.
         /// </summary>
@@ -83,7 +100,7 @@ namespace CodeDocumentor
                         createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
                         equivalenceKey: FILE_FIX_TITLE),
                     diagnostic);
-            }, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, diagnostic.Id, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
         }
     }
 }

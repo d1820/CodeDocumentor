@@ -46,13 +46,13 @@ namespace CodeDocumentor.Helper
         public static bool IsTwoLetterPropertyExclusionVerb(this string word)
         {
             var checkWord = word.GetWordFirstPart().Clean();
-            return Constants.TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
+            return Constants.TWO_LETTER_PROPERTY_WORD_EXCLUSION_LIST.Any(w => w.Equals(checkWord, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static bool IsTwoLetterVerb(this string word)
         {
             var checkWord = word.GetWordFirstPart().Clean();
-            return Constants.TWO_LETTER_WORD_LIST.Any(w => w.Equals(checkWord, System.StringComparison.InvariantCultureIgnoreCase));
+            return Constants.TWO_LETTER_WORD_LIST.Any(w => w.Equals(checkWord, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static bool IsVerb(this string word)
@@ -78,10 +78,10 @@ namespace CodeDocumentor.Helper
             }
 
             return Constants.GetInternalVerbCheckList().Any(w =>
-                w.Equals(baseWord, System.StringComparison.InvariantCultureIgnoreCase)
-                || checkWord.Equals((w + "ed"), System.StringComparison.InvariantCultureIgnoreCase)
+                w.Equals(baseWord, StringComparison.InvariantCultureIgnoreCase)
+                || checkWord.Equals((w + "ed"), StringComparison.InvariantCultureIgnoreCase)
                 //|| checkWord.Equals((w + "ing"), System.StringComparison.InvariantCultureIgnoreCase)
-                || (checkWord.Equals((w + "s"), System.StringComparison.InvariantCultureIgnoreCase)
+                || (checkWord.Equals((w + "s"), StringComparison.InvariantCultureIgnoreCase)
                     && !Constants.LETTER_S_SUFFIX_EXCLUSION_FOR_PLURALIZER.Any(a => a.Equals(w, StringComparison.InvariantCultureIgnoreCase)))
             );
         }

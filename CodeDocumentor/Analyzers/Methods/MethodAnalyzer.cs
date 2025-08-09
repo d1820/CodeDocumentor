@@ -12,7 +12,7 @@ namespace CodeDocumentor
     ///  The method analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MethodAnalyzer : DiagnosticAnalyzer
+    public class MethodAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.

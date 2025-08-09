@@ -15,7 +15,7 @@ namespace CodeDocumentor
     ///  The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicClassAnalyzer : DiagnosticAnalyzer
+    public class NonPublicClassAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.
@@ -24,7 +24,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 return optionsService.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
                     : ImmutableArray.Create(ClassAnalyzerSettings.GetRule());
@@ -53,7 +53,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+            var optionsService = OptionsService;
 
             if (optionsService.IsEnabledForPublicMembersOnly)
             {

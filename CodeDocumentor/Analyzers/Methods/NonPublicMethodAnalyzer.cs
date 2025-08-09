@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicMethodAnalyzer : DiagnosticAnalyzer
+    public class NonPublicMethodAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         ///  Gets the supported diagnostics.
@@ -21,7 +21,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
+                var optionsService = OptionsService;
                 return optionsService.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
                     : ImmutableArray.Create(MethodAnalyzerSettings.GetRule());
@@ -51,8 +51,9 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.IsEnabledForPublicMembersOnly)
+            //NOTE [dturco 8.9.2025]:Since interfaces declarations do not have accessors, we do not need to check for public members only.
+            var optionsService = OptionsService;
+            if (node?.Parent.GetType() != typeof(InterfaceDeclarationSyntax) && optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;
             }

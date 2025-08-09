@@ -5,7 +5,7 @@ namespace CodeDocumentor.Helper
 {
     internal static class TryHelper
     {
-        internal static void Try(Action action, Action<Exception> exceptionCallback = null, bool reThrow = false, int eventId = 0, short category = 0)
+        internal static void Try(Action action, string diagnosticId, Action<Exception> exceptionCallback = null, bool reThrow = false, int eventId = 0, short category = 0)
         {
             try
             {
@@ -13,7 +13,7 @@ namespace CodeDocumentor.Helper
             }
             catch (Exception ex)
             {
-                Log.LogError(ex.ToString(), eventId, category);
+                Log.LogError(ex.ToString(), eventId, category, diagnosticId);
                 exceptionCallback?.Invoke(ex);
                 if (reThrow)
                 {
@@ -22,7 +22,7 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        internal static TResult Try<TResult>(Func<TResult> action, Func<Exception, TResult> exceptionCallback, bool reThrow = false, int eventId = 0, short category = 0)
+        internal static TResult Try<TResult>(Func<TResult> action, string diagnosticId, Func<Exception, TResult> exceptionCallback, bool reThrow = false, int eventId = 0, short category = 0)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace CodeDocumentor.Helper
             }
             catch (Exception ex)
             {
-                Log.LogError(ex.ToString(), eventId, category);
+                Log.LogError(ex.ToString(), eventId, category, diagnosticId);
                 if (reThrow)
                 {
                     throw;
@@ -39,7 +39,7 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        internal static TResult Try<TResult>(Func<TResult> action, Action<Exception> exceptionCallback = null, bool reThrow = false, int eventId = 0, short category = 0)
+        internal static TResult Try<TResult>(Func<TResult> action, string diagnosticId, Action<Exception> exceptionCallback = null, bool reThrow = false, int eventId = 0, short category = 0)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace CodeDocumentor.Helper
             }
             catch (Exception ex)
             {
-                Log.LogError(ex.ToString(), eventId, category);
+                Log.LogError(ex.ToString(), eventId, category, diagnosticId);
                 exceptionCallback?.Invoke(ex);
                 if (reThrow)
                 {

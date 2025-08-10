@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Managers;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -27,7 +27,16 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public abstract string DictionaryCommentTemplate { get; }
 
-        public GenericCommentManager GenericCommentManager => new GenericCommentManager();
+        protected GenericCommentManager GenericCommentManager { get; private set; }
+        protected IOptionsService OptionsService { get; private set; }
+        protected DocumentationHeaderHelper DocumentationHeaderHelper { get; private set; }
+
+        public BaseReturnTypeCommentConstruction(IOptionsService optionsService)
+        {
+            OptionsService = optionsService;
+            DocumentationHeaderHelper = new DocumentationHeaderHelper(optionsService);
+            GenericCommentManager = new GenericCommentManager(optionsService);
+        }
 
         /// <summary>
         ///  Builds a comment

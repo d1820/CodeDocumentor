@@ -120,8 +120,8 @@ namespace CodeDocumentor
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ConstructorDeclarationSyntax declarationSyntax)
         {
             var optionsService = OptionsService;
-            var comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate());
-            var builder = DocumentationBuilder;
+            var comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate(), OptionsService);
+            var builder = new DocumentationBuilder(OptionsService);
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                         .WithParameters(declarationSyntax, OptionsService)
                         .WithExisting(declarationSyntax, Constants.REMARKS)

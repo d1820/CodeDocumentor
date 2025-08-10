@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,13 +13,19 @@ namespace CodeDocumentor.Helper
     /// <summary>
     ///  The documentation header helper.
     /// </summary>
-    public static class DocumentationHeaderHelper
+    public class DocumentationHeaderHelper
     {
-        private static readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private readonly Regex _regEx = new Regex(@"throw\s+new\s+\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-        private static readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-        private static readonly Regex _regExParseXmlElement = new Regex(@"<(.*?)\s(\w*)=""(.*?)""\s*/>", RegexOptions.IgnoreCase);
+        private readonly Regex _regExParseXmlElement = new Regex(@"<(.*?)\s(\w*)=""(.*?)""\s*/>", RegexOptions.IgnoreCase);
+        private IOptionsService _optionsService;
+
+        public DocumentationHeaderHelper(IOptionsService optionsService)
+        {
+            _optionsService = optionsService;
+        }
 
         /// <summary>
         ///  Has analyzer exclusion.
@@ -26,7 +33,7 @@ namespace CodeDocumentor.Helper
         /// <param name="node"> The node. </param>
         /// <param name="recursive"> If true, recursive. </param>
         /// <returns> A bool. </returns>
-        public static bool HasAnalyzerExclusion(SyntaxNode node, bool recursive = true, List<AttributeSyntax> attributes = null)
+        public bool HasAnalyzerExclusion(SyntaxNode node, bool recursive = true, List<AttributeSyntax> attributes = null)
         {
             if (node == null)
             {
@@ -51,139 +58,7 @@ namespace CodeDocumentor.Helper
             return !hasExclusion && recursive ? HasAnalyzerExclusion(node.Parent, recursive, attributes) : hasExclusion;
         }
 
-        /// <summary>
-        ///  Checks if is dictionary.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsDictionary(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.Contains("Dictionary");
-        }
-
-        public static bool IsDictionary(this TypeSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.ToString();
-
-            return genericTypeStr.Contains("Dictionary");
-        }
-
-        /// <summary>
-        ///  Checks if is generic action result.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsGenericActionResult(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.IndexOf("ActionResult", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
-        }
-
-        public static bool IsGenericValueTask(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.IndexOf("ValueTask", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
-        }
-
-        /// <summary>
-        ///  Checks if is list.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsList(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
-        }
-
-        /// <summary>
-        ///  Checks if is list.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsList(this TypeSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.ToString();
-
-            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
-        }
-
-        public static bool IsPropertyReturnTypeBool(this PropertyDeclarationSyntax declarationSyntax)
-        {
-            var isBoolean = false;
-            if (declarationSyntax.Type.IsKind(SyntaxKind.PredefinedType))
-            {
-                isBoolean = ((PredefinedTypeSyntax)declarationSyntax.Type).Keyword.IsKind(SyntaxKind.BoolKeyword);
-            }
-            else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
-            {
-                if (((NullableTypeSyntax)declarationSyntax.Type).ElementType is PredefinedTypeSyntax returnType)
-                {
-                    isBoolean = returnType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
-                }
-            }
-
-            return isBoolean;
-        }
-
-        /// <summary>
-        ///  Checks if is read only collection.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsReadOnlyCollection(this GenericNameSyntax nameSyntax)
-        {
-            return nameSyntax.Identifier.ValueText.Contains("ReadOnlyCollection");
-        }
-
-        /// <summary>
-        ///  Checks if is read only collection.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsReadOnlyCollection(this TypeSyntax nameSyntax)
-        {
-            return nameSyntax.ToString().Contains("ReadOnlyCollection");
-        }
-
-        /// <summary>
-        ///  Checks if is task.
-        /// </summary>
-        /// <param name="nameSyntax"> The name syntax. </param>
-        /// <returns> A bool. </returns>
-        public static bool IsTask(this GenericNameSyntax nameSyntax)
-        {
-            var genericTypeStr = nameSyntax.Identifier.ValueText;
-
-            return genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
-        }
-
-        public static bool PropertyHasSetter(this PropertyDeclarationSyntax declarationSyntax)
-        {
-            var hasSetter = false;
-
-            if (declarationSyntax.AccessorList != null && declarationSyntax.AccessorList.Accessors.Any(o => o.Kind() == SyntaxKind.SetAccessorDeclaration))
-            {
-                if (declarationSyntax.AccessorList.Accessors.First(o => o.Kind() == SyntaxKind.SetAccessorDeclaration).ChildTokens().Any(o => o.IsKind(SyntaxKind.PrivateKeyword) || o.IsKind(SyntaxKind.InternalKeyword)))
-                {
-                    // private set or internal set should consider as no set.
-                    hasSetter = false;
-                }
-                else
-                {
-                    hasSetter = true;
-                }
-            }
-
-            return hasSetter;
-        }
-
-        internal static XmlEmptyElementSyntax CreateElementWithAttributeSyntax(string elementName, string attributeName, string attributeValue)
+        internal XmlEmptyElementSyntax CreateElementWithAttributeSyntax(string elementName, string attributeName, string attributeValue)
         {
             return SyntaxFactory.XmlEmptyElement(
                SyntaxFactory.XmlName(elementName), // Element name
@@ -199,7 +74,7 @@ namespace CodeDocumentor.Helper
         /// <param name="parameterName"> The parameter name. </param>
         /// <param name="parameterContent"> The parameter content. </param>
         /// <returns> A XmlElementSyntax. </returns>
-        internal static XmlElementSyntax CreateParameterElementSyntax(string parameterName, string parameterContent)
+        internal XmlElementSyntax CreateParameterElementSyntax(string parameterName, string parameterContent)
         {
             var paramName = SyntaxFactory.XmlName("param");
 
@@ -223,7 +98,7 @@ namespace CodeDocumentor.Helper
         /// <param name="content"> The content. </param>
         /// <param name="xmlNodeName"> The XML node name. </param>
         /// <returns> A XmlNodeSyntax. </returns>
-        internal static XmlNodeSyntax CreateReturnElementSyntax(string content, string xmlNodeName = "returns")
+        internal XmlNodeSyntax CreateReturnElementSyntax(string content, string xmlNodeName = "returns")
         {
             var xmlName = SyntaxFactory.XmlName(xmlNodeName);
             /// <returns> [0]xxx[1] </returns>
@@ -288,25 +163,25 @@ namespace CodeDocumentor.Helper
         /// <param name="specificType"> The specific type. </param>
         /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
         /// <returns> The comment. </returns>
-        internal static string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
+        internal string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
         {
             string value;
             switch (specificType)
             {
                 case IdentifierNameSyntax identifierNameSyntax:
-                    value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations();
+                    value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations(_optionsService.WordMaps);
                     return pluaralizeIdentifierType ? Pluralizer.Pluralize(value) : value;
 
                 case PredefinedTypeSyntax predefinedTypeSyntax:
-                    value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations();
+                    value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations(_optionsService.WordMaps);
                     return pluaralizeName ? Pluralizer.Pluralize(value) : value;
 
                 case GenericNameSyntax genericNameSyntax:
-                    value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations();
+                    value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations(_optionsService.WordMaps);
                     return pluaralizeName ? Pluralizer.Pluralize(value) : value;
 
                 default:
-                    return specificType.ToFullString().ApplyUserTranslations();
+                    return specificType.ToFullString().ApplyUserTranslations(_optionsService.WordMaps);
             }
         }
 
@@ -316,7 +191,7 @@ namespace CodeDocumentor.Helper
         /// <param name="returnType"> The return type. </param>
         /// <param name="useProperCasing"> If true, use proper casing. </param>
         /// <returns> A string. </returns>
-        internal static string DetermineStartingWord(ReadOnlySpan<char> returnType, bool useProperCasing = true)
+        internal string DetermineStartingWord(ReadOnlySpan<char> returnType, bool useProperCasing = true)
         {
             if (returnType.IsEmpty)
             {
@@ -332,35 +207,7 @@ namespace CodeDocumentor.Helper
             return vowelChars.Contains(char.ToLower(returnType[0])) ? useProperCasing ? "An" : "an" : useProperCasing ? "A" : "a";
         }
 
-        /// <summary>
-        ///  Gets the element syntax.
-        /// </summary>
-        /// <param name="syntax"> The syntax. </param>
-        /// <param name="name"> The name. </param>
-        /// <returns> A XmlElementSyntax. </returns>
-        internal static XmlElementSyntax GetElementSyntax(this CSharpSyntaxNode syntax, string name)
-        {
-            if (syntax.HasLeadingTrivia)
-            {
-                var docComment = syntax.GetLeadingTrivia().FirstOrDefault(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
-                                                                || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
-                                                                || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
-                if (docComment != default)
-                {
-                    var docTriviaSyntax = docComment.GetStructure() as DocumentationCommentTriviaSyntax;
-                    var items = docTriviaSyntax?.Content
-                        .OfType<XmlElementSyntax>();
-
-                    var match = items
-                        .FirstOrDefault(element => string.Equals(element.StartTag.Name.LocalName.ValueText, name, StringComparison.OrdinalIgnoreCase));
-
-                    return match;
-                }
-            }
-            return null;
-        }
-
-        internal static IEnumerable<string> GetExceptions(string textToSearch)
+        internal IEnumerable<string> GetExceptions(string textToSearch)
         {
             if (string.IsNullOrEmpty(textToSearch))
             {
@@ -386,34 +233,7 @@ namespace CodeDocumentor.Helper
             return exceptions.Distinct();
         }
 
-        /// <summary>
-        ///  Has summary.
-        /// </summary>
-        /// <param name="syntax"> The syntax. </param>
-        /// <returns> A bool. </returns>
-        internal static bool HasSummary(this CSharpSyntaxNode syntax)
-        {
-            return syntax.HasLeadingTrivia && syntax.GetLeadingTrivia().Any(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
-            || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
-            || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
-        }
-
-        /// <summary>
-        ///  Checks if is private.
-        /// </summary>
-        /// <param name="declarationSyntax"> The declaration syntax. </param>
-        /// <returns> A bool. </returns>
-        internal static bool IsPrivate(this BaseMethodDeclarationSyntax declarationSyntax)
-        {
-            var isPrivate = false;
-            if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
-            {
-                isPrivate = true;
-            }
-            return isPrivate;
-        }
-
-        internal static List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent)
+        internal List<XmlNodeSyntax> ParseStringToXmlNodeSyntax(string cleanContent)
         {
             var xmlNodes = new List<XmlNodeSyntax>();
             TryHelper.Try(() =>
@@ -451,7 +271,7 @@ namespace CodeDocumentor.Helper
                     }
                 }
                 xmlNodes.RemoveAt(xmlNodes.Count - 1);
-            }, nameof(ParseStringToXmlNodeSyntax ), (_) =>
+            }, nameof(ParseStringToXmlNodeSyntax), (_) =>
             {
                 xmlNodes.Clear();
                 xmlNodes.Add(SyntaxFactory.XmlText(""));
@@ -459,6 +279,224 @@ namespace CodeDocumentor.Helper
 
             return xmlNodes;
         }
+
+        private IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)
+        {
+            if (node == null)
+            {
+                return new SyntaxList<AttributeSyntax>();
+            }
+
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            return attrs.Where(w => w.ArgumentList != null)
+                         .SelectMany(w => w.ArgumentList.Arguments
+                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(Constants.EXCLUSION_CATEGORY))
+                                .Select(_ => w));
+        }
+
+        private IEnumerable<AttributeSyntax> GetAttributes(MemberDeclarationSyntax node)
+        {
+            if (node == null)
+            {
+                return new SyntaxList<AttributeSyntax>();
+            }
+
+            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
+            return attrs.Where(w => w.ArgumentList != null)
+                         .SelectMany(w => w.ArgumentList.Arguments
+                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(Constants.EXCLUSION_CATEGORY))
+                                .Select(_ => w));
+        }
+    }
+
+    public static class SyntaxExtensions
+    {
+        /// <summary>
+        ///  Checks if is dictionary.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsDictionary(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.Contains("Dictionary");
+        }
+
+        public static bool IsDictionary(this TypeSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.ToString();
+
+            return genericTypeStr.Contains("Dictionary");
+        }
+
+        /// <summary>
+        ///  Checks if is generic action result.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsGenericActionResult(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("ActionResult", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
+        public static bool IsGenericValueTask(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("ValueTask", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+
+        /// <summary>
+        ///  Checks if is list.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsList(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
+        }
+
+        public static bool PropertyHasSetter(this PropertyDeclarationSyntax declarationSyntax)
+        {
+            var hasSetter = false;
+
+            if (declarationSyntax.AccessorList != null && declarationSyntax.AccessorList.Accessors.Any(o => o.Kind() == SyntaxKind.SetAccessorDeclaration))
+            {
+                if (declarationSyntax.AccessorList.Accessors.First(o => o.Kind() == SyntaxKind.SetAccessorDeclaration).ChildTokens().Any(o => o.IsKind(SyntaxKind.PrivateKeyword) || o.IsKind(SyntaxKind.InternalKeyword)))
+                {
+                    // private set or internal set should consider as no set.
+                    hasSetter = false;
+                }
+                else
+                {
+                    hasSetter = true;
+                }
+            }
+
+            return hasSetter;
+        }
+
+        /// <summary>
+        ///  Checks if is list.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsList(this TypeSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.ToString();
+
+            return genericTypeStr.Contains("Enumerable") || genericTypeStr.Contains("List") || genericTypeStr.Contains("Collection");
+        }
+
+        public static bool IsPropertyReturnTypeBool(this PropertyDeclarationSyntax declarationSyntax)
+        {
+            var isBoolean = false;
+            if (declarationSyntax.Type.IsKind(SyntaxKind.PredefinedType))
+            {
+                isBoolean = ((PredefinedTypeSyntax)declarationSyntax.Type).Keyword.IsKind(SyntaxKind.BoolKeyword);
+            }
+            else if (declarationSyntax.Type.IsKind(SyntaxKind.NullableType))
+            {
+                if (((NullableTypeSyntax)declarationSyntax.Type).ElementType is PredefinedTypeSyntax returnType)
+                {
+                    isBoolean = returnType.ToString().IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1;
+                }
+            }
+
+            return isBoolean;
+        }
+
+        /// <summary>
+        ///  Checks if is read only collection.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsReadOnlyCollection(this GenericNameSyntax nameSyntax)
+        {
+            return nameSyntax.Identifier.ValueText.Contains("ReadOnlyCollection");
+        }
+
+        /// <summary>
+        ///  Checks if is read only collection.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsReadOnlyCollection(this TypeSyntax nameSyntax)
+        {
+            return nameSyntax.ToString().Contains("ReadOnlyCollection");
+        }
+
+        /// <summary>
+        ///  Checks if is task.
+        /// </summary>
+        /// <param name="nameSyntax"> The name syntax. </param>
+        /// <returns> A bool. </returns>
+        public static bool IsTask(this GenericNameSyntax nameSyntax)
+        {
+            var genericTypeStr = nameSyntax.Identifier.ValueText;
+
+            return genericTypeStr.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1 && nameSyntax.TypeArgumentList?.Arguments.Any() == true;
+        }
+        /// <summary>
+        ///  Has summary.
+        /// </summary>
+        /// <param name="syntax"> The syntax. </param>
+        /// <returns> A bool. </returns>
+        internal static bool HasSummary(this CSharpSyntaxNode syntax)
+        {
+            return syntax.HasLeadingTrivia && syntax.GetLeadingTrivia().Any(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
+            || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+            || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
+        }
+
+        /// <summary>
+        ///  Checks if is private.
+        /// </summary>
+        /// <param name="declarationSyntax"> The declaration syntax. </param>
+        /// <returns> A bool. </returns>
+        internal static bool IsPrivate(this BaseMethodDeclarationSyntax declarationSyntax)
+        {
+            var isPrivate = false;
+            if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
+            {
+                isPrivate = true;
+            }
+            return isPrivate;
+        }
+
+        /// <summary>
+        ///  Gets the element syntax.
+        /// </summary>
+        /// <param name="syntax"> The syntax. </param>
+        /// <param name="name"> The name. </param>
+        /// <returns> A XmlElementSyntax. </returns>
+        internal static XmlElementSyntax GetElementSyntax(this CSharpSyntaxNode syntax, string name)
+        {
+            if (syntax.HasLeadingTrivia)
+            {
+                var docComment = syntax.GetLeadingTrivia().FirstOrDefault(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
+                                                                || a.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+                                                                || a.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
+                if (docComment != default)
+                {
+                    var docTriviaSyntax = docComment.GetStructure() as DocumentationCommentTriviaSyntax;
+                    var items = docTriviaSyntax?.Content
+                        .OfType<XmlElementSyntax>();
+
+                    var match = items
+                        .FirstOrDefault(element => string.Equals(element.StartTag.Name.LocalName.ValueText, name, StringComparison.OrdinalIgnoreCase));
+
+                    return match;
+                }
+            }
+            return null;
+        }
+
 
         /// <summary>
         ///  Upserts the leading trivia.
@@ -482,34 +520,6 @@ namespace CodeDocumentor.Helper
             return existingIndex < 0
                 ? leadingTrivia.Insert(leadingTrivia.Count - 1, SyntaxFactory.Trivia(commentTrivia))
                 : leadingTrivia.Replace(leadingTrivia[existingIndex], SyntaxFactory.Trivia(commentTrivia));
-        }
-
-        private static IEnumerable<AttributeSyntax> GetAttributes(CompilationUnitSyntax node)
-        {
-            if (node == null)
-            {
-                return new SyntaxList<AttributeSyntax>();
-            }
-
-            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
-            return attrs.Where(w => w.ArgumentList != null)
-                         .SelectMany(w => w.ArgumentList.Arguments
-                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(Constants.EXCLUSION_CATEGORY))
-                                .Select(_ => w));
-        }
-
-        private static IEnumerable<AttributeSyntax> GetAttributes(MemberDeclarationSyntax node)
-        {
-            if (node == null)
-            {
-                return new SyntaxList<AttributeSyntax>();
-            }
-
-            var attrs = node.AttributeLists.SelectMany(w => w.Attributes);
-            return attrs.Where(w => w.ArgumentList != null)
-                         .SelectMany(w => w.ArgumentList.Arguments
-                                .Where(ss => ss.Expression.IsKind(SyntaxKind.StringLiteralExpression) && ss.Expression.ToString().Contains(Constants.EXCLUSION_CATEGORY))
-                                .Select(_ => w));
         }
     }
 }

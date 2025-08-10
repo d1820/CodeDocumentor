@@ -16,12 +16,11 @@ namespace CodeDocumentor.Test.Helper
     {
         private readonly ReturnCommentConstruction _returnCommentBuilder;
         private readonly ReturnTypeBuilderOptions _options;
-        private Mock<IOptionsService> _mockOptionsService;
 
         public ReturnCommentConstructionTests(TestFixture testFixture, ITestOutputHelper output)
         {
-            _returnCommentBuilder = new ReturnCommentConstruction();
             testFixture.Initialize(output);
+            _returnCommentBuilder = new ReturnCommentConstruction(testFixture.MockOptionsService);
 
             _options = new ReturnTypeBuilderOptions
             {

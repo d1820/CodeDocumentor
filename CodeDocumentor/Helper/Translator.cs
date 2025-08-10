@@ -7,16 +7,15 @@ namespace CodeDocumentor.Helper
 {
     public static class Translator
     {
-        private static IOptionsService _optionsService;
 
         /// <summary>
         ///  Translates text replacing words from the WordMap settings
         /// </summary>
         /// <param name="node"> </param>
         /// <returns> A string </returns>
-        public static string ApplyUserTranslations(this CSharpSyntaxNode node)
+        public static string ApplyUserTranslations(this CSharpSyntaxNode node, WordMap[] wordMaps)
         {
-            return TranslateText(node.ToString());
+            return TranslateText(node.ToString(), wordMaps);
         }
 
         /// <summary>
@@ -24,14 +23,9 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>
-        public static string ApplyUserTranslations(this string text)
+        public static string ApplyUserTranslations(this string text, WordMap[] wordMaps)
         {
-            return TranslateText(text);
-        }
-
-        public static void Initialize(IOptionsService optionsService)
-        {
-            _optionsService = optionsService;
+            return TranslateText(text, wordMaps);
         }
 
         /// <summary>
@@ -39,20 +33,16 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="text"> </param>
         /// <returns> A string </returns>
-        internal static string TranslateText(string text)
+        private static string TranslateText(string text, WordMap[] wordMaps)
         {
-            if (_optionsService == null)
-            {
-                return text;
-            }
             var converted = text;
-            if (_optionsService.WordMaps == null)
+            if (wordMaps == null ||  wordMaps.Length == 0)
             {
                 return converted;
             }
             converted = converted.SwapXmlTokens((line) =>
             {
-                foreach (var wordMap in _optionsService.WordMaps)
+                foreach (var wordMap in wordMaps)
                 {
                     var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
                     line = Regex.Replace(line, wordToLookFor, wordMap.GetTranslation());

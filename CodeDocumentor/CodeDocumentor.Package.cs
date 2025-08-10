@@ -126,10 +126,8 @@ namespace CodeDocumentor.Vsix2022
             _optService = new OptionsService();
             _optService.SetDefaults(_options);
             BaseCodeFixProvider.SetOptionsService(_optService);
-            BaseCodeFixProvider.SetDocumentationBuilder(new DocumentationBuilder());
             BaseDiagnosticAnalyzer.SetOptionsService(_optService);
             BaseAnalyzerSettings.SetOptionsService(_optService);
-            Translator.Initialize(_optService);
         }
 
         #endregion

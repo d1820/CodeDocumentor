@@ -40,13 +40,14 @@ namespace CodeDocumentor
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.PropertyDeclaration);
+            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
         }
 
         /// <summary>
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is PropertyDeclarationSyntax node))
             {

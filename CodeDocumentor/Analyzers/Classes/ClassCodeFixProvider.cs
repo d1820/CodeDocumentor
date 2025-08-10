@@ -83,7 +83,7 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        internal static Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        internal Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, ClassDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             return Task.Run(() => TryHelper.Try(() =>
                 {
@@ -128,7 +128,7 @@ namespace CodeDocumentor
         {
             var optionsService = OptionsService;
             var comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, OptionsService);
-            var builder = DocumentationBuilder;
+            var builder = new DocumentationBuilder(OptionsService);
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                             .WithTypeParamters(declarationSyntax)
                             .WithParameters(declarationSyntax, OptionsService)

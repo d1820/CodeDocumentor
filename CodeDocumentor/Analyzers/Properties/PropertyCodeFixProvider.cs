@@ -110,7 +110,7 @@ namespace CodeDocumentor
             var hasSetter = declarationSyntax.PropertyHasSetter();
             var optionsService = OptionsService;
             var propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter, OptionsService);
-            var builder = DocumentationBuilder;
+            var builder = new DocumentationBuilder(OptionsService);
 
             var returnOptions = new ReturnTypeBuilderOptions
             {

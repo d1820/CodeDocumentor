@@ -120,7 +120,7 @@ namespace CodeDocumentor
         {
             var optionsService = OptionsService;
             var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType, OptionsService);
-            var builder = DocumentationBuilder;
+            var builder = new DocumentationBuilder(OptionsService);
 
             var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)

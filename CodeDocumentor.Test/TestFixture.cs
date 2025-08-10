@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CodeDocumentor.Analyzers;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Managers;
@@ -51,7 +52,7 @@ namespace CodeDocumentor.Test
 
         public string CurrentTestName { get; set; }
 
-        protected Mock<IOptionsService> _mockOptionsService;
+        public TestOptionsService MockOptionsService;
         protected static ConcurrentDictionary<string, Action<IOptionsService>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<IOptionsService>>();
 
         public TestFixture()
@@ -63,8 +64,10 @@ namespace CodeDocumentor.Test
         {
             CurrentTestName = output.GetTestName();
 
-            _mockOptionsService = new Mock<IOptionsService>();
-            Translator.Initialize(_mockOptionsService.Object);
+            MockOptionsService = new TestOptionsService();
+            BaseCodeFixProvider.SetOptionsService(MockOptionsService);
+            BaseDiagnosticAnalyzer.SetOptionsService(MockOptionsService);
+            BaseAnalyzerSettings.SetOptionsService(MockOptionsService);
         }
 
         public void RegisterCallback(string name, Action<IOptionsService> callback)

@@ -12,8 +12,16 @@ namespace CodeDocumentor.Builders
 {
     public class DocumentationBuilder
     {
+        private readonly IOptionsService _optionsService;
+        private readonly DocumentationHeaderHelper _documentationHeaderHelper;
         private XmlElementSyntax _currentElement;
         private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
+
+        public DocumentationBuilder(IOptionsService optionsService)
+        {
+            _optionsService = optionsService;
+            _documentationHeaderHelper = new DocumentationHeaderHelper(optionsService);
+        }
 
         internal SyntaxList<XmlNodeSyntax> Build()
         {
@@ -28,7 +36,7 @@ namespace CodeDocumentor.Builders
 
         internal DocumentationBuilder WithExceptionTypes(MethodDeclarationSyntax declarationSyntax)
         {
-            var exceptions = DocumentationHeaderHelper.GetExceptions(declarationSyntax.Body?.ToFullString());
+            var exceptions = _documentationHeaderHelper.GetExceptions(declarationSyntax.Body?.ToFullString());
 
             if (exceptions.Any())
             {
@@ -64,7 +72,7 @@ namespace CodeDocumentor.Builders
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
                     var parameterComment = CommentHelper.CreateParameterComment(parameter, optionsService);
-                    var parameterElement = DocumentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
+                    var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
                                 .WithElement(parameterElement)
@@ -82,7 +90,7 @@ namespace CodeDocumentor.Builders
                 {
                     var parameterComment = CommentHelper.CreateParameterComment(parameter, optionsService);
 
-                    var parameterElement = DocumentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
+                    var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
                                 .WithElement(parameterElement)
@@ -97,8 +105,8 @@ namespace CodeDocumentor.Builders
         {
             if (options.GenerateReturnStatement)
             {
-                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
-                var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment, "value");
+                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options, _optionsService).Comment;
+                var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment, "value");
 
                 Reset().WithTripleSlashSpace()
                             .WithElement(returnElement) //this already contains the rest of the /// for all the line <summary>...</summary>
@@ -114,7 +122,7 @@ namespace CodeDocumentor.Builders
             {
                 var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType, optionsService);
                 var returnComment = commentConstructor.Comment;
-                var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment);
+                var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment);
 
                 Reset().WithTripleSlashSpace()
                             .WithElement(returnElement) //this already contains the rest of the /// for all the line <summary>...</summary>
@@ -158,7 +166,7 @@ namespace CodeDocumentor.Builders
             {
                 foreach (var parameter in declarationSyntax.TypeParameterList.Parameters)
                 {
-                    var typeElement = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
+                    var typeElement = _documentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
                     Reset().WithTripleSlashSpace()
                             .WithElement(typeElement) //this already contains the rest of the /// for all the line <summary>...</summary>
                             .WithLineEndTextSyntax();
@@ -173,7 +181,7 @@ namespace CodeDocumentor.Builders
             {
                 foreach (var parameter in declarationSyntax.TypeParameterList.Parameters)
                 {
-                    var typeElement = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
+                    var typeElement = _documentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
                     Reset().WithTripleSlashSpace()
                             .WithElement(typeElement) //this already contains the rest of the /// for all the line <summary>...</summary>
                             .WithLineEndTextSyntax();

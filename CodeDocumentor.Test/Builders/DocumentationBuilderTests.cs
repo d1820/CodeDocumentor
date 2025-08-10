@@ -29,7 +29,7 @@ namespace CodeDocumentor.Test.Builders
             _fixture = fixture;
             _output = output;
             _fixture.Initialize(output);
-            _builder = new DocumentationBuilder();
+            _builder = new DocumentationBuilder(_fixture.MockOptionsService);
         }
 
         [Fact]

@@ -2,12 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Managers
 {
     public class GenericCommentManager
     {
+        private IOptionsService _optionsService;
+        private DocumentationHeaderHelper _documentationHeaderHelper;
+
+        public GenericCommentManager(IOptionsService optionsService)
+        {
+            _optionsService = optionsService;
+            _documentationHeaderHelper = new DocumentationHeaderHelper(optionsService);
+        }
         public string ProcessDictionary(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, string stringTemplate)
         {
             var argType1 = returnType.TypeArgumentList.Arguments.First();
@@ -32,10 +41,10 @@ namespace CodeDocumentor.Managers
                                }
                            })
                            .JoinToString(" of ")
-                           .ApplyUserTranslations()
+                           .ApplyUserTranslations(_optionsService.WordMaps)
                            .WithPeriod();
 
-            comment = string.Format(stringTemplate, argType1.ApplyUserTranslations(), comment);
+            comment = string.Format(stringTemplate, argType1.ApplyUserTranslations(_optionsService.WordMaps), comment);
             if (options.IsRootReturnType)
             {
                 //This ensure the return string has correct casing
@@ -51,7 +60,7 @@ namespace CodeDocumentor.Managers
             var items = new List<string>();
             BuildChildrenGenericArgList(argType, items);
 
-            var returnName = DocumentationHeaderHelper.DetermineSpecificObjectName(returnType, false, true).ToLower();
+            var returnName = _documentationHeaderHelper.DetermineSpecificObjectName(returnType, false, true).ToLower();
             items.Add(returnName);
             items.Reverse();
 
@@ -65,7 +74,7 @@ namespace CodeDocumentor.Managers
                                     }
                                 })
                                 .JoinToString(" of ")
-                                .ApplyUserTranslations()
+                                .ApplyUserTranslations(_optionsService.WordMaps)
                                 .WithPeriod();
             if (options.IsRootReturnType)
             {
@@ -85,7 +94,7 @@ namespace CodeDocumentor.Managers
                 var item = returnType.TypeArgumentList.Arguments[i];
                 if (i > 0)
                 {
-                    builder.Append($"{DocumentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), options.UseProperCasing)}");
+                    builder.Append($"{_documentationHeaderHelper.DetermineStartingWord(item.ToString().AsSpan(), options.UseProperCasing)}");
                 }
                 var newOptions = new ReturnTypeBuilderOptions
                 {
@@ -112,7 +121,7 @@ namespace CodeDocumentor.Managers
 
             var items = new List<string>();
             BuildChildrenGenericArgList(argType, items);
-            var returnName = DocumentationHeaderHelper.DetermineSpecificObjectName(returnType, false, true).ToLower();
+            var returnName = _documentationHeaderHelper.DetermineSpecificObjectName(returnType, false, true).ToLower();
             items.Add(returnName);
             items.Reverse();
 
@@ -126,7 +135,7 @@ namespace CodeDocumentor.Managers
                                     }
                                 })
                                 .JoinToString(" of ")
-                                .ApplyUserTranslations()
+                                .ApplyUserTranslations(_optionsService.WordMaps)
                                 .WithPeriod();
             if (options.IsRootReturnType)
             {
@@ -228,7 +237,7 @@ namespace CodeDocumentor.Managers
                     BuildChildrenGenericArgList(childArg, items);
                 }
             }
-            items.Add(DocumentationHeaderHelper.DetermineSpecificObjectName(argType, false, true));
+            items.Add(_documentationHeaderHelper.DetermineSpecificObjectName(argType, false, true));
         }
     }
 }

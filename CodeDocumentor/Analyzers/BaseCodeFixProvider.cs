@@ -14,7 +14,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer {
+    public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer
+    {
+        protected DocumentationHeaderHelper DocumentationHeaderHelper;
+
         protected static IOptionsService OptionsService;
 
         public static void SetOptionsService(IOptionsService optionsService)
@@ -25,18 +28,15 @@ namespace CodeDocumentor
 
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
+        protected DocumentationHeaderHelper DocumentationHeaderHelper;
+
         protected static IOptionsService OptionsService;
-        protected static DocumentationBuilder DocumentationBuilder;
 
         public static void SetOptionsService(IOptionsService optionsService)
         {
             OptionsService = optionsService;
         }
 
-        public static void SetDocumentationBuilder(DocumentationBuilder documentationBuilder)
-        {
-            DocumentationBuilder = documentationBuilder;
-        }
         /// <summary>
         ///  The title.
         /// </summary>

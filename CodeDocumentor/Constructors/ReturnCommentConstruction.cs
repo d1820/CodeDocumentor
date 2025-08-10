@@ -17,7 +17,7 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
 
-        public ReturnCommentConstruction(TypeSyntax returnType, IOptionsService optionsService)
+        public ReturnCommentConstruction(TypeSyntax returnType, IOptionsService optionsService) : base(optionsService)
         {
             var options = new ReturnTypeBuilderOptions
             {
@@ -29,13 +29,13 @@ namespace CodeDocumentor.Constructors
             BuildReturnComment(returnType, options);
         }
 
-        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, IOptionsService optionsService) : base(optionsService)
         {
             BuildReturnComment(returnType, options);
         }
 
         //used for testing
-        internal ReturnCommentConstruction()
+        internal ReturnCommentConstruction(IOptionsService optionsService): base(optionsService)
         {
         }
 

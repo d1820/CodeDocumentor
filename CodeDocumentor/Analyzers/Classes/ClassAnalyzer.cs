@@ -14,6 +14,8 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ClassAnalyzer : BaseDiagnosticAnalyzer
     {
+
+
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -34,13 +36,15 @@ namespace CodeDocumentor
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ClassDeclaration);
+
+            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
         }
 
         /// <summary>
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is ClassDeclarationSyntax node))
             {

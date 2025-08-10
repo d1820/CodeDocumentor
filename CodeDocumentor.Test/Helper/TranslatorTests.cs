@@ -52,7 +52,7 @@ namespace CodeDocumentor.Test.Helper
                 temp.AddRange(Constants.INTERNAL_WORD_MAPS);
                 o.WordMaps = temp.ToArray();
             });
-            var translated = input.ApplyUserTranslations();
+            var translated = input.ApplyUserTranslations(_testFixure.MockOptionsService.WordMaps);
             translated.Should().Be(output);
         }
     }

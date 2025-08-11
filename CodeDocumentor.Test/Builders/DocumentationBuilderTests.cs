@@ -1,15 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CodeDocumentor.Builders;
-using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;

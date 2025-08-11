@@ -70,10 +70,9 @@ namespace CodeDocumentor.Test.Constructors
         {
             var fix = _fixture.LoadTestFile($"./Constructors/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Constructors/TestFiles/{testCode}");
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                _fixture.SetPublicProcessingOption(o, diagType);
-            });
+            var clone = new TestOptionsService();
+            _fixture.SetPublicProcessingOption(clone, diagType);
+            _fixture.MockOptionsService.SetClone(clone);
 
             var expected = new DiagnosticResult
             {
@@ -96,10 +95,11 @@ namespace CodeDocumentor.Test.Constructors
         {
             var fix = _fixture.LoadTestFile("./Constructors/TestFiles/PrivateConstructorTestCode.cs");
             var test = _fixture.LoadTestFile("./Constructors/TestFiles/PrivateConstructorTestCode.cs");
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            var clone = new TestOptionsService
             {
-                o.IsEnabledForPublicMembersOnly = true;
-            });
+                IsEnabledForPublicMembersOnly = true
+            };
+            _fixture.MockOptionsService.SetClone(clone);
 
             await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 

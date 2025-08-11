@@ -1,11 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 

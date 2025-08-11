@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -104,12 +102,12 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenReturnIsTask_ActionResult_CustomType()
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.ExcludeAsyncSuffix = false;
-                o.UseToDoCommentsOnSummaryError = false;
-                o.TryToIncludeCrefsForReturnTypes = false;
-            });
+            var clone = new TestOptionsService {
+                ExcludeAsyncSuffix = false,
+                UseToDoCommentsOnSummaryError = false,
+                TryToIncludeCrefsForReturnTypes = false
+            };
+            _fixture.MockOptionsService.SetClone(clone);
 
             TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
             var commentHelper = new CommentHelper();

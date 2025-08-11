@@ -43,62 +43,13 @@ namespace CodeDocumentor.Vsix2022
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        ///// <summary>
-        ///// Gets or sets the container factory. This is used ONLY in unit testing
-        ///// </summary>
-        //public static Func<Container> ContainerFactory { get; set; }
-
-        //private static readonly object _lock = new object();
-
-        //public static Container DIContainer()
-        //{
-        //    if (ContainerFactory != null)
-        //    {
-        //        return ContainerFactory();
-        //    }
-        //    if (_DIContainer == null)
-        //    {
-        //        lock (_lock)
-        //        {
-        //            if (_DIContainer == null)
-        //            {
-        //                var c = new Container();
-        //                c.RegisterServices();
-        //                c.Verify();
-        //                _DIContainer = c;
-        //            }
-        //        }
-        //    }
-        //    return _DIContainer;
-        //}
-
+        
 #pragma warning disable IDE1006 // Naming Styles
         internal static IOptionPageGrid _options;
         internal static OptionsService _optService;
 #pragma warning restore IDE1006 // Naming Styles
 
-#pragma warning disable IDE1006 // Naming Styles
-        //private static Container _DIContainer;
-#pragma warning restore IDE1006 // Naming Styles
-
         #region Package Members
-
-        ///// <summary>
-        /////  Gets the options.
-        ///// </summary>
-        ///// <value> An IOptionPageGrid. </value>
-        //public static IOptionPageGrid Options
-        //{
-        //    get
-        //    {
-        //        return _options;
-        //    }
-        //    internal set
-        //    {
-        //        //This is used for testing
-        //        _options = value;
-        //    }
-        //}
 
         /// <summary>
         ///  Initialization of the package; this method is called right after the package is sited, so this is the place

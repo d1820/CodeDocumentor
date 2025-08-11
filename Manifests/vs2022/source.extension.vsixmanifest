@@ -32,9 +32,7 @@
   </Dependencies>
   <Assets>
     <Asset Type="Assembly" Path="Newtonsoft.Json.dll" />
-    <Asset Type="Assembly" Path="SimpleInjector.dll" />
     <Asset Type="Assembly" Path="Pluralize.NET.dll" />
-    <Asset Type="Assembly" Path="Microsoft.VisualStudio.Shell.15.0.dll" />
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="CodeDocumentor" Path="|CodeDocumentor|" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="CodeDocumentor" Path="|CodeDocumentor|" />

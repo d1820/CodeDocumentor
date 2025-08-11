@@ -6,9 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CodeDocumentor.Analyzers;
-using CodeDocumentor.Builders;
-using CodeDocumentor.Helper;
-using CodeDocumentor.Managers;
 using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;
@@ -16,8 +13,6 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Moq;
-using SimpleInjector;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -68,16 +63,6 @@ namespace CodeDocumentor.Test
             BaseCodeFixProvider.SetOptionsService(MockOptionsService);
             BaseDiagnosticAnalyzer.SetOptionsService(MockOptionsService);
             BaseAnalyzerSettings.SetOptionsService(MockOptionsService);
-        }
-
-        public void RegisterCallback(string name, Action<IOptionsService> callback)
-        {
-            if (RegisteredCallBacks.ContainsKey(name))
-            {
-                RegisteredCallBacks[name] = callback;
-                return;
-            }
-            RegisteredCallBacks.TryAdd(name, callback);
         }
 
         public void SetPublicProcessingOption(IOptionsService o, string diagType)

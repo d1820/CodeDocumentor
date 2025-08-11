@@ -101,7 +101,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = _optionsService;
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly
@@ -123,7 +123,7 @@ namespace CodeDocumentor
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            var optionsService = _optionsService;
+            var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
             var comment = commentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText, optionsService);
             var builder = new DocumentationBuilder(optionsService);

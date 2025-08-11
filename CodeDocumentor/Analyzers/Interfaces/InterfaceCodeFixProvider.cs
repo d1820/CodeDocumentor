@@ -94,7 +94,7 @@ namespace CodeDocumentor
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
-            var optionsService = _optionsService;
+            var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
             var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, optionsService);
             var builder = new DocumentationBuilder(optionsService);

@@ -83,7 +83,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = _optionsService;
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -105,12 +105,12 @@ namespace CodeDocumentor
         private static FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-
+            var optionsService = OptionsService;
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, _optionsService);
+            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, optionsService);
 
-            var builder = new DocumentationBuilder(_optionsService);
+            var builder = new DocumentationBuilder(optionsService);
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

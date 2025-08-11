@@ -8,16 +8,14 @@ namespace CodeDocumentor
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper;
 
-#pragma warning disable IDE1006 // Naming Styles
-        protected static IOptionsService _optionsService;
-#pragma warning restore IDE1006 // Naming Styles
+        private static IOptionsService _optionsService;
 
         public static void SetOptionsService(IOptionsService optionsService)
         {
             _optionsService = optionsService;
         }
 
-        protected IOptionsService OptionsService =>
+        protected static IOptionsService OptionsService =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
               _optionsService.Clone();
 

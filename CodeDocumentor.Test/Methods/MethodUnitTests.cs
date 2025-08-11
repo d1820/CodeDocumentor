@@ -68,11 +68,9 @@ namespace CodeDocumentor.Test.Methods
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
-
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.UseNaturalLanguageForReturnNode = false;
-                o.TryToIncludeCrefsForReturnTypes = false;
+            _fixture.MockOptionsService.SetClone(new TestOptionsService {
+                 UseNaturalLanguageForReturnNode = false,
+                 TryToIncludeCrefsForReturnTypes = false
             });
             var expected = new DiagnosticResult
             {
@@ -108,11 +106,12 @@ namespace CodeDocumentor.Test.Methods
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{testCode}.cs");
 
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            _fixture.MockOptionsService.SetClone(new TestOptionsService
             {
-                o.UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode;
-                o.TryToIncludeCrefsForReturnTypes = true;
+                UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode,
+                TryToIncludeCrefsForReturnTypes = true
             });
+
             var expected = new DiagnosticResult
             {
                 Id = MethodAnalyzerSettings.DiagnosticId,

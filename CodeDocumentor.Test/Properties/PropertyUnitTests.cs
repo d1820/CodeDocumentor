@@ -93,12 +93,14 @@ namespace CodeDocumentor.Test.Properties
         {
             var fix = _fixture.LoadTestFile($"./Properties/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Properties/TestFiles/{testCode}.cs");
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            var clone = new TestOptionsService
             {
-                _fixture.SetPublicProcessingOption(o, diagType);
-                o.IncludeValueNodeInProperties = true;
-                o.TryToIncludeCrefsForReturnTypes = tryToIncludeCrefsForReturnTypes;
-            });
+                IncludeValueNodeInProperties = true,
+                TryToIncludeCrefsForReturnTypes = tryToIncludeCrefsForReturnTypes
+            };
+            _fixture.SetPublicProcessingOption(clone, diagType);
+            _fixture.MockOptionsService.SetClone(clone);
+
             var expected = new DiagnosticResult
             {
                 Id = PropertyAnalyzerSettings.DiagnosticId,

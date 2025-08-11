@@ -103,7 +103,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = _optionsService;
+                var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly
@@ -125,10 +125,10 @@ namespace CodeDocumentor
 
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
-            var optionsService = _optionsService;
+            var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
             var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, optionsService);
-            var builder = new DocumentationBuilder(_optionsService);
+            var builder = new DocumentationBuilder(optionsService);
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                             .WithTypeParamters(declarationSyntax)
                             .WithParameters(declarationSyntax, optionsService)

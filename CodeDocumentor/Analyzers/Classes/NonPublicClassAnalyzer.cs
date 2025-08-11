@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,6 +15,12 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicClassAnalyzer : BaseDiagnosticAnalyzer
     {
+        private ClassAnalyzerSettings _analyzerSettings;
+
+        public NonPublicClassAnalyzer()
+        {
+            _analyzerSettings = new ClassAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -27,7 +31,7 @@ namespace CodeDocumentor
                 var optionsService = OptionsService;
                 return optionsService.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
-                    : ImmutableArray.Create(ClassAnalyzerSettings.GetRule());
+                    : ImmutableArray.Create(_analyzerSettings.GetRule());
             }
         }
 
@@ -66,7 +70,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

@@ -3,14 +3,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using CodeDocumentor.Analyzers;
-using CodeDocumentor.Builders;
-using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
-using SimpleInjector;
 using Task = System.Threading.Tasks.Task;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]

@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -85,7 +84,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var optionsService = _optionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -119,11 +118,12 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ConstructorDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
-            var comment = CommentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate(), OptionsService);
-            var builder = new DocumentationBuilder(OptionsService);
+            var optionsService = _optionsService;
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate(), optionsService);
+            var builder = new DocumentationBuilder(optionsService);
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
-                        .WithParameters(declarationSyntax, OptionsService)
+                        .WithParameters(declarationSyntax, optionsService)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
                         .Build();

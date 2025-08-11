@@ -21,7 +21,7 @@ namespace CodeDocumentor
         /// </summary>
         internal const string Title = "The class must have a documentation header.";
 
-        internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
+        internal DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             return new DiagnosticDescriptor(DiagnosticId, Title,
                 MessageFormat, Category,

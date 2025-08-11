@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp;
 

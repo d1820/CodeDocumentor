@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -95,9 +94,10 @@ namespace CodeDocumentor
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
-            var comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, OptionsService);
-            var builder = new DocumentationBuilder(OptionsService);
+            var optionsService = _optionsService;
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, optionsService);
+            var builder = new DocumentationBuilder(optionsService);
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .Build();

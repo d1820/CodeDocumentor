@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
@@ -10,32 +8,27 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
 {
-    public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer
-    {
-        protected DocumentationHeaderHelper DocumentationHeaderHelper;
-
-        protected static IOptionsService OptionsService;
-
-        public static void SetOptionsService(IOptionsService optionsService)
-        {
-            OptionsService = optionsService;
-        }
-    }
 
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper;
 
-        protected static IOptionsService OptionsService;
+        //expose this for some of the static helpers for producing ALl File comments
+#pragma warning disable IDE1006 // Naming Styles
+        protected static IOptionsService _optionsService;
+#pragma warning restore IDE1006 // Naming Styles
 
         public static void SetOptionsService(IOptionsService optionsService)
         {
-            OptionsService = optionsService;
+            _optionsService = optionsService;
         }
+
+        protected IOptionsService OptionsService =>
+                //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
+                _optionsService.Clone();
 
         /// <summary>
         ///  The title.

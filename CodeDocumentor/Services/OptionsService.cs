@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
@@ -9,6 +10,8 @@ namespace CodeDocumentor.Services
         void SetDefaults(IOptionPageGrid options);
 
         void Update(Vsix2022.Settings settings);
+
+        IOptionsService Clone();
     }
 
     public class OptionsService : IOptionsService
@@ -48,6 +51,56 @@ namespace CodeDocumentor.Services
         public bool UseToDoCommentsOnSummaryError { get; set; }
 
         public WordMap[] WordMaps { get; set; }
+
+        public IOptionsService Clone()
+        {
+            var newService = new OptionsService
+            {
+                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
+                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
+
+                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
+
+                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
+
+                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
+
+                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
+
+                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
+
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
+
+                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
+
+                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
+
+                PreserveExistingSummaryText = PreserveExistingSummaryText,
+
+                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
+
+                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
+
+                TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
+
+                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
+
+                UseToDoCommentsOnSummaryError = UseNaturalLanguageForReturnNode
+            };
+            var clonedMaps = new List<WordMap>();
+            foreach (var item in WordMaps)
+            {
+                clonedMaps.Add(new WordMap
+                {
+                    Translation = item.Translation,
+                    Word = item.Word,
+                    WordEvaluator = item.WordEvaluator
+                });
+            }
+            newService.WordMaps = clonedMaps.ToArray();
+            return newService;
+        }
 
         public void SetDefaults(IOptionPageGrid options)
         {

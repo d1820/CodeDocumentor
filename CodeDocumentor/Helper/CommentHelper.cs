@@ -9,7 +9,6 @@ using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.OLE.Interop;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 

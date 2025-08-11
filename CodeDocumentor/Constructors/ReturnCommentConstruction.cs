@@ -1,7 +1,6 @@
 using System;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Constructors

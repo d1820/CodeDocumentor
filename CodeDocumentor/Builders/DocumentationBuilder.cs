@@ -69,9 +69,10 @@ namespace CodeDocumentor.Builders
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
+                var commentHelper = new CommentHelper();
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = CommentHelper.CreateParameterComment(parameter, optionsService);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, optionsService);
                     var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
@@ -86,9 +87,10 @@ namespace CodeDocumentor.Builders
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
+                var commentHelper = new CommentHelper();
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = CommentHelper.CreateParameterComment(parameter, optionsService);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, optionsService);
 
                     var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 

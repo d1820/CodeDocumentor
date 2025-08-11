@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -84,7 +83,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var optionsService = _optionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -108,9 +107,10 @@ namespace CodeDocumentor
             var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
 
             var hasSetter = declarationSyntax.PropertyHasSetter();
-            var optionsService = OptionsService;
-            var propertyComment = CommentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter, OptionsService);
-            var builder = new DocumentationBuilder(OptionsService);
+            var optionsService = _optionsService;
+            var commentHelper = new CommentHelper();
+            var propertyComment = commentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter, optionsService);
+            var builder = new DocumentationBuilder(optionsService);
 
             var returnOptions = new ReturnTypeBuilderOptions
             {

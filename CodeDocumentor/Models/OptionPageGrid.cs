@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 

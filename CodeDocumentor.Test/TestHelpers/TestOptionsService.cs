@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime;
 using CodeDocumentor.Services;
@@ -9,6 +10,8 @@ namespace CodeDocumentor.Test.TestHelpers
     [SuppressMessage("XMLDocumentation", "")]
     public class TestOptionsService : IOptionsService
     {
+        private IOptionsService _clonedService;
+
         public bool ExcludeAsyncSuffix { get; set; }
 
         public bool IncludeValueNodeInProperties { get; set; }
@@ -35,6 +38,66 @@ namespace CodeDocumentor.Test.TestHelpers
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
         public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
         public bool IsEnabledForNonPublicFields { get; set; }
+
+        public void SetClone(IOptionsService optionsService)
+        {
+            _clonedService = optionsService;
+        }
+
+        public IOptionsService Clone()
+        {
+            if (_clonedService != null)
+            {
+                return _clonedService;
+            }
+            var newService = new OptionsService
+            {
+                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
+                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
+
+                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
+
+                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
+
+                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
+
+                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
+
+                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
+
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
+
+                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
+
+                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
+
+                PreserveExistingSummaryText = PreserveExistingSummaryText,
+
+                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
+
+                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
+
+                TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
+
+                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
+
+                UseToDoCommentsOnSummaryError = UseNaturalLanguageForReturnNode
+            };
+            var clonedMaps = new List<WordMap>();
+            foreach (var item in WordMaps)
+            {
+                clonedMaps.Add(new WordMap
+                {
+                    Translation = item.Translation,
+                    Word = item.Word,
+                    WordEvaluator = item.WordEvaluator
+                });
+            }
+            newService.WordMaps = clonedMaps.ToArray();
+            return newService;
+
+        }
 
         public void SetDefaults(IOptionPageGrid options)
         {

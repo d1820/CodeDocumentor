@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -84,7 +83,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var optionsService = _optionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -108,9 +107,10 @@ namespace CodeDocumentor
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
 
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-            var comment = CommentHelper.CreateFieldComment(field?.Identifier.ValueText, OptionsService);
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, _optionsService);
 
-            var builder = new DocumentationBuilder(OptionsService);
+            var builder = new DocumentationBuilder(_optionsService);
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

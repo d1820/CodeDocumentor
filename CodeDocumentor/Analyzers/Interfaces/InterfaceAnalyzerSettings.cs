@@ -25,7 +25,7 @@ namespace CodeDocumentor
         /// <summary>
         ///  The diagnostic descriptor rule.
         /// </summary>
-        internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
+        internal  DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
         {
             return new DiagnosticDescriptor(DiagnosticId, Title,
                 MessageFormat, Category,

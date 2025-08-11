@@ -2,8 +2,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,6 +15,12 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class FieldAnalyzer : BaseDiagnosticAnalyzer
     {
+        private FieldAnalyzerSettings _analyzerSettings;
+
+        public FieldAnalyzer()
+        {
+            _analyzerSettings = new FieldAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -24,7 +28,7 @@ namespace CodeDocumentor
         {
             get
             {
-                return ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetRule());
             }
         }
 
@@ -69,7 +73,7 @@ namespace CodeDocumentor
             }
 
             var field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

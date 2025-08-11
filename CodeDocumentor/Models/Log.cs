@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 // For definitions of XML nodes see:

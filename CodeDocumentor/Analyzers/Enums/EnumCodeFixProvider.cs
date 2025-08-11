@@ -95,10 +95,10 @@ namespace CodeDocumentor
         private static EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, _optionsService);
 
-            var comment = CommentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, OptionsService);
-
-            var builder = new DocumentationBuilder(OptionsService);
+            var builder = new DocumentationBuilder(_optionsService);
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

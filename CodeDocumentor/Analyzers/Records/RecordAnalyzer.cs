@@ -14,6 +14,12 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class RecordAnalyzer : BaseDiagnosticAnalyzer
     {
+        private RecordAnalyzerSettings _analyzerSettings;
+
+        public RecordAnalyzer()
+        {
+            _analyzerSettings = new RecordAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -21,7 +27,7 @@ namespace CodeDocumentor
         {
             get
             {
-                return ImmutableArray.Create(RecordAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetRule());
             }
         }
 
@@ -57,7 +63,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => RecordAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
         }
     }
 }

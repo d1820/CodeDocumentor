@@ -12,15 +12,21 @@ namespace CodeDocumentor.Analyzers
         /// </summary>
         internal const string Category = Constants.CATEGORY;
 
-        protected static IOptionsService OptionsService;
+#pragma warning disable IDE1006 // Naming Styles
+        protected static IOptionsService _optionsService;
+#pragma warning restore IDE1006 // Naming Styles
 
         public static void SetOptionsService(IOptionsService optionsService)
         {
-            OptionsService = optionsService;
+            _optionsService = optionsService;
         }
 
+        protected IOptionsService OptionsService =>
+              //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
+              _optionsService.Clone();
 
-        internal static DiagnosticSeverity LookupSeverity(string diagnosticId)
+
+        internal DiagnosticSeverity LookupSeverity(string diagnosticId)
         {
             if (OptionsService == null)
             {

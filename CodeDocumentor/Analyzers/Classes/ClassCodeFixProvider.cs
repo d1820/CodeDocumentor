@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -104,7 +103,7 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var optionsService = _optionsService;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (optionsService.IsEnabledForPublicMembersOnly
@@ -126,12 +125,13 @@ namespace CodeDocumentor
 
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
-            var comment = CommentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, OptionsService);
-            var builder = new DocumentationBuilder(OptionsService);
+            var optionsService = _optionsService;
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, optionsService);
+            var builder = new DocumentationBuilder(_optionsService);
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                             .WithTypeParamters(declarationSyntax)
-                            .WithParameters(declarationSyntax, OptionsService)
+                            .WithParameters(declarationSyntax, optionsService)
                             .WithExisting(declarationSyntax, Constants.REMARKS)
                             .WithExisting(declarationSyntax, Constants.EXAMPLE)
                             .Build();

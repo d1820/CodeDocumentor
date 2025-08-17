@@ -48,7 +48,7 @@ namespace CodeDocumentor.Test.Methods
 
         [Theory]
         [InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
-        [InlineData("InterfacePrivateMethods", "InterfacePrivateMethodsFix", 9, 21)]
+        [InlineData("InterfacePrivateMethods", "InterfacePrivateMethodsFix", 9, 22)]
         [InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithBooleanParameterTestCode", "MethodWithBooleanParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]
@@ -86,6 +86,33 @@ namespace CodeDocumentor.Test.Methods
             await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY, expected);
 
             await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
+        }
+
+        [Theory]
+        [InlineData("InterfacePrivateMethods", "InterfacePrivateMethodsFix", 9, 22)]
+        public async Task ShowMethodDiagnosticAndFixForPrivate(string testCode, string fixCode, int line, int column)
+        {
+            var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
+            var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
+            _fixture.MockOptionsService.SetClone(new TestOptionsService
+            {
+                UseNaturalLanguageForReturnNode = false,
+                TryToIncludeCrefsForReturnTypes = false
+            });
+            var expected = new DiagnosticResult
+            {
+                Id = MethodAnalyzerSettings.DiagnosticId,
+                Message = MethodAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
+
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PRIVATE, expected);
+
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PRIVATE);
         }
 
 

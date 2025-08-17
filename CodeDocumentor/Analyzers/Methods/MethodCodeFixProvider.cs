@@ -57,7 +57,12 @@ namespace CodeDocumentor
                 return;
             }
             var optionsService = OptionsService;
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (
+                //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
+                !declaration.IsOwnedByInterface() &&
+                optionsService.IsEnabledForPublicMembersOnly &&
+                PrivateMemberVerifier.IsPrivateMember(declaration)
+                )
             {
                 return;
             }

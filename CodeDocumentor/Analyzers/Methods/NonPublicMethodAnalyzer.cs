@@ -56,9 +56,9 @@ namespace CodeDocumentor
             {
                 return;
             }
-            //NOTE [dturco 8.9.2025]:Since interfaces declarations do not have accessors, we do not need to check for public members only.
+            //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
             var optionsService = OptionsService;
-            if (node?.Parent.GetType() != typeof(InterfaceDeclarationSyntax) && optionsService.IsEnabledForPublicMembersOnly)
+            if (!node.IsOwnedByInterface() && optionsService.IsEnabledForPublicMembersOnly)
             {
                 return;
             }

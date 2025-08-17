@@ -7,10 +7,10 @@ namespace ConsoleApp4
     public interface IInterfaceTesterPrivateMethod
     {
         /// <summary>
-        ///  Gets the names asynchronously.
+        /// Get the names asynchronously.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">The name.</param>
+        /// <returns><![CDATA[Task<string>]]></returns>
         Task<string> GetNamesAsync(string name);
     }
 }

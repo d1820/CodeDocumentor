@@ -53,7 +53,11 @@ namespace CodeDocumentor
             {
                 return;
             }
-            if (PrivateMemberVerifier.IsPrivateMember(node))
+
+            //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
+            var isPrivate = PrivateMemberVerifier.IsPrivateMember(node);
+            var isOwnedByInterface = node.IsOwnedByInterface();
+            if (isPrivate && !isOwnedByInterface)
             {
                 return;
             }

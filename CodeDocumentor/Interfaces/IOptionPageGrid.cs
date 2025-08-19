@@ -80,5 +80,13 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         /// <value> A list of wordmaps. </value>
         WordMap[] WordMaps { get; set; }
+
+        /// <summary>
+        /// Gets or Sets a value indicating whether to use the .editorconfig file for settings.
+        /// </summary>
+        /// <remarks>
+        /// This will convert the existing settings to a %USERPROFILE% .editorconfig file
+        /// </remarks>
+        bool UseEditorConfigForSettings { get; set; }
     }
 }

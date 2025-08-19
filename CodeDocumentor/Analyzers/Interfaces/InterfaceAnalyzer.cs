@@ -34,7 +34,6 @@ namespace CodeDocumentor
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.InterfaceDeclaration);
-            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-
+            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {

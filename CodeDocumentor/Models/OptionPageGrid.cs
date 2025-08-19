@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 
@@ -191,17 +193,26 @@ namespace CodeDocumentor.Vsix2022
         /// <summary>
         ///  Gets or Sets the word maps.
         /// </summary>
-        /// <value> Aa array of wordmaps. </value>
+        /// <value> An array of wordmaps. </value>
         [Category(TranslationSubCategory)]
         [DisplayName("Word mappings for creating comments")]
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
         public WordMap[] WordMaps { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Use .editorconfig for extension settings")]
+        [Description("This will convert existing extension settings to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.")]
+        public bool UseEditorConfigForSettings { get; set; }
 
         /// <summary>
         ///  Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
+            if (Settings.IsCodeDocumentorDefinedInEditorConfig()) {
+                UseEditorConfigForSettings = true;
+                return;
+            }
             var settings = Settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
@@ -221,6 +232,7 @@ namespace CodeDocumentor.Vsix2022
             PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
             RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
+            UseEditorConfigForSettings = settings.UseEditorConfigForSettings;
         }
 
         /// <summary>
@@ -247,8 +259,30 @@ namespace CodeDocumentor.Vsix2022
                 MethodDiagnosticSeverity = MethodDiagnosticSeverity,
                 PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
                 RecordDiagnosticSeverity = RecordDiagnosticSeverity,
-                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
+                UseEditorConfigForSettings = UseEditorConfigForSettings
             };
+            var response = DialogResult.No;
+            if (settings.UseEditorConfigForSettings)
+            {
+                response = MessageBox.Show(
+                    $"This will convert existing extension settings to .editorconfig values. " +
+                    $"This allows CodeDocumentor to run out of process. " +
+                    $"Do you want to continue?{Environment.NewLine}" +
+                    $"You will need to paste these settings into your %USERPROFILE% .editorconfig and restart Visual Studio.",
+                    "Use .editorconfig for settings",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+            }
+            if (response == DialogResult.Yes)
+            {
+                settings.SaveToEditorConfig();
+                MessageBox.Show("Settings have been copied to the clipboard. Update your .editorconfig file in %USERPROFILE% with the contents to use the new settings. You will need to restart Visual Studio.",
+                    "Settings copied to clipboard",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+            }
             settings.Save();
             var optionsService = CodeDocumentorPackage._optService;
             optionsService.Update(settings);

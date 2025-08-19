@@ -91,11 +91,14 @@ namespace CodeDocumentor
                 var optionsService = OptionsService;
                 foreach (var declarationSyntax in declarations)
                 {
-                    if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    if (
+                       !declarationSyntax.IsOwnedByInterface() &&
+                       optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax)
+                    )
                     {
                         continue;
                     }
-                    //if method is already commented dont redo it, user should update methods indivually
+                    //if method is already commented dont redo it, user should update methods individually
                     if (declarationSyntax.HasSummary())
                     {
                         continue;

@@ -41,15 +41,13 @@ namespace CodeDocumentor
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ClassDeclaration);
-
-            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
         }
 
         /// <summary>
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        public void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is ClassDeclarationSyntax node))
             {
@@ -59,6 +57,7 @@ namespace CodeDocumentor
             {
                 return;
             }
+            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {

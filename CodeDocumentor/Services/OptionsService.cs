@@ -52,6 +52,8 @@ namespace CodeDocumentor.Services
 
         public WordMap[] WordMaps { get; set; }
 
+        public bool UseEditorConfigForSettings { get; set; }
+
         public IOptionsService Clone()
         {
             var newService = new OptionsService

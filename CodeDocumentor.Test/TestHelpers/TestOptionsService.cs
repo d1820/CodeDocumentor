@@ -37,6 +37,7 @@ namespace CodeDocumentor.Test.TestHelpers
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
         public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
         public bool IsEnabledForNonPublicFields { get; set; }
+        public bool UseEditorConfigForSettings { get; set; }
 
         public void SetClone(IOptionsService optionsService)
         {

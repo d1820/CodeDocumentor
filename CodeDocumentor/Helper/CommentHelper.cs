@@ -99,7 +99,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public string CreateFieldComment(string name, IOptionsService optionsService)
+        public string CreateFieldComment(string name, bool excludeAsyncSuffix, WordMap[] wordMaps)
         {
             //string comment;
             if (string.IsNullOrEmpty(name))
@@ -109,7 +109,7 @@ namespace CodeDocumentor.Helper
             //order matters. fields are special in the sense there is not action attached and we dont need to do translations
             var comment = NameSplitter
                             .Split(name)
-                            .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
+                            .HandleAsyncKeyword(excludeAsyncSuffix)
                             .Tap((parts) =>
                             {
                                 if (parts.Count > 0 && char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
@@ -120,7 +120,7 @@ namespace CodeDocumentor.Helper
                             .TryInsertTheWord()
                             .ToLowerParts()
                             .JoinToString()
-                            .ApplyUserTranslations(optionsService.WordMaps)
+                            .ApplyUserTranslations(wordMaps)
                             .WithPeriod();
 
             return comment;
@@ -266,7 +266,7 @@ namespace CodeDocumentor.Helper
         /// <param name="isBoolean"> If true, is boolean. </param>
         /// <param name="hasSetter"> If true, has setter. </param>
         /// <returns> A string. </returns>
-        public string CreatePropertyComment(string name, bool isBoolean, bool hasSetter, IOptionsService optionsService)
+        public string CreatePropertyComment(string name, bool isBoolean, bool hasSetter, bool excludeAsyncSuffix, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -280,11 +280,11 @@ namespace CodeDocumentor.Helper
                               .AddPropertyBooleanPart() //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts(optionsService.WordMaps)
-                              .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
+                              .TranslateParts(wordMaps)
+                              .HandleAsyncKeyword(excludeAsyncSuffix)
                               .ToLowerParts()
                               .JoinToString()
-                              .ApplyUserTranslations(optionsService.WordMaps)
+                              .ApplyUserTranslations(wordMaps)
                               .WithPeriod();
                 return comment;
             }
@@ -295,11 +295,11 @@ namespace CodeDocumentor.Helper
                               .AddCustomPart("the", 0) //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts(optionsService.WordMaps)
-                              .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
+                              .TranslateParts(wordMaps)
+                              .HandleAsyncKeyword(excludeAsyncSuffix)
                               .ToLowerParts()
                               .JoinToString()
-                              .ApplyUserTranslations(optionsService.WordMaps)
+                              .ApplyUserTranslations(wordMaps)
                               .WithPeriod();
                 return comment;
             }

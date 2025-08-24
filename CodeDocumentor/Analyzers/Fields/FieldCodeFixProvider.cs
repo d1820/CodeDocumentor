@@ -108,7 +108,7 @@ namespace CodeDocumentor
             var optionsService = OptionsService;
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, optionsService);
+            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, optionsService.ExcludeAsyncSuffix, optionsService.WordMaps);
 
             var builder = new DocumentationBuilder();
 

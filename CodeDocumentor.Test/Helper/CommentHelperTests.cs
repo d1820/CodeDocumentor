@@ -35,7 +35,7 @@ namespace CodeDocumentor.Test.Helper
         public void CreateFieldComment_ReturnsValidName(string name, string expected)
         {
 
-            var comment = _commentHelper.CreateFieldComment(name, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateFieldComment(name, _fixture.MockOptionsService.ExcludeAsyncSuffix, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -198,7 +198,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("HasError", "Gets a value indicating whether has error.", true, false)]
         public void CreatePropertyComment_ReturnsValidName(string name, string expected, bool isBool, bool hasSetter)
         {
-            var comment = _commentHelper.CreatePropertyComment(name, isBool, hasSetter, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreatePropertyComment(name, isBool, hasSetter, _fixture.MockOptionsService.ExcludeAsyncSuffix, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 

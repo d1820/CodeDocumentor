@@ -127,11 +127,11 @@ namespace CodeDocumentor
         {
             var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, optionsService);
+            var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, optionsService.WordMaps);
             var builder = new DocumentationBuilder();
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                             .WithTypeParamters(declarationSyntax)
-                            .WithParameters(declarationSyntax, optionsService)
+                            .WithParameters(declarationSyntax, optionsService.WordMaps)
                             .WithExisting(declarationSyntax, Constants.REMARKS)
                             .WithExisting(declarationSyntax, Constants.EXAMPLE)
                             .Build();

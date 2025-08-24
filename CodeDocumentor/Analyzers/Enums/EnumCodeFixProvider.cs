@@ -97,7 +97,7 @@ namespace CodeDocumentor
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var commentHelper = new CommentHelper();
             var optionsService = OptionsService;
-            var comment = commentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, optionsService);
+            var comment = commentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, optionsService.WordMaps);
 
             var builder = new DocumentationBuilder();
 

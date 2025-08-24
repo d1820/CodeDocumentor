@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -21,7 +22,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public string CreateClassComment(string name, IOptionsService optionsService)
+        public string CreateClassComment(string name, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -29,7 +30,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts(optionsService.WordMaps)
+                         .TranslateParts(wordMaps)
                          .TryInsertTheWord((parts) =>
                          {
                              if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -39,7 +40,7 @@ namespace CodeDocumentor.Helper
                          })
                          .ToLowerParts()
                          .JoinToString()
-                         .ApplyUserTranslations(optionsService.WordMaps)
+                         .ApplyUserTranslations(wordMaps)
                          .WithPeriod();
             return comment;
         }
@@ -50,7 +51,7 @@ namespace CodeDocumentor.Helper
         /// <param name="name"> The name. </param>
         /// <param name="isPrivate"> If true, is private. </param>
         /// <returns> A string. </returns>
-        public string CreateConstructorComment(string name, bool isPrivate, IOptionsService optionsService)
+        public string CreateConstructorComment(string name, bool isPrivate, WordMap[] wordMaps)
         {
             string comment;
             if (string.IsNullOrEmpty(name))
@@ -66,7 +67,7 @@ namespace CodeDocumentor.Helper
             {
                 comment = $"Initializes a new instance of the <see cref=\"{name}\"/> class";
             }
-            return comment.ApplyUserTranslations(optionsService.WordMaps).WithPeriod();
+            return comment.ApplyUserTranslations(wordMaps).WithPeriod();
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public string CreateEnumComment(string name, IOptionsService optionsService)
+        public string CreateEnumComment(string name,  WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -82,13 +83,13 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                            .Split(name)
-                           .TranslateParts(optionsService.WordMaps)
+                           .TranslateParts(wordMaps)
                            .TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .PluaralizeLastWord()
                            .JoinToString()
-                           .ApplyUserTranslations(optionsService.WordMaps)
+                           .ApplyUserTranslations(wordMaps)
                            .WithPeriod();
             return comment;
         }
@@ -130,7 +131,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public string CreateInterfaceComment(string name, IOptionsService optionsService)
+        public string CreateInterfaceComment(string name, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -143,11 +144,11 @@ namespace CodeDocumentor.Helper
                                parts.Remove("I");
                            })
                            .AddCustomPart("interface")
-                           .TranslateParts(optionsService.WordMaps)
+                           .TranslateParts(wordMaps)
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .JoinToString()
-                           .ApplyUserTranslations(optionsService.WordMaps)
+                           .ApplyUserTranslations(wordMaps)
                            .WithPeriod();
 
             return comment;
@@ -206,7 +207,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="parameter"> The parameter. </param>
         /// <returns> A string. </returns>
-        public string CreateParameterComment(ParameterSyntax parameter, IOptionsService optionsService)
+        public string CreateParameterComment(ParameterSyntax parameter, WordMap[] wordMaps)
         {
             var isBoolean = false;
             if (parameter.Type.IsKind(SyntaxKind.PredefinedType))
@@ -227,10 +228,10 @@ namespace CodeDocumentor.Helper
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
                                 .AddCustomPart("If true,", 0)
-                                .TranslateParts(optionsService.WordMaps)
+                                .TranslateParts(wordMaps)
                                 .ToLowerParts()
                                 .JoinToString()
-                                .ApplyUserTranslations(optionsService.WordMaps)
+                                .ApplyUserTranslations(wordMaps)
                                 .WithPeriod();
                 return comment;
             }
@@ -238,7 +239,7 @@ namespace CodeDocumentor.Helper
             {
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
-                                .TranslateParts(optionsService.WordMaps)
+                                .TranslateParts(wordMaps)
                                 .TryInsertTheWord((parts) =>
                                 {
                                     if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -248,7 +249,7 @@ namespace CodeDocumentor.Helper
                                 })
                                 .ToLowerParts()
                                 .JoinToString()
-                                .ApplyUserTranslations(optionsService.WordMaps)
+                                .ApplyUserTranslations(wordMaps)
                                 .WithPeriod();
                 return comment;
             }
@@ -305,7 +306,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public string CreateRecordComment(string name, IOptionsService optionsService)
+        public string CreateRecordComment(string name, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -313,7 +314,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts(optionsService.WordMaps)
+                         .TranslateParts(wordMaps)
                          .TryInsertTheWord((parts) =>
                          {
                              if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -323,7 +324,7 @@ namespace CodeDocumentor.Helper
                          })
                          .ToLowerParts()
                          .JoinToString()
-                         .ApplyUserTranslations(optionsService.WordMaps)
+                         .ApplyUserTranslations(wordMaps)
                          .WithPeriod();
             return comment;
         }

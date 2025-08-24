@@ -71,7 +71,7 @@ namespace CodeDocumentor.Builders
                 var commentHelper = new CommentHelper();
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = commentHelper.CreateParameterComment(parameter, optionsService);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, optionsService.WordMaps);
                     var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
@@ -82,14 +82,14 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithParameters(TypeDeclarationSyntax declarationSyntax, IOptionsService optionsService)
+        internal DocumentationBuilder WithParameters(TypeDeclarationSyntax declarationSyntax, WordMap[] wordMaps)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
                 var commentHelper = new CommentHelper();
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = commentHelper.CreateParameterComment(parameter, optionsService);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter,wordMaps);
 
                     var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 

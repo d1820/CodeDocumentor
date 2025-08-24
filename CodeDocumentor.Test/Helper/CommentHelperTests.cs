@@ -151,7 +151,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("INotifier", "The notifier interface.")]
         public void CreateInterfaceComment_ReturnsValidName(string name, string expected)
         {
-            var comment = _commentHelper.CreateInterfaceComment(name, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateInterfaceComment(name, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -163,7 +163,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("ClientDto", "The client data transfer object.")]
         public void CreateClassComment_ReturnsValidName(string name, string expected)
         {
-            var comment = _commentHelper.CreateClassComment(name, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateClassComment(name, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -172,7 +172,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("ClientDto", "The client data transfer object.")]
         public void CreateRecordComment_ReturnsValidName(string name, string expected)
         {
-            var comment = _commentHelper.CreateRecordComment(name, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateRecordComment(name, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -192,7 +192,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("ClientRole", "The clients roles.")]
         public void CreateEnumComment_ReturnsValidName(string name, string expected)
         {
-            var comment = _commentHelper.CreateEnumComment(name, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateEnumComment(name, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -217,7 +217,7 @@ namespace CodeDocumentor.Test.Helper
             }
 
             var parameter = SyntaxFactory.Parameter(attributeLists, modifiers, typeSyntax, SyntaxFactory.Identifier(name), null);
-            var comment = _commentHelper.CreateParameterComment(parameter, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateParameterComment(parameter, _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 

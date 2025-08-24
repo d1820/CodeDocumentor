@@ -13,14 +13,18 @@ namespace CodeDocumentor.Helper
 {
     public static class ListExtensions
     {
-        public static List<string> TryIncudeReturnType(this List<string> parts, IOptionsService optionsService, TypeSyntax returnType, Action<string> returnTapAction = null)
+        public static List<string> TryIncludeReturnType(this List<string> parts,
+            bool useToDoCommentsOnSummaryError,
+            bool tryToIncludeCrefsForReturnTypes,
+            WordMap[] wordMaps,
+            TypeSyntax returnType, Action<string> returnTapAction = null)
         {
             if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
             {
                 //if return type is not a generic type then just force the Todo comment cause what ever we do here will not be a good summary anyway
                 if (returnType.GetType() != typeof(GenericNameSyntax))
                 {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
+                    if (useToDoCommentsOnSummaryError)
                     {
                         parts = new List<string> { "TODO: Add Summary" };
                     }
@@ -35,10 +39,10 @@ namespace CodeDocumentor.Helper
                 {
                     //ReturnBuildType = ReturnBuildType.SummaryXmlElement,
                     UseProperCasing = false,
-                    TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
+                    TryToIncludeCrefsForReturnTypes = tryToIncludeCrefsForReturnTypes,
                     IncludeStartingWordInText = true
                 };
-                var returnComment = new SingleWordCommentSummaryConstruction(returnType, options, optionsService).Comment;
+                var returnComment = new SingleWordCommentSummaryConstruction(returnType, options, wordMaps).Comment;
                 returnTapAction?.Invoke(returnComment);
                 if (!string.IsNullOrEmpty(returnComment))
                 {
@@ -54,7 +58,7 @@ namespace CodeDocumentor.Helper
                 }
                 else
                 {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
+                    if (useToDoCommentsOnSummaryError)
                     {
                         parts = new List<string> { "TODO: Add Summary" };
                     }

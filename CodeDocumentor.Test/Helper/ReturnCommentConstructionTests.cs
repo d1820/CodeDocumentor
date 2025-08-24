@@ -19,7 +19,7 @@ namespace CodeDocumentor.Test.Helper
         public ReturnCommentConstructionTests(TestFixture testFixture, ITestOutputHelper output)
         {
             testFixture.Initialize(output);
-            _returnCommentBuilder = new ReturnCommentConstruction(testFixture.MockOptionsService);
+            _returnCommentBuilder = new ReturnCommentConstruction();
 
             _options = new ReturnTypeBuilderOptions
             {

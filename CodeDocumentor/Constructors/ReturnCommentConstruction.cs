@@ -35,7 +35,7 @@ namespace CodeDocumentor.Constructors
         }
 
         //used for testing
-        internal ReturnCommentConstruction(IOptionsService optionsService)
+        internal ReturnCommentConstruction()
         {
         }
 

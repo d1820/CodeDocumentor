@@ -160,7 +160,11 @@ namespace CodeDocumentor.Helper
         /// <param name="name"> The name. </param>
         /// <param name="returnType"> The return type. </param>
         /// <returns> A string. </returns>
-        public string CreateMethodComment(string name, TypeSyntax returnType, IOptionsService optionsService)
+        public string CreateMethodComment(string name, TypeSyntax returnType,
+            bool useToDoCommentsOnSummaryError,
+            bool tryToIncludeCrefsForReturnTypes,
+            bool excludeAsyncSuffix,
+            WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -176,13 +180,13 @@ namespace CodeDocumentor.Helper
                              is2partPlusAsync = parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase));
                              isBool = returnType.IsBoolReturnType();
                          })
-                         .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
-                         .TryIncudeReturnType(optionsService, returnType, (returnComment) =>
+                         .HandleAsyncKeyword(excludeAsyncSuffix)
+                         .TryIncludeReturnType(useToDoCommentsOnSummaryError, tryToIncludeCrefsForReturnTypes, wordMaps, returnType, (returnComment) =>
                          {
                              hasReturnComment = !string.IsNullOrEmpty(returnComment);
                          })
-                         .TryAddTodoSummary(returnType.ToString(), optionsService.UseToDoCommentsOnSummaryError)
-                         .TranslateParts(optionsService.WordMaps)
+                         .TryAddTodoSummary(returnType.ToString(), useToDoCommentsOnSummaryError)
+                         .TranslateParts(wordMaps)
                          .TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
@@ -197,7 +201,7 @@ namespace CodeDocumentor.Helper
                          })
                          .ToLowerParts()
                          .JoinToString()
-                         .ApplyUserTranslations(optionsService.WordMaps)
+                         .ApplyUserTranslations(wordMaps)
                          .WithPeriod();
             return comment;
         }

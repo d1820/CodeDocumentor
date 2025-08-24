@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -127,7 +128,12 @@ namespace CodeDocumentor
         {
             var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
-            var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType, optionsService);
+            var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
+                                                                declarationSyntax.ReturnType,
+                                                               optionsService.UseToDoCommentsOnSummaryError,
+                                                               optionsService.TryToIncludeCrefsForReturnTypes,
+                                                               optionsService.ExcludeAsyncSuffix,
+                                                               optionsService.WordMaps);
             var builder = new DocumentationBuilder();
 
             var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)

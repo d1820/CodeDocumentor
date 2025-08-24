@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
@@ -82,7 +83,11 @@ namespace CodeDocumentor.Test.Helper
                 typeSyntax = SyntaxFactory.ParseTypeName(returnType);
             }
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateMethodComment(name, typeSyntax, _fixture.MockOptionsService);
+            var comment = commentHelper.CreateMethodComment(name, typeSyntax,
+                 _fixture.MockOptionsService.UseToDoCommentsOnSummaryError,
+                 _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockOptionsService.ExcludeAsyncSuffix,
+                 _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -95,7 +100,10 @@ namespace CodeDocumentor.Test.Helper
             _fixture.MockOptionsService.UseToDoCommentsOnSummaryError = false;
             _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes = true;
 
-            var comment = _commentHelper.CreateMethodComment("Work", typeSyntax, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateMethodComment("Work", typeSyntax, _fixture.MockOptionsService.UseToDoCommentsOnSummaryError,
+                 _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockOptionsService.ExcludeAsyncSuffix,
+                 _fixture.MockOptionsService.WordMaps);
             comment.Should().Be("Work and return a <see cref=\"Task\"/> of a list of a list of strings.");
         }
 
@@ -111,7 +119,11 @@ namespace CodeDocumentor.Test.Helper
 
             TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateMethodComment("CreateAsync", typeSyntax, _fixture.MockOptionsService);
+            var comment = commentHelper.CreateMethodComment("CreateAsync", typeSyntax,
+                _fixture.MockOptionsService.UseToDoCommentsOnSummaryError,
+                 _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockOptionsService.ExcludeAsyncSuffix,
+                 _fixture.MockOptionsService.WordMaps);
             comment.Should().Be("Creates and return a task of type actionresult of type clientdto asynchronously.");
         }
 
@@ -141,7 +153,11 @@ namespace CodeDocumentor.Test.Helper
                 typeSyntax = SyntaxFactory.ParseTypeName(returnType);
             }
 
-            var comment = _commentHelper.CreateMethodComment(name, typeSyntax, _fixture.MockOptionsService);
+            var comment = _commentHelper.CreateMethodComment(name, typeSyntax,
+                _fixture.MockOptionsService.UseToDoCommentsOnSummaryError,
+                 _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockOptionsService.ExcludeAsyncSuffix,
+                 _fixture.MockOptionsService.WordMaps);
             comment.Should().Be(expected);
         }
 

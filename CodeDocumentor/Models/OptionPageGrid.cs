@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CodeDocumentor.Common;
@@ -204,16 +205,32 @@ namespace CodeDocumentor.Vsix2022
         public WordMap[] WordMaps { get; set; }
 
         [Category(AnalyzerSubCategory)]
-        [DisplayName("Use .editorconfig for extension settings")]
-        [Description("This will convert existing extension settings to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.")]
+        [DisplayName("Use .editorconfig for extension options")]
+        [Description("This will convert existing extension options to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.")]
         public bool UseEditorConfigForSettings { get; set; }
 
+
+        protected override void OnActivate(CancelEventArgs e)
+        {
+            base.OnActivate(e);
+            var settings = new Settings();
+            if (settings.IsCodeDocumentorDefinedInEditorConfig())
+            {
+                MessageBox.Show(
+                  $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
+                  $"Options are no longer managed through Visual Studio. ",
+                  "CodeDocumentor Options Management",
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Exclamation);
+            }
+        }
         /// <summary>
         ///  Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
-            var settings = new CodeDocumentor.Common.Models.Settings();
+            var settings = new Settings();
+            var f = this.Window.Handle;
             if (settings.IsCodeDocumentorDefinedInEditorConfig()) {
                 UseEditorConfigForSettings = true;
                 return;
@@ -245,7 +262,18 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
-            var settings = new CodeDocumentor.Common.Models.Settings
+            var settings = new Settings();
+            if (settings.IsCodeDocumentorDefinedInEditorConfig())
+            {
+                MessageBox.Show(
+                    $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
+                    $"Options are no longer managed through Visual Studio. ",
+                    "CodeDocumentor Options Management",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
+                return;
+            }
+            settings = new Settings
             {
                 IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
                 UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
@@ -271,11 +299,11 @@ namespace CodeDocumentor.Vsix2022
             if (settings.UseEditorConfigForSettings)
             {
                 response = MessageBox.Show(
-                    $"This will convert existing extension settings to .editorconfig values. " +
+                    $"This will convert existing extension options to .editorconfig values. " +
                     $"This allows CodeDocumentor to run out of process. " +
                     $"Do you want to continue?{Environment.NewLine}" +
-                    $"You will need to paste these settings into your %USERPROFILE% .editorconfig and restart Visual Studio.",
-                    "Use .editorconfig for settings",
+                    $"You will need to paste these options into your %USERPROFILE% .editorconfig and restart Visual Studio.",
+                    "CodeDocumentor Options Management",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
             }

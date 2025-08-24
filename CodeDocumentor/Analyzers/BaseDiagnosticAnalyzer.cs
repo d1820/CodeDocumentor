@@ -10,6 +10,11 @@ namespace CodeDocumentor
 
         private static IOptionsService _optionsService;
 
+        protected BaseDiagnosticAnalyzer()
+        {
+            DocumentationHeaderHelper = new DocumentationHeaderHelper();
+        }
+
         public static void SetOptionsService(IOptionsService optionsService)
         {
             _optionsService = optionsService;

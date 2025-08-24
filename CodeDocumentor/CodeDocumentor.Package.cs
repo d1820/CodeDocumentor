@@ -3,7 +3,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -45,7 +47,7 @@ namespace CodeDocumentor.Vsix2022
     {
 
 #pragma warning disable IDE1006 // Naming Styles
-        internal static IOptionPageGrid _options;
+        private static IOptionPageGrid _options;
         internal static OptionsService _optService;
 #pragma warning restore IDE1006 // Naming Styles
 
@@ -69,8 +71,9 @@ namespace CodeDocumentor.Vsix2022
             // initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
+            //When editorconfig settings are available, we will use those,
+            //but we still bootstrap all the static injections, because we can only read the editorconfig settings at runtime from the contexts
             _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-
             _optService = new OptionsService();
             _optService.SetDefaults(_options);
             BaseCodeFixProvider.SetOptionsService(_optService);

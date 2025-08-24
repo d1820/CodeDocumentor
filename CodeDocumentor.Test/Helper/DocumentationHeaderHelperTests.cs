@@ -13,7 +13,7 @@ namespace CodeDocumentor.Test.Helper
         public DocumentationHeaderHelperTests(TestFixture fixture, ITestOutputHelper output)
         {
             fixture.Initialize(output);
-            _documentationHeaderHelper = new DocumentationHeaderHelper(fixture.MockOptionsService);
+            _documentationHeaderHelper = new DocumentationHeaderHelper();
         }
         [Fact]
         public void CreateReturnElementSyntax_ReturnsMultipleCRefAsEmbeddedNodeInReturn()

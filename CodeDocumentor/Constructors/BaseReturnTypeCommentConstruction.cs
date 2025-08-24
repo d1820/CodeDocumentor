@@ -35,7 +35,7 @@ namespace CodeDocumentor.Constructors
         public BaseReturnTypeCommentConstruction(IOptionsService optionsService)
         {
             OptionsService = optionsService;
-            DocumentationHeaderHelper = new DocumentationHeaderHelper(optionsService);
+            DocumentationHeaderHelper = new DocumentationHeaderHelper();
             GenericCommentManager = new GenericCommentManager(optionsService);
         }
 
@@ -90,7 +90,7 @@ namespace CodeDocumentor.Constructors
             }
             else if (returnType is ArrayTypeSyntax ast)
             {
-                var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, options.TryToIncludeCrefsForReturnTypes));
+                var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, OptionsService.WordMaps, options.TryToIncludeCrefsForReturnTypes));
                 var arrayOptions = options.Clone();
                 arrayOptions.IncludeStartingWordInText = true;
                 arrayOptions.TryToIncludeCrefsForReturnTypes = false;
@@ -172,14 +172,14 @@ namespace CodeDocumentor.Constructors
             var genericTypeStr = returnType.Identifier.ValueText;
             if (returnType.IsReadOnlyCollection())
             {
-                var comment = GenericCommentManager.ProcessReadOnlyCollection(returnType, options);
+                var comment = GenericCommentManager.ProcessReadOnlyCollection(returnType, options, OptionsService.WordMaps);
                 return comment;
             }
 
             // IEnumerable IList List
             if (returnType.IsList())
             {
-                var comment = GenericCommentManager.ProcessList(returnType, options);
+                var comment = GenericCommentManager.ProcessList(returnType, options, OptionsService.WordMaps);
                 return comment;
             }
 
@@ -187,7 +187,7 @@ namespace CodeDocumentor.Constructors
             {
                 if (returnType.TypeArgumentList.Arguments.Count == 2)
                 {
-                    var comment = GenericCommentManager.ProcessDictionary(returnType, options, DictionaryCommentTemplate);
+                    var comment = GenericCommentManager.ProcessDictionary(returnType, options, DictionaryCommentTemplate, OptionsService.WordMaps);
                     return comment;
                 }
                 return GenerateGeneralComment(genericTypeStr.AsSpan(), new ReturnTypeBuilderOptions());

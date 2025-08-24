@@ -10,20 +10,18 @@ namespace CodeDocumentor.Managers
 {
     public class GenericCommentManager
     {
-        private IOptionsService _optionsService;
         private DocumentationHeaderHelper _documentationHeaderHelper;
 
         public GenericCommentManager(IOptionsService optionsService)
         {
-            _optionsService = optionsService;
-            _documentationHeaderHelper = new DocumentationHeaderHelper(optionsService);
+            _documentationHeaderHelper = new DocumentationHeaderHelper();
         }
-        public string ProcessDictionary(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, string stringTemplate)
+        public string ProcessDictionary(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, string stringTemplate, WordMap[] wordMaps)
         {
             var argType1 = returnType.TypeArgumentList.Arguments.First();
             var argType2 = returnType.TypeArgumentList.Arguments.Last();
             var items = new List<string>();
-            BuildChildrenGenericArgList(argType2, items); //pluaralizeIdentifierType: false
+            BuildChildrenGenericArgList(argType2, items, wordMaps); //pluaralizeIdentifierType: false
             items.Reverse();
 
             var comment = items.ToLowerParts(true)
@@ -42,10 +40,10 @@ namespace CodeDocumentor.Managers
                                }
                            })
                            .JoinToString(" of ")
-                           .ApplyUserTranslations(_optionsService.WordMaps)
+                           .ApplyUserTranslations(wordMaps)
                            .WithPeriod();
 
-            comment = string.Format(stringTemplate, argType1.ApplyUserTranslations(_optionsService.WordMaps), comment);
+            comment = string.Format(stringTemplate, argType1.ApplyUserTranslations(wordMaps), comment);
             if (options.IsRootReturnType)
             {
                 //This ensure the return string has correct casing
@@ -55,13 +53,13 @@ namespace CodeDocumentor.Managers
             return comment;
         }
 
-        public string ProcessList(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        public string ProcessList(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
             var argType = returnType.TypeArgumentList.Arguments.First();
             var items = new List<string>();
-            BuildChildrenGenericArgList(argType, items);
+            BuildChildrenGenericArgList(argType, items, wordMaps);
 
-            var returnName = _documentationHeaderHelper.DetermineSpecificObjectName(returnType, false, true).ToLower();
+            var returnName = _documentationHeaderHelper.DetermineSpecificObjectName(returnType, wordMaps, false, true).ToLower();
             items.Add(returnName);
             items.Reverse();
 
@@ -75,7 +73,7 @@ namespace CodeDocumentor.Managers
                                     }
                                 })
                                 .JoinToString(" of ")
-                                .ApplyUserTranslations(_optionsService.WordMaps)
+                                .ApplyUserTranslations(wordMaps)
                                 .WithPeriod();
             if (options.IsRootReturnType)
             {
@@ -116,13 +114,13 @@ namespace CodeDocumentor.Managers
             return comment;
         }
 
-        public string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        public string ProcessReadOnlyCollection(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
             var argType = returnType.TypeArgumentList.Arguments.First();
 
             var items = new List<string>();
-            BuildChildrenGenericArgList(argType, items);
-            var returnName = _documentationHeaderHelper.DetermineSpecificObjectName(returnType, false, true).ToLower();
+            BuildChildrenGenericArgList(argType, items, wordMaps);
+            var returnName = _documentationHeaderHelper.DetermineSpecificObjectName(returnType, wordMaps, false, true).ToLower();
             items.Add(returnName);
             items.Reverse();
 
@@ -136,7 +134,7 @@ namespace CodeDocumentor.Managers
                                     }
                                 })
                                 .JoinToString(" of ")
-                                .ApplyUserTranslations(_optionsService.WordMaps)
+                                .ApplyUserTranslations(wordMaps)
                                 .WithPeriod();
             if (options.IsRootReturnType)
             {
@@ -228,17 +226,17 @@ namespace CodeDocumentor.Managers
         /// </summary>
         /// <param name="argType"> The arg type. </param>
         /// <param name="items"> The items. </param>
-        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items)
+        private void BuildChildrenGenericArgList(TypeSyntax argType, List<string> items, WordMap[] wordMaps)
         {
             if (argType is GenericNameSyntax genericArgType)
             {
                 var childArg = genericArgType.TypeArgumentList?.Arguments.FirstOrDefault();
                 if (childArg != null)
                 {
-                    BuildChildrenGenericArgList(childArg, items);
+                    BuildChildrenGenericArgList(childArg, items, wordMaps);
                 }
             }
-            items.Add(_documentationHeaderHelper.DetermineSpecificObjectName(argType, false, true));
+            items.Add(_documentationHeaderHelper.DetermineSpecificObjectName(argType, wordMaps, false, true));
         }
     }
 }

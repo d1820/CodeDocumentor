@@ -46,7 +46,6 @@ namespace CodeDocumentor
             {
                 return;
             }
-            DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {

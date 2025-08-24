@@ -22,12 +22,10 @@ namespace CodeDocumentor.Helper
         private readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         private readonly Regex _regExParseXmlElement = new Regex(@"<(.*?)\s(\w*)=""(.*?)""\s*/>", RegexOptions.IgnoreCase);
-        private IOptionsService _optionsService;
         private readonly Logger _eventLogger;
 
-        public DocumentationHeaderHelper(IOptionsService optionsService)
+        public DocumentationHeaderHelper()
         {
-            _optionsService = optionsService;
             _eventLogger = new Logger();
         }
 
@@ -167,25 +165,25 @@ namespace CodeDocumentor.Helper
         /// <param name="specificType"> The specific type. </param>
         /// <param name="pluaralizeName"> Flag determines if name should be pluralized </param>
         /// <returns> The comment. </returns>
-        internal string DetermineSpecificObjectName(TypeSyntax specificType, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
+        internal string DetermineSpecificObjectName(TypeSyntax specificType, WordMap[] wordMaps, bool pluaralizeName = false, bool pluaralizeIdentifierType = true)
         {
             string value;
             switch (specificType)
             {
                 case IdentifierNameSyntax identifierNameSyntax:
-                    value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations(_optionsService.WordMaps);
+                    value = identifierNameSyntax.Identifier.ValueText.ApplyUserTranslations(wordMaps);
                     return pluaralizeIdentifierType ? Pluralizer.Pluralize(value) : value;
 
                 case PredefinedTypeSyntax predefinedTypeSyntax:
-                    value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations(_optionsService.WordMaps);
+                    value = predefinedTypeSyntax.Keyword.ValueText.ApplyUserTranslations(wordMaps);
                     return pluaralizeName ? Pluralizer.Pluralize(value) : value;
 
                 case GenericNameSyntax genericNameSyntax:
-                    value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations(_optionsService.WordMaps);
+                    value = genericNameSyntax.Identifier.ValueText.ApplyUserTranslations(wordMaps);
                     return pluaralizeName ? Pluralizer.Pluralize(value) : value;
 
                 default:
-                    return specificType.ToFullString().ApplyUserTranslations(_optionsService.WordMaps);
+                    return specificType.ToFullString().ApplyUserTranslations(wordMaps);
             }
         }
 

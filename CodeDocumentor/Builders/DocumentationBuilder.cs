@@ -21,7 +21,7 @@ namespace CodeDocumentor.Builders
         public DocumentationBuilder(IOptionsService optionsService)
         {
             _optionsService = optionsService;
-            _documentationHeaderHelper = new DocumentationHeaderHelper(optionsService);
+            _documentationHeaderHelper = new DocumentationHeaderHelper();
         }
 
         internal SyntaxList<XmlNodeSyntax> Build()

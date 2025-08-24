@@ -15,7 +15,6 @@ namespace CodeDocumentor.Common.Extensions
 
         private static readonly string _userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-
         public static void Save(this Settings settings)
         {
             if (Runtime.RunningUnitTests)
@@ -27,7 +26,6 @@ namespace CodeDocumentor.Common.Extensions
             Directory.CreateDirectory(_programDataFolder);
             settings.SaveToFile(GetSettingsFilePath());
         }
-
 
         /// <summary>
         ///  Loads the <see cref="Settings"/>.

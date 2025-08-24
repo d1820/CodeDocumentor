@@ -18,9 +18,9 @@ namespace CodeDocumentor.Constructors
         ///  Initializes a new instance of the <see cref="SingleWordCommentSummaryConstruction"/> class.
         /// </summary>
         /// <param name="returnType"> The return type. </param>
-        public SingleWordCommentSummaryConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, IOptionsService optionsService): base(optionsService)
+        public SingleWordCommentSummaryConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, IOptionsService optionsService)
         {
-            var comment = BuildComment(returnType, options); //we dont need to translate or period here cause the caller of this does all that work
+            var comment = BuildComment(returnType, options, optionsService.WordMaps); //we dont need to translate or period here cause the caller of this does all that work
             if (!string.IsNullOrEmpty(comment))
             {
                 var startWord = "";

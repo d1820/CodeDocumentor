@@ -111,7 +111,7 @@ namespace CodeDocumentor
             var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
             var propertyComment = commentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean, hasSetter, optionsService);
-            var builder = new DocumentationBuilder(optionsService);
+            var builder = new DocumentationBuilder();
 
             var returnOptions = new ReturnTypeBuilderOptions
             {
@@ -122,7 +122,7 @@ namespace CodeDocumentor
                 UseProperCasing = true
             };
             var list = builder.WithSummary(declarationSyntax, propertyComment, optionsService.PreserveExistingSummaryText)
-                        .WithPropertyValueTypes(declarationSyntax, returnOptions)
+                        .WithPropertyValueTypes(declarationSyntax, returnOptions, optionsService.WordMaps)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
                         .Build();

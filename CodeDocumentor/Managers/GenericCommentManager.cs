@@ -12,7 +12,7 @@ namespace CodeDocumentor.Managers
     {
         private DocumentationHeaderHelper _documentationHeaderHelper;
 
-        public GenericCommentManager(IOptionsService optionsService)
+        public GenericCommentManager()
         {
             _documentationHeaderHelper = new DocumentationHeaderHelper();
         }

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Common.Models
 {
-    public class Settings : IOptionPageGrid
+    public class Settings : ISettings
     {
         public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
 

@@ -102,7 +102,7 @@ namespace CodeDocumentor.Test.TestHelpers
 
         }
 
-        public void SetDefaults(IOptionPageGrid options)
+        public void SetDefaults(ISettings options)
         {
             IsEnabledForPublicMembersOnly = options.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = options.UseNaturalLanguageForReturnNode;

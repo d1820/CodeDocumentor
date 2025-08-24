@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace CodeDocumentor.Services
 {
-    public interface IOptionsService : IOptionPageGrid
+    public interface IOptionsService : ISettings
     {
-        void SetDefaults(IOptionPageGrid options);
+        void SetDefaults(ISettings options);
 
         void Update(Settings settings);
 
@@ -92,7 +92,7 @@ namespace CodeDocumentor.Services
             return newService;
         }
 
-        public void SetDefaults(IOptionPageGrid options)
+        public void SetDefaults(ISettings options)
         {
             DefaultDiagnosticSeverity = options?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
 

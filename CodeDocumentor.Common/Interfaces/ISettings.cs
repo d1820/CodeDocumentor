@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 namespace CodeDocumentor.Common.Interfaces
 {
-    public interface IOptionPageGrid
+    public interface ISettings
     {
         DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
 

@@ -99,7 +99,7 @@ namespace CodeDocumentor
             var optionsService = OptionsService;
             var comment = commentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, optionsService);
 
-            var builder = new DocumentationBuilder(optionsService);
+            var builder = new DocumentationBuilder();
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

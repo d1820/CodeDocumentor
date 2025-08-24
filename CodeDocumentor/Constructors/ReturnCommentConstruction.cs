@@ -17,7 +17,7 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
 
-        public ReturnCommentConstruction(TypeSyntax returnType, IOptionsService optionsService) : base(optionsService)
+        public ReturnCommentConstruction(TypeSyntax returnType, IOptionsService optionsService)
         {
             var options = new ReturnTypeBuilderOptions
             {
@@ -26,22 +26,22 @@ namespace CodeDocumentor.Constructors
                 IncludeStartingWordInText = true,
                 UseProperCasing = true
             };
-            BuildReturnComment(returnType, options);
+            BuildReturnComment(returnType, options, optionsService.WordMaps);
         }
 
-        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, IOptionsService optionsService) : base(optionsService)
+        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
-            BuildReturnComment(returnType, options);
+            BuildReturnComment(returnType, options, wordMaps);
         }
 
         //used for testing
-        internal ReturnCommentConstruction(IOptionsService optionsService): base(optionsService)
+        internal ReturnCommentConstruction(IOptionsService optionsService)
         {
         }
 
-        private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
-            var comment = BuildComment(returnType, options).Trim();
+            var comment = BuildComment(returnType, options, wordMaps).Trim();
             if (options.IncludeStartingWordInText && !options.ReturnGenericTypeAsFullString)
             {
                 if (!string.IsNullOrEmpty(comment))

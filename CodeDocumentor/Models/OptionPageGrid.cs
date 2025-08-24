@@ -20,7 +20,7 @@ namespace CodeDocumentor.Vsix2022
     ///  The option page grid.
     /// </summary>
     [Guid("BE905985-26BB-492B-9453-743E26F4E8BB")]
-    public class OptionPageGrid : DialogPage, IOptionPageGrid
+    public class OptionPageGrid : DialogPage, ISettings
     {
         /// <summary>
         ///  The category.

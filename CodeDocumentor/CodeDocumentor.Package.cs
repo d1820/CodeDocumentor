@@ -47,7 +47,7 @@ namespace CodeDocumentor.Vsix2022
     {
 
 #pragma warning disable IDE1006 // Naming Styles
-        private static IOptionPageGrid _options;
+        private static ISettings _options;
         internal static OptionsService _optService;
 #pragma warning restore IDE1006 // Naming Styles
 

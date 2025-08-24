@@ -97,7 +97,7 @@ namespace CodeDocumentor
             var optionsService = OptionsService;
             var commentHelper = new CommentHelper();
             var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, optionsService);
-            var builder = new DocumentationBuilder(optionsService);
+            var builder = new DocumentationBuilder();
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .Build();

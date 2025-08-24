@@ -29,14 +29,12 @@ namespace CodeDocumentor.Constructors
         public abstract string DictionaryCommentTemplate { get; }
 
         protected GenericCommentManager GenericCommentManager { get; private set; }
-        protected IOptionsService OptionsService { get; private set; }
         protected DocumentationHeaderHelper DocumentationHeaderHelper { get; private set; }
 
-        public BaseReturnTypeCommentConstruction(IOptionsService optionsService)
+        public BaseReturnTypeCommentConstruction()
         {
-            OptionsService = optionsService;
             DocumentationHeaderHelper = new DocumentationHeaderHelper();
-            GenericCommentManager = new GenericCommentManager(optionsService);
+            GenericCommentManager = new GenericCommentManager();
         }
 
         /// <summary>
@@ -45,7 +43,7 @@ namespace CodeDocumentor.Constructors
         /// <param name="returnType"> The return type. </param>
         /// <param name="options"> The options </param>
         /// <returns> The comment </returns>
-        internal virtual string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        internal virtual string BuildComment(TypeSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
             var returnComment = string.Empty;
             if (returnType is IdentifierNameSyntax identifier)
@@ -86,11 +84,11 @@ namespace CodeDocumentor.Constructors
             }
             else if (returnType is GenericNameSyntax gst)
             {
-                returnComment = GenerateGenericTypeComment(gst, options);
+                returnComment = GenerateGenericTypeComment(gst, options, wordMaps);
             }
             else if (returnType is ArrayTypeSyntax ast)
             {
-                var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, OptionsService.WordMaps, options.TryToIncludeCrefsForReturnTypes));
+                var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, wordMaps, options.TryToIncludeCrefsForReturnTypes));
                 var arrayOptions = options.Clone();
                 arrayOptions.IncludeStartingWordInText = true;
                 arrayOptions.TryToIncludeCrefsForReturnTypes = false;
@@ -161,7 +159,7 @@ namespace CodeDocumentor.Constructors
         /// </summary>
         /// <param name="returnType"> The return type. </param>
         /// <returns> The string </returns>
-        private string GenerateGenericTypeComment(GenericNameSyntax returnType, ReturnTypeBuilderOptions options)
+        private string GenerateGenericTypeComment(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
             // this will return the full generic Ex. Task<Request>- which then will get added to a CDATA
             if (options.ReturnGenericTypeAsFullString)
@@ -172,14 +170,14 @@ namespace CodeDocumentor.Constructors
             var genericTypeStr = returnType.Identifier.ValueText;
             if (returnType.IsReadOnlyCollection())
             {
-                var comment = GenericCommentManager.ProcessReadOnlyCollection(returnType, options, OptionsService.WordMaps);
+                var comment = GenericCommentManager.ProcessReadOnlyCollection(returnType, options, wordMaps);
                 return comment;
             }
 
             // IEnumerable IList List
             if (returnType.IsList())
             {
-                var comment = GenericCommentManager.ProcessList(returnType, options, OptionsService.WordMaps);
+                var comment = GenericCommentManager.ProcessList(returnType, options, wordMaps);
                 return comment;
             }
 
@@ -187,7 +185,7 @@ namespace CodeDocumentor.Constructors
             {
                 if (returnType.TypeArgumentList.Arguments.Count == 2)
                 {
-                    var comment = GenericCommentManager.ProcessDictionary(returnType, options, DictionaryCommentTemplate, OptionsService.WordMaps);
+                    var comment = GenericCommentManager.ProcessDictionary(returnType, options, DictionaryCommentTemplate, wordMaps);
                     return comment;
                 }
                 return GenerateGeneralComment(genericTypeStr.AsSpan(), new ReturnTypeBuilderOptions());
@@ -196,8 +194,8 @@ namespace CodeDocumentor.Constructors
             if (returnType.IsTask() || returnType.IsGenericActionResult() || returnType.IsGenericValueTask())
             {
                 return returnType.TypeArgumentList.Arguments.Count == 1
-                    ? GenericCommentManager.ProcessSingleTypeTaskArguments(returnType, options, (typeSyntax, opts) => BuildComment(typeSyntax, opts))
-                    : GenericCommentManager.ProcessMultiTypeTaskArguments(returnType, options, (typeSyntax, opts) => BuildComment(typeSyntax, opts));
+                    ? GenericCommentManager.ProcessSingleTypeTaskArguments(returnType, options, (typeSyntax, opts) => BuildComment(typeSyntax, opts, wordMaps))
+                    : GenericCommentManager.ProcessMultiTypeTaskArguments(returnType, options, (typeSyntax, opts) => BuildComment(typeSyntax, opts, wordMaps));
             }
             return GenerateGeneralComment(genericTypeStr.AsSpan(), new ReturnTypeBuilderOptions());
         }

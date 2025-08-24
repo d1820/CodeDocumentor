@@ -13,14 +13,12 @@ namespace CodeDocumentor.Builders
 {
     public class DocumentationBuilder
     {
-        private readonly IOptionsService _optionsService;
         private readonly DocumentationHeaderHelper _documentationHeaderHelper;
         private XmlElementSyntax _currentElement;
         private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
 
-        public DocumentationBuilder(IOptionsService optionsService)
+        public DocumentationBuilder()
         {
-            _optionsService = optionsService;
             _documentationHeaderHelper = new DocumentationHeaderHelper();
         }
 
@@ -104,11 +102,11 @@ namespace CodeDocumentor.Builders
         }
 
         internal DocumentationBuilder WithPropertyValueTypes(BasePropertyDeclarationSyntax declarationSyntax,
-                                                                ReturnTypeBuilderOptions options)
+                                                                ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
             if (options.GenerateReturnStatement)
             {
-                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options, _optionsService).Comment;
+                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options, wordMaps).Comment;
                 var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment, "value");
 
                 Reset().WithTripleSlashSpace()

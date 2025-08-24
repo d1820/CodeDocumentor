@@ -132,11 +132,11 @@ namespace CodeDocumentor
 
             var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
-                        .WithParameters(declarationSyntax, optionsService)
+                        .WithParameters(declarationSyntax, optionsService.WordMaps)
                         .WithExceptionTypes(declarationSyntax)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
-                        .WithReturnType(declarationSyntax, optionsService)
+                        .WithReturnType(declarationSyntax, optionsService.UseNaturalLanguageForReturnNode, optionsService.TryToIncludeCrefsForReturnTypes, optionsService.WordMaps)
                         .Build();
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);

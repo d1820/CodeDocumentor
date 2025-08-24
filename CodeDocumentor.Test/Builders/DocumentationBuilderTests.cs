@@ -28,12 +28,9 @@ namespace CodeDocumentor.Test.Builders
         public void CreateReturnComment__ReturnsValidNameWithStartingWord_WhenUseNaturalLanguageForReturnNodeIsTrue()
         {
             var method = TestFixture.BuildMethodDeclarationSyntax("TResult", "Tester");
-            var mockOptionService = new Mock<IOptionsService>();
-            mockOptionService.Setup(s=>s.UseNaturalLanguageForReturnNode)
-                .Returns(true);
-            mockOptionService.Setup(s => s.TryToIncludeCrefsForReturnTypes)
-                .Returns(false);
-            var comment = _builder.WithReturnType(method, mockOptionService.Object).Build();
+            _fixture.MockOptionsService.UseNaturalLanguageForReturnNode = true;
+            _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes = false;
+            var comment = _builder.WithReturnType(method, _fixture.MockOptionsService.UseNaturalLanguageForReturnNode, _fixture.MockOptionsService.TryToIncludeCrefsForReturnTypes, _fixture.MockOptionsService.WordMaps).Build();
             comment.Count.Should().Be(3);
             comment[1].ToFullString().Should().Be(@"<returns>A <typeparamref name=""TResult""/></returns>");
         }

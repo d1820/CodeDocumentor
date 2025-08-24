@@ -17,16 +17,16 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
 
-        public ReturnCommentConstruction(TypeSyntax returnType, IOptionsService optionsService)
+        public ReturnCommentConstruction(TypeSyntax returnType, bool useNaturalLanguageForReturnNode, bool tryToIncludeCrefsForReturnTypes, WordMap[] wordMaps)
         {
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
-                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
+                ReturnGenericTypeAsFullString = !useNaturalLanguageForReturnNode,
+                TryToIncludeCrefsForReturnTypes = tryToIncludeCrefsForReturnTypes,
                 IncludeStartingWordInText = true,
                 UseProperCasing = true
             };
-            BuildReturnComment(returnType, options, optionsService.WordMaps);
+            BuildReturnComment(returnType, options, wordMaps);
         }
 
         public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)

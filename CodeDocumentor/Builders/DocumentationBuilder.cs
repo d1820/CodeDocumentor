@@ -64,14 +64,14 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithParameters(BaseMethodDeclarationSyntax declarationSyntax, IOptionsService optionsService)
+        internal DocumentationBuilder WithParameters(BaseMethodDeclarationSyntax declarationSyntax, WordMap[] wordMaps)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
                 var commentHelper = new CommentHelper();
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = commentHelper.CreateParameterComment(parameter, optionsService.WordMaps);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, wordMaps);
                     var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
@@ -116,12 +116,18 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax, IOptionsService optionsService)
+        internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax,
+                                                    bool useNaturalLanguageForReturnNode,
+                                                    bool tryToIncludeCrefsForReturnTypes,
+                                                    WordMap[] wordMaps)
         {
             var returnType = declarationSyntax.ReturnType.ToString().Replace("?",string.Empty);
             if (returnType != "void")
             {
-                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType, optionsService);
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType,
+                                                                        useNaturalLanguageForReturnNode,
+                                                                        tryToIncludeCrefsForReturnTypes,
+                                                                        wordMaps);
                 var returnComment = commentConstructor.Comment;
                 var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment);
 

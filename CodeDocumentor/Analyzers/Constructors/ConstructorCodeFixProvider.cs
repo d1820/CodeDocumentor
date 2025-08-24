@@ -123,7 +123,7 @@ namespace CodeDocumentor
             var comment = commentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate(), optionsService.WordMaps);
             var builder = new DocumentationBuilder();
             var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
-                        .WithParameters(declarationSyntax, optionsService)
+                        .WithParameters(declarationSyntax, optionsService.WordMaps)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
                         .Build();

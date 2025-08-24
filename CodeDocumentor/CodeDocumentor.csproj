@@ -74,8 +74,9 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Builders\DiagnosticBuilder.cs" />
     <Compile Include="Builders\DocumentationBuilder.cs" />
+    <Compile Include="Helper\ListExtensions.cs" />
     <Compile Include="Helper\Logger.cs" />
-    <Compile Include="Helper\SyntaxNodeExtensions.cs" />
+    <Compile Include="Helper\SyntaxExtensions.cs" />
     <Compile Include="Managers\GenericCommentManager.cs" />
     <Compile Include="Helper\WordExtensions.cs" />
     <Compile Include="Analyzers\Constructors\ConstructorAnalyzer.cs" />
@@ -90,7 +91,6 @@
     <Compile Include="Helper\PrivateMemberVerifier.cs" />
     <Compile Include="Constructors\ReturnCommentConstruction.cs" />
     <Compile Include="Constructors\SingleWordCommentSummaryConstruction.cs" />
-    <Compile Include="Helper\Translator.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />
     <Compile Include="Analyzers\Methods\MethodAnalyzer.cs" />

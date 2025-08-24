@@ -230,7 +230,7 @@ namespace CodeDocumentor.Test.Helper
         public void InternalTranslate_ConvertsCorrectly(string word, string converted)
         {
             var list = new List<string> { word };
-            var result = list.TranslateParts(_fixture.MockOptionsService);
+            var result = list.TranslateParts(_fixture.MockOptionsService.WordMaps);
             result.Should().Contain(converted);
         }
     }

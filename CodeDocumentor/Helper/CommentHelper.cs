@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using CodeDocumentor.Common;
-using CodeDocumentor.Common.Models;
-using CodeDocumentor.Constructors;
 using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -33,7 +29,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts(optionsService)
+                         .TranslateParts(optionsService.WordMaps)
                          .TryInsertTheWord((parts) =>
                          {
                              if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -86,7 +82,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                            .Split(name)
-                           .TranslateParts(optionsService)
+                           .TranslateParts(optionsService.WordMaps)
                            .TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
@@ -112,7 +108,7 @@ namespace CodeDocumentor.Helper
             //order matters. fields are special in the sense there is not action attached and we dont need to do translations
             var comment = NameSplitter
                             .Split(name)
-                            .HandleAsyncKeyword(optionsService)
+                            .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
                             .Tap((parts) =>
                             {
                                 if (parts.Count > 0 && char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
@@ -147,7 +143,7 @@ namespace CodeDocumentor.Helper
                                parts.Remove("I");
                            })
                            .AddCustomPart("interface")
-                           .TranslateParts(optionsService)
+                           .TranslateParts(optionsService.WordMaps)
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .JoinToString()
@@ -179,13 +175,13 @@ namespace CodeDocumentor.Helper
                              is2partPlusAsync = parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase));
                              isBool = returnType.IsBoolReturnType();
                          })
-                         .HandleAsyncKeyword(optionsService)
+                         .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
                          .TryIncudeReturnType(optionsService, returnType, (returnComment) =>
                          {
                              hasReturnComment = !string.IsNullOrEmpty(returnComment);
                          })
-                         .TryAddTodoSummary(returnType.ToString(), optionsService)
-                         .TranslateParts(optionsService)
+                         .TryAddTodoSummary(returnType.ToString(), optionsService.UseToDoCommentsOnSummaryError)
+                         .TranslateParts(optionsService.WordMaps)
                          .TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
@@ -231,7 +227,7 @@ namespace CodeDocumentor.Helper
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
                                 .AddCustomPart("If true,", 0)
-                                .TranslateParts(optionsService)
+                                .TranslateParts(optionsService.WordMaps)
                                 .ToLowerParts()
                                 .JoinToString()
                                 .ApplyUserTranslations(optionsService.WordMaps)
@@ -242,7 +238,7 @@ namespace CodeDocumentor.Helper
             {
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
-                                .TranslateParts(optionsService)
+                                .TranslateParts(optionsService.WordMaps)
                                 .TryInsertTheWord((parts) =>
                                 {
                                     if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -279,8 +275,8 @@ namespace CodeDocumentor.Helper
                               .AddPropertyBooleanPart() //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts(optionsService)
-                              .HandleAsyncKeyword(optionsService)
+                              .TranslateParts(optionsService.WordMaps)
+                              .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
                               .ToLowerParts()
                               .JoinToString()
                               .ApplyUserTranslations(optionsService.WordMaps)
@@ -294,8 +290,8 @@ namespace CodeDocumentor.Helper
                               .AddCustomPart("the", 0) //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts(optionsService)
-                              .HandleAsyncKeyword(optionsService)
+                              .TranslateParts(optionsService.WordMaps)
+                              .HandleAsyncKeyword(optionsService.ExcludeAsyncSuffix)
                               .ToLowerParts()
                               .JoinToString()
                               .ApplyUserTranslations(optionsService.WordMaps)
@@ -317,7 +313,7 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts(optionsService)
+                         .TranslateParts(optionsService.WordMaps)
                          .TryInsertTheWord((parts) =>
                          {
                              if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
@@ -354,270 +350,6 @@ namespace CodeDocumentor.Helper
                 .Any(o => o.Name.ToString().Equals(Constants.INHERITDOC));
 
             return hasSummary || hasInheritDoc;
-        }
-    }
-
-    public static class StringExtensions
-    {
-
-        public static string RemovePeriod(this string text)
-        {
-            return text?.Trim().EndsWith(".") == true ? text.Remove(text.Length - 1) : text;
-        }
-
-        /// <summary>
-        ///  Withs the period.
-        /// </summary>
-        /// <param name="text"> The text. </param>
-        /// <returns> A string. </returns>
-        public static string WithPeriod(this string text)
-        {
-            if (text?.Trim().EndsWith(".") == true)
-            {
-                return text;
-            }
-            return text.Length > 0 ? text + "." : text;
-        }
-    }
-
-    public static class ListExtensions
-    {
-        public static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
-        {
-            if (part is null)
-            {
-                return parts;
-            }
-            if (idx == -1)
-            {
-                parts.Add(part);
-                return parts;
-            }
-            parts.Insert(idx, part);
-            return parts;
-        }
-
-        public static string JoinToString(this List<string> parts, string delimiter = " ")
-        {
-            return $"{string.Join(delimiter, parts)}";
-        }
-
-        public static List<string> PluaralizeLastWord(this List<string> parts)
-        {
-            var lastIdx = parts.Count - 1;
-            parts[lastIdx] = Pluralizer.ForcePluralization(parts[lastIdx]);
-            return parts;
-        }
-
-        public static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
-        {
-            tapAction?.Invoke(parts);
-            return parts;
-        }
-
-        public static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
-        {
-            var i = forceFirstCharToLower ||
-                    (
-                        parts.Count > 0 &&
-                        !parts[0].Equals("The", StringComparison.InvariantCultureIgnoreCase) &&
-                        !parts[0].Equals("If true,", StringComparison.InvariantCultureIgnoreCase) &&
-                        !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
-                    )
-                ? 0 : 1;
-
-            parts.SwapXmlTokens((part) =>
-            {
-                if (!part.All(a => char.IsUpper(a)))
-                {
-                    part = part.ToLower();
-                }
-                return part;
-            }, i);
-
-            //First letter is always caps unless it was forced lower
-            if (!forceFirstCharToLower && parts.Count > 0 && char.IsLower(parts[0], 0))
-            {
-                parts[0] = parts[0].ToTitleCase();
-            }
-            return parts;
-        }
-
-        public static List<string> TranslateParts(this List<string> parts, IOptionsService optionsService)
-        {
-            for (var i = 0; i < parts.Count; i++)
-            {
-                var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
-                var userMaps = optionsService.WordMaps ?? Array.Empty<WordMap>();
-                foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
-                {
-                    if (!CanEvaluateWordMap(wordMap, i))
-                    {
-                        continue;
-                    }
-                    //dont run an internal word map if the user has one for the same thing
-                    if (!userMaps.Any(a => a.Word == wordMap.Word))
-                    {
-                        var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
-                        parts[i] = Regex.Replace(parts[i], wordToLookFor, wordMap.GetTranslation(nextWord));
-                    }
-                }
-            }
-            return parts;
-        }
-
-        private static bool CanEvaluateWordMap(WordMap wordMap, int partIdx)
-        {
-            return wordMap.Word != "Is" || partIdx == 0;
-        }
-
-        public static List<string> TryInsertTheWord(this List<string> parts, Action<List<string>> customInsertCallback = null)
-        {
-            if (customInsertCallback != null)
-            {
-                customInsertCallback.Invoke(parts);
-            }
-            else if (parts.Count > 0)
-            {
-                var checkWord = parts[0].GetWordFirstPart();
-                var skipThe = checkWord.IsVerb();
-                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
-                if (!skipThe || addTheAnyway)
-                {
-                    if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        parts.Insert(0, "The");
-                    }
-                    else
-                    {
-                        parts[0] = "The"; //force casing
-                    }
-                }
-            }
-            return parts;
-        }
-
-        public static List<string> AddPropertyBooleanPart(this List<string> parts)
-        {
-            if (parts.Count > 0)
-            {
-                var booleanPart = " a value indicating whether to";
-                if (parts[0].IsPastTense() || parts[0].IsVerb())
-                {
-                    booleanPart = "a value indicating whether";
-                }
-
-                //is messes up readability. Lets remove it. ex) IsEnabledForDays
-                var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
-                if (isTwoLettweWord)
-                {
-                    parts.Remove(parts[0]);
-                }
-                parts.Insert(0, booleanPart);
-            }
-
-            return parts;
-        }
-
-        public static List<string> HandleAsyncKeyword(this List<string> parts, IOptionsService optionsService)
-        {
-
-            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", StringComparison.OrdinalIgnoreCase) > -1)
-            {
-                parts.Remove(parts.Last());
-            }
-            var idx = parts.FindIndex(f => f.Equals("async", StringComparison.OrdinalIgnoreCase));
-            if (idx > -1)
-            {
-                parts[idx] = "asynchronously";
-            }
-            return parts;
-        }
-
-        public static List<string> TryAddTodoSummary(this List<string> parts, string returnType, IOptionsService optionsService)
-        {
-            if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
-            {
-                if (optionsService.UseToDoCommentsOnSummaryError)
-                {
-                    parts = new List<string> { "TODO: Add Summary" };
-                }
-                else
-                {
-                    parts = new List<string>();
-                }
-            }
-            return parts;
-        }
-
-        public static List<string> TryIncudeReturnType(this List<string> parts, IOptionsService optionsService, TypeSyntax returnType, Action<string> returnTapAction = null)
-        {
-            if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
-            {
-                //if return type is not a generic type then just force the Todo comment cause what ever we do here will not be a good summary anyway
-                if (returnType.GetType() != typeof(GenericNameSyntax))
-                {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
-                    {
-                        parts = new List<string> { "TODO: Add Summary" };
-                    }
-                    else
-                    {
-                        parts.Clear();
-                    }
-                    return parts;
-                }
-
-                var options = new ReturnTypeBuilderOptions
-                {
-                    //ReturnBuildType = ReturnBuildType.SummaryXmlElement,
-                    UseProperCasing = false,
-                    TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                    IncludeStartingWordInText = true
-                };
-                var returnComment = new SingleWordCommentSummaryConstruction(returnType, options, optionsService).Comment;
-                returnTapAction?.Invoke(returnComment);
-                if (!string.IsNullOrEmpty(returnComment))
-                {
-                    if (!returnComment.StartsWith_A_An_And())
-                    {
-                        parts.Insert(1, "the");
-                        parts.Insert(2, returnComment);
-                    }
-                    else
-                    {
-                        parts.Insert(1, returnComment);
-                    }
-                }
-                else
-                {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
-                    {
-                        parts = new List<string> { "TODO: Add Summary" };
-                    }
-                }
-            }
-            else
-            {
-                returnTapAction?.Invoke(null);
-            }
-            return parts;
-        }
-
-        public static List<string> TryPluarizeFirstWord(this List<string> parts)
-        {
-            if (parts.Count > 0)
-            {
-                if (parts.Count >= 2)
-                {
-                    parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-                }
-                else
-                {
-                    parts[0] = Pluralizer.Pluralize(parts[0]);
-                }
-            }
-            return parts;
         }
     }
 }

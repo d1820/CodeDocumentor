@@ -1,23 +1,11 @@
 using System.Text.RegularExpressions;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeDocumentor.Helper
 {
     public static class Translator
     {
-
-        /// <summary>
-        ///  Translates text replacing words from the WordMap settings
-        /// </summary>
-        /// <param name="node"> </param>
-        /// <returns> A string </returns>
-        public static string ApplyUserTranslations(this CSharpSyntaxNode node, WordMap[] wordMaps)
-        {
-            return TranslateText(node.ToString(), wordMaps);
-        }
-
         /// <summary>
         ///  Translates text replacing words from the WordMap settings
         /// </summary>

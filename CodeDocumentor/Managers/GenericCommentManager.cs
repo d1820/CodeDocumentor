@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

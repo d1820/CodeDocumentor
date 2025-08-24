@@ -1,17 +1,20 @@
-using System.Diagnostics;
+
 
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
-namespace CodeDocumentor.Vsix2022
+using System.Diagnostics;
+using CodeDocumentor.Common.Interfaces;
+
+namespace CodeDocumentor
 {
-    internal static class Log
+    public class Logger: IEventLogger
     {
         /// <summary>
         ///  Logs the error.
         /// </summary>
         /// <param name="message"> The message. </param>
-        internal static void LogError(string message, int eventId, short category, string diagnosticId)
+        public void LogError(string message, int eventId, short category, string diagnosticId)
         {
             try
             {
@@ -26,7 +29,7 @@ namespace CodeDocumentor.Vsix2022
             }
         }
 
-        internal static void LogInfo(string message, int eventId, short category, string diagnosticId)
+        public void LogInfo(string message, int eventId, short category, string diagnosticId)
         {
             try
             {

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
 using CodeDocumentor.Vsix2022;

@@ -2,6 +2,10 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Extensions;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 
@@ -209,11 +213,12 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
-            if (Settings.IsCodeDocumentorDefinedInEditorConfig()) {
+            var settings = new CodeDocumentor.Common.Models.Settings();
+            if (settings.IsCodeDocumentorDefinedInEditorConfig()) {
                 UseEditorConfigForSettings = true;
                 return;
             }
-            var settings = Settings.Load();
+             settings = settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
             ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
@@ -240,7 +245,7 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
-            var settings = new Settings
+            var settings = new CodeDocumentor.Common.Models.Settings
             {
                 IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
                 UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
@@ -276,7 +281,7 @@ namespace CodeDocumentor.Vsix2022
             }
             if (response == DialogResult.Yes)
             {
-                settings.SaveToEditorConfig();
+                settings.SaveToEditorConfig(clipboardStr => Clipboard.SetText(clipboardStr));
                 MessageBox.Show("Settings have been copied to the clipboard. Update your .editorconfig file in %USERPROFILE% with the contents to use the new settings. You will need to restart Visual Studio.",
                     "Settings copied to clipboard",
                     MessageBoxButtons.OK,

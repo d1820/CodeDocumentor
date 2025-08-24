@@ -15,6 +15,11 @@ namespace CodeDocumentor
             _optionsService = optionsService;
         }
 
+        protected IOptionsService GetOptionsService()
+        {
+            return OptionsService;
+        }
+
         protected static IOptionsService OptionsService =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
               _optionsService.Clone();

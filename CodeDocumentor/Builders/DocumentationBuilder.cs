@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

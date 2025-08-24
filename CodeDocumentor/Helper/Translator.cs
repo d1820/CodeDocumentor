@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeDocumentor.Helper

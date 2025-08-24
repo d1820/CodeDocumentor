@@ -1,6 +1,6 @@
-using CodeDocumentor.Helper;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Analyzers
@@ -13,6 +13,8 @@ namespace CodeDocumentor.Analyzers
         internal const string Category = Constants.CATEGORY;
 
         private static IOptionsService _optionsService;
+
+        protected IEventLogger EventLogger = new Logger();
 
         public static void SetOptionsService(IOptionsService optionsService)
         {
@@ -53,7 +55,7 @@ namespace CodeDocumentor.Analyzers
                         return optionsService.RecordDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
                 }
                 return Constants.DefaultDiagnosticSeverityOnError;
-            }, diagnosticId, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
+            }, diagnosticId, EventLogger, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
         }
     }
 }

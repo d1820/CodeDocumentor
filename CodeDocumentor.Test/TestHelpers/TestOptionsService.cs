@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
 using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
@@ -119,7 +122,7 @@ namespace CodeDocumentor.Test.TestHelpers
             RecordDiagnosticSeverity = options.RecordDiagnosticSeverity;
         }
 
-        public void Update(Vsix2022.Settings settings)
+        public void Update(Settings settings)
         {
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;

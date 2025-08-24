@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -15,6 +16,8 @@ namespace CodeDocumentor
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper;
+
+        protected static IEventLogger EventLogger = new Logger();
 
         //expose this for some of the static helpers for producing ALl File comments
         private static IOptionsService _optionsService;
@@ -98,7 +101,7 @@ namespace CodeDocumentor
                         createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
                         equivalenceKey: FILE_FIX_TITLE),
                     diagnostic);
-            }, diagnostic.Id, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, diagnostic.Id, EventLogger, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
         }
     }
 }

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -191,7 +192,7 @@ namespace CodeDocumentor.Helper
                              //this means any name of a method that is not a return type of bool and not 2 part (+async) should insert "the" into the sentence
                              if (!isBool &&
                                 !hasReturnComment &&
-                                !Vsix2022.Constants.EXCLUDE_THE_LIST_FOR_2PART_COMMENTS.Any(a => a.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase)) &&
+                                !Constants.EXCLUDE_THE_LIST_FOR_2PART_COMMENTS.Any(a => a.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase)) &&
                                 is2partPlusAsync)
                              {
                                  parts.Insert(1, "the");
@@ -345,12 +346,12 @@ namespace CodeDocumentor.Helper
             var hasSummary = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlElementSyntax>()
-                .Any(o => o.StartTag.Name.ToString().Equals(Vsix2022.Constants.SUMMARY));
+                .Any(o => o.StartTag.Name.ToString().Equals(Constants.SUMMARY));
 
             var hasInheritDoc = commentTriviaSyntax
                 .ChildNodes()
                 .OfType<XmlEmptyElementSyntax>()
-                .Any(o => o.Name.ToString().Equals(Vsix2022.Constants.INHERITDOC));
+                .Any(o => o.Name.ToString().Equals(Constants.INHERITDOC));
 
             return hasSummary || hasInheritDoc;
         }
@@ -448,7 +449,7 @@ namespace CodeDocumentor.Helper
             {
                 var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
                 var userMaps = optionsService.WordMaps ?? Array.Empty<WordMap>();
-                foreach (var wordMap in Vsix2022.Constants.INTERNAL_WORD_MAPS)
+                foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
                 {
                     if (!CanEvaluateWordMap(wordMap, i))
                     {
@@ -457,7 +458,7 @@ namespace CodeDocumentor.Helper
                     //dont run an internal word map if the user has one for the same thing
                     if (!userMaps.Any(a => a.Word == wordMap.Word))
                     {
-                        var wordToLookFor = string.Format(Vsix2022.Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
+                        var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
                         parts[i] = Regex.Replace(parts[i], wordToLookFor, wordMap.GetTranslation(nextWord));
                     }
                 }
@@ -480,7 +481,7 @@ namespace CodeDocumentor.Helper
             {
                 var checkWord = parts[0].GetWordFirstPart();
                 var skipThe = checkWord.IsVerb();
-                var addTheAnyway = Vsix2022.Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
+                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
                 if (!skipThe || addTheAnyway)
                 {
                     if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))

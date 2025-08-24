@@ -1,4 +1,4 @@
-namespace CodeDocumentor.Settings
+namespace CodeDocumentor
 {
     public static class VsixOptions
     {

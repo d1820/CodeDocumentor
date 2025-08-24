@@ -1,5 +1,5 @@
 using CodeDocumentor.Analyzers;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor

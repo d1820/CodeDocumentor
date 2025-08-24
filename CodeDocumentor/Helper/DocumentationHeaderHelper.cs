@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -21,10 +23,12 @@ namespace CodeDocumentor.Helper
 
         private readonly Regex _regExParseXmlElement = new Regex(@"<(.*?)\s(\w*)=""(.*?)""\s*/>", RegexOptions.IgnoreCase);
         private IOptionsService _optionsService;
+        private readonly Logger _eventLogger;
 
         public DocumentationHeaderHelper(IOptionsService optionsService)
         {
             _optionsService = optionsService;
+            _eventLogger = new Logger();
         }
 
         /// <summary>
@@ -221,14 +225,14 @@ namespace CodeDocumentor.Helper
                 exceptions.AddRange(_regEx.Matches(textToSearch).OfType<Match>()
                                                            .Select(m => m?.Groups[0]?.Value)
                                                            .ToList());
-            }, nameof(GetExceptions), eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.EXCEPTION_BUILDER);
+            }, nameof(GetExceptions), _eventLogger, eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.EXCEPTION_BUILDER);
 
             TryHelper.Try(() =>
             {
                 var exceptionsInline = _regExInline.Matches(textToSearch).OfType<Match>()
                                                                .Select(m => m?.Groups.Count == 1 ? m?.Groups[0]?.Value : m?.Groups[1]?.Value).ToArray();
                 exceptions.AddRange(exceptionsInline);
-            }, nameof(GetExceptions), eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.EXCEPTION_BUILDER);
+            }, nameof(GetExceptions), _eventLogger, eventId: Constants.EventIds.HEADER_HELPER, category: Constants.EventIds.Categories.EXCEPTION_BUILDER);
 
             return exceptions.Distinct();
         }
@@ -258,7 +262,7 @@ namespace CodeDocumentor.Helper
                                 xmlNodes.Add(CreateElementWithAttributeSyntax(elementName, attributeName, attributeValue));
                                 xmlNodes.Add(SyntaxFactory.XmlText(" "));
                             }
-                        }, nameof(ParseStringToXmlNodeSyntax), (_) =>
+                        }, nameof(ParseStringToXmlNodeSyntax), _eventLogger, (_) =>
                         {
                             xmlNodes.Add(SyntaxFactory.XmlText($"TODO: Add {elementName} XML"));
                             xmlNodes.Add(SyntaxFactory.XmlText(" "));
@@ -271,7 +275,7 @@ namespace CodeDocumentor.Helper
                     }
                 }
                 xmlNodes.RemoveAt(xmlNodes.Count - 1);
-            }, nameof(ParseStringToXmlNodeSyntax), (_) =>
+            }, nameof(ParseStringToXmlNodeSyntax), _eventLogger, (_) =>
             {
                 xmlNodes.Clear();
                 xmlNodes.Add(SyntaxFactory.XmlText(""));

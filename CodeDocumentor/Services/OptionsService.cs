@@ -1,5 +1,7 @@
 using System.Collections.Generic;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 
@@ -9,7 +11,7 @@ namespace CodeDocumentor.Services
     {
         void SetDefaults(IOptionPageGrid options);
 
-        void Update(Vsix2022.Settings settings);
+        void Update(Settings settings);
 
         IOptionsService Clone();
     }
@@ -61,33 +63,19 @@ namespace CodeDocumentor.Services
                 ClassDiagnosticSeverity = ClassDiagnosticSeverity,
                 ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
                 DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
-
                 EnumDiagnosticSeverity = EnumDiagnosticSeverity,
-
                 ExcludeAsyncSuffix = ExcludeAsyncSuffix,
-
                 FieldDiagnosticSeverity = FieldDiagnosticSeverity,
-
                 IncludeValueNodeInProperties = IncludeValueNodeInProperties,
-
                 InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
-
                 IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
-
                 IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
-
                 MethodDiagnosticSeverity = MethodDiagnosticSeverity,
-
                 PreserveExistingSummaryText = PreserveExistingSummaryText,
-
                 PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
-
                 RecordDiagnosticSeverity = RecordDiagnosticSeverity,
-
                 TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
-
                 UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
-
                 UseToDoCommentsOnSummaryError = UseNaturalLanguageForReturnNode
             };
             var clonedMaps = new List<WordMap>();
@@ -143,7 +131,7 @@ namespace CodeDocumentor.Services
             WordMaps = options?.WordMaps ?? Constants.DEFAULT_WORD_MAPS;
         }
 
-        public void Update(Vsix2022.Settings settings)
+        public void Update(Settings settings)
         {
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
@@ -164,7 +152,8 @@ namespace CodeDocumentor.Services
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
             TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes;
 
-            Log.LogInfo(JsonConvert.SerializeObject(this), 200, 0, "Options updated");
+            var logger = new Logger();
+            logger.LogInfo(JsonConvert.SerializeObject(this), 200, 0, "Options updated");
         }
     }
 }

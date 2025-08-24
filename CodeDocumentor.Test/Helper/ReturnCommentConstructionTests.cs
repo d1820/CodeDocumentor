@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Helper;
 using FluentAssertions;

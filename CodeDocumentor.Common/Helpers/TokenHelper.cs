@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using CodeDocumentor.Vsix2022;
 
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Common
 {
     //This takes XML nodes in a string and swaps them to tokens for string manipulation, and then replaces them once complete. This keeps the validity of the XML
-    internal static class TokenHelper
+    public static class TokenHelper
     {
         private static readonly Regex _xmlElementRegEx = new Regex(Constants.XML_ELEMENT_MATCH_REGEX_TEMPLATE);
 
-        internal static void SwapXmlTokens(this List<string> parts, Func<string, string> swapLineCallback, int startingIndex = 0)
+        public static void SwapXmlTokens(this List<string> parts, Func<string, string> swapLineCallback, int startingIndex = 0)
         {
             var i = startingIndex;
             var swaps = new Dictionary<string, string>();
@@ -34,7 +33,7 @@ namespace CodeDocumentor.Helper
             }
         }
 
-        internal static string SwapXmlTokens(this string content, Func<string, string> swapLineCallback, int startingIndex = 0)
+        public static string SwapXmlTokens(this string content, Func<string, string> swapLineCallback, int startingIndex = 0)
         {
             var i = startingIndex;
             var swaps = new Dictionary<string, string>();
@@ -54,7 +53,7 @@ namespace CodeDocumentor.Helper
             return content;
         }
 
-        internal static (string replacedString, Dictionary<string, string> tokens) SwapXmlTokens(this string content, int startingIndex = 0)
+        public static (string replacedString, Dictionary<string, string> tokens) SwapXmlTokens(this string content, int startingIndex = 0)
         {
             var i = startingIndex;
             var swaps = new Dictionary<string, string>();

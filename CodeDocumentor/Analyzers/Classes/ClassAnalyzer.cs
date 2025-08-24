@@ -57,6 +57,11 @@ namespace CodeDocumentor
             {
                 return;
             }
+
+            //var options = context.Options.AnalyzerConfigOptionsProvider.GetOptions(node.SyntaxTree);
+            //options.TryGetValue("");
+
+
             DocumentationHeaderHelper = new DocumentationHeaderHelper(OptionsService);
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)

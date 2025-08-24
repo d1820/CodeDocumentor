@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Services;
-using CodeDocumentor.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -43,7 +43,7 @@ namespace CodeDocumentor.Vsix2022
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        
+
 #pragma warning disable IDE1006 // Naming Styles
         internal static IOptionPageGrid _options;
         internal static OptionsService _optService;

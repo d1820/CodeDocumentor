@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Vsix2022;
 using FluentAssertions;

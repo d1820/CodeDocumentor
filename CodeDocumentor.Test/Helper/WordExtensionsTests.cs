@@ -2,6 +2,8 @@ using CodeDocumentor.Helper;
 using FluentAssertions;
 using Xunit;
 
+using System;
+
 namespace CodeDocumentor.Test.Helper
 {
     public class WordExtensionsTests

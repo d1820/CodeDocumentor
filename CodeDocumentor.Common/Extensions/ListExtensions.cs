@@ -167,7 +167,7 @@ namespace CodeDocumentor.Helper
             {
                 if (useToDoCommentsOnSummaryError)
                 {
-                    parts = new List<string> { "TODO: Add Summary" };
+                    parts = new List<string> { Constants.TODO};
                 }
                 else
                 {

@@ -122,7 +122,7 @@ namespace CodeDocumentor
             var settings = Settings;
              var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate(), settings.WordMaps);
-            var builder = new DocumentationBuilder();
+            var builder = ServiceLocator.DocumentationBuilder;
             var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
                         .WithParameters(declarationSyntax, settings.WordMaps)
                         .WithExisting(declarationSyntax, Constants.REMARKS)

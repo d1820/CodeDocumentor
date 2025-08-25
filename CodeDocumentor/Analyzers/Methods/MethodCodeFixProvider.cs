@@ -134,7 +134,7 @@ namespace CodeDocumentor
                                                                settings.TryToIncludeCrefsForReturnTypes,
                                                                settings.ExcludeAsyncSuffix,
                                                                settings.WordMaps);
-            var builder = new DocumentationBuilder();
+            var builder = ServiceLocator.DocumentationBuilder;
 
             var list = builder.WithSummary(declarationSyntax, summaryText, settings.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)

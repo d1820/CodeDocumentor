@@ -100,7 +100,7 @@ namespace CodeDocumentor
             var settings = Settings;
             var comment = commentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
 
-            var builder = new DocumentationBuilder();
+            var builder = ServiceLocator.DocumentationBuilder;
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

@@ -113,7 +113,7 @@ namespace CodeDocumentor
              var commentHelper = ServiceLocator.CommentHelper;
             var propertyComment = commentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean,
                                                                         hasSetter, settings.ExcludeAsyncSuffix, settings.WordMaps);
-            var builder = new DocumentationBuilder();
+            var builder = ServiceLocator.DocumentationBuilder;
 
             var returnOptions = new ReturnTypeBuilderOptions
             {

@@ -12,6 +12,8 @@ namespace CodeDocumentor.Common
     {
         public const DiagnosticSeverity DefaultDiagnosticSeverityOnError = DiagnosticSeverity.Info;
 
+        public const string TODO = "TODO: Add Summary";
+
         public static class EventIds
         {
             public const int ANALYZER = 1000;

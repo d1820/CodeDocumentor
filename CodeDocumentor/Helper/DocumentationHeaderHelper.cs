@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,12 +21,7 @@ namespace CodeDocumentor.Helper
         private readonly Regex _regExInline = new Regex(@"(\w+Exception)\.Throw\w+", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         private readonly Regex _regExParseXmlElement = new Regex(@"<(.*?)\s(\w*)=""(.*?)""\s*/>", RegexOptions.IgnoreCase);
-        private readonly Logger _eventLogger;
-
-        public DocumentationHeaderHelper()
-        {
-            _eventLogger = new Logger();
-        }
+        private readonly Logger _eventLogger =ServiceLocator.Logger;
 
         /// <summary>
         ///  Has analyzer exclusion.

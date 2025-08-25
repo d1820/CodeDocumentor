@@ -1,3 +1,4 @@
+using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Managers;
 
@@ -9,6 +10,7 @@ namespace CodeDocumentor.Locators
         public static Logger Logger { get; } = new Logger();
         public static CommentHelper CommentHelper { get; } = new CommentHelper();
         public static GenericCommentManager GenericCommentManager { get; } = new GenericCommentManager();
+        public static DocumentationBuilder DocumentationBuilder => new DocumentationBuilder();
 
     }
 }

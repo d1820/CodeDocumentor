@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -27,7 +28,7 @@ namespace CodeDocumentor.Builders
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
 
-            var commentHelper = new CommentHelper();
+            var commentHelper = ServiceLocator.CommentHelper;
             var alreadyHasComment = commentTriviaSyntax != null && commentHelper.HasComment(commentTriviaSyntax);
 
             try

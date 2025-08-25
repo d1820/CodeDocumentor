@@ -63,7 +63,7 @@ namespace CodeDocumentor.Builders
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
-                var commentHelper = new CommentHelper();
+                var commentHelper = ServiceLocator.CommentHelper;
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
                     var parameterComment = commentHelper.CreateParameterComment(parameter, wordMaps);
@@ -81,7 +81,7 @@ namespace CodeDocumentor.Builders
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
-                var commentHelper = new CommentHelper();
+                var commentHelper = ServiceLocator.CommentHelper;
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
                     var parameterComment = commentHelper.CreateParameterComment(parameter,wordMaps);

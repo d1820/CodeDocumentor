@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,7 +23,7 @@ namespace CodeDocumentor.Helper
                 {
                     if (useToDoCommentsOnSummaryError)
                     {
-                        parts = new List<string> { "TODO: Add Summary" };
+                        parts = new List<string> { Constants.TODO };
                     }
                     else
                     {
@@ -56,7 +57,7 @@ namespace CodeDocumentor.Helper
                 {
                     if (useToDoCommentsOnSummaryError)
                     {
-                        parts = new List<string> { "TODO: Add Summary" };
+                        parts = new List<string> { Constants.TODO };
                     }
                 }
             }

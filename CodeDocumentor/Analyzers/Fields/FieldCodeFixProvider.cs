@@ -111,7 +111,7 @@ namespace CodeDocumentor
              var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, settings.ExcludeAsyncSuffix, settings.WordMaps);
 
-            var builder = new DocumentationBuilder();
+            var builder = ServiceLocator.DocumentationBuilder;
 
             var summaryNodes = builder.WithSummary(comment).Build();
             var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);

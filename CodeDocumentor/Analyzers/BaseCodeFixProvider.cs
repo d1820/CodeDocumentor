@@ -17,7 +17,7 @@ namespace CodeDocumentor
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
 
-        protected static IEventLogger EventLogger = new Logger();
+        protected static IEventLogger EventLogger = ServiceLocator.Logger;
 
         //expose this for some of the static helpers for producing ALl File comments
         private static ISettings _settings;

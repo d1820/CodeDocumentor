@@ -56,7 +56,7 @@ namespace CodeDocumentor
                 return;
             }
             //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
-            var settings = Settings;
+            var settings = BuildSettings(context, node);
             if (!node.IsOwnedByInterface() && settings.IsEnabledForPublicMembersOnly)
             {
                 return;

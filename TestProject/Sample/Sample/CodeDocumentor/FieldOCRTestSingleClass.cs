@@ -12,10 +12,7 @@ namespace Sample.CodeDocumentor
     /// <typeparam name="TEntity"></typeparam>
     interface IInterface<TEntity>
     {
-        /// <summary>
-        /// Does the work.
-        /// </summary>
-        /// <returns>A string.</returns>
+
         string DoWork();
     }
 

@@ -73,6 +73,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Builders\DiagnosticBuilder.cs" />
     <Compile Include="Builders\DocumentationBuilder.cs" />
+    <Compile Include="Helper\EditorConfigExtensions.cs" />
     <Compile Include="Helper\ListExtensions.cs" />
     <Compile Include="Helper\Logger.cs" />
     <Compile Include="Helper\SyntaxExtensions.cs" />

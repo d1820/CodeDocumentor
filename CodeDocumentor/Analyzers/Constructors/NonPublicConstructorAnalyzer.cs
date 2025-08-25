@@ -25,6 +25,7 @@ namespace CodeDocumentor
         {
             get
             {
+                //TODO: figure this out
                 var settings = Settings;
                 return settings.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
@@ -54,7 +55,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = Settings;
+            var settings = BuildSettings(context, node);
             if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;

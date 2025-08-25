@@ -53,7 +53,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = Settings;
+            var settings = BuildSettings(context, node);
             if (!settings.IsEnabledForNonPublicFields && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;

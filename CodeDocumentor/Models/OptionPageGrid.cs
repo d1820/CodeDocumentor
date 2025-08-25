@@ -209,31 +209,31 @@ namespace CodeDocumentor.Vsix2022
         public bool UseEditorConfigForSettings { get; set; }
 
 
-        protected override void OnActivate(CancelEventArgs e)
-        {
-            base.OnActivate(e);
-            var settings = new Settings();
-            if (settings.IsCodeDocumentorDefinedInEditorConfig())
-            {
-                MessageBox.Show(
-                  $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
-                  $"Options are no longer managed through Visual Studio. ",
-                  "CodeDocumentor Options Management",
-                  MessageBoxButtons.OK,
-                  MessageBoxIcon.Exclamation);
-            }
-        }
+        //protected override void OnActivate(CancelEventArgs e)
+        //{
+        //    base.OnActivate(e);
+        //    var settings = new Settings();
+        //    if (settings.IsCodeDocumentorDefinedInEditorConfig())
+        //    {
+        //        MessageBox.Show(
+        //          $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
+        //          $"Options are no longer managed through Visual Studio. ",
+        //          "CodeDocumentor Options Management",
+        //          MessageBoxButtons.OK,
+        //          MessageBoxIcon.Exclamation);
+        //    }
+        //}
         /// <summary>
         ///  Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
             ISettings settings = new Settings();
-            if (settings.IsCodeDocumentorDefinedInEditorConfig())
-            {
-                UseEditorConfigForSettings = true;
-                return;
-            }
+            //if (settings.IsCodeDocumentorDefinedInEditorConfig())
+            //{
+            //    UseEditorConfigForSettings = true;
+            //    return;
+            //}
             settings = settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
@@ -261,18 +261,17 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
+            //if (settings.IsCodeDocumentorDefinedInEditorConfig())
+            //{
+            //    MessageBox.Show(
+            //        $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
+            //        $"Options are no longer managed through Visual Studio. ",
+            //        "CodeDocumentor Options Management",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Exclamation);
+            //    return;
+            //}
             var settings = new Settings();
-            if (settings.IsCodeDocumentorDefinedInEditorConfig())
-            {
-                MessageBox.Show(
-                    $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
-                    $"Options are no longer managed through Visual Studio. ",
-                    "CodeDocumentor Options Management",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation);
-                return;
-            }
-            settings = new Settings();
             var eventLogger = new Logger();
             settings.Update(this, eventLogger);
             settings.Save();
@@ -282,9 +281,9 @@ namespace CodeDocumentor.Vsix2022
             {
                 response = MessageBox.Show(
                     $"This will convert existing extension options to .editorconfig values. " +
-                    $"This allows CodeDocumentor to run out of process. " +
+                    $"This would allow CodeDocumentor to run out of process for this solution. " +
                     $"Do you want to continue?{Environment.NewLine}" +
-                    $"You will need to paste these options into your %USERPROFILE% .editorconfig and restart Visual Studio.",
+                    $"You will need to paste these options into your solution .editorconfig and restart Visual Studio.",
                     "CodeDocumentor Options Management",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
@@ -292,7 +291,7 @@ namespace CodeDocumentor.Vsix2022
             if (response == DialogResult.Yes)
             {
                 settings.SaveToEditorConfig(clipboardStr => Clipboard.SetText(clipboardStr));
-                MessageBox.Show("Settings have been copied to the clipboard. Update your .editorconfig file in %USERPROFILE% with the contents to use the new settings. You will need to restart Visual Studio.",
+                MessageBox.Show("Settings have been copied to the clipboard. Update your solution .editorconfig file with the copied settings. You will need to restart Visual Studio.",
                     "Settings copied to clipboard",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);

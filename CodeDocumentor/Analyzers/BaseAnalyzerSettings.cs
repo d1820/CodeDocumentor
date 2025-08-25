@@ -1,3 +1,4 @@
+using System;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;

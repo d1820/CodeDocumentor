@@ -1,5 +1,7 @@
+using System.Runtime.Remoting.Contexts;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
@@ -13,6 +15,13 @@ namespace CodeDocumentor
         protected BaseDiagnosticAnalyzer()
         {
             DocumentationHeaderHelper = new DocumentationHeaderHelper();
+        }
+
+        protected ISettings BuildSettings(SyntaxNodeAnalysisContext context, SyntaxNode node)
+        {
+            var options = context.Options.AnalyzerConfigOptionsProvider.GetOptions(node.SyntaxTree);
+            var settings = options.BuildSettings(_settings);
+            return settings;
         }
 
         public static void SetSettings(ISettings settings)

@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;
 
@@ -86,5 +87,41 @@ namespace CodeDocumentor.Common.Models
         /// This will convert the existing settings to a %USERPROFILE% .editorconfig file
         /// </remarks>
         public bool UseEditorConfigForSettings { get; set; }
+
+        public ISettings Clone()
+        {
+            var newService = new Settings
+            {
+                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
+                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
+                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
+                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
+                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
+                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
+                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
+                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
+                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
+                PreserveExistingSummaryText = PreserveExistingSummaryText,
+                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
+                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
+                TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
+                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
+                UseToDoCommentsOnSummaryError = UseNaturalLanguageForReturnNode
+            };
+            var clonedMaps = new List<WordMap>();
+            foreach (var item in WordMaps)
+            {
+                clonedMaps.Add(new WordMap
+                {
+                    Translation = item.Translation,
+                    Word = item.Word,
+                    WordEvaluator = item.WordEvaluator
+                });
+            }
+            newService.WordMaps = clonedMaps.ToArray();
+            return newService;
+        }
     }
 }

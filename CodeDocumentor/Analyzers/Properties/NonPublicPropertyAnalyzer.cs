@@ -28,8 +28,8 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = OptionsService;
-                return optionsService.IsEnabledForPublicMembersOnly
+                var settings = Settings;
+                return settings.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
                     : ImmutableArray.Create(_analyzerSettings.GetRule());
             }
@@ -60,8 +60,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
-            if (optionsService.IsEnabledForPublicMembersOnly)
+            var settings = Settings;
+            if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }

@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
-using CodeDocumentor.Services;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Helper

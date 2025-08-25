@@ -1,10 +1,14 @@
+#pragma warning disable IDE0130
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
+using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 
-namespace CodeDocumentor.Common.Extensions
+namespace CodeDocumentor.Common
 {
     public static class SettingsExtensions
     {
@@ -15,23 +19,24 @@ namespace CodeDocumentor.Common.Extensions
 
         private static readonly string _userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-        public static void Save(this Settings settings)
+       
+
+        public static bool IsCodeDocumentorDefinedInEditorConfig(this ISettings settings)
         {
-            if (Runtime.RunningUnitTests)
+            var editorConfigPath = Path.Combine(_userProfileFolder, ".editorconfig");
+            if (!File.Exists(editorConfigPath))
             {
-                return;
+                return false;
             }
-
-
-            Directory.CreateDirectory(_programDataFolder);
-            settings.SaveToFile(GetSettingsFilePath());
+            var lines = File.ReadAllLines(editorConfigPath);
+            return lines.Any(line => line.StartsWith(PREFIX, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
         ///  Loads the <see cref="Settings"/>.
         /// </summary>
         /// <returns> A Settings. </returns>
-        public static Settings Load(this Settings settings)
+        public static ISettings Load(this ISettings settings)
         {
             if (Runtime.RunningUnitTests)
             {
@@ -44,18 +49,18 @@ namespace CodeDocumentor.Common.Extensions
             return settings;
         }
 
-        public static bool IsCodeDocumentorDefinedInEditorConfig(this Settings settings)
+        public static void Save(this ISettings settings)
         {
-            var editorConfigPath = Path.Combine(_userProfileFolder, ".editorconfig");
-            if (!File.Exists(editorConfigPath))
+            if (Runtime.RunningUnitTests)
             {
-                return false;
+                return;
             }
-            var lines = File.ReadAllLines(editorConfigPath);
-            return lines.Any(line => line.StartsWith(PREFIX, StringComparison.OrdinalIgnoreCase));
+
+            Directory.CreateDirectory(_programDataFolder);
+            settings.SaveToFile(GetSettingsFilePath());
         }
 
-        public static void SaveToEditorConfig(this Settings settings, Action<string> setToClipboardAction)
+        public static void SaveToEditorConfig(this ISettings settings, Action<string> setToClipboardAction)
         {
             if (Runtime.RunningUnitTests)
             {
@@ -107,9 +112,56 @@ namespace CodeDocumentor.Common.Extensions
         ///  Saves the settings to file.
         /// </summary>
         /// <param name="path"> The path. </param>
-        public static void SaveToFile(this Settings settings, string path)
+        public static void SaveToFile(this ISettings settings, string path)
         {
             File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(settings));
+        }
+
+        public static void SetFromOptionsGrid(this ISettings settings, ISettings optionsGrid)
+        {
+            settings.DefaultDiagnosticSeverity = optionsGrid?.DefaultDiagnosticSeverity ?? DiagnosticSeverity.Warning;
+            settings.ClassDiagnosticSeverity = optionsGrid.ClassDiagnosticSeverity;
+            settings.ConstructorDiagnosticSeverity = optionsGrid.ConstructorDiagnosticSeverity;
+            settings.EnumDiagnosticSeverity = optionsGrid.EnumDiagnosticSeverity;
+            settings.FieldDiagnosticSeverity = optionsGrid.FieldDiagnosticSeverity;
+            settings.InterfaceDiagnosticSeverity = optionsGrid.InterfaceDiagnosticSeverity;
+            settings.MethodDiagnosticSeverity = optionsGrid.MethodDiagnosticSeverity;
+            settings.PropertyDiagnosticSeverity = optionsGrid.PropertyDiagnosticSeverity;
+            settings.RecordDiagnosticSeverity = optionsGrid.RecordDiagnosticSeverity;
+            settings.ExcludeAsyncSuffix = optionsGrid?.ExcludeAsyncSuffix ?? false;
+            settings.IncludeValueNodeInProperties = optionsGrid?.IncludeValueNodeInProperties ?? false;
+            settings.IsEnabledForPublicMembersOnly = optionsGrid?.IsEnabledForPublicMembersOnly ?? false;
+            settings.IsEnabledForNonPublicFields = optionsGrid?.IsEnabledForNonPublicFields ?? false;
+            settings.PreserveExistingSummaryText = optionsGrid?.PreserveExistingSummaryText ?? true;
+            settings.UseNaturalLanguageForReturnNode = optionsGrid?.UseNaturalLanguageForReturnNode ?? false;
+            settings.UseToDoCommentsOnSummaryError = optionsGrid?.UseToDoCommentsOnSummaryError ?? false;
+            settings.TryToIncludeCrefsForReturnTypes = optionsGrid?.TryToIncludeCrefsForReturnTypes ?? false;
+            settings.WordMaps = optionsGrid?.WordMaps ?? Constants.DEFAULT_WORD_MAPS;
+        }
+
+        public static ISettings Update(this ISettings settings, ISettings newSettings, IEventLogger logger)
+        {
+            settings.IsEnabledForPublicMembersOnly = newSettings.IsEnabledForPublicMembersOnly;
+            settings.UseNaturalLanguageForReturnNode = newSettings.UseNaturalLanguageForReturnNode;
+            settings.ExcludeAsyncSuffix = newSettings.ExcludeAsyncSuffix;
+            settings.IncludeValueNodeInProperties = newSettings.IncludeValueNodeInProperties;
+            settings.UseToDoCommentsOnSummaryError = newSettings.UseToDoCommentsOnSummaryError;
+            settings.WordMaps = newSettings.WordMaps;
+            settings.DefaultDiagnosticSeverity = newSettings.DefaultDiagnosticSeverity;
+            settings.PreserveExistingSummaryText = newSettings.PreserveExistingSummaryText;
+            settings.ClassDiagnosticSeverity = newSettings.ClassDiagnosticSeverity;
+            settings.ConstructorDiagnosticSeverity = newSettings.ConstructorDiagnosticSeverity;
+            settings.EnumDiagnosticSeverity = newSettings.EnumDiagnosticSeverity;
+            settings.FieldDiagnosticSeverity = newSettings.FieldDiagnosticSeverity;
+            settings.InterfaceDiagnosticSeverity = newSettings.InterfaceDiagnosticSeverity;
+            settings.MethodDiagnosticSeverity = newSettings.MethodDiagnosticSeverity;
+            settings.PropertyDiagnosticSeverity = newSettings.PropertyDiagnosticSeverity;
+            settings.RecordDiagnosticSeverity = newSettings.RecordDiagnosticSeverity;
+            settings.IsEnabledForNonPublicFields = newSettings.IsEnabledForNonPublicFields;
+            settings.TryToIncludeCrefsForReturnTypes = newSettings.TryToIncludeCrefsForReturnTypes;
+
+            logger.LogInfo(JsonConvert.SerializeObject(settings), 200, 0, "Options updated");
+            return settings;
         }
 
         /// <summary>

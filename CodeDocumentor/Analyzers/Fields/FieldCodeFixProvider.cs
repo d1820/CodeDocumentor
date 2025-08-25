@@ -56,8 +56,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
+            var settings = Settings;
+            if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -83,10 +83,10 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
-                    if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                     {
                         continue;
                     }
@@ -105,10 +105,10 @@ namespace CodeDocumentor
         private static FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var optionsService = OptionsService;
+            var settings = Settings;
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, optionsService.ExcludeAsyncSuffix, optionsService.WordMaps);
+            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, settings.ExcludeAsyncSuffix, settings.WordMaps);
 
             var builder = new DocumentationBuilder();
 

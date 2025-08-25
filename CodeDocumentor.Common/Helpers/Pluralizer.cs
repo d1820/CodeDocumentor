@@ -1,6 +1,4 @@
 #pragma warning disable IDE0130
-using CodeDocumentor.Common.Extensions;
-
 namespace System
 {
     public static class Pluralizer

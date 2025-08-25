@@ -53,8 +53,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
-            if (!optionsService.IsEnabledForNonPublicFields && PrivateMemberVerifier.IsPrivateMember(node))
+            var settings = Settings;
+            if (!settings.IsEnabledForNonPublicFields && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }

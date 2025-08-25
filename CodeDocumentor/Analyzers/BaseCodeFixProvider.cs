@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -20,16 +19,16 @@ namespace CodeDocumentor
         protected static IEventLogger EventLogger = new Logger();
 
         //expose this for some of the static helpers for producing ALl File comments
-        private static IOptionsService _optionsService;
+        private static ISettings _settings;
 
-        public static void SetOptionsService(IOptionsService optionsService)
+        public static void SetSettings(ISettings settings)
         {
-            _optionsService = optionsService;
+            _settings = settings;
         }
 
-        protected static IOptionsService OptionsService =>
+        protected static ISettings Settings =>
                 //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-                _optionsService.Clone();
+                _settings.Clone();
 
         /// <summary>
         ///  The title.

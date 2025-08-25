@@ -68,7 +68,7 @@ namespace CodeDocumentor.Test.Methods
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
-            _fixture.MockOptionsService.SetClone(new TestOptionsService {
+            _fixture.MockSettings.SetClone(new TestSettings {
                  UseNaturalLanguageForReturnNode = false,
                  TryToIncludeCrefsForReturnTypes = false
             });
@@ -94,7 +94,7 @@ namespace CodeDocumentor.Test.Methods
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
-            _fixture.MockOptionsService.SetClone(new TestOptionsService
+            _fixture.MockSettings.SetClone(new TestSettings
             {
                 UseNaturalLanguageForReturnNode = false,
                 TryToIncludeCrefsForReturnTypes = false
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Test.Methods
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{testCode}.cs");
 
-            _fixture.MockOptionsService.SetClone(new TestOptionsService
+            _fixture.MockSettings.SetClone(new TestSettings
             {
                 UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode,
                 TryToIncludeCrefsForReturnTypes = true

@@ -1,10 +1,9 @@
 using System;
 using System.ComponentModel;
-using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using CodeDocumentor.Analyzers;
 using CodeDocumentor.Common;
-using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
@@ -229,13 +228,13 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
-            var settings = new Settings();
-            var f = this.Window.Handle;
-            if (settings.IsCodeDocumentorDefinedInEditorConfig()) {
+            ISettings settings = new Settings();
+            if (settings.IsCodeDocumentorDefinedInEditorConfig())
+            {
                 UseEditorConfigForSettings = true;
                 return;
             }
-             settings = settings.Load();
+            settings = settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
             ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
@@ -273,29 +272,12 @@ namespace CodeDocumentor.Vsix2022
                     MessageBoxIcon.Exclamation);
                 return;
             }
-            settings = new Settings
-            {
-                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
-                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
-                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
-                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
-                UseToDoCommentsOnSummaryError = UseToDoCommentsOnSummaryError,
-                TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
-                WordMaps = WordMaps,
-                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
-                PreserveExistingSummaryText = PreserveExistingSummaryText,
-                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
-                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
-                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
-                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
-                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
-                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
-                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
-                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
-                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
-                UseEditorConfigForSettings = UseEditorConfigForSettings
-            };
+            settings = new Settings();
+            var eventLogger = new Logger();
+            settings.Update(this, eventLogger);
+            settings.Save();
             var response = DialogResult.No;
+
             if (settings.UseEditorConfigForSettings)
             {
                 response = MessageBox.Show(
@@ -314,11 +296,16 @@ namespace CodeDocumentor.Vsix2022
                     "Settings copied to clipboard",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-
             }
-            settings.Save();
-            var optionsService = CodeDocumentorPackage._optService;
-            optionsService.Update(settings);
+
+            BaseCodeFixProvider.SetSettings(settings);
+            BaseDiagnosticAnalyzer.SetSettings(settings);
+            BaseAnalyzerSettings.SetSettings(settings);
+        }
+
+        public ISettings Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -6,10 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -48,8 +47,8 @@ namespace CodeDocumentor.Test
 
         public string CurrentTestName { get; set; }
 
-        public TestOptionsService MockOptionsService;
-        protected static ConcurrentDictionary<string, Action<IOptionsService>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<IOptionsService>>();
+        public TestSettings MockSettings;
+        protected static ConcurrentDictionary<string, Action<ISettings>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<ISettings>>();
 
         public TestFixture()
         {
@@ -60,13 +59,13 @@ namespace CodeDocumentor.Test
         {
             CurrentTestName = output.GetTestName();
 
-            MockOptionsService = new TestOptionsService();
-            BaseCodeFixProvider.SetOptionsService(MockOptionsService);
-            BaseDiagnosticAnalyzer.SetOptionsService(MockOptionsService);
-            BaseAnalyzerSettings.SetOptionsService(MockOptionsService);
+            MockSettings = new TestSettings();
+            BaseCodeFixProvider.SetSettings(MockSettings);
+            BaseDiagnosticAnalyzer.SetSettings(MockSettings);
+            BaseAnalyzerSettings.SetSettings(MockSettings);
         }
 
-        public void SetPublicProcessingOption(IOptionsService o, string diagType)
+        public void SetPublicProcessingOption(ISettings o, string diagType)
         {
             if (diagType == DIAG_TYPE_PRIVATE)
             {

@@ -3,16 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Test.TestHelpers
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TestOptionsService : IOptionsService
+    public class TestSettings : ISettings
     {
-        private IOptionsService _clonedService;
+        private ISettings _clonedSettings;
 
         public bool ExcludeAsyncSuffix { get; set; }
 
@@ -42,18 +40,18 @@ namespace CodeDocumentor.Test.TestHelpers
         public bool IsEnabledForNonPublicFields { get; set; }
         public bool UseEditorConfigForSettings { get; set; }
 
-        public void SetClone(IOptionsService optionsService)
+        public void SetClone(ISettings settings)
         {
-            _clonedService = optionsService;
+            _clonedSettings = settings;
         }
 
-        public IOptionsService Clone()
+        public ISettings Clone()
         {
-            if (_clonedService != null)
+            if (_clonedSettings != null)
             {
-                return _clonedService;
+                return _clonedSettings;
             }
-            var newService = new OptionsService
+            var newSettings = new Settings
             {
                 ClassDiagnosticSeverity = ClassDiagnosticSeverity,
                 ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
@@ -97,8 +95,8 @@ namespace CodeDocumentor.Test.TestHelpers
                     WordEvaluator = item.WordEvaluator
                 });
             }
-            newService.WordMaps = clonedMaps.ToArray();
-            return newService;
+            newSettings.WordMaps = clonedMaps.ToArray();
+            return newSettings;
 
         }
 

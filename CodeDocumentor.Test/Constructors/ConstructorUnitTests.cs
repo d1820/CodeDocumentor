@@ -70,9 +70,9 @@ namespace CodeDocumentor.Test.Constructors
         {
             var fix = _fixture.LoadTestFile($"./Constructors/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Constructors/TestFiles/{testCode}");
-            var clone = new TestOptionsService();
+            var clone = new TestSettings();
             _fixture.SetPublicProcessingOption(clone, diagType);
-            _fixture.MockOptionsService.SetClone(clone);
+            _fixture.MockSettings.SetClone(clone);
 
             var expected = new DiagnosticResult
             {
@@ -95,11 +95,11 @@ namespace CodeDocumentor.Test.Constructors
         {
             var fix = _fixture.LoadTestFile("./Constructors/TestFiles/PrivateConstructorTestCode.cs");
             var test = _fixture.LoadTestFile("./Constructors/TestFiles/PrivateConstructorTestCode.cs");
-            var clone = new TestOptionsService
+            var clone = new TestSettings
             {
                 IsEnabledForPublicMembersOnly = true
             };
-            _fixture.MockOptionsService.SetClone(clone);
+            _fixture.MockSettings.SetClone(clone);
 
             await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 

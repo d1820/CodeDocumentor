@@ -1,6 +1,5 @@
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
-using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Analyzers
@@ -12,47 +11,47 @@ namespace CodeDocumentor.Analyzers
         /// </summary>
         internal const string Category = Constants.CATEGORY;
 
-        private static IOptionsService _optionsService;
+        private static ISettings _settings;
 
         protected IEventLogger EventLogger = new Logger();
 
-        public static void SetOptionsService(IOptionsService optionsService)
+        public static void SetSettings(ISettings settings)
         {
-            _optionsService = optionsService;
+            _settings = settings;
         }
 
-        protected static IOptionsService OptionsService =>
+        protected static ISettings Settings =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-              _optionsService.Clone();
+              _settings.Clone();
 
 
         internal DiagnosticSeverity LookupSeverity(string diagnosticId)
         {
-            if (OptionsService == null)
+            if (Settings == null)
             {
                 return Constants.DefaultDiagnosticSeverityOnError;
             }
             return TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var settings = Settings;
                 switch (diagnosticId)
                 {
                     case Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID:
-                        return optionsService.ClassDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.ClassDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.CONSTRUCTOR_DIAGNOSTIC_ID:
-                        return optionsService.ConstructorDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.ConstructorDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID:
-                        return optionsService.InterfaceDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.InterfaceDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID:
-                        return optionsService.EnumDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.EnumDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID:
-                        return optionsService.FieldDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.FieldDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.METHOD_DIAGNOSTIC_ID:
-                        return optionsService.MethodDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.MethodDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.PROPERTY_DIAGNOSTIC_ID:
-                        return optionsService.PropertyDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.PropertyDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID:
-                        return optionsService.RecordDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.RecordDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                 }
                 return Constants.DefaultDiagnosticSeverityOnError;
             }, diagnosticId, EventLogger, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);

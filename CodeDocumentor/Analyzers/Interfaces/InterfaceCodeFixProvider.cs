@@ -94,11 +94,11 @@ namespace CodeDocumentor
 
         private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
+            var settings = Settings;
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, optionsService.WordMaps);
+            var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
             var builder = new DocumentationBuilder();
-            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .Build();
 

@@ -56,8 +56,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
+            var settings = Settings;
+            if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -101,10 +101,10 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
-                    if (optionsService.IsEnabledForPublicMembersOnly
+                    if (settings.IsEnabledForPublicMembersOnly
                         && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                     {
                         continue;
@@ -123,12 +123,12 @@ namespace CodeDocumentor
 
         private static RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
+            var settings = Settings;
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText, optionsService.WordMaps);
+            var comment = commentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
             var builder = new DocumentationBuilder();
 
-            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)

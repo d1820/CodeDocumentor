@@ -3,7 +3,6 @@ using System.Linq;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -44,12 +43,12 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            var temp = _testFixure.MockOptionsService.WordMaps.ToList();
+            var temp = _testFixure.MockSettings.WordMaps.ToList();
             temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
             temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
             temp.AddRange(Constants.INTERNAL_WORD_MAPS);
-            _testFixure.MockOptionsService.WordMaps = temp.ToArray();
-            var translated = input.ApplyUserTranslations(_testFixure.MockOptionsService.WordMaps);
+            _testFixure.MockSettings.WordMaps = temp.ToArray();
+            var translated = input.ApplyUserTranslations(_testFixure.MockSettings.WordMaps);
             translated.Should().Be(output);
         }
     }

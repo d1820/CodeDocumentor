@@ -65,9 +65,9 @@ namespace CodeDocumentor.Test.Properties
         {
             var fix = _fixture.LoadTestFile($"./Properties/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Properties/TestFiles/{testCode}.cs");
-            var clone = new TestOptionsService();
+            var clone = new TestSettings();
             _fixture.SetPublicProcessingOption(clone, diagType);
-            _fixture.MockOptionsService.SetClone(clone);
+            _fixture.MockSettings.SetClone(clone);
             var expected = new DiagnosticResult
             {
                 Id = PropertyAnalyzerSettings.DiagnosticId,
@@ -92,13 +92,13 @@ namespace CodeDocumentor.Test.Properties
         {
             var fix = _fixture.LoadTestFile($"./Properties/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Properties/TestFiles/{testCode}.cs");
-            var clone = new TestOptionsService
+            var clone = new TestSettings
             {
                 IncludeValueNodeInProperties = true,
                 TryToIncludeCrefsForReturnTypes = tryToIncludeCrefsForReturnTypes
             };
             _fixture.SetPublicProcessingOption(clone, diagType);
-            _fixture.MockOptionsService.SetClone(clone);
+            _fixture.MockSettings.SetClone(clone);
 
             var expected = new DiagnosticResult
             {

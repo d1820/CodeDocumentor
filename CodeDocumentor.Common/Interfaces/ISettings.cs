@@ -87,5 +87,7 @@ namespace CodeDocumentor.Common.Interfaces
         /// </summary>
         /// <value> A list of wordmaps. </value>
         WordMap[] WordMaps { get; set; }
+
+        ISettings Clone();
     }
 }

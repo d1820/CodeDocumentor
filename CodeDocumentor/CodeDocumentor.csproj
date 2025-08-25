@@ -67,7 +67,6 @@
     <Compile Include="Analyzers\Constructors\NonPublicConstructorAnalyzer.cs" />
     <Compile Include="Analyzers\Enums\EnumAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Interfaces\InterfaceAnalyzerSettings.cs" />
-    <Compile Include="ApplicationRegistrations.cs" />
     <Compile Include="CodeDocumentor.Package.cs" />
     <Compile Include="Analyzers\Fields\FieldAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Methods\MethodAnalyzerSettings.cs" />
@@ -106,7 +105,6 @@
     <Compile Include="Analyzers\Properties\PropertyAnalyzer.cs" />
     <Compile Include="Analyzers\Properties\PropertyAnalyzerSettings.cs" />
     <Compile Include="Analyzers\Properties\PropertyCodeFixProvider.cs" />
-    <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Settings\VsixOptions.cs" />
   </ItemGroup>
   <ItemGroup>

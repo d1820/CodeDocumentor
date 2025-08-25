@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -3,10 +3,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using CodeDocumentor.Analyzers;
-using CodeDocumentor.Common.Extensions;
+using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -45,12 +44,6 @@ namespace CodeDocumentor.Vsix2022
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-
-#pragma warning disable IDE1006 // Naming Styles
-        private static ISettings _options;
-        internal static OptionsService _optService;
-#pragma warning restore IDE1006 // Naming Styles
-
         #region Package Members
 
         /// <summary>
@@ -73,12 +66,12 @@ namespace CodeDocumentor.Vsix2022
 
             //When editorconfig settings are available, we will use those,
             //but we still bootstrap all the static injections, because we can only read the editorconfig settings at runtime from the contexts
-            _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-            _optService = new OptionsService();
-            _optService.SetDefaults(_options);
-            BaseCodeFixProvider.SetOptionsService(_optService);
-            BaseDiagnosticAnalyzer.SetOptionsService(_optService);
-            BaseAnalyzerSettings.SetOptionsService(_optService);
+            var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            var settings = new Settings();
+            settings.SetFromOptionsGrid(options);
+            BaseCodeFixProvider.SetSettings(settings);
+            BaseDiagnosticAnalyzer.SetSettings(settings);
+            BaseAnalyzerSettings.SetSettings(settings);
         }
 
         #endregion

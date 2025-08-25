@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
-using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -57,11 +56,11 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
+            var settings = Settings;
             if (
                 //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
                 !declaration.IsOwnedByInterface() &&
-                optionsService.IsEnabledForPublicMembersOnly &&
+                settings.IsEnabledForPublicMembersOnly &&
                 PrivateMemberVerifier.IsPrivateMember(declaration)
                 )
             {
@@ -89,12 +88,12 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (
                        !declarationSyntax.IsOwnedByInterface() &&
-                       optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax)
+                       settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax)
                     )
                     {
                         continue;
@@ -126,23 +125,23 @@ namespace CodeDocumentor
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
+            var settings = Settings;
             var commentHelper = new CommentHelper();
             var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
                                                                 declarationSyntax.ReturnType,
-                                                               optionsService.UseToDoCommentsOnSummaryError,
-                                                               optionsService.TryToIncludeCrefsForReturnTypes,
-                                                               optionsService.ExcludeAsyncSuffix,
-                                                               optionsService.WordMaps);
+                                                               settings.UseToDoCommentsOnSummaryError,
+                                                               settings.TryToIncludeCrefsForReturnTypes,
+                                                               settings.ExcludeAsyncSuffix,
+                                                               settings.WordMaps);
             var builder = new DocumentationBuilder();
 
-            var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
+            var list = builder.WithSummary(declarationSyntax, summaryText, settings.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
-                        .WithParameters(declarationSyntax, optionsService.WordMaps)
+                        .WithParameters(declarationSyntax, settings.WordMaps)
                         .WithExceptionTypes(declarationSyntax)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
-                        .WithReturnType(declarationSyntax, optionsService.UseNaturalLanguageForReturnNode, optionsService.TryToIncludeCrefsForReturnTypes, optionsService.WordMaps)
+                        .WithReturnType(declarationSyntax, settings.UseNaturalLanguageForReturnNode, settings.TryToIncludeCrefsForReturnTypes, settings.WordMaps)
                         .Build();
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);

@@ -25,8 +25,8 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = OptionsService;
-                return optionsService.IsEnabledForPublicMembersOnly
+                var settings = Settings;
+                return settings.IsEnabledForPublicMembersOnly
                     ? new List<DiagnosticDescriptor>().ToImmutableArray()
                     : ImmutableArray.Create(_analyzerSettings.GetRule());
             }
@@ -56,8 +56,8 @@ namespace CodeDocumentor
                 return;
             }
             //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
-            var optionsService = OptionsService;
-            if (!node.IsOwnedByInterface() && optionsService.IsEnabledForPublicMembersOnly)
+            var settings = Settings;
+            if (!node.IsOwnedByInterface() && settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }

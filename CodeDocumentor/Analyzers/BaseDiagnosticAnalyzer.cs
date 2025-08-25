@@ -1,5 +1,5 @@
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
@@ -8,26 +8,21 @@ namespace CodeDocumentor
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper;
 
-        private static IOptionsService _optionsService;
+        private static ISettings _settings;
 
         protected BaseDiagnosticAnalyzer()
         {
             DocumentationHeaderHelper = new DocumentationHeaderHelper();
         }
 
-        public static void SetOptionsService(IOptionsService optionsService)
+        public static void SetSettings(ISettings settings)
         {
-            _optionsService = optionsService;
+            _settings = settings;
         }
 
-        protected IOptionsService GetOptionsService()
-        {
-            return OptionsService;
-        }
-
-        protected static IOptionsService OptionsService =>
+        protected static ISettings Settings =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-              _optionsService.Clone();
+              _settings.Clone();
 
     }
 }

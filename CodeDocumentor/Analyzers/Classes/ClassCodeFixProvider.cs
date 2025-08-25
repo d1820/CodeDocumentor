@@ -57,9 +57,9 @@ namespace CodeDocumentor
                 return;
             }
 
-            var optionsService = OptionsService;
+            var settings = Settings;
 
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
+            if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -103,10 +103,10 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
-                    if (optionsService.IsEnabledForPublicMembersOnly
+                    if (settings.IsEnabledForPublicMembersOnly
                         && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                     {
                         continue;
@@ -125,13 +125,13 @@ namespace CodeDocumentor
 
         private static ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax)
         {
-            var optionsService = OptionsService;
+            var settings = Settings;
             var commentHelper = new CommentHelper();
-            var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, optionsService.WordMaps);
+            var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
             var builder = new DocumentationBuilder();
-            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
                             .WithTypeParamters(declarationSyntax)
-                            .WithParameters(declarationSyntax, optionsService.WordMaps)
+                            .WithParameters(declarationSyntax, settings.WordMaps)
                             .WithExisting(declarationSyntax, Constants.REMARKS)
                             .WithExisting(declarationSyntax, Constants.EXAMPLE)
                             .Build();

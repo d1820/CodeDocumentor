@@ -56,8 +56,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
+            var settings = Settings;
+            if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }

@@ -57,8 +57,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = OptionsService;
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
+            var settings = Settings;
+            if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
             }
@@ -84,10 +84,10 @@ namespace CodeDocumentor
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = OptionsService;
+                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
-                    if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                     {
                         continue;
                     }
@@ -108,22 +108,22 @@ namespace CodeDocumentor
             var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
 
             var hasSetter = declarationSyntax.PropertyHasSetter();
-            var optionsService = OptionsService;
+            var settings = Settings;
             var commentHelper = new CommentHelper();
             var propertyComment = commentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean,
-                                                                        hasSetter, optionsService.ExcludeAsyncSuffix, optionsService.WordMaps);
+                                                                        hasSetter, settings.ExcludeAsyncSuffix, settings.WordMaps);
             var builder = new DocumentationBuilder();
 
             var returnOptions = new ReturnTypeBuilderOptions
             {
-                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                GenerateReturnStatement = optionsService.IncludeValueNodeInProperties,
+                TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes,
+                GenerateReturnStatement = settings.IncludeValueNodeInProperties,
                 ReturnGenericTypeAsFullString = false,
                 IncludeStartingWordInText = true,
                 UseProperCasing = true
             };
-            var list = builder.WithSummary(declarationSyntax, propertyComment, optionsService.PreserveExistingSummaryText)
-                        .WithPropertyValueTypes(declarationSyntax, returnOptions, optionsService.WordMaps)
+            var list = builder.WithSummary(declarationSyntax, propertyComment, settings.PreserveExistingSummaryText)
+                        .WithPropertyValueTypes(declarationSyntax, returnOptions, settings.WordMaps)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
                         .Build();

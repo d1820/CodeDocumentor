@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -126,7 +127,7 @@ namespace CodeDocumentor
         private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
         {
             var settings = Settings;
-            var commentHelper = new CommentHelper();
+             var commentHelper = ServiceLocator.CommentHelper;
             var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
                                                                 declarationSyntax.ReturnType,
                                                                settings.UseToDoCommentsOnSummaryError,

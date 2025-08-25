@@ -1,6 +1,7 @@
 using System.Runtime.Remoting.Contexts;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -8,14 +9,9 @@ namespace CodeDocumentor
 {
     public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer
     {
-        protected DocumentationHeaderHelper DocumentationHeaderHelper;
+        protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
 
         private static ISettings _settings;
-
-        protected BaseDiagnosticAnalyzer()
-        {
-            DocumentationHeaderHelper = new DocumentationHeaderHelper();
-        }
 
         protected ISettings BuildSettings(SyntaxNodeAnalysisContext context, SyntaxNode node)
         {

@@ -1,6 +1,7 @@
 using System;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Analyzers
@@ -14,7 +15,7 @@ namespace CodeDocumentor.Analyzers
 
         private static ISettings _settings;
 
-        protected IEventLogger EventLogger = new Logger();
+        protected IEventLogger EventLogger = ServiceLocator.Logger;
 
         public static void SetSettings(ISettings settings)
         {

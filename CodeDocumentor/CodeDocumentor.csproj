@@ -77,6 +77,7 @@
     <Compile Include="Helper\ListExtensions.cs" />
     <Compile Include="Helper\Logger.cs" />
     <Compile Include="Helper\SyntaxExtensions.cs" />
+    <Compile Include="Locators\ServiceLocator.cs" />
     <Compile Include="Managers\GenericCommentManager.cs" />
     <Compile Include="Helper\WordExtensions.cs" />
     <Compile Include="Analyzers\Constructors\ConstructorAnalyzer.cs" />

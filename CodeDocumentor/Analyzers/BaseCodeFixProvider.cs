@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -14,7 +15,7 @@ namespace CodeDocumentor
 
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
-        protected DocumentationHeaderHelper DocumentationHeaderHelper;
+        protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
 
         protected static IEventLogger EventLogger = new Logger();
 

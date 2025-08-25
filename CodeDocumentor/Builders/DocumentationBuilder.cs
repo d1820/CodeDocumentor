@@ -4,6 +4,7 @@ using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +13,9 @@ namespace CodeDocumentor.Builders
 {
     public class DocumentationBuilder
     {
-        private readonly DocumentationHeaderHelper _documentationHeaderHelper;
+        private readonly DocumentationHeaderHelper _documentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
         private XmlElementSyntax _currentElement;
-        private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
-
-        public DocumentationBuilder()
-        {
-            _documentationHeaderHelper = new DocumentationHeaderHelper();
-        }
+        private readonly List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
 
         internal SyntaxList<XmlNodeSyntax> Build()
         {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -107,7 +108,7 @@ namespace CodeDocumentor
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var settings = Settings;
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-            var commentHelper = new CommentHelper();
+             var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, settings.ExcludeAsyncSuffix, settings.WordMaps);
 
             var builder = new DocumentationBuilder();

@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Managers
 {
     public class GenericCommentManager
     {
-        private DocumentationHeaderHelper _documentationHeaderHelper;
+        private DocumentationHeaderHelper _documentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
 
-        public GenericCommentManager()
-        {
-            _documentationHeaderHelper = new DocumentationHeaderHelper();
-        }
         public string ProcessDictionary(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, string stringTemplate, WordMap[] wordMaps)
         {
             var argType1 = returnType.TypeArgumentList.Arguments.First();

@@ -8,6 +8,7 @@ using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -109,7 +110,7 @@ namespace CodeDocumentor
 
             var hasSetter = declarationSyntax.PropertyHasSetter();
             var settings = Settings;
-            var commentHelper = new CommentHelper();
+             var commentHelper = ServiceLocator.CommentHelper;
             var propertyComment = commentHelper.CreatePropertyComment(declarationSyntax.Identifier.ValueText, isBoolean,
                                                                         hasSetter, settings.ExcludeAsyncSuffix, settings.WordMaps);
             var builder = new DocumentationBuilder();

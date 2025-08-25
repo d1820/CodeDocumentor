@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -95,7 +96,7 @@ namespace CodeDocumentor
         private static EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var commentHelper = new CommentHelper();
+            var commentHelper = ServiceLocator.CommentHelper;
             var settings = Settings;
             var comment = commentHelper.CreateEnumComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
 

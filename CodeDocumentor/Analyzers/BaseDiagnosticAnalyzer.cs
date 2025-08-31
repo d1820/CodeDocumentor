@@ -25,7 +25,7 @@ namespace CodeDocumentor
             _settings = settings;
         }
 
-        protected static ISettings Settings =>
+        protected static ISettings StaticSettings =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
               _settings.Clone();
 

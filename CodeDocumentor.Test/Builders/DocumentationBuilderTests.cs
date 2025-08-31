@@ -14,7 +14,6 @@ namespace CodeDocumentor.Test.Builders
         private readonly TestFixture _fixture;
         private readonly ITestOutputHelper _output;
         private DocumentationBuilder _builder;
-        private Mock<ISettings> _mockSettings;
 
         public DocumentationBuilderTests(TestFixture fixture, ITestOutputHelper output)
         {

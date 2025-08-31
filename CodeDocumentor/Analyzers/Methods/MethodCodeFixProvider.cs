@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
@@ -57,7 +59,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = Settings;
+            var settings = await context.BuildSettingsAsync(StaticSettings);
             if (
                 //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
                 !declaration.IsOwnedByInterface() &&
@@ -71,7 +73,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: displayTitle,
-                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(settings, context.Document, root, declaration, c),
                     equivalenceKey: displayTitle),
                 diagnostic);
 
@@ -83,13 +85,12 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
-        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(ISettings settings, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (
@@ -104,7 +105,7 @@ namespace CodeDocumentor
                     {
                         continue;
                     }
-                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
@@ -112,10 +113,10 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
-        private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
+        private static MethodDeclarationSyntax BuildNewDeclaration(ISettings settings, MethodDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
+            var commentTrivia = CreateDocumentationCommentTriviaSyntax(settings, declarationSyntax);
             return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
         }
 
@@ -124,10 +125,9 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
-        private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
+        private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ISettings settings, MethodDeclarationSyntax declarationSyntax)
         {
-            var settings = Settings;
-             var commentHelper = ServiceLocator.CommentHelper;
+            var commentHelper = ServiceLocator.CommentHelper;
             var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
                                                                 declarationSyntax.ReturnType,
                                                                settings.UseToDoCommentsOnSummaryError,
@@ -156,11 +156,11 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Task. </returns>
-        private Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private Task<Document> AddDocumentationHeaderAsync(ISettings settings, Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             return Task.Run(() => TryHelper.Try(() =>
             {
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, MethodAnalyzerSettings.DiagnosticId, EventLogger, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);

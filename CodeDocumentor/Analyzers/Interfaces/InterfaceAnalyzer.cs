@@ -14,7 +14,7 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class InterfaceAnalyzer : BaseDiagnosticAnalyzer
     {
-        private InterfaceAnalyzerSettings _analyzerSettings;
+        private readonly InterfaceAnalyzerSettings _analyzerSettings;
 
         public InterfaceAnalyzer()
         {
@@ -23,7 +23,7 @@ namespace CodeDocumentor
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(_analyzerSettings.GetRule());
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
 
         /// <summary>
         ///  Initializes action.
@@ -56,7 +56,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

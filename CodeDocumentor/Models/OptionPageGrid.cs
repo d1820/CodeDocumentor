@@ -280,7 +280,7 @@ namespace CodeDocumentor.Vsix2022
             if (settings.UseEditorConfigForSettings)
             {
                 response = MessageBox.Show(
-                    $"This will convert existing extension options to .editorconfig values. " +
+                    $"This will copy existing extension options to .editorconfig values. " +
                     $"This would allow CodeDocumentor to run out of process for this solution. " +
                     $"Do you want to continue?{Environment.NewLine}" +
                     $"You will need to paste these options into your solution .editorconfig and restart Visual Studio.",
@@ -299,7 +299,6 @@ namespace CodeDocumentor.Vsix2022
 
             BaseCodeFixProvider.SetSettings(settings);
             BaseDiagnosticAnalyzer.SetSettings(settings);
-            BaseAnalyzerSettings.SetSettings(settings);
         }
 
         public ISettings Clone()

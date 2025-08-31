@@ -15,7 +15,7 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicPropertyAnalyzer : BaseDiagnosticAnalyzer
     {
-        private PropertyAnalyzerSettings _analyzerSettings;
+        private readonly PropertyAnalyzerSettings _analyzerSettings;
 
         public NonPublicPropertyAnalyzer()
         {
@@ -28,10 +28,12 @@ namespace CodeDocumentor
         {
             get
             {
-                var settings = Settings;
-                return settings.IsEnabledForPublicMembersOnly
-                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
-                    : ImmutableArray.Create(_analyzerSettings.GetRule());
+            //    var settings = StaticSettings;
+            //    return settings.IsEnabledForPublicMembersOnly
+            //        ? new List<DiagnosticDescriptor>().ToImmutableArray()
+            //        : ImmutableArray.Create(_analyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
+
             }
         }
 
@@ -71,7 +73,7 @@ namespace CodeDocumentor
                 return;
             }
 
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

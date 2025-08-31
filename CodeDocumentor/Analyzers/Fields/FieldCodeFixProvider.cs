@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
@@ -57,7 +59,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = Settings;
+            var settings = await context.BuildSettingsAsync(StaticSettings);
             if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;
@@ -66,7 +68,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: displayTitle,
-                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(settings, context.Document, root, declaration, c),
                     equivalenceKey: displayTitle),
                 diagnostic);
 
@@ -78,13 +80,12 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
-        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(ISettings settings, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.FieldDeclaration)).OfType<FieldDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var settings = Settings;
                 foreach (var declarationSyntax in declarations)
                 {
                     if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
@@ -95,7 +96,7 @@ namespace CodeDocumentor
                     {
                         continue;
                     }
-                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
@@ -103,10 +104,9 @@ namespace CodeDocumentor
             return neededCommentCount;
         }
 
-        private static FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax)
+        private static FieldDeclarationSyntax BuildNewDeclaration(ISettings settings, FieldDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var settings = Settings;
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
              var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, settings.ExcludeAsyncSuffix, settings.WordMaps);
@@ -127,11 +127,11 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        private Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, FieldDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private Task<Document> AddDocumentationHeaderAsync(ISettings settings, Document document, SyntaxNode root, FieldDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             return Task.Run(() => TryHelper.Try(() =>
             {
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, FieldAnalyzerSettings.DiagnosticId, EventLogger, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);

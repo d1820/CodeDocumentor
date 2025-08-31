@@ -15,7 +15,7 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class FieldAnalyzer : BaseDiagnosticAnalyzer
     {
-        private FieldAnalyzerSettings _analyzerSettings;
+        private readonly FieldAnalyzerSettings _analyzerSettings;
 
         public FieldAnalyzer()
         {
@@ -28,7 +28,7 @@ namespace CodeDocumentor
         {
             get
             {
-                return ImmutableArray.Create(_analyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
 
@@ -71,7 +71,7 @@ namespace CodeDocumentor
             }
 
             var field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

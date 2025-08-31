@@ -14,7 +14,7 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class EnumAnalyzer : BaseDiagnosticAnalyzer
     {
-        private EnumAnalyzerSettings _analyzerSettings;
+        private readonly EnumAnalyzerSettings _analyzerSettings;
 
         public EnumAnalyzer()
         {
@@ -23,7 +23,7 @@ namespace CodeDocumentor
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(_analyzerSettings.GetRule());
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
 
         /// <summary>
         ///  Initializes action.
@@ -51,8 +51,8 @@ namespace CodeDocumentor
             {
                 return;
             }
-
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
+            var settings = context.BuildSettings(StaticSettings);
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }
 }

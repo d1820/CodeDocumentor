@@ -17,20 +17,17 @@ namespace CodeDocumentor.Common
 
         private static readonly string _programDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CodeDocumentor");
 
-        private static readonly string _userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-       
-
-        public static bool IsCodeDocumentorDefinedInEditorConfig(this ISettings settings)
-        {
-            var editorConfigPath = Path.Combine(_userProfileFolder, ".editorconfig");
-            if (!File.Exists(editorConfigPath))
-            {
-                return false;
-            }
-            var lines = File.ReadAllLines(editorConfigPath);
-            return lines.Any(line => line.StartsWith(PREFIX, StringComparison.OrdinalIgnoreCase));
-        }
+        // private static readonly string _userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        //public static bool IsCodeDocumentorDefinedInEditorConfig(this ISettings settings)
+        //{
+        //    var editorConfigPath = Path.Combine(_userProfileFolder, ".editorconfig");
+        //    if (!File.Exists(editorConfigPath))
+        //    {
+        //        return false;
+        //    }
+        //    var lines = File.ReadAllLines(editorConfigPath);
+        //    return lines.Any(line => line.StartsWith(PREFIX, StringComparison.OrdinalIgnoreCase));
+        //}
 
         /// <summary>
         ///  Loads the <see cref="Settings"/>.
@@ -67,37 +64,28 @@ namespace CodeDocumentor.Common
                 return;
             }
 
-            var editorConfigPath = Path.Combine(_userProfileFolder, ".editorconfig");
-            var lines = File.ReadAllLines(editorConfigPath).ToList();
-
-            var clipboardLInes = new List<string>();
-
-            if (!lines.Any(line => line.StartsWith("[*.cs]", StringComparison.OrdinalIgnoreCase)))
+            var clipboardLInes = new List<string>
             {
-                clipboardLInes.Add("[*.cs]");
-            }
-            if (!lines.Any(line => line.StartsWith(PREFIX, StringComparison.OrdinalIgnoreCase)))
-            {
-                clipboardLInes.Add("# CodeDocumentor settings");
-            }
-
-            clipboardLInes.Add($"{PREFIX}class_diagram_severity = {settings.ClassDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}constructor_diagram_severity = {settings.ConstructorDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}default_diagram_severity = {settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}enum_diagram_severity = {settings.EnumDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}field_diagram_severity = {settings.FieldDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}interface_diagram_severity = {settings.InterfaceDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}method_diagram_severity = {settings.MethodDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}property_diagram_severity = {settings.PropertyDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}record_diagram_severity = {settings.RecordDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}");
-            clipboardLInes.Add($"{PREFIX}exclude_async_suffix = {settings.ExcludeAsyncSuffix}");
-            clipboardLInes.Add($"{PREFIX}include_value_node_in_properties = {settings.IncludeValueNodeInProperties}");
-            clipboardLInes.Add($"{PREFIX}is_enabled_for_public_members_only = {settings.IsEnabledForPublicMembersOnly}");
-            clipboardLInes.Add($"{PREFIX}is_enabled_for_non_public_fields = {settings.IsEnabledForNonPublicFields}");
-            clipboardLInes.Add($"{PREFIX}preserve_existing_summary_text = {settings.PreserveExistingSummaryText}");
-            clipboardLInes.Add($"{PREFIX}try_to_include_crefs_for_return_types = {settings.TryToIncludeCrefsForReturnTypes}");
-            clipboardLInes.Add($"{PREFIX}use_natural_language_for_return_node = {settings.UseNaturalLanguageForReturnNode}");
-            clipboardLInes.Add($"{PREFIX}use_todo_comments_on_summary_error = {settings.UseToDoCommentsOnSummaryError}");
+                "[*.cs]",
+                "# CodeDocumentor settings",
+                $"{PREFIX}class_diagram_severity = {settings.ClassDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}constructor_diagram_severity = {settings.ConstructorDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}default_diagram_severity = {settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}enum_diagram_severity = {settings.EnumDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}field_diagram_severity = {settings.FieldDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}interface_diagram_severity = {settings.InterfaceDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}method_diagram_severity = {settings.MethodDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}property_diagram_severity = {settings.PropertyDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}record_diagram_severity = {settings.RecordDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity}",
+                $"{PREFIX}exclude_async_suffix = {settings.ExcludeAsyncSuffix}",
+                $"{PREFIX}include_value_node_in_properties = {settings.IncludeValueNodeInProperties}",
+                $"{PREFIX}is_enabled_for_public_members_only = {settings.IsEnabledForPublicMembersOnly}",
+                $"{PREFIX}is_enabled_for_non_public_fields = {settings.IsEnabledForNonPublicFields}",
+                $"{PREFIX}preserve_existing_summary_text = {settings.PreserveExistingSummaryText}",
+                $"{PREFIX}try_to_include_crefs_for_return_types = {settings.TryToIncludeCrefsForReturnTypes}",
+                $"{PREFIX}use_natural_language_for_return_node = {settings.UseNaturalLanguageForReturnNode}",
+                $"{PREFIX}use_todo_comments_on_summary_error = {settings.UseToDoCommentsOnSummaryError}"
+            };
 
             if (settings.WordMaps != null && settings.WordMaps.Length > 0)
             {

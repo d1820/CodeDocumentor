@@ -30,7 +30,7 @@ namespace CodeDocumentor.Builders
 
             var commentHelper = ServiceLocator.CommentHelper;
             var alreadyHasComment = commentTriviaSyntax != null && commentHelper.HasComment(commentTriviaSyntax);
-
+            var settings = context.BuildSettings(null);
             try
             {
                 context.ReportDiagnostic(Diagnostic.Create(getRuleCallback.Invoke(alreadyHasComment), identifier.GetLocation()));

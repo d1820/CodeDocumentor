@@ -62,7 +62,6 @@ namespace CodeDocumentor.Test
             MockSettings = new TestSettings();
             BaseCodeFixProvider.SetSettings(MockSettings);
             BaseDiagnosticAnalyzer.SetSettings(MockSettings);
-            BaseAnalyzerSettings.SetSettings(MockSettings);
         }
 
         public void SetPublicProcessingOption(ISettings o, string diagType)

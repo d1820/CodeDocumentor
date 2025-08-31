@@ -72,7 +72,6 @@ namespace CodeDocumentor.Vsix2022
             settings.SetFromOptionsGrid(options);
             BaseCodeFixProvider.SetSettings(settings);
             BaseDiagnosticAnalyzer.SetSettings(settings);
-            BaseAnalyzerSettings.SetSettings(settings);
         }
 
         #endregion

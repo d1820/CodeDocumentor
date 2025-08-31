@@ -1,5 +1,6 @@
 using CodeDocumentor.Analyzers;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
@@ -21,14 +22,22 @@ namespace CodeDocumentor
         /// </summary>
         internal const string Title = "The field must have a documentation header.";
 
+        internal DiagnosticDescriptor GetSupportedDiagnosticRule()
+        {
+            return new DiagnosticDescriptor(DiagnosticId, Title,
+                MessageFormat, Category,
+                 DiagnosticSeverity.Info,
+                 true);
+        }
+
         /// <summary>
         ///  The diagnostic descriptor rule.
         /// </summary>
-        internal  DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
+        internal  DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity, ISettings settings)
         {
             return new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat,
                 Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId), true);
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId, settings), true);
         }
     }
 }

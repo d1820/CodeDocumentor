@@ -10,7 +10,7 @@ namespace CodeDocumentor.Managers
 {
     public class GenericCommentManager
     {
-        private DocumentationHeaderHelper _documentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
+        private readonly DocumentationHeaderHelper _documentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
 
         public string ProcessDictionary(GenericNameSyntax returnType, ReturnTypeBuilderOptions options, string stringTemplate, WordMap[] wordMaps)
         {

@@ -2,7 +2,8 @@ using System.Threading.Tasks;
 
 namespace Sample.CodeDocumentor
 {
-    public interface ITestPublicInteraceMethods
+
+  public interface ITestPublicInteraceMethods
     {
         Task<string> GetNamesAsync(string name);
     }

@@ -12,7 +12,7 @@ namespace CodeDocumentor
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicConstructorAnalyzer : BaseDiagnosticAnalyzer
     {
-        private ConstructorAnalyzerSettings _analyzerSettings;
+        private readonly ConstructorAnalyzerSettings _analyzerSettings;
 
         public NonPublicConstructorAnalyzer()
         {
@@ -26,10 +26,11 @@ namespace CodeDocumentor
             get
             {
                 //TODO: figure this out
-                var settings = Settings;
-                return settings.IsEnabledForPublicMembersOnly
-                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
-                    : ImmutableArray.Create(_analyzerSettings.GetRule());
+                //var settings = StaticSettings;
+                //return settings.IsEnabledForPublicMembersOnly
+                //    ? new List<DiagnosticDescriptor>().ToImmutableArray()
+                //    : ImmutableArray.Create(_analyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
 
@@ -65,7 +66,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }
 }

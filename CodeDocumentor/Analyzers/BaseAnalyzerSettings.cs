@@ -13,29 +13,16 @@ namespace CodeDocumentor.Analyzers
         /// </summary>
         internal const string Category = Constants.CATEGORY;
 
-        private static ISettings _settings;
-
         protected IEventLogger EventLogger = ServiceLocator.Logger;
 
-        public static void SetSettings(ISettings settings)
+        internal DiagnosticSeverity LookupSeverity(string diagnosticId, ISettings settings)
         {
-            _settings = settings;
-        }
-
-        protected static ISettings Settings =>
-              //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-              _settings.Clone();
-
-
-        internal DiagnosticSeverity LookupSeverity(string diagnosticId)
-        {
-            if (Settings == null)
+            if (settings == null)
             {
                 return Constants.DefaultDiagnosticSeverityOnError;
             }
             return TryHelper.Try(() =>
             {
-                var settings = Settings;
                 switch (diagnosticId)
                 {
                     case Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID:

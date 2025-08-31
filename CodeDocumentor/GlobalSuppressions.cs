@@ -4,3 +4,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1035:Do not use APIs banned for analyzers", Justification = "<Pending>", Scope = "member", Target = "~M:CodeDocumentor.Vsix2022.OptionPageGrid.SaveSettingsToStorage")]
+[assembly: SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1035:Do not use APIs banned for analyzers", Justification = "<Pending>", Scope = "member", Target = "~M:CodeDocumentor.Vsix2022.CodeDocumentorPackage.InitializeAsync(System.Threading.CancellationToken,System.IProgress{Microsoft.VisualStudio.Shell.ServiceProgressData})~System.Threading.Tasks.Task")]

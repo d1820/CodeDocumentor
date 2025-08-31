@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -40,7 +41,7 @@ namespace CodeDocumentor.Vsix2022
     [InstalledProductRegistration("#110", "#112", VsixOptions.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
-    [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
+    //[ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ComVisible(true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
@@ -65,13 +66,36 @@ namespace CodeDocumentor.Vsix2022
             // initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            //When editorconfig settings are available, we will use those,
-            //but we still bootstrap all the static injections, because we can only read the editorconfig settings at runtime from the contexts
-            var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-            var settings = new Settings();
-            settings.SetFromOptionsGrid(options);
-            BaseCodeFixProvider.SetSettings(settings);
-            BaseDiagnosticAnalyzer.SetSettings(settings);
+            var hasCodeDocumentorInEditorConfig = false;
+            var solutionService = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+            if (solutionService != null)
+            {
+                solutionService.GetSolutionInfo(out string solutionDir, out _, out _);
+
+                if (!string.IsNullOrEmpty(solutionDir))
+                {
+                    // Look for .editorconfig in the solution directory
+                    var editorConfigPath = System.IO.Path.Combine(solutionDir, ".editorconfig");
+                    if (System.IO.File.Exists(editorConfigPath))
+                    {
+                        // Read the .editorconfig file
+                        var lines = System.IO.File.ReadAllLines(editorConfigPath);
+                        // Check for a specific value, e.g., "my_setting = true"
+                        hasCodeDocumentorInEditorConfig = lines.Any(line => line.Trim().StartsWith("codedocumentor_", StringComparison.OrdinalIgnoreCase));
+
+                    }
+                }
+            }
+            if (!hasCodeDocumentorInEditorConfig) {
+                //When .editorconfig settings are available, we will use those,
+                //but we still bootstrap all the static injections, because we can only read the .editorconfig settings at runtime from the contexts
+                var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                var settings = new Settings();
+                settings.SetFromOptionsGrid(options);
+                BaseCodeFixProvider.SetSettings(settings);
+                BaseDiagnosticAnalyzer.SetSettings(settings);
+            }
+
         }
 
         #endregion

@@ -17,18 +17,6 @@ namespace CodeDocumentor.Common
 
         private static readonly string _programDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CodeDocumentor");
 
-        // private static readonly string _userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        //public static bool IsCodeDocumentorDefinedInEditorConfig(this ISettings settings)
-        //{
-        //    var editorConfigPath = Path.Combine(_userProfileFolder, ".editorconfig");
-        //    if (!File.Exists(editorConfigPath))
-        //    {
-        //        return false;
-        //    }
-        //    var lines = File.ReadAllLines(editorConfigPath);
-        //    return lines.Any(line => line.StartsWith(PREFIX, StringComparison.OrdinalIgnoreCase));
-        //}
-
         /// <summary>
         ///  Loads the <see cref="Settings"/>.
         /// </summary>

@@ -69,10 +69,6 @@ namespace CodeDocumentor.Constructors
                     returnComment = GenerateGeneralComment(identifier.Identifier.ValueText.AsSpan(), options);
                 }
             }
-            //else if (returnType is NullableTypeSyntax nts)
-            //{
-            //    returnComment = BuildComment(nts.ElementType, options);
-            //}
             else if (returnType is QualifiedNameSyntax qst)
             {
                 returnComment = GenerateGeneralComment(qst.ToString().AsSpan(), options);
@@ -95,29 +91,6 @@ namespace CodeDocumentor.Constructors
                 ? GenerateGeneralComment(pst.Keyword.ValueText.AsSpan(), options)
                 : GenerateGeneralComment(returnType.ToFullString().AsSpan(), options);
             }
-
-            //if (returnType is NullableTypeSyntax)
-            //{
-            //    var returnParts = returnComment.Split(new[] { ' ' }, 2).ToList();
-            //    if (returnParts.Count > 1)
-            //    {
-            //        //insert "nullable" in second to last position
-            //        returnParts.Insert(1, "nullable");
-            //    }
-            //    else
-            //    {
-            //        if (options.UseProperCasing)
-            //        {
-            //            returnParts.Insert(0, "Nullable");
-            //        }
-            //        else
-            //        {
-            //            returnParts.Insert(0, "nullable");
-            //        }
-            //    }
-            //    returnComment = string.Join(" ", returnParts);
-            //    returnComment = returnComment.Replace("?", string.Empty);
-            //}
             return returnComment;
         }
 

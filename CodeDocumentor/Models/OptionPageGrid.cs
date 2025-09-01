@@ -207,32 +207,12 @@ namespace CodeDocumentor.Vsix2022
         [Description("This will convert existing extension options to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.")]
         public bool UseEditorConfigForSettings { get; set; }
 
-
-        //protected override void OnActivate(CancelEventArgs e)
-        //{
-        //    base.OnActivate(e);
-        //    var settings = new Settings();
-        //    if (settings.IsCodeDocumentorDefinedInEditorConfig())
-        //    {
-        //        MessageBox.Show(
-        //          $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
-        //          $"Options are no longer managed through Visual Studio. ",
-        //          "CodeDocumentor Options Management",
-        //          MessageBoxButtons.OK,
-        //          MessageBoxIcon.Exclamation);
-        //    }
-        //}
         /// <summary>
         ///  Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
             ISettings settings = new Settings();
-            //if (settings.IsCodeDocumentorDefinedInEditorConfig())
-            //{
-            //    UseEditorConfigForSettings = true;
-            //    return;
-            //}
             settings = settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
@@ -260,16 +240,6 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
-            //if (settings.IsCodeDocumentorDefinedInEditorConfig())
-            //{
-            //    MessageBox.Show(
-            //        $"CodeDocumentor options have been detected in your %USERPROFILE% .editorconfig file. " +
-            //        $"Options are no longer managed through Visual Studio. ",
-            //        "CodeDocumentor Options Management",
-            //        MessageBoxButtons.OK,
-            //        MessageBoxIcon.Exclamation);
-            //    return;
-            //}
             var settings = new Settings();
             var eventLogger = new Logger();
             settings.Update(this, eventLogger);

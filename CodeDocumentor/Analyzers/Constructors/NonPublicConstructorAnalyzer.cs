@@ -24,11 +24,6 @@ namespace CodeDocumentor
         {
             get
             {
-                //TODO: figure this out
-                //var settings = StaticSettings;
-                //return settings.IsEnabledForPublicMembersOnly
-                //    ? new List<DiagnosticDescriptor>().ToImmutableArray()
-                //    : ImmutableArray.Create(_analyzerSettings.GetRule());
                 return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }

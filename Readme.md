@@ -54,7 +54,7 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 Microsoft is not going to make any changes to truly allow analyzers to run out of process. Even with .editorconfig support, it will not work if you want to have any user level settings collection from Visual Studio > Options.
 
-- As of VS2022 version 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
+- As of VS2022 version 17.6.x there is some bug that makes extension analyzers not able to work properly if you have *Run code analysis in separate process*
 
   ![Out of process](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/outOfProcess.png?raw=true)
 
@@ -295,7 +295,7 @@ To convert existing settings to .editorconfig go to Tools > Options > CodeDocume
 This will convert the existing Visual Studio Option Settings to editor config format and copy them to your clipboard. 
 Paste this into a new or existing .editorconfig file in your solution.
 
-**NOTE**: Event with using .editroconfig as your settings, Out of Process still can not be used, because the extension needs to support backward compatibility of using the Visual Studio Options.
+**NOTE**: Even with using .editorconfig as your settings, Out of Process still can not be used, because the extension needs to support backward compatibility of using the Visual Studio Options.
 
 
 ## Changelog

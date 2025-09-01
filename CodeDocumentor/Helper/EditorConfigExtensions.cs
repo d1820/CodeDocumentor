@@ -48,7 +48,7 @@ namespace CodeDocumentor.Helper
             settings.IsEnabledForNonPublicFields = options.ConvertToBoolean("codedocumentor_is_enabled_for_non_public_fields", false);
             settings.PreserveExistingSummaryText = options.ConvertToBoolean("codedocumentor_preserve_existing_summary_text", true);
             settings.TryToIncludeCrefsForReturnTypes = options.ConvertToBoolean("codedocumentor_try_to_include_crefs_for_return_types", true);
-            settings.UseToDoCommentsOnSummaryError = options.ConvertToBoolean("codedocumentor_use_natural_language_for_return_node", false);
+            settings.UseNaturalLanguageForReturnNode = options.ConvertToBoolean("codedocumentor_use_natural_language_for_return_node", false);
             settings.UseToDoCommentsOnSummaryError = options.ConvertToBoolean("codedocumentor_use_todo_comments_on_summary_error", true);
             settings.WordMaps = options.ConvertToWordMap("codedocumentor_wordmap", Constants.DEFAULT_WORD_MAPS);
             return settings;
@@ -80,18 +80,18 @@ namespace CodeDocumentor.Helper
                 .ToArray();
         }
 
-        private static bool ConvertToBoolean(this AnalyzerConfigOptions options, string key, bool defaulBool)
+        private static bool ConvertToBoolean(this AnalyzerConfigOptions options, string key, bool defaultBool)
         {
             options.TryGetValue(key, out var cds);
             if (string.IsNullOrEmpty(cds))
             {
-                return defaulBool;
+                return defaultBool;
             }
             if (bool.TryParse(cds, out var converted))
             {
                 return converted;
             }
-            return defaulBool;
+            return defaultBool;
         }
 
         private static DiagnosticSeverity ConvertToDiagnosticSeverity(this AnalyzerConfigOptions options, string key, DiagnosticSeverity defaultSeverity)

@@ -29,8 +29,8 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   VisxDirectory: ${{github.workspace}}/vsix
-  Version: '2.1.1.${{ github.run_number }}'
-  BaseVersion: '2.1.1.0'
+  Version: '3.0.0.${{ github.run_number }}'
+  BaseVersion: '3.0.0.0'
 
 defaults:
   run:

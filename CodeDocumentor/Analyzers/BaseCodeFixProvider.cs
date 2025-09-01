@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+#if DEBUG
+#endif
 using System.Threading.Tasks;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
@@ -29,7 +31,7 @@ namespace CodeDocumentor
 
         protected static ISettings StaticSettings =>
                 //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-                _settings.Clone();
+                _settings?.Clone();
 
         /// <summary>
         ///  The title.
@@ -62,10 +64,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-            //#if DEBUG
-            //            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            //            return;
-            //#endif
+#if DEBUG
+            //Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            //return;
+#endif
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);

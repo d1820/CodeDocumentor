@@ -46,7 +46,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = BuildSettings(context, node);
+            var settings = context.BuildSettings(StaticSettings);
             if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;

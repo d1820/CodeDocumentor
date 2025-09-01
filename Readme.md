@@ -52,15 +52,21 @@ Download and install the VSIX from the [VS Marketplace](https://marketplace.visu
 
 ## Known Issues
 
-- As of VS2022 verison 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
+Microsoft is not going to make any changes to truly allow analyzers to run out of process. Even with .editorconfig support, it will not work if you want to have any user level settings collection from Visual Studio > Options.
+
+- As of VS2022 version 17.6.x there is some bug that makes extension analyzers not being to work work properly if you have *Run code analysis in seperate process*
 
   ![Out of process](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/outOfProcess.png?raw=true)
 
   **Please disable this setting to allow CodeDocumentor to work correctly.**
 
-- As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect _Run code analysis on latest .NET_.
+- As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect *_Run code analysis on latest .NET_*.
 
    ![Out Of Process Latest](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/OutOfProessLatest.png?raw=true)
+
+- As of VS2022 Version 17.14.13. Out of process does not work AGAIN. you need to deselect *_Run code analysis in separate process*.
+  ![Out Of Process 17.14.13](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/OutOfProcess17.14.13.png?raw=true)
+  **Please disable this setting to allow CodeDocumentor to work correctly.**
 
 
 ## Comment Ordering
@@ -105,7 +111,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Method Diagnostics                                  | Allows setting a new default diagnostic level for evaluation for methods. A restart of Visual Studio is required on change.                                                                                                                                                                            |
 | Property Diagnostics                                | Allows setting a new default diagnostic level for evaluation for properties. A restart of Visual Studio is required on change.                                                                                                                                                                         |
 | Record Diagnostics                                  | Allows setting a new default diagnostic level for evaluation for records. A restart of Visual Studio is required on change.                                                                                                                                                                            |
-
+| Use .editorconfig for settings options              | This will convert existing extension options to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.|
 
 
 
@@ -256,31 +262,7 @@ How fast comments can be added
 
 ![Quick add](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/short%20cut%20to%20quick%20add.gif?raw=true)
 
-
-## Errors and Crashes
-
-If you are finding the code documentor is crashing or causing errors.
-All errors are written to the EventLog in windows. Check there for causes, and use this information to file a bug.
-
-**Source**: "Visual Studio"
-
-**Message Prefix**: "CodeDocumentor: "
-
-![Event Log](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/EventLog.png?raw=true)
-
-
-
-## Changelog
-
-| Date       | Change                                                                  | Version |
-| ---------- | ----------------------------------------------------------------------- | ------- |
-| 02/13/2024 | Rewrote document generator to builder pattern                           | 2.1.0.X |
-|            | Increased code coverage for tests                                       |         |
-|            | Added support for ```<see cref=""/>``` tags in summary and return nodes |         |
-|            | Bug fixes                                                               |         |
-| 02/1/2024  | Added support for ArgumentNullException.ThrowIf statements              | 2.0.1.1 |
-
-#### Example Cref Support
+### Example Cref Support
 
 ```csharp
 /// <summary>
@@ -294,6 +276,39 @@ internal Task<ActionResult<ClientDto>> CreateAsync(CreateClientDto clientDto)
 throw new ArgumentException("test");
 }
 ```
+
+## Errors and Crashes
+
+If you are finding the code documentor is crashing or causing errors.
+All errors are written to the EventLog in windows. Check there for causes, and use this information to file a bug.
+
+**Source**: "Visual Studio"
+
+**Message Prefix**: "CodeDocumentor: "
+
+![Event Log](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/EventLog.png?raw=true)
+
+
+## Using .editorconfig for settings
+
+To convert existing settings to .editorconfig go to Tools > Options > CodeDocumentor and select **Use .editorconfig for settings options**. 
+This will convert the existing Visual Studio Option Settings to editor config format and copy them to your clipboard. 
+Paste this into a new or existing .editorconfig file in your solution.
+
+**NOTE**: Event with using .editroconfig as your settings, Out of Process still can not be used, because the extension needs to support backward compatibility of using the Visual Studio Options.
+
+
+## Changelog
+
+| Date       | Change                                                                  | Version |
+| ---------- | ----------------------------------------------------------------------- | ------- |
+| 02/13/2024 | Rewrote document generator to builder pattern                           | 2.1.0.X |
+|            | Increased code coverage for tests                                       |         |
+|            | Added support for ```<see cref=""/>``` tags in summary and return nodes |         |
+|            | Bug fixes                                                               |         |
+| 02/1/2024  | Added support for ArgumentNullException.ThrowIf statements              | 2.0.1.1 |
+| 09/01/2025 | Added support for storing settings in a solution level .editorconfig    | 3.0.0.0 |
+
 
 ## Special Thanks
 This was forked and modified from [jinyafeng](https://github.com/jinyafeng/DocumentationAssistant)

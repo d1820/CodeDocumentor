@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
@@ -56,8 +55,8 @@ namespace CodeDocumentor
             {
                 return;
             }
+            var settings = context.BuildSettings(StaticSettings);
             //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
-            var settings = BuildSettings(context, node);
             if (!node.IsOwnedByInterface() && settings.IsEnabledForPublicMembersOnly)
             {
                 return;

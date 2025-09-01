@@ -3,9 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CodeDocumentor.Analyzers;
 using CodeDocumentor.Common;
-using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -66,7 +64,20 @@ namespace CodeDocumentor.Vsix2022
             // initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            var hasCodeDocumentorInEditorConfig = false;
+            //var hasCodeDocumentorInEditorConfig = await SlnHasEditorConfigAsync(hasCodeDocumentorInEditorConfig);
+
+            //When .editorconfig settings are available, we will use those,
+            //but we still bootstrap all the static injections, because we can only read the .editorconfig settings at runtime from the contexts
+            var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            var settings = new Settings();
+            settings.SetFromOptionsGrid(options);
+            BaseCodeFixProvider.SetSettings(settings);
+            BaseDiagnosticAnalyzer.SetSettings(settings);
+
+        }
+
+        private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)
+        {
             var solutionService = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
             if (solutionService != null)
             {
@@ -86,16 +97,8 @@ namespace CodeDocumentor.Vsix2022
                     }
                 }
             }
-            if (!hasCodeDocumentorInEditorConfig) {
-                //When .editorconfig settings are available, we will use those,
-                //but we still bootstrap all the static injections, because we can only read the .editorconfig settings at runtime from the contexts
-                var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-                var settings = new Settings();
-                settings.SetFromOptionsGrid(options);
-                BaseCodeFixProvider.SetSettings(settings);
-                BaseDiagnosticAnalyzer.SetSettings(settings);
-            }
 
+            return hasCodeDocumentorInEditorConfig;
         }
 
         #endregion

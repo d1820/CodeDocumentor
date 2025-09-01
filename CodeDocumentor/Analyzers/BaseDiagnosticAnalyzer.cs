@@ -1,8 +1,6 @@
-using System.Runtime.Remoting.Contexts;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
 using CodeDocumentor.Locators;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor
@@ -13,13 +11,6 @@ namespace CodeDocumentor
 
         private static ISettings _settings;
 
-        protected ISettings BuildSettings(SyntaxNodeAnalysisContext context, SyntaxNode node)
-        {
-            var options = context.Options.AnalyzerConfigOptionsProvider.GetOptions(node.SyntaxTree);
-            var settings = options.BuildSettings(_settings);
-            return settings;
-        }
-
         public static void SetSettings(ISettings settings)
         {
             _settings = settings;
@@ -27,7 +18,6 @@ namespace CodeDocumentor
 
         protected static ISettings StaticSettings =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-              _settings.Clone();
-
+              _settings?.Clone();
     }
 }

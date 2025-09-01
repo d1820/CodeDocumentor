@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using CodeDocumentor.Constructors;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,14 +14,14 @@ namespace CodeDocumentor.Helper
     /// <summary>
     ///  The comment helper.
     /// </summary>
-    public static class CommentHelper
+    public class CommentHelper
     {
         /// <summary>
         ///  Creates the class comment.
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateClassComment(string name)
+        public string CreateClassComment(string name, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -32,17 +29,17 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts()
+                         .TranslateParts(wordMaps)
                          .TryInsertTheWord((parts) =>
                          {
-                             if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                             if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
                              {
                                  parts.Insert(0, "The"); //for records we always force "The"
                              }
                          })
                          .ToLowerParts()
                          .JoinToString()
-                         .ApplyUserTranslations()
+                         .ApplyUserTranslations(wordMaps)
                          .WithPeriod();
             return comment;
         }
@@ -53,13 +50,14 @@ namespace CodeDocumentor.Helper
         /// <param name="name"> The name. </param>
         /// <param name="isPrivate"> If true, is private. </param>
         /// <returns> A string. </returns>
-        public static string CreateConstructorComment(string name, bool isPrivate)
+        public string CreateConstructorComment(string name, bool isPrivate, WordMap[] wordMaps)
         {
             string comment;
             if (string.IsNullOrEmpty(name))
             {
                 return name;
             }
+            name = name.Trim();
             if (isPrivate)
             {
                 comment = $"Prevents a default instance of the <see cref=\"{name}\"/> class from being created";
@@ -68,7 +66,7 @@ namespace CodeDocumentor.Helper
             {
                 comment = $"Initializes a new instance of the <see cref=\"{name}\"/> class";
             }
-            return comment.ApplyUserTranslations().WithPeriod();
+            return comment.ApplyUserTranslations(wordMaps).WithPeriod();
         }
 
         /// <summary>
@@ -76,7 +74,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateEnumComment(string name)
+        public string CreateEnumComment(string name,  WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -84,13 +82,13 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                            .Split(name)
-                           .TranslateParts()
+                           .TranslateParts(wordMaps)
                            .TryPluarizeFirstWord()
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .PluaralizeLastWord()
                            .JoinToString()
-                           .ApplyUserTranslations()
+                           .ApplyUserTranslations(wordMaps)
                            .WithPeriod();
             return comment;
         }
@@ -100,7 +98,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateFieldComment(string name)
+        public string CreateFieldComment(string name, bool excludeAsyncSuffix, WordMap[] wordMaps)
         {
             //string comment;
             if (string.IsNullOrEmpty(name))
@@ -110,10 +108,10 @@ namespace CodeDocumentor.Helper
             //order matters. fields are special in the sense there is not action attached and we dont need to do translations
             var comment = NameSplitter
                             .Split(name)
-                            .HandleAsyncKeyword()
+                            .HandleAsyncKeyword(excludeAsyncSuffix)
                             .Tap((parts) =>
                             {
-                                if (char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
+                                if (parts.Count > 0 && char.IsLower(parts[0], 0)) //if first letter of a field is lower its prob a private field. Lets adjust for it
                                 {
                                     parts[0] = parts[0].ToTitleCase();
                                 }
@@ -121,7 +119,7 @@ namespace CodeDocumentor.Helper
                             .TryInsertTheWord()
                             .ToLowerParts()
                             .JoinToString()
-                            .ApplyUserTranslations()
+                            .ApplyUserTranslations(wordMaps)
                             .WithPeriod();
 
             return comment;
@@ -132,7 +130,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateInterfaceComment(string name)
+        public string CreateInterfaceComment(string name, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -145,11 +143,11 @@ namespace CodeDocumentor.Helper
                                parts.Remove("I");
                            })
                            .AddCustomPart("interface")
-                           .TranslateParts()
+                           .TranslateParts(wordMaps)
                            .TryInsertTheWord()
                            .ToLowerParts()
                            .JoinToString()
-                           .ApplyUserTranslations()
+                           .ApplyUserTranslations(wordMaps)
                            .WithPeriod();
 
             return comment;
@@ -161,7 +159,11 @@ namespace CodeDocumentor.Helper
         /// <param name="name"> The name. </param>
         /// <param name="returnType"> The return type. </param>
         /// <returns> A string. </returns>
-        public static string CreateMethodComment(string name, TypeSyntax returnType)
+        public string CreateMethodComment(string name, TypeSyntax returnType,
+            bool useToDoCommentsOnSummaryError,
+            bool tryToIncludeCrefsForReturnTypes,
+            bool excludeAsyncSuffix,
+            WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -177,13 +179,13 @@ namespace CodeDocumentor.Helper
                              is2partPlusAsync = parts.Count == 2 || (parts.Count == 3 && parts.Last().StartsWith("async", StringComparison.InvariantCultureIgnoreCase));
                              isBool = returnType.IsBoolReturnType();
                          })
-                         .HandleAsyncKeyword()
-                         .TryIncudeReturnType(returnType, (returnComment) =>
+                         .HandleAsyncKeyword(excludeAsyncSuffix)
+                         .TryIncludeReturnType(useToDoCommentsOnSummaryError, tryToIncludeCrefsForReturnTypes, wordMaps, returnType, (returnComment) =>
                          {
                              hasReturnComment = !string.IsNullOrEmpty(returnComment);
                          })
-                         .TryAddTodoSummary(returnType.ToString())
-                         .TranslateParts()
+                         .TryAddTodoSummary(returnType.ToString(), useToDoCommentsOnSummaryError)
+                         .TranslateParts(wordMaps)
                          .TryPluarizeFirstWord()
                          .TryInsertTheWord((parts) =>
                          {
@@ -198,7 +200,7 @@ namespace CodeDocumentor.Helper
                          })
                          .ToLowerParts()
                          .JoinToString()
-                         .ApplyUserTranslations()
+                         .ApplyUserTranslations(wordMaps)
                          .WithPeriod();
             return comment;
         }
@@ -208,7 +210,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="parameter"> The parameter. </param>
         /// <returns> A string. </returns>
-        public static string CreateParameterComment(ParameterSyntax parameter)
+        public string CreateParameterComment(ParameterSyntax parameter, WordMap[] wordMaps)
         {
             var isBoolean = false;
             if (parameter.Type.IsKind(SyntaxKind.PredefinedType))
@@ -229,10 +231,10 @@ namespace CodeDocumentor.Helper
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
                                 .AddCustomPart("If true,", 0)
-                                .TranslateParts()
+                                .TranslateParts(wordMaps)
                                 .ToLowerParts()
                                 .JoinToString()
-                                .ApplyUserTranslations()
+                                .ApplyUserTranslations(wordMaps)
                                 .WithPeriod();
                 return comment;
             }
@@ -240,17 +242,17 @@ namespace CodeDocumentor.Helper
             {
                 var comment = NameSplitter
                                 .Split(parameter.Identifier.ValueText)
-                                .TranslateParts()
+                                .TranslateParts(wordMaps)
                                 .TryInsertTheWord((parts) =>
                                 {
-                                    if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                                    if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         parts.Insert(0, "The"); //for parameters we always force "The"
                                     }
                                 })
                                 .ToLowerParts()
                                 .JoinToString()
-                                .ApplyUserTranslations()
+                                .ApplyUserTranslations(wordMaps)
                                 .WithPeriod();
                 return comment;
             }
@@ -263,7 +265,7 @@ namespace CodeDocumentor.Helper
         /// <param name="isBoolean"> If true, is boolean. </param>
         /// <param name="hasSetter"> If true, has setter. </param>
         /// <returns> A string. </returns>
-        public static string CreatePropertyComment(string name, bool isBoolean, bool hasSetter)
+        public string CreatePropertyComment(string name, bool isBoolean, bool hasSetter, bool excludeAsyncSuffix, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -277,11 +279,11 @@ namespace CodeDocumentor.Helper
                               .AddPropertyBooleanPart() //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts()
-                              .HandleAsyncKeyword()
+                              .TranslateParts(wordMaps)
+                              .HandleAsyncKeyword(excludeAsyncSuffix)
                               .ToLowerParts()
                               .JoinToString()
-                              .ApplyUserTranslations()
+                              .ApplyUserTranslations(wordMaps)
                               .WithPeriod();
                 return comment;
             }
@@ -292,11 +294,11 @@ namespace CodeDocumentor.Helper
                               .AddCustomPart("the", 0) //we do this here cause it will get pushed down the stack
                               .AddCustomPart("Gets", 0)
                               .AddCustomPart(hasSetter ? "or Sets" : null, 1)
-                              .TranslateParts()
-                              .HandleAsyncKeyword()
+                              .TranslateParts(wordMaps)
+                              .HandleAsyncKeyword(excludeAsyncSuffix)
                               .ToLowerParts()
                               .JoinToString()
-                              .ApplyUserTranslations()
+                              .ApplyUserTranslations(wordMaps)
                               .WithPeriod();
                 return comment;
             }
@@ -307,7 +309,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="name"> The name. </param>
         /// <returns> A string. </returns>
-        public static string CreateRecordComment(string name)
+        public string CreateRecordComment(string name, WordMap[] wordMaps)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -315,17 +317,17 @@ namespace CodeDocumentor.Helper
             }
             var comment = NameSplitter
                          .Split(name)
-                         .TranslateParts()
+                         .TranslateParts(wordMaps)
                          .TryInsertTheWord((parts) =>
                          {
-                             if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
+                             if (parts.Count > 0 && !parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
                              {
                                  parts.Insert(0, "The"); //for records we always force "The"
                              }
                          })
                          .ToLowerParts()
                          .JoinToString()
-                         .ApplyUserTranslations()
+                         .ApplyUserTranslations(wordMaps)
                          .WithPeriod();
             return comment;
         }
@@ -335,7 +337,7 @@ namespace CodeDocumentor.Helper
         /// </summary>
         /// <param name="commentTriviaSyntax"> The comment trivia syntax. </param>
         /// <returns> A bool. </returns>
-        public static bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
+        public bool HasComment(DocumentationCommentTriviaSyntax commentTriviaSyntax)
         {
             if (commentTriviaSyntax == null)
             {
@@ -352,260 +354,6 @@ namespace CodeDocumentor.Helper
                 .Any(o => o.Name.ToString().Equals(Constants.INHERITDOC));
 
             return hasSummary || hasInheritDoc;
-        }
-
-        public static string RemovePeriod(this string text)
-        {
-            return text?.Trim().EndsWith(".") == true ? text.Remove(text.Length - 1) : text;
-        }
-
-        /// <summary>
-        ///  Withs the period.
-        /// </summary>
-        /// <param name="text"> The text. </param>
-        /// <returns> A string. </returns>
-        public static string WithPeriod(this string text)
-        {
-            if (text?.Trim().EndsWith(".") == true)
-            {
-                return text;
-            }
-            return text.Length > 0 ? text + "." : text;
-        }
-
-        internal static List<string> AddCustomPart(this List<string> parts, string part = null, int idx = -1)
-        {
-            if (part is null)
-            {
-                return parts;
-            }
-            if (idx == -1)
-            {
-                parts.Add(part);
-                return parts;
-            }
-            parts.Insert(idx, part);
-            return parts;
-        }
-
-        internal static string JoinToString(this List<string> parts, string delimiter = " ")
-        {
-            return $"{string.Join(delimiter, parts)}";
-        }
-
-        internal static List<string> PluaralizeLastWord(this List<string> parts)
-        {
-            var lastIdx = parts.Count - 1;
-            parts[lastIdx] = Pluralizer.ForcePluralization(parts[lastIdx]);
-            return parts;
-        }
-
-        internal static List<string> Tap(this List<string> parts, Action<List<string>> tapAction)
-        {
-            tapAction?.Invoke(parts);
-            return parts;
-        }
-
-        internal static List<string> ToLowerParts(this List<string> parts, bool forceFirstCharToLower = false)
-        {
-            var i = forceFirstCharToLower ||
-                    (
-                        !parts[0].Equals("The", StringComparison.InvariantCultureIgnoreCase) &&
-                        !parts[0].Equals("If true,", StringComparison.InvariantCultureIgnoreCase) &&
-                        !parts[0].IsVerb() //if the first word is a verb we are not adding The anyway so we need to leave it Pascal
-                    )
-                ? 0 : 1;
-
-            parts.SwapXmlTokens((part) =>
-            {
-                if (!part.All(a => char.IsUpper(a)))
-                {
-                    part = part.ToLower();
-                }
-                return part;
-            }, i);
-
-            //First letter is always caps unless it was forced lower
-            if (!forceFirstCharToLower && char.IsLower(parts[0], 0))
-            {
-                parts[0] = parts[0].ToTitleCase();
-            }
-            return parts;
-        }
-
-        internal static List<string> TranslateParts(this List<string> parts)
-        {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            for (var i = 0; i < parts.Count; i++)
-            {
-                var nextWord = i + 1 < parts.Count ? parts[i + 1] : null;
-                var userMaps = optionsService.WordMaps ?? Array.Empty<WordMap>();
-                foreach (var wordMap in Constants.INTERNAL_WORD_MAPS)
-                {
-                    if (!CanEvaluateWordMap(wordMap, i))
-                    {
-                        continue;
-                    }
-                    //dont run an internal word map if the user has one for the same thing
-                    if (!userMaps.Any(a => a.Word == wordMap.Word))
-                    {
-                        var wordToLookFor = string.Format(Constants.WORD_MATCH_REGEX_TEMPLATE, wordMap.Word);
-                        parts[i] = Regex.Replace(parts[i], wordToLookFor, wordMap.GetTranslation(nextWord));
-                    }
-                }
-            }
-            return parts;
-        }
-
-        internal static List<string> TryInsertTheWord(this List<string> parts, Action<List<string>> customInsertCallback = null)
-        {
-            if (customInsertCallback != null)
-            {
-                customInsertCallback.Invoke(parts);
-            }
-            else
-            {
-                var checkWord = parts[0].GetWordFirstPart();
-                var skipThe = checkWord.IsVerb();
-                var addTheAnyway = Constants.ADD_THE_ANYWAY_LIST.Any(w => w.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase));
-                if (!skipThe || addTheAnyway)
-                {
-                    if (!parts[0].Equals("the", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        parts.Insert(0, "The");
-                    }
-                    else
-                    {
-                        parts[0] = "The"; //force casing
-                    }
-                }
-            }
-            return parts;
-        }
-
-        private static List<string> AddPropertyBooleanPart(this List<string> parts)
-        {
-            var booleanPart = " a value indicating whether to";
-            if (parts[0].IsPastTense() || parts[0].IsVerb())
-            {
-                booleanPart = "a value indicating whether";
-            }
-
-            //is messes up readability. Lets remove it. ex) IsEnabledForDays
-            var isTwoLettweWord = parts[0].IsTwoLetterPropertyExclusionVerb();//we only care if forst word is relavent
-            if (isTwoLettweWord)
-            {
-                parts.Remove(parts[0]);
-            }
-            parts.Insert(0, booleanPart);
-
-            return parts;
-        }
-
-        private static bool CanEvaluateWordMap(WordMap wordMap, int partIdx)
-        {
-            return wordMap.Word != "Is" || partIdx == 0;
-        }
-
-        private static List<string> HandleAsyncKeyword(this List<string> parts)
-        {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-
-            if (optionsService.ExcludeAsyncSuffix && parts.Last().IndexOf("async", System.StringComparison.OrdinalIgnoreCase) > -1)
-            {
-                parts.Remove(parts.Last());
-            }
-            var idx = parts.FindIndex(f => f.Equals("async", System.StringComparison.OrdinalIgnoreCase));
-            if (idx > -1)
-            {
-                parts[idx] = "asynchronously";
-            }
-            return parts;
-        }
-
-        private static List<string> TryAddTodoSummary(this List<string> parts, string returnType)
-        {
-            if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
-            {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                if (optionsService.UseToDoCommentsOnSummaryError)
-                {
-                    parts = new List<string> { "TODO: Add Summary" };
-                }
-                else
-                {
-                    parts = new List<string>();
-                }
-            }
-            return parts;
-        }
-
-        private static List<string> TryIncudeReturnType(this List<string> parts, TypeSyntax returnType, Action<string> returnTapAction = null)
-        {
-            if (returnType.ToString() != "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
-            {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                //if return type is not a generic type then just force the Todo comment cause what ever we do here will not be a good summary anyway
-                if (returnType.GetType() != typeof(GenericNameSyntax))
-                {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
-                    {
-                        parts = new List<string> { "TODO: Add Summary" };
-                    }
-                    else
-                    {
-                        parts.Clear();
-                    }
-                    return parts;
-                }
-
-                var options = new ReturnTypeBuilderOptions
-                {
-                    //ReturnBuildType = ReturnBuildType.SummaryXmlElement,
-                    UseProperCasing = false,
-                    TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
-                    IncludeStartingWordInText = true
-                };
-                var returnComment = new SingleWordCommentSummaryConstruction(returnType, options).Comment;
-                returnTapAction?.Invoke(returnComment);
-                if (!string.IsNullOrEmpty(returnComment))
-                {
-                    if (!returnComment.StartsWith_A_An_And())
-                    {
-                        parts.Insert(1, "the");
-                        parts.Insert(2, returnComment);
-                    }
-                    else
-                    {
-                        parts.Insert(1, returnComment);
-                    }
-                }
-                else
-                {
-                    if (optionsService.UseToDoCommentsOnSummaryError)
-                    {
-                        parts = new List<string> { "TODO: Add Summary" };
-                    }
-                }
-            }
-            else
-            {
-                returnTapAction?.Invoke(null);
-            }
-            return parts;
-        }
-
-        private static List<string> TryPluarizeFirstWord(this List<string> parts)
-        {
-            if (parts.Count >= 2)
-            {
-                parts[0] = Pluralizer.Pluralize(parts[0], parts[1]);
-            }
-            else
-            {
-                parts[0] = Pluralizer.Pluralize(parts[0]);
-            }
-            return parts;
         }
     }
 }

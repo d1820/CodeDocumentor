@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,8 +12,14 @@ namespace CodeDocumentor
     ///  The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicRecordAnalyzer : DiagnosticAnalyzer
+    public class NonPublicRecordAnalyzer : BaseDiagnosticAnalyzer
     {
+        private readonly RecordAnalyzerSettings _analyzerSettings;
+
+        public NonPublicRecordAnalyzer()
+        {
+            _analyzerSettings = new RecordAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -24,10 +27,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                return optionsService.IsEnabledForPublicMembersOnly
-                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
-                    : ImmutableArray.Create(RecordAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
 
@@ -46,25 +46,24 @@ namespace CodeDocumentor
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        private void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as RecordDeclarationSyntax;
             if (!PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.IsEnabledForPublicMembersOnly)
+            var settings = context.BuildSettings(StaticSettings);
+            if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => RecordAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

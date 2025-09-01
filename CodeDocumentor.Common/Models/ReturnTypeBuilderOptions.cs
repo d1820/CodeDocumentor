@@ -1,4 +1,4 @@
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Common.Models
 {
     public class ReturnTypeBuilderOptions
     {

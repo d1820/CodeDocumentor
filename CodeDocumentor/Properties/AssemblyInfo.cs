@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
-using CodeDocumentor.Settings;
+using CodeDocumentor;
 
 [assembly: AssemblyTitle("CodeDocumentor")]
 [assembly: AssemblyDescription("An Extension to generate XML documentation automatically using IntelliSense for interface,class,enum, field, constructor, property and method.")]

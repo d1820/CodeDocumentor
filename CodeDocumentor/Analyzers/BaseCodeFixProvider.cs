@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
+#if DEBUG
+#endif
 using System.Threading.Tasks;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -11,8 +14,25 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeDocumentor
 {
+
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
+        protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
+
+        protected static IEventLogger EventLogger = ServiceLocator.Logger;
+
+        //expose this for some of the static helpers for producing ALl File comments
+        private static ISettings _settings;
+
+        public static void SetSettings(ISettings settings)
+        {
+            _settings = settings;
+        }
+
+        protected static ISettings StaticSettings =>
+                //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
+                _settings?.Clone();
+
         /// <summary>
         ///  The title.
         /// </summary>
@@ -44,10 +64,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-            //#if DEBUG
-            //            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            //            return;
-            //#endif
+#if DEBUG
+            //Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            //return;
+#endif
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
@@ -55,22 +75,23 @@ namespace CodeDocumentor
             {
                 return;
             }
+            var settings = await context.BuildSettingsAsync(StaticSettings);
             TryHelper.Try(() =>
             {
                 var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
 
                 //Order Matters
                 var neededCommentCount = 0;
-                neededCommentCount += PropertyCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-                neededCommentCount += ConstructorCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-                neededCommentCount += EnumCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-                neededCommentCount += FieldCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-                neededCommentCount += MethodCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += PropertyCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += ConstructorCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += EnumCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += FieldCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += MethodCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
                 root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
                 _nodesTempToReplace.Clear();
-                neededCommentCount += InterfaceCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-                neededCommentCount += ClassCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-                neededCommentCount += RecordCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+                neededCommentCount += InterfaceCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += ClassCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += RecordCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
                 var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
                 if (neededCommentCount == 0)
                 {
@@ -83,7 +104,7 @@ namespace CodeDocumentor
                         createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
                         equivalenceKey: FILE_FIX_TITLE),
                     diagnostic);
-            }, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, diagnostic.Id, EventLogger, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
         }
     }
 }

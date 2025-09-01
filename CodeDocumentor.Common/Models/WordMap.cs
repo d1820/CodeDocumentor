@@ -3,7 +3,7 @@
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
 using System;
 
-namespace CodeDocumentor.Vsix2022
+namespace CodeDocumentor.Common.Models
 {
     public class WordMap
     {

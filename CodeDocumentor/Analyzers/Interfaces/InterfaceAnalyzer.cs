@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,12 +12,18 @@ namespace CodeDocumentor
     ///  The interface analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class InterfaceAnalyzer : DiagnosticAnalyzer
+    public class InterfaceAnalyzer : BaseDiagnosticAnalyzer
     {
+        private readonly InterfaceAnalyzerSettings _analyzerSettings;
+
+        public InterfaceAnalyzer()
+        {
+            _analyzerSettings = new InterfaceAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InterfaceAnalyzerSettings.GetRule());
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
 
         /// <summary>
         ///  Initializes action.
@@ -36,24 +40,23 @@ namespace CodeDocumentor
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is InterfaceDeclarationSyntax node))
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
+            var settings = context.BuildSettings(StaticSettings);
+            if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => InterfaceAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

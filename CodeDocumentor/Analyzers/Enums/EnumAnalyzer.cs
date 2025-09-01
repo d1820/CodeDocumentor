@@ -12,12 +12,18 @@ namespace CodeDocumentor
     ///  The enum analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class EnumAnalyzer : DiagnosticAnalyzer
+    public class EnumAnalyzer : BaseDiagnosticAnalyzer
     {
+        private readonly EnumAnalyzerSettings _analyzerSettings;
+
+        public EnumAnalyzer()
+        {
+            _analyzerSettings = new EnumAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EnumAnalyzerSettings.GetRule());
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
 
         /// <summary>
         ///  Initializes action.
@@ -34,20 +40,19 @@ namespace CodeDocumentor
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is EnumDeclarationSyntax node))
             {
                 return;
             }
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => EnumAnalyzerSettings.GetRule(alreadyHasComment));
+            var settings = context.BuildSettings(StaticSettings);
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }
 }

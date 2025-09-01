@@ -1,0 +1,40 @@
+# Editor configuration, see http://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[*.php]
+end_of_line = crlf
+indent_size = 4
+insert_final_newline = false
+
+[*.cs]
+# CodeDocumentor settings
+codedocumentor_class_diagram_severity = Warning
+codedocumentor_constructor_diagram_severity = Warning
+codedocumentor_default_diagram_severity = Warning
+codedocumentor_enum_diagram_severity = Warning
+codedocumentor_field_diagram_severity = Warning
+codedocumentor_interface_diagram_severity = Warning
+codedocumentor_method_diagram_severity = Warning
+codedocumentor_property_diagram_severity = Warning
+codedocumentor_record_diagram_severity = Warning
+codedocumentor_exclude_async_suffix = False
+codedocumentor_include_value_node_in_properties = False
+codedocumentor_is_enabled_for_public_members_only = False
+codedocumentor_is_enabled_for_non_public_fields = False
+codedocumentor_preserve_existing_summary_text = True
+codedocumentor_try_to_include_crefs_for_return_types = True
+codedocumentor_use_natural_language_for_return_node = False
+codedocumentor_use_todo_comments_on_summary_error = True
+codedocumentor_wordmap = int:integer|Int32:integer|Int64:integer|OfList:OfLists|OfEnumerable:OfLists|IEnumerable:List|IList:List|IReadOnlyList:Read Only List|ICollection:Collection|OfCollection:OfCollections|IReadOnlyCollection:Read Only Collection|IReadOnlyDictionary:Read Only Dictionary

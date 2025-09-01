@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using CodeDocumentor.Helper;
+using CodeDocumentor.Common;
 using FluentAssertions;
 using Xunit;
 

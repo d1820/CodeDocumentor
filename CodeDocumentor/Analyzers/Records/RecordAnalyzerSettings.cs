@@ -1,5 +1,6 @@
 using CodeDocumentor.Analyzers;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
@@ -21,11 +22,19 @@ namespace CodeDocumentor
         /// </summary>
         internal const string Title = "The record must have a documentation header.";
 
-        internal static DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity = false)
+        internal DiagnosticDescriptor GetSupportedDiagnosticRule()
         {
-            return new DiagnosticDescriptor(RecordAnalyzerSettings.DiagnosticId, RecordAnalyzerSettings.Title,
-                RecordAnalyzerSettings.MessageFormat, RecordAnalyzerSettings.Category,
-                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId), true);
+            return new DiagnosticDescriptor(DiagnosticId, Title,
+                MessageFormat, Category,
+                 DiagnosticSeverity.Info,
+                 true);
+        }
+
+        internal DiagnosticDescriptor GetRule(bool hideDiagnosticSeverity, ISettings settings)
+        {
+            return new DiagnosticDescriptor(DiagnosticId, Title,
+                MessageFormat, Category,
+                 hideDiagnosticSeverity ? DiagnosticSeverity.Hidden : LookupSeverity(DiagnosticId, settings), true);
         }
     }
 }

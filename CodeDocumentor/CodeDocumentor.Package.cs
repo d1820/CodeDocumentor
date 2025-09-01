@@ -1,14 +1,13 @@
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Settings;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
-using SimpleInjector;
 using Task = System.Threading.Tasks.Task;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
@@ -40,53 +39,12 @@ namespace CodeDocumentor.Vsix2022
     [InstalledProductRegistration("#110", "#112", VsixOptions.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
-    [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
+    //[ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
+    [ComVisible(true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
-        public static Func<Container> ContainerFactory { get; set; }
-
-        public static Container DIContainer()
-        {
-            if (ContainerFactory != null)
-            {
-                return ContainerFactory();
-            }
-            if (_DIContainer == null)
-            {
-                _DIContainer = new Container();
-                _DIContainer.RegisterServices();
-                _DIContainer.Verify();
-            }
-            return _DIContainer;
-        }
-
-#pragma warning disable IDE1006 // Naming Styles
-        internal static IOptionPageGrid _options;
-#pragma warning restore IDE1006 // Naming Styles
-
-#pragma warning disable IDE1006 // Naming Styles
-        private static Container _DIContainer;
-#pragma warning restore IDE1006 // Naming Styles
-
         #region Package Members
-
-        /// <summary>
-        ///  Gets the options.
-        /// </summary>
-        /// <value> An IOptionPageGrid. </value>
-        public static IOptionPageGrid Options
-        {
-            get
-            {
-                return _options;
-            }
-            internal set
-            {
-                //This is used for testing
-                _options = value;
-            }
-        }
 
         /// <summary>
         ///  Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -106,11 +64,41 @@ namespace CodeDocumentor.Vsix2022
             // initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            _options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            //var hasCodeDocumentorInEditorConfig = await SlnHasEditorConfigAsync(hasCodeDocumentorInEditorConfig);
 
-            var optService = DIContainer().GetInstance<IOptionsService>();
-            optService.SetDefaults(_options);
-            Translator.Initialize(optService);
+            //When .editorconfig settings are available, we will use those,
+            //but we still bootstrap all the static injections, because we can only read the .editorconfig settings at runtime from the contexts
+            var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            var settings = new Settings();
+            settings.SetFromOptionsGrid(options);
+            BaseCodeFixProvider.SetSettings(settings);
+            BaseDiagnosticAnalyzer.SetSettings(settings);
+
+        }
+
+        private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)
+        {
+            var solutionService = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+            if (solutionService != null)
+            {
+                solutionService.GetSolutionInfo(out string solutionDir, out _, out _);
+
+                if (!string.IsNullOrEmpty(solutionDir))
+                {
+                    // Look for .editorconfig in the solution directory
+                    var editorConfigPath = System.IO.Path.Combine(solutionDir, ".editorconfig");
+                    if (System.IO.File.Exists(editorConfigPath))
+                    {
+                        // Read the .editorconfig file
+                        var lines = System.IO.File.ReadAllLines(editorConfigPath);
+                        // Check for a specific value, e.g., "my_setting = true"
+                        hasCodeDocumentorInEditorConfig = lines.Any(line => line.Trim().StartsWith("codedocumentor_", StringComparison.OrdinalIgnoreCase));
+
+                    }
+                }
+            }
+
+            return hasCodeDocumentorInEditorConfig;
         }
 
         #endregion

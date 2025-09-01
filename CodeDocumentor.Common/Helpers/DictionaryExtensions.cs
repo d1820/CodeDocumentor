@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+#pragma warning disable IDE0130
 
-namespace CodeDocumentor.Helper
+namespace System.Collections.Generic
 {
     public static class DictionaryExtensions
     {

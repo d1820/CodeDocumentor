@@ -4,10 +4,10 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeDocumentor.Builders;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -57,8 +57,13 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
+            var settings = await context.BuildSettingsAsync(StaticSettings);
+            if (
+                //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
+                !declaration.IsOwnedByInterface() &&
+                settings.IsEnabledForPublicMembersOnly &&
+                PrivateMemberVerifier.IsPrivateMember(declaration)
+                )
             {
                 return;
             }
@@ -66,7 +71,7 @@ namespace CodeDocumentor
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: displayTitle,
-                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(settings, context.Document, root, declaration, c),
                     equivalenceKey: displayTitle),
                 diagnostic);
 
@@ -78,36 +83,38 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
-        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(ISettings settings, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
             TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 foreach (var declarationSyntax in declarations)
                 {
-                    if (optionsService.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    if (
+                       !declarationSyntax.IsOwnedByInterface() &&
+                       settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax)
+                    )
                     {
                         continue;
                     }
-                    //if method is already commented dont redo it, user should update methods indivually
+                    //if method is already commented dont redo it, user should update methods individually
                     if (declarationSyntax.HasSummary())
                     {
                         continue;
                     }
-                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, MethodAnalyzerSettings.DiagnosticId, EventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
-        private static MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax)
+        private static MethodDeclarationSyntax BuildNewDeclaration(ISettings settings, MethodDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var commentTrivia = CreateDocumentationCommentTriviaSyntax(declarationSyntax);
+            var commentTrivia = CreateDocumentationCommentTriviaSyntax(settings, declarationSyntax);
             return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
         }
 
@@ -116,19 +123,24 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <returns> A DocumentationCommentTriviaSyntax. </returns>
-        private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(MethodDeclarationSyntax declarationSyntax)
+        private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ISettings settings, MethodDeclarationSyntax declarationSyntax)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var summaryText = CommentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText, declarationSyntax.ReturnType);
-            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
+            var commentHelper = ServiceLocator.CommentHelper;
+            var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
+                                                                declarationSyntax.ReturnType,
+                                                               settings.UseToDoCommentsOnSummaryError,
+                                                               settings.TryToIncludeCrefsForReturnTypes,
+                                                               settings.ExcludeAsyncSuffix,
+                                                               settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
 
-            var list = builder.WithSummary(declarationSyntax, summaryText, optionsService.PreserveExistingSummaryText)
+            var list = builder.WithSummary(declarationSyntax, summaryText, settings.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
-                        .WithParameters(declarationSyntax)
+                        .WithParameters(declarationSyntax, settings.WordMaps)
                         .WithExceptionTypes(declarationSyntax)
                         .WithExisting(declarationSyntax, Constants.REMARKS)
                         .WithExisting(declarationSyntax, Constants.EXAMPLE)
-                        .WithReturnType(declarationSyntax)
+                        .WithReturnType(declarationSyntax, settings.UseNaturalLanguageForReturnNode, settings.TryToIncludeCrefsForReturnTypes, settings.WordMaps)
                         .Build();
 
             return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
@@ -142,14 +154,14 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Task. </returns>
-        private Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private Task<Document> AddDocumentationHeaderAsync(ISettings settings, Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             return Task.Run(() => TryHelper.Try(() =>
             {
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, MethodAnalyzerSettings.DiagnosticId, EventLogger, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

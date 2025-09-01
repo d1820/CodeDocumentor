@@ -1,11 +1,12 @@
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
-namespace CodeDocumentor.Vsix2022
+namespace CodeDocumentor.Common.Interfaces
 {
-    public interface IOptionPageGrid
+    public interface ISettings
     {
         DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
 
@@ -64,6 +65,12 @@ namespace CodeDocumentor.Vsix2022
         bool TryToIncludeCrefsForReturnTypes { get; set; }
 
         /// <summary>
+        ///  Gets or Sets a value indicating whether to use the .editorconfig file for settings.
+        /// </summary>
+        /// <remarks> This will convert the existing settings to a %USERPROFILE% .editorconfig file </remarks>
+        bool UseEditorConfigForSettings { get; set; }
+
+        /// <summary>
         ///  Gets or Sets a value indicating whether use natural language for return node.
         /// </summary>
         /// <value> A bool. </value>
@@ -80,5 +87,7 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         /// <value> A list of wordmaps. </value>
         WordMap[] WordMaps { get; set; }
+
+        ISettings Clone();
     }
 }

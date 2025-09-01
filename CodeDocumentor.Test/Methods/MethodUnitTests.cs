@@ -48,6 +48,7 @@ namespace CodeDocumentor.Test.Methods
 
         [Theory]
         [InlineData("BasicTestCode", "BasicTestFixCode", 9, 21)]
+        [InlineData("InterfacePrivateMethods", "InterfacePrivateMethodsFix", 9, 22)]
         [InlineData("MethodWithParameterTestCode", "MethodWithParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithBooleanParameterTestCode", "MethodWithBooleanParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]
@@ -67,11 +68,9 @@ namespace CodeDocumentor.Test.Methods
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
-
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.UseNaturalLanguageForReturnNode = false;
-                o.TryToIncludeCrefsForReturnTypes = false;
+            _fixture.MockSettings.SetClone(new TestSettings {
+                 UseNaturalLanguageForReturnNode = false,
+                 TryToIncludeCrefsForReturnTypes = false
             });
             var expected = new DiagnosticResult
             {
@@ -89,8 +88,37 @@ namespace CodeDocumentor.Test.Methods
             await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
         }
 
+        [Theory]
+        [InlineData("InterfacePrivateMethods", "InterfacePrivateMethodsFix", 9, 22)]
+        public async Task ShowMethodDiagnosticAndFixForPrivate(string testCode, string fixCode, int line, int column)
+        {
+            var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
+            var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
+            _fixture.MockSettings.SetClone(new TestSettings
+            {
+                UseNaturalLanguageForReturnNode = false,
+                TryToIncludeCrefsForReturnTypes = false
+            });
+            var expected = new DiagnosticResult
+            {
+                Id = MethodAnalyzerSettings.DiagnosticId,
+                Message = MethodAnalyzerSettings.MessageFormat,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", line, column)
+                        }
+            };
+
+            await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PRIVATE, expected);
+
+            await VerifyCSharpFixAsync(test, fix, TestFixture.DIAG_TYPE_PRIVATE);
+        }
+
 
         [Theory]
+        [InlineData("MethodWithNullableReturnTestCode", "MethodWithNullableReturnTestFixCode", 9, 30)]
+        [InlineData("MethodWithNullableStringReturnTestCode", "MethodWithNullableStringReturnTestFixCode", 9, 24)]
         [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
         [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
         [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
@@ -105,11 +133,12 @@ namespace CodeDocumentor.Test.Methods
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/Crefs/{testCode}.cs");
 
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
+            _fixture.MockSettings.SetClone(new TestSettings
             {
-                o.UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode;
-                o.TryToIncludeCrefsForReturnTypes = true;
+                UseNaturalLanguageForReturnNode = useNaturalLanguageForReturnNode,
+                TryToIncludeCrefsForReturnTypes = true
             });
+
             var expected = new DiagnosticResult
             {
                 Id = MethodAnalyzerSettings.DiagnosticId,

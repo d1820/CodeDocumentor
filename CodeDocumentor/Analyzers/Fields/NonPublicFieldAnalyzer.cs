@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Builders;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,8 +10,14 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicFieldAnalyzer : DiagnosticAnalyzer
+    public class NonPublicFieldAnalyzer : BaseDiagnosticAnalyzer
     {
+        private readonly FieldAnalyzerSettings _analyzerSettings;
+
+        public NonPublicFieldAnalyzer()
+        {
+            _analyzerSettings = new FieldAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -22,10 +25,7 @@ namespace CodeDocumentor
         {
             get
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-                return optionsService.IsEnabledForPublicMembersOnly
-                    ? new List<DiagnosticDescriptor>().ToImmutableArray()
-                    : ImmutableArray.Create(FieldAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
 
@@ -44,7 +44,7 @@ namespace CodeDocumentor
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        private void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as FieldDeclarationSyntax;
 
@@ -57,12 +57,11 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            if (optionsService.IsEnabledForPublicMembersOnly)
+            var settings = context.BuildSettings(StaticSettings);
+            if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
@@ -70,7 +69,7 @@ namespace CodeDocumentor
             }
 
             var field = node.DescendantNodes().OfType<VariableDeclaratorSyntax>().First();
-            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => FieldAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, field.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

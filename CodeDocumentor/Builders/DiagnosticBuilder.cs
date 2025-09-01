@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CodeDocumentor.Helper;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -27,8 +28,9 @@ namespace CodeDocumentor.Builders
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault();
 
-            var alreadyHasComment = commentTriviaSyntax != null && CommentHelper.HasComment(commentTriviaSyntax);
-
+            var commentHelper = ServiceLocator.CommentHelper;
+            var alreadyHasComment = commentTriviaSyntax != null && commentHelper.HasComment(commentTriviaSyntax);
+            var settings = context.BuildSettings(null);
             try
             {
                 context.ReportDiagnostic(Diagnostic.Create(getRuleCallback.Invoke(alreadyHasComment), identifier.GetLocation()));

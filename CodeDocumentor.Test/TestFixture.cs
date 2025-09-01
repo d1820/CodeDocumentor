@@ -5,17 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CodeDocumentor.Builders;
-using CodeDocumentor.Helper;
-using CodeDocumentor.Managers;
-using CodeDocumentor.Services;
+using CodeDocumentor.Analyzers;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Test.TestHelpers;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SimpleInjector;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -50,7 +47,8 @@ namespace CodeDocumentor.Test
 
         public string CurrentTestName { get; set; }
 
-        protected static ConcurrentDictionary<string, Action<IOptionsService>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<IOptionsService>>();
+        public TestSettings MockSettings;
+        protected static ConcurrentDictionary<string, Action<ISettings>> RegisteredCallBacks = new ConcurrentDictionary<string, Action<ISettings>>();
 
         public TestFixture()
         {
@@ -61,37 +59,12 @@ namespace CodeDocumentor.Test
         {
             CurrentTestName = output.GetTestName();
 
-            CodeDocumentorPackage.ContainerFactory = () =>
-            {
-                var _testContainer = new Container();
-                _testContainer.Register<IOptionsService>(() =>
-                {
-                    var os = new TestOptionsService();
-                    if (CurrentTestName != null && RegisteredCallBacks.TryGetValue(CurrentTestName, out var callback))
-                    {
-                        callback.Invoke(os);
-                    }
-                    Translator.Initialize(os);
-                    return os;
-                }, Lifestyle.Transient);
-                _testContainer.Register<DocumentationBuilder>();
-                _testContainer.RegisterSingleton<GenericCommentManager>();
-                _testContainer.Verify();
-                return _testContainer;
-            };
+            MockSettings = new TestSettings();
+            BaseCodeFixProvider.SetSettings(MockSettings);
+            BaseDiagnosticAnalyzer.SetSettings(MockSettings);
         }
 
-        public void RegisterCallback(string name, Action<IOptionsService> callback)
-        {
-            if (RegisteredCallBacks.ContainsKey(name))
-            {
-                RegisteredCallBacks[name] = callback;
-                return;
-            }
-            RegisteredCallBacks.TryAdd(name, callback);
-        }
-
-        public void SetPublicProcessingOption(IOptionsService o, string diagType)
+        public void SetPublicProcessingOption(ISettings o, string diagType)
         {
             if (diagType == DIAG_TYPE_PRIVATE)
             {

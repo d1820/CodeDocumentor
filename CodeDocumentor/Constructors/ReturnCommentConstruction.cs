@@ -1,7 +1,6 @@
 using System;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor.Constructors
@@ -17,22 +16,21 @@ namespace CodeDocumentor.Constructors
         /// <value> A string. </value>
         public override string DictionaryCommentTemplate { get; } = "a dictionary with a key of type {0} and a value of type {1}";
 
-        public ReturnCommentConstruction(TypeSyntax returnType)
+        public ReturnCommentConstruction(TypeSyntax returnType, bool useNaturalLanguageForReturnNode, bool tryToIncludeCrefsForReturnTypes, WordMap[] wordMaps)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
             var options = new ReturnTypeBuilderOptions
             {
-                ReturnGenericTypeAsFullString = !optionsService.UseNaturalLanguageForReturnNode,
-                TryToIncludeCrefsForReturnTypes = optionsService.TryToIncludeCrefsForReturnTypes,
+                ReturnGenericTypeAsFullString = !useNaturalLanguageForReturnNode,
+                TryToIncludeCrefsForReturnTypes = tryToIncludeCrefsForReturnTypes,
                 IncludeStartingWordInText = true,
                 UseProperCasing = true
             };
-            BuildReturnComment(returnType, options);
+            BuildReturnComment(returnType, options, wordMaps);
         }
 
-        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        public ReturnCommentConstruction(TypeSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
-            BuildReturnComment(returnType, options);
+            BuildReturnComment(returnType, options, wordMaps);
         }
 
         //used for testing
@@ -40,9 +38,9 @@ namespace CodeDocumentor.Constructors
         {
         }
 
-        private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options)
+        private void BuildReturnComment(TypeSyntax returnType, ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
-            var comment = BuildComment(returnType, options).Trim();
+            var comment = BuildComment(returnType, options, wordMaps).Trim();
             if (options.IncludeStartingWordInText && !options.ReturnGenericTypeAsFullString)
             {
                 if (!string.IsNullOrEmpty(comment))

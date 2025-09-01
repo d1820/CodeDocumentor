@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -17,13 +16,14 @@ namespace CodeDocumentor.Test.Helper
     {
         private readonly TestFixture _fixture;
         private readonly ITestOutputHelper _output;
+        private CommentHelper _commentHelper;
 
         public CommentHelperTests(TestFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;
             _fixture.Initialize(output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            _commentHelper = new CommentHelper();
         }
 
         [Theory]
@@ -33,7 +33,8 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("_hasErrors", "Has errors.")]
         public void CreateFieldComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateFieldComment(name);
+
+            var comment = _commentHelper.CreateFieldComment(name, _fixture.MockSettings.ExcludeAsyncSuffix, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -67,14 +68,9 @@ namespace CodeDocumentor.Test.Helper
             bool useToDoCommentsOnSummaryError = true
             )
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.ExcludeAsyncSuffix = excludeAsyncSuffix;
-                o.UseToDoCommentsOnSummaryError = useToDoCommentsOnSummaryError;
-                o.TryToIncludeCrefsForReturnTypes = true;
-            });
-            _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            _fixture.MockSettings.ExcludeAsyncSuffix = excludeAsyncSuffix;
+            _fixture.MockSettings.UseToDoCommentsOnSummaryError = useToDoCommentsOnSummaryError;
+            _fixture.MockSettings.TryToIncludeCrefsForReturnTypes = true;
 
             TypeSyntax typeSyntax;
             if (!string.IsNullOrEmpty(genericReturnType))
@@ -85,44 +81,48 @@ namespace CodeDocumentor.Test.Helper
             {
                 typeSyntax = SyntaxFactory.ParseTypeName(returnType);
             }
-
-            var comment = CommentHelper.CreateMethodComment(name, typeSyntax);
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateMethodComment(name, typeSyntax,
+                 _fixture.MockSettings.UseToDoCommentsOnSummaryError,
+                 _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockSettings.ExcludeAsyncSuffix,
+                 _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenOneWordMethodAndLayeredList()
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.ExcludeAsyncSuffix = false;
-                o.UseToDoCommentsOnSummaryError = false;
-                o.TryToIncludeCrefsForReturnTypes = true;
-            });
-            _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
-
             TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
 
-            var comment = CommentHelper.CreateMethodComment("Work", typeSyntax);
+            _fixture.MockSettings.ExcludeAsyncSuffix = false;
+            _fixture.MockSettings.UseToDoCommentsOnSummaryError = false;
+            _fixture.MockSettings.TryToIncludeCrefsForReturnTypes = true;
+
+            var comment = _commentHelper.CreateMethodComment("Work", typeSyntax, _fixture.MockSettings.UseToDoCommentsOnSummaryError,
+                 _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockSettings.ExcludeAsyncSuffix,
+                 _fixture.MockSettings.WordMaps);
             comment.Should().Be("Work and return a <see cref=\"Task\"/> of a list of a list of strings.");
         }
 
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenReturnIsTask_ActionResult_CustomType()
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.ExcludeAsyncSuffix = false;
-                o.UseToDoCommentsOnSummaryError = false;
-                o.TryToIncludeCrefsForReturnTypes = false;
-            });
-            _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            var clone = new TestSettings {
+                ExcludeAsyncSuffix = false,
+                UseToDoCommentsOnSummaryError = false,
+                TryToIncludeCrefsForReturnTypes = false
+            };
+            _fixture.MockSettings.SetClone(clone);
 
             TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
-
-            var comment = CommentHelper.CreateMethodComment("CreateAsync", typeSyntax);
+            var commentHelper = new CommentHelper();
+            var comment = commentHelper.CreateMethodComment("CreateAsync", typeSyntax,
+                _fixture.MockSettings.UseToDoCommentsOnSummaryError,
+                 _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockSettings.ExcludeAsyncSuffix,
+                 _fixture.MockSettings.WordMaps);
             comment.Should().Be("Creates and return a task of type actionresult of type clientdto asynchronously.");
         }
 
@@ -138,14 +138,9 @@ namespace CodeDocumentor.Test.Helper
             bool useToDoCommentsOnSummaryError = true
             )
         {
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.ExcludeAsyncSuffix = excludeAsyncSuffix;
-                o.UseToDoCommentsOnSummaryError = useToDoCommentsOnSummaryError;
-                o.TryToIncludeCrefsForReturnTypes = false;
-            });
-            _fixture.Initialize(_output);
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
+            _fixture.MockSettings.ExcludeAsyncSuffix = excludeAsyncSuffix;
+            _fixture.MockSettings.UseToDoCommentsOnSummaryError = useToDoCommentsOnSummaryError;
+            _fixture.MockSettings.TryToIncludeCrefsForReturnTypes = false;
 
             TypeSyntax typeSyntax;
             if (!string.IsNullOrEmpty(genericReturnType))
@@ -157,7 +152,11 @@ namespace CodeDocumentor.Test.Helper
                 typeSyntax = SyntaxFactory.ParseTypeName(returnType);
             }
 
-            var comment = CommentHelper.CreateMethodComment(name, typeSyntax);
+            var comment = _commentHelper.CreateMethodComment(name, typeSyntax,
+                _fixture.MockSettings.UseToDoCommentsOnSummaryError,
+                 _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
+                 _fixture.MockSettings.ExcludeAsyncSuffix,
+                 _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -167,7 +166,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("INotifier", "The notifier interface.")]
         public void CreateInterfaceComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateInterfaceComment(name);
+            var comment = _commentHelper.CreateInterfaceComment(name, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -179,7 +178,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("ClientDto", "The client data transfer object.")]
         public void CreateClassComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateClassComment(name);
+            var comment = _commentHelper.CreateClassComment(name, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -188,7 +187,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("ClientDto", "The client data transfer object.")]
         public void CreateRecordComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateRecordComment(name);
+            var comment = _commentHelper.CreateRecordComment(name, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -198,7 +197,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("HasError", "Gets a value indicating whether has error.", true, false)]
         public void CreatePropertyComment_ReturnsValidName(string name, string expected, bool isBool, bool hasSetter)
         {
-            var comment = CommentHelper.CreatePropertyComment(name, isBool, hasSetter);
+            var comment = _commentHelper.CreatePropertyComment(name, isBool, hasSetter, _fixture.MockSettings.ExcludeAsyncSuffix, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -208,7 +207,7 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("ClientRole", "The clients roles.")]
         public void CreateEnumComment_ReturnsValidName(string name, string expected)
         {
-            var comment = CommentHelper.CreateEnumComment(name);
+            var comment = _commentHelper.CreateEnumComment(name, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -233,7 +232,7 @@ namespace CodeDocumentor.Test.Helper
             }
 
             var parameter = SyntaxFactory.Parameter(attributeLists, modifiers, typeSyntax, SyntaxFactory.Identifier(name), null);
-            var comment = CommentHelper.CreateParameterComment(parameter);
+            var comment = _commentHelper.CreateParameterComment(parameter, _fixture.MockSettings.WordMaps);
             comment.Should().Be(expected);
         }
 
@@ -245,8 +244,8 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("Dto", "Data transfer object")]
         public void InternalTranslate_ConvertsCorrectly(string word, string converted)
         {
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
-            var result = CommentHelper.TranslateParts(new List<string> { word });
+            var list = new List<string> { word };
+            var result = list.TranslateParts(_fixture.MockSettings.WordMaps);
             result.Should().Contain(converted);
         }
     }

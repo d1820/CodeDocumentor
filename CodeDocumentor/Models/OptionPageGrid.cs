@@ -1,6 +1,10 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using CodeDocumentor.Services;
+using System.Windows.Forms;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 
@@ -14,7 +18,7 @@ namespace CodeDocumentor.Vsix2022
     ///  The option page grid.
     /// </summary>
     [Guid("BE905985-26BB-492B-9453-743E26F4E8BB")]
-    public class OptionPageGrid : DialogPage, IOptionPageGrid
+    public class OptionPageGrid : DialogPage, ISettings
     {
         /// <summary>
         ///  The category.
@@ -192,18 +196,24 @@ namespace CodeDocumentor.Vsix2022
         /// <summary>
         ///  Gets or Sets the word maps.
         /// </summary>
-        /// <value> Aa array of wordmaps. </value>
+        /// <value> An array of wordmaps. </value>
         [Category(TranslationSubCategory)]
         [DisplayName("Word mappings for creating comments")]
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
         public WordMap[] WordMaps { get; set; }
+
+        [Category(AnalyzerSubCategory)]
+        [DisplayName("Use .editorconfig for extension options")]
+        [Description("This will convert existing extension options to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.")]
+        public bool UseEditorConfigForSettings { get; set; }
 
         /// <summary>
         ///  Load settings from storage.
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
-            var settings = Settings.Load();
+            ISettings settings = new Settings();
+            settings = settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
             ExcludeAsyncSuffix = settings.ExcludeAsyncSuffix;
@@ -222,6 +232,7 @@ namespace CodeDocumentor.Vsix2022
             PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
             RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
+            UseEditorConfigForSettings = settings.UseEditorConfigForSettings;
         }
 
         /// <summary>
@@ -229,30 +240,39 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
-            var settings = new Settings
-            {
-                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
-                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
-                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
-                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
-                UseToDoCommentsOnSummaryError = UseToDoCommentsOnSummaryError,
-                TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
-                WordMaps = WordMaps,
-                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
-                PreserveExistingSummaryText = PreserveExistingSummaryText,
-                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
-                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
-                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
-                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
-                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
-                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
-                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
-                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
-                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields
-            };
+            var settings = new Settings();
+            var eventLogger = new Logger();
+            settings.Update(this, eventLogger);
             settings.Save();
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            optionsService.Update(settings);
+            var response = DialogResult.No;
+
+            if (settings.UseEditorConfigForSettings)
+            {
+                response = MessageBox.Show(
+                    $"This will copy existing extension options to .editorconfig values. " +
+                    $"This would allow CodeDocumentor to run out of process for this solution. " +
+                    $"Do you want to continue?{Environment.NewLine}" +
+                    $"You will need to paste these options into your solution .editorconfig and restart Visual Studio.",
+                    "CodeDocumentor Options Management",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+            }
+            if (response == DialogResult.Yes)
+            {
+                settings.SaveToEditorConfig(clipboardStr => Clipboard.SetText(clipboardStr));
+                MessageBox.Show("Settings have been copied to the clipboard. Update your solution .editorconfig file with the copied settings. You will need to restart Visual Studio.",
+                    "Settings copied to clipboard",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+
+            BaseCodeFixProvider.SetSettings(settings);
+            BaseDiagnosticAnalyzer.SetSettings(settings);
+        }
+
+        public ISettings Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

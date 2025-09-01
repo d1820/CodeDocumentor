@@ -10,6 +10,8 @@
     <Compile Remove="Classes\ClassTesterInheritDoc.cs" />
     <Compile Remove="Classes\PublicClassTester.cs" />
     <Compile Remove="Classes\PublicClassTesterFix.cs" />
+    <Compile Remove="Classes\TestFiles\ClassConstructorTester.cs" />
+    <Compile Remove="Classes\TestFiles\ClassConstructorTesterFix.cs" />
     <Compile Remove="Constructors\TestFiles\InheritDocTestCode.cs" />
     <Compile Remove="Constructors\TestFiles\PrivateConstructorTestCode.cs" />
     <Compile Remove="Constructors\TestFiles\PrivateContructorTestFixCode.cs" />
@@ -22,6 +24,8 @@
     <Compile Remove="Fields\TestFiles\ConstFieldTestCode.cs" />
     <Compile Remove="Fields\TestFiles\ConstFieldTestFixCode.cs" />
     <Compile Remove="Fields\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Interfaces\TestFiles\InterfaceMethods.cs" />
+    <Compile Remove="Interfaces\TestFiles\InterfaceMethodsFIx.cs" />
     <Compile Remove="Interfaces\TestFiles\TestCode.cs" />
     <Compile Remove="Interfaces\TestFiles\TestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\BasicTestCode.cs" />
@@ -38,6 +42,12 @@
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithIntReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableReturnTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs" />
@@ -45,6 +55,8 @@
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\InheritDocTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\InterfacePrivateMethods.cs" />
+    <Compile Remove="Methods\TestFiles\InterfacePrivateMethodsFix.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithBooleanParameterTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithCrefTestCode.cs" />
@@ -118,7 +130,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Methods\TestFiles\InterfacePrivateMethods.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\BasicTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\InterfacePrivateMethodsFix.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\BasicTestFixCode.cs">
@@ -160,19 +178,37 @@
     <Content Include="Methods\TestFiles\Crefs\MethodWithMixedExceptionTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableDictionaryReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithObjectReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\Crefs\MethodWithNullableStringReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\Crefs\MethodWithStringReturnTestFixCode.cs">
@@ -304,6 +340,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Classes\TestFiles\ClassConstructorTester.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Classes\TestFiles\ClassConstructorTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Constructors\TestFiles\InheritDocTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -445,27 +487,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+    <PackageReference Include="FluentAssertions" Version="[7.0.0,8.0.0]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.8.37222" ExcludeAssets="runtime">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.13.40008" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.8.37221" />
-    <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
-    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="xunit" Version="2.6.6" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.13.40008" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.8.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.8.3" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.0">
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

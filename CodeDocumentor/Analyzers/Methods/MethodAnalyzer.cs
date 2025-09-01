@@ -12,8 +12,14 @@ namespace CodeDocumentor
     ///  The method analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MethodAnalyzer : DiagnosticAnalyzer
+    public class MethodAnalyzer : BaseDiagnosticAnalyzer
     {
+        private readonly MethodAnalyzerSettings _analyzerSettings;
+
+        public MethodAnalyzer()
+        {
+            _analyzerSettings = new MethodAnalyzerSettings();
+        }
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -21,7 +27,7 @@ namespace CodeDocumentor
         {
             get
             {
-                return ImmutableArray.Create(MethodAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
 
@@ -40,24 +46,27 @@ namespace CodeDocumentor
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is MethodDeclarationSyntax node))
             {
                 return;
             }
-            if (PrivateMemberVerifier.IsPrivateMember(node))
+
+            //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
+            var isPrivate = PrivateMemberVerifier.IsPrivateMember(node);
+            var isOwnedByInterface = node.IsOwnedByInterface();
+            if (isPrivate && !isOwnedByInterface)
             {
                 return;
             }
-
             var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => MethodAnalyzerSettings.GetRule(alreadyHasComment));
+            var settings = context.BuildSettings(StaticSettings);
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment,settings));
         }
     }
 }

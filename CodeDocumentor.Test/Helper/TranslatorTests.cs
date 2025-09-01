@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -43,16 +43,12 @@ namespace CodeDocumentor.Test.Helper
         [InlineData("To UpperCase", "Converts to UpperCase")]
         public void TranslateText_ReturnsTranslatedStrings(string input, string output)
         {
-            _testFixure.RegisterCallback(_testFixure.CurrentTestName, (o) =>
-            {
-                var temp = o.WordMaps.ToList();
-                temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
-                temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
-                temp.AddRange(Constants.INTERNAL_WORD_MAPS);
-                o.WordMaps = temp.ToArray();
-            });
-            Translator.Initialize(CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>());
-            var translated = input.ApplyUserTranslations();
+            var temp = _testFixure.MockSettings.WordMaps.ToList();
+            temp.Add(new WordMap { Word = "You're", Translation = "You Are" });
+            temp.Add(new WordMap { Word = "This is long", Translation = "How long is this" });
+            temp.AddRange(Constants.INTERNAL_WORD_MAPS);
+            _testFixure.MockSettings.WordMaps = temp.ToArray();
+            var translated = input.ApplyUserTranslations(_testFixure.MockSettings.WordMaps);
             translated.Should().Be(output);
         }
     }

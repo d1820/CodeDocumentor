@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Models;
 using CodeDocumentor.Constructors;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,8 +13,9 @@ namespace CodeDocumentor.Builders
 {
     public class DocumentationBuilder
     {
+        private readonly DocumentationHeaderHelper _documentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
         private XmlElementSyntax _currentElement;
-        private List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
+        private readonly List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
 
         internal SyntaxList<XmlNodeSyntax> Build()
         {
@@ -27,7 +30,7 @@ namespace CodeDocumentor.Builders
 
         internal DocumentationBuilder WithExceptionTypes(MethodDeclarationSyntax declarationSyntax)
         {
-            var exceptions = DocumentationHeaderHelper.GetExceptions(declarationSyntax.Body?.ToFullString());
+            var exceptions = _documentationHeaderHelper.GetExceptions(declarationSyntax.Body?.ToFullString());
 
             if (exceptions.Any())
             {
@@ -56,14 +59,15 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithParameters(BaseMethodDeclarationSyntax declarationSyntax)
+        internal DocumentationBuilder WithParameters(BaseMethodDeclarationSyntax declarationSyntax, WordMap[] wordMaps)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
+                var commentHelper = ServiceLocator.CommentHelper;
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = CommentHelper.CreateParameterComment(parameter);
-                    var parameterElement = DocumentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, wordMaps);
+                    var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
                                 .WithElement(parameterElement)
@@ -73,15 +77,16 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithParameters(TypeDeclarationSyntax declarationSyntax)
+        internal DocumentationBuilder WithParameters(TypeDeclarationSyntax declarationSyntax, WordMap[] wordMaps)
         {
             if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
             {
+                var commentHelper = ServiceLocator.CommentHelper;
                 foreach (var parameter in declarationSyntax.ParameterList.Parameters)
                 {
-                    var parameterComment = CommentHelper.CreateParameterComment(parameter);
+                    var parameterComment = commentHelper.CreateParameterComment(parameter,wordMaps);
 
-                    var parameterElement = DocumentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
+                    var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
 
                     Reset().WithTripleSlashSpace()
                                 .WithElement(parameterElement)
@@ -92,12 +97,12 @@ namespace CodeDocumentor.Builders
         }
 
         internal DocumentationBuilder WithPropertyValueTypes(BasePropertyDeclarationSyntax declarationSyntax,
-                                                                ReturnTypeBuilderOptions options)
+                                                                ReturnTypeBuilderOptions options, WordMap[] wordMaps)
         {
             if (options.GenerateReturnStatement)
             {
-                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options).Comment;
-                var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment, "value");
+                var returnComment = new ReturnCommentConstruction(declarationSyntax.Type, options, wordMaps).Comment;
+                var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment, "value");
 
                 Reset().WithTripleSlashSpace()
                             .WithElement(returnElement) //this already contains the rest of the /// for all the line <summary>...</summary>
@@ -106,14 +111,20 @@ namespace CodeDocumentor.Builders
             return this;
         }
 
-        internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax)
+        internal DocumentationBuilder WithReturnType(MethodDeclarationSyntax declarationSyntax,
+                                                    bool useNaturalLanguageForReturnNode,
+                                                    bool tryToIncludeCrefsForReturnTypes,
+                                                    WordMap[] wordMaps)
         {
-            var returnType = declarationSyntax.ReturnType.ToString();
+            var returnType = declarationSyntax.ReturnType.ToString().Replace("?",string.Empty);
             if (returnType != "void")
             {
-                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType);
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType,
+                                                                        useNaturalLanguageForReturnNode,
+                                                                        tryToIncludeCrefsForReturnTypes,
+                                                                        wordMaps);
                 var returnComment = commentConstructor.Comment;
-                var returnElement = DocumentationHeaderHelper.CreateReturnElementSyntax(returnComment);
+                var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment);
 
                 Reset().WithTripleSlashSpace()
                             .WithElement(returnElement) //this already contains the rest of the /// for all the line <summary>...</summary>
@@ -157,7 +168,7 @@ namespace CodeDocumentor.Builders
             {
                 foreach (var parameter in declarationSyntax.TypeParameterList.Parameters)
                 {
-                    var typeElement = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
+                    var typeElement = _documentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
                     Reset().WithTripleSlashSpace()
                             .WithElement(typeElement) //this already contains the rest of the /// for all the line <summary>...</summary>
                             .WithLineEndTextSyntax();
@@ -172,7 +183,7 @@ namespace CodeDocumentor.Builders
             {
                 foreach (var parameter in declarationSyntax.TypeParameterList.Parameters)
                 {
-                    var typeElement = DocumentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
+                    var typeElement = _documentationHeaderHelper.CreateElementWithAttributeSyntax("typeparam", "name", parameter.Identifier.ValueText);
                     Reset().WithTripleSlashSpace()
                             .WithElement(typeElement) //this already contains the rest of the /// for all the line <summary>...</summary>
                             .WithLineEndTextSyntax();

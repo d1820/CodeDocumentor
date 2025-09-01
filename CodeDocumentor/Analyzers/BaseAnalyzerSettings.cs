@@ -1,6 +1,6 @@
-using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Analyzers
@@ -12,33 +12,37 @@ namespace CodeDocumentor.Analyzers
         /// </summary>
         internal const string Category = Constants.CATEGORY;
 
+        protected IEventLogger EventLogger = ServiceLocator.Logger;
 
-        internal static DiagnosticSeverity LookupSeverity(string diagnosticId)
+        internal DiagnosticSeverity LookupSeverity(string diagnosticId, ISettings settings)
         {
+            if (settings == null)
+            {
+                return Constants.DefaultDiagnosticSeverityOnError;
+            }
             return TryHelper.Try(() =>
             {
-                var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
                 switch (diagnosticId)
                 {
                     case Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID:
-                        return optionsService.ClassDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.ClassDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.CONSTRUCTOR_DIAGNOSTIC_ID:
-                        return optionsService.ConstructorDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.ConstructorDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID:
-                        return optionsService.InterfaceDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.InterfaceDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID:
-                        return optionsService.EnumDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.EnumDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID:
-                        return optionsService.FieldDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.FieldDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.METHOD_DIAGNOSTIC_ID:
-                        return optionsService.MethodDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.MethodDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.PROPERTY_DIAGNOSTIC_ID:
-                        return optionsService.PropertyDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.PropertyDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID:
-                        return optionsService.RecordDiagnosticSeverity ?? optionsService.DefaultDiagnosticSeverity;
+                        return settings.RecordDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                 }
                 return Constants.DefaultDiagnosticSeverityOnError;
-            }, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
+            }, diagnosticId, EventLogger, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
         }
     }
 }

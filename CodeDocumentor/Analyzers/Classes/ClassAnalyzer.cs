@@ -12,8 +12,15 @@ namespace CodeDocumentor
     ///  The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ClassAnalyzer : DiagnosticAnalyzer
+    public class ClassAnalyzer : BaseDiagnosticAnalyzer
     {
+        private readonly ClassAnalyzerSettings _analyzerSettings;
+
+        public ClassAnalyzer()
+        {
+            _analyzerSettings = new ClassAnalyzerSettings();
+        }
+
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -21,7 +28,7 @@ namespace CodeDocumentor
         {
             get
             {
-                return ImmutableArray.Create(ClassAnalyzerSettings.GetRule());
+                return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
 
@@ -40,7 +47,7 @@ namespace CodeDocumentor
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        internal static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        public void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is ClassDeclarationSyntax node))
             {
@@ -55,8 +62,9 @@ namespace CodeDocumentor
             {
                 return;
             }
+            var settings = context.BuildSettings(StaticSettings);
 
-            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => ClassAnalyzerSettings.GetRule(alreadyHasComment));
+            context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }
 }

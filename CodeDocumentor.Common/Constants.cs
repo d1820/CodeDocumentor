@@ -1,15 +1,18 @@
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
+using System;
 using System.Collections.Generic;
-using CodeDocumentor.Helper;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Vsix2022
+namespace CodeDocumentor.Common
 {
     public static class Constants
     {
         public const DiagnosticSeverity DefaultDiagnosticSeverityOnError = DiagnosticSeverity.Info;
+
+        public const string TODO = "TODO: Add Summary";
 
         public static class EventIds
         {

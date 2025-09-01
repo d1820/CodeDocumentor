@@ -4,10 +4,10 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeDocumentor.Builders;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Helper;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -57,11 +57,12 @@ namespace CodeDocumentor
             {
                 return;
             }
+            var settings =await  context.BuildSettingsAsync(StaticSettings);
             var displayTitle = declaration.HasSummary() ? TitleRebuild : Title;
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: displayTitle,
-                    createChangedDocument: c => AddDocumentationHeaderAsync(context.Document, root, declaration, c),
+                    createChangedDocument: c => AddDocumentationHeaderAsync(settings, context.Document, root, declaration, c),
                     equivalenceKey: displayTitle),
                 diagnostic);
 
@@ -73,7 +74,7 @@ namespace CodeDocumentor
         /// </summary>
         /// <param name="root"> The root. </param>
         /// <param name="nodesToReplace"> The nodes to replace. </param>
-        internal static int BuildComments(SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        internal static int BuildComments(ISettings settings, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.InterfaceDeclaration)).OfType<InterfaceDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -85,20 +86,20 @@ namespace CodeDocumentor
                     {
                         continue;
                     }
-                    var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
                 }
-            }, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            }, InterfaceAnalyzerSettings.DiagnosticId, EventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
             return neededCommentCount;
         }
 
-        private static InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax)
+        private static InterfaceDeclarationSyntax BuildNewDeclaration(ISettings settings, InterfaceDeclarationSyntax declarationSyntax)
         {
-            var optionsService = CodeDocumentorPackage.DIContainer().GetInstance<IOptionsService>();
-            var comment = CommentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText);
-            var builder = CodeDocumentorPackage.DIContainer().GetInstance<DocumentationBuilder>();
-            var list = builder.WithSummary(declarationSyntax, comment, optionsService.PreserveExistingSummaryText)
+             var commentHelper = ServiceLocator.CommentHelper;
+            var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
                         .WithTypeParamters(declarationSyntax)
                         .Build();
 
@@ -117,14 +118,14 @@ namespace CodeDocumentor
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
         /// <returns> A Document. </returns>
-        private Task<Document> AddDocumentationHeaderAsync(Document document, SyntaxNode root, InterfaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private Task<Document> AddDocumentationHeaderAsync(ISettings settings, Document document, SyntaxNode root, InterfaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             return Task.Run(() => TryHelper.Try(() =>
             {
-                var newDeclaration = BuildNewDeclaration(declarationSyntax);
+                var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
-            }, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
+            }, InterfaceAnalyzerSettings.DiagnosticId , EventLogger, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);
         }
     }
 }

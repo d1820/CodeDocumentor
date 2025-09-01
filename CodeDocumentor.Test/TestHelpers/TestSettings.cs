@@ -1,14 +1,17 @@
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime;
-using CodeDocumentor.Services;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Test.TestHelpers
 {
     [SuppressMessage("XMLDocumentation", "")]
-    public class TestOptionsService : IOptionsService
+    public class TestSettings : ISettings
     {
+        private ISettings _clonedSettings;
+
         public bool ExcludeAsyncSuffix { get; set; }
 
         public bool IncludeValueNodeInProperties { get; set; }
@@ -35,8 +38,69 @@ namespace CodeDocumentor.Test.TestHelpers
         public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
         public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
         public bool IsEnabledForNonPublicFields { get; set; }
+        public bool UseEditorConfigForSettings { get; set; }
 
-        public void SetDefaults(IOptionPageGrid options)
+        public void SetClone(ISettings settings)
+        {
+            _clonedSettings = settings;
+        }
+
+        public ISettings Clone()
+        {
+            if (_clonedSettings != null)
+            {
+                return _clonedSettings;
+            }
+            var newSettings = new Settings
+            {
+                ClassDiagnosticSeverity = ClassDiagnosticSeverity,
+                ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
+                DefaultDiagnosticSeverity = DefaultDiagnosticSeverity,
+
+                EnumDiagnosticSeverity = EnumDiagnosticSeverity,
+
+                ExcludeAsyncSuffix = ExcludeAsyncSuffix,
+
+                FieldDiagnosticSeverity = FieldDiagnosticSeverity,
+
+                IncludeValueNodeInProperties = IncludeValueNodeInProperties,
+
+                InterfaceDiagnosticSeverity = InterfaceDiagnosticSeverity,
+
+                IsEnabledForNonPublicFields = IsEnabledForNonPublicFields,
+
+                IsEnabledForPublicMembersOnly = IsEnabledForPublicMembersOnly,
+
+                MethodDiagnosticSeverity = MethodDiagnosticSeverity,
+
+                PreserveExistingSummaryText = PreserveExistingSummaryText,
+
+                PropertyDiagnosticSeverity = PropertyDiagnosticSeverity,
+
+                RecordDiagnosticSeverity = RecordDiagnosticSeverity,
+
+                TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
+
+                UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
+
+                UseToDoCommentsOnSummaryError = UseNaturalLanguageForReturnNode
+            };
+            var clonedMaps = new List<WordMap>();
+            foreach (var item in WordMaps)
+            {
+                clonedMaps.Add(new WordMap
+                {
+                    Translation = item.Translation,
+                    Word = item.Word,
+                    WordEvaluator = item.WordEvaluator
+                });
+            }
+            newSettings.WordMaps = clonedMaps.ToArray();
+            return newSettings;
+
+        }
+
+        public void SetDefaults(ISettings options)
         {
             IsEnabledForPublicMembersOnly = options.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = options.UseNaturalLanguageForReturnNode;
@@ -56,7 +120,7 @@ namespace CodeDocumentor.Test.TestHelpers
             RecordDiagnosticSeverity = options.RecordDiagnosticSeverity;
         }
 
-        public void Update(Vsix2022.Settings settings)
+        public void Update(Settings settings)
         {
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;

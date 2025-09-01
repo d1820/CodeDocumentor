@@ -50,15 +50,16 @@ namespace CodeDocumentor.Test.Classes
         [Theory]
         [InlineData("ClassTester.cs", "ClassTesterFix.cs", 3, 19, TestFixture.DIAG_TYPE_PRIVATE)]
         [InlineData("PublicClassTester.cs", "PublicClassTesterFix.cs", 3, 26, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
+        [InlineData("ClassConstructorTester.cs", "ClassConstructorTesterFix.cs", 3, 18, TestFixture.DIAG_TYPE_PUBLIC_ONLY)]
         public async Task ShowClassDiagnosticAndFix(string testCode, string fixCode, int line, int column, string diagType)
         {
             var fix = _fixture.LoadTestFile($"./Classes/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Classes/TestFiles/{testCode}");
 
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                _fixture.SetPublicProcessingOption(o, diagType);
-            });
+            var clone = new TestSettings();
+            _fixture.SetPublicProcessingOption(clone, diagType);
+            _fixture.MockSettings.SetClone(clone);
+
             var expected = new DiagnosticResult
             {
                 Id = ClassAnalyzerSettings.DiagnosticId,
@@ -80,10 +81,10 @@ namespace CodeDocumentor.Test.Classes
         {
             var fix = _fixture.LoadTestFile("./Classes/TestFiles/ClassTester.cs");
             var test = _fixture.LoadTestFile("./Classes/TestFiles/ClassTester.cs");
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.IsEnabledForPublicMembersOnly = true;
-            });
+            var clone = new TestSettings {
+                IsEnabledForPublicMembersOnly = true
+            };
+            _fixture.MockSettings.SetClone(clone);
 
             await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 

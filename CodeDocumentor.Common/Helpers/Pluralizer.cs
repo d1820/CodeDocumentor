@@ -1,4 +1,5 @@
-namespace CodeDocumentor.Helper
+#pragma warning disable IDE0130
+namespace System
 {
     public static class Pluralizer
     {

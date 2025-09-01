@@ -68,10 +68,10 @@ namespace CodeDocumentor.Test.Records
         {
             var fix = _fixture.LoadTestFile($"./Records/TestFiles/{fixCode}");
             var test = _fixture.LoadTestFile($"./Records/TestFiles/{testCode}");
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                _fixture.SetPublicProcessingOption(o, diagType);
-            });
+            var clone = new TestSettings();
+            _fixture.SetPublicProcessingOption(clone, diagType);
+            _fixture.MockSettings.SetClone(clone);
+
             var expected = new DiagnosticResult
             {
                 Id = RecordAnalyzerSettings.DiagnosticId,
@@ -93,10 +93,10 @@ namespace CodeDocumentor.Test.Records
         {
             var fix = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
             var test = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
-            _fixture.RegisterCallback(_fixture.CurrentTestName, (o) =>
-            {
-                o.IsEnabledForPublicMembersOnly = true;
-            });
+            var clone = new TestSettings {
+                IsEnabledForPublicMembersOnly = true
+            };
+            _fixture.MockSettings.SetClone(clone);
 
             await VerifyCSharpDiagnosticAsync(test, TestFixture.DIAG_TYPE_PUBLIC_ONLY);
 

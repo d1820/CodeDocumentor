@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDocumentor.Common", "CodeDocumentor.Common\CodeDocumentor.Common.csproj", "{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,18 @@ Global
 		{0D6E3633-F45F-4883-AC62-DEC9F714AA9B}.Release|x64.Build.0 = Release|Any CPU
 		{0D6E3633-F45F-4883-AC62-DEC9F714AA9B}.Release|x86.ActiveCfg = Release|x86
 		{0D6E3633-F45F-4883-AC62-DEC9F714AA9B}.Release|x86.Build.0 = Release|x86
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Debug|x64.Build.0 = Debug|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Debug|x86.Build.0 = Debug|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Release|x64.ActiveCfg = Release|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Release|x64.Build.0 = Release|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Release|x86.ActiveCfg = Release|Any CPU
+		{7CC64CDF-A7FF-463B-8F05-C37A6C0A820C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

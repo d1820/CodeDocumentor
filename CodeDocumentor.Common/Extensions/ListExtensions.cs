@@ -163,7 +163,7 @@ namespace CodeDocumentor.Helper
 
         public static List<string> TryAddTodoSummary(this List<string> parts, string returnType, bool useToDoCommentsOnSummaryError)
         {
-            if (returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously")))
+            if (IsReturnVoidAndOnePart(parts, returnType) || IsOnePart(parts))
             {
                 if (useToDoCommentsOnSummaryError)
                 {
@@ -175,6 +175,15 @@ namespace CodeDocumentor.Helper
                 }
             }
             return parts;
+        }
+
+        private static bool IsReturnVoidAndOnePart(List<string> parts, string returnType) {
+            return returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"));
+        }
+
+        private static bool IsOnePart(List<string> parts)
+        {
+            return (parts.Count <= 1 || (parts.Count == 2 && parts.Last() == "asynchronously"));
         }
 
         public static List<string> TryPluarizeFirstWord(this List<string> parts)

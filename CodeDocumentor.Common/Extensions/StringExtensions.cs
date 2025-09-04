@@ -10,13 +10,13 @@ namespace System
         }
 
         /// <summary>
-        ///  Withs the period.
+        ///  Add period if does not exist.
         /// </summary>
         /// <param name="text"> The text. </param>
         /// <returns> A string. </returns>
         public static string WithPeriod(this string text)
         {
-            if (text?.Trim().EndsWith(".") == true)
+            if (!string.IsNullOrWhiteSpace(text) && text.Trim().EndsWith("."))
             {
                 return text;
             }

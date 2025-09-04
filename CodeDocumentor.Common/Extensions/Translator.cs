@@ -13,6 +13,10 @@ namespace CodeDocumentor.Helper
         /// <returns> A string </returns>
         public static string ApplyUserTranslations(this string text, WordMap[] wordMaps)
         {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
             return TranslateText(text, wordMaps);
         }
 

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-#if DEBUG
-#endif
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
@@ -65,8 +64,8 @@ namespace CodeDocumentor
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
 #if DEBUG
-            //Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            //return;
+            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            return;
 #endif
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;

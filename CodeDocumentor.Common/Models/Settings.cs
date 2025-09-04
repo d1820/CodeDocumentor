@@ -108,7 +108,7 @@ namespace CodeDocumentor.Common.Models
                 RecordDiagnosticSeverity = RecordDiagnosticSeverity,
                 TryToIncludeCrefsForReturnTypes = TryToIncludeCrefsForReturnTypes,
                 UseNaturalLanguageForReturnNode = UseNaturalLanguageForReturnNode,
-                UseToDoCommentsOnSummaryError = UseNaturalLanguageForReturnNode
+                UseToDoCommentsOnSummaryError = UseToDoCommentsOnSummaryError
             };
             var clonedMaps = new List<WordMap>();
             foreach (var item in WordMaps)

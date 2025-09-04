@@ -190,7 +190,8 @@ namespace CodeDocumentor.Helper
                          .TryInsertTheWord((parts) =>
                          {
                              //this means any name of a method that is not a return type of bool and not 2 part (+async) should insert "the" into the sentence
-                             if (!isBool &&
+                             if (parts.Count > 0 &&
+                                !isBool &&
                                 !hasReturnComment &&
                                 !Constants.EXCLUDE_THE_LIST_FOR_2PART_COMMENTS.Any(a => a.Equals(parts[0], StringComparison.InvariantCultureIgnoreCase)) &&
                                 is2partPlusAsync)

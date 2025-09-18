@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Helper;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -18,12 +18,12 @@ namespace CodeDocumentor
     ///   The class code fix provider.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FileCodeFixProvider)), Shared]
-    public class FileCodeFixProvider : CodeFixProvider
+    public class FileCodeFixProvider : BaseCodeFixProvider
     {
         /// <summary>
         ///   The title.
         /// </summary>
-        private const string title = "Code Documentor this whole file";
+        private const string Title = "Code Documentor this whole file";
 
         /// <summary>
         ///   Gets the fixable diagnostic ids.
@@ -61,26 +61,26 @@ namespace CodeDocumentor
             return;
 #endif
             Diagnostic diagnostic = context.Diagnostics.First();
-
+            var settings = await context.BuildSettingsAsync(StaticSettings);
             //build it up, but check for counts if anything actually needs to be shown
             var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             Document tempDoc = context.Document;
             SyntaxNode root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
             //Order Matters
             var neededCommentCount = 0;
-            neededCommentCount += PropertyCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += ConstructorCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += EnumCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += FieldCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += MethodCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += PropertyCodeFixProvider.BuildComments(settings,root, _nodesTempToReplace);
+            neededCommentCount += ConstructorCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+            neededCommentCount += EnumCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+            neededCommentCount += FieldCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+            neededCommentCount += MethodCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
             root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
             {
                 return _nodesTempToReplace[n1];
             });
             _nodesTempToReplace.Clear();
-            neededCommentCount += InterfaceCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += ClassCodeFixProvider.BuildComments(root, _nodesTempToReplace);
-            neededCommentCount += RecordCodeFixProvider.BuildComments(root, _nodesTempToReplace);
+            neededCommentCount += InterfaceCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+            neededCommentCount += ClassCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+            neededCommentCount += RecordCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
             var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) =>
             {
                 return _nodesTempToReplace[n1];
@@ -92,11 +92,10 @@ namespace CodeDocumentor
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: Title,
                     createChangedDocument: (c) => Task.Run(() => context.Document.WithSyntaxRoot(newRoot), c),
-                    equivalenceKey: title),
+                    equivalenceKey: Title),
                 diagnostic);
         }
-
     }
 }

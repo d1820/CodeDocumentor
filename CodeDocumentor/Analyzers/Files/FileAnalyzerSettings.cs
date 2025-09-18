@@ -1,20 +1,15 @@
-﻿using CodeDocumentor.Helper;
-using CodeDocumentor.Vsix2022;
+using CodeDocumentor.Analyzers;
+using CodeDocumentor.Common;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor
 {
-    internal class FileAnalyzerSettings
+    internal class FileAnalyzerSettings: BaseAnalyzerSettings
     {
         /// <summary>
         ///   The title.
         /// </summary>
         internal const string Title = "The file needs documentation headers.";
-
-        /// <summary>
-        ///   The category.
-        /// </summary>
-        internal const string Category = DocumentationHeaderHelper.CATEGORY;
 
         /// <summary>
         ///   The diagnostic id.
@@ -29,8 +24,8 @@ namespace CodeDocumentor
         internal static DiagnosticDescriptor GetRule()
         {
             //we dont need to show this to still show the option to decorate the whole file. Setting DiagnosticSeverity.Hidden
-            return new DiagnosticDescriptor(FileAnalyzerSettings.DiagnosticId, FileAnalyzerSettings.Title,
-                FileAnalyzerSettings.MessageFormat, FileAnalyzerSettings.Category, DiagnosticSeverity.Hidden, true);
+            return new DiagnosticDescriptor(DiagnosticId, Title,
+                MessageFormat, Category, DiagnosticSeverity.Hidden, true);
         }
     }
 }

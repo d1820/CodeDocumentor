@@ -1,8 +1,9 @@
 using System.Text.RegularExpressions;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Models;
 
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Common.Extensions
 {
     public static class Translator
     {

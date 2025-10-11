@@ -8,7 +8,7 @@ using CodeDocumentor.Common.Interfaces;
 
 namespace CodeDocumentor
 {
-    public class Logger: IEventLogger
+    public class Logger : IEventLogger
     {
         /// <summary>
         ///  Logs the error.
@@ -21,7 +21,7 @@ namespace CodeDocumentor
                 // I'm co-opting the Visual Studio event source because I can't register my own from a .VSIX installer.
                 EventLog.WriteEntry("Visual Studio",
                     $"CodeDocumentor: DiagnosticId: {diagnosticId}. Message: {message ?? "null"}",
-                    EventLogEntryType.Error,eventId, category);
+                    EventLogEntryType.Error, eventId, category);
             }
             catch
             {

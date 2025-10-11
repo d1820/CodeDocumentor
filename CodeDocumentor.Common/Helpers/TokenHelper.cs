@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace CodeDocumentor.Common
+namespace CodeDocumentor.Common.Helpers
 {
     //This takes XML nodes in a string and swaps them to tokens for string manipulation, and then replaces them once complete. This keeps the validity of the XML
     public static class TokenHelper

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Helper;
+using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 using Xunit.Abstractions;
+using CodeDocumentor.Common.Extensions;
 
 namespace CodeDocumentor.Test.Helper
 {

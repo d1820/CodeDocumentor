@@ -2,10 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Helper;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
+using CodeDocumentor.Common.Extensions;
 
 namespace CodeDocumentor.Test.Helper
 {

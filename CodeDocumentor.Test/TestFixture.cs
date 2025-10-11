@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
+using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -62,6 +64,8 @@ namespace CodeDocumentor.Test
             MockSettings = new TestSettings();
             BaseCodeFixProvider.SetSettings(MockSettings);
             BaseDiagnosticAnalyzer.SetSettings(MockSettings);
+            ServiceLocator.SettingService = new SettingService();
+            ServiceLocator.Logger = new Logger();
         }
 
         public void SetPublicProcessingOption(ISettings o, string diagType)

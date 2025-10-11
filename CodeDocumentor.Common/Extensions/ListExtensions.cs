@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Helper
+namespace CodeDocumentor.Common.Extensions
 {
     public static class ListExtensions
     {

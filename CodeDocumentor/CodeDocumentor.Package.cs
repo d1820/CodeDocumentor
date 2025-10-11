@@ -1,10 +1,12 @@
 using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;
+using CodeDocumentor.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -63,6 +65,15 @@ namespace CodeDocumentor.Vsix2022
             // When initialized asynchronously, the current thread may be a background thread at this point. Do any
             // initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            Load();
+
+        }
+
+        private void Load()
+        {
+            //this needs to be set here due to bootstrapping environment and where EventLog is available
+            ServiceLocator.Logger = new Logger();
+            ServiceLocator.SettingService = new SettingService();
 
             //var hasCodeDocumentorInEditorConfig = await SlnHasEditorConfigAsync(hasCodeDocumentorInEditorConfig);
 
@@ -73,33 +84,32 @@ namespace CodeDocumentor.Vsix2022
             settings.SetFromOptionsGrid(options);
             BaseCodeFixProvider.SetSettings(settings);
             BaseDiagnosticAnalyzer.SetSettings(settings);
-
         }
 
-        private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)
-        {
-            var solutionService = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
-            if (solutionService != null)
-            {
-                solutionService.GetSolutionInfo(out string solutionDir, out _, out _);
+        //private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)
+        //{
+        //    var solutionService = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+        //    if (solutionService != null)
+        //    {
+        //        solutionService.GetSolutionInfo(out string solutionDir, out _, out _);
 
-                if (!string.IsNullOrEmpty(solutionDir))
-                {
-                    // Look for .editorconfig in the solution directory
-                    var editorConfigPath = System.IO.Path.Combine(solutionDir, ".editorconfig");
-                    if (System.IO.File.Exists(editorConfigPath))
-                    {
-                        // Read the .editorconfig file
-                        var lines = System.IO.File.ReadAllLines(editorConfigPath);
-                        // Check for a specific value, e.g., "my_setting = true"
-                        hasCodeDocumentorInEditorConfig = lines.Any(line => line.Trim().StartsWith("codedocumentor_", StringComparison.OrdinalIgnoreCase));
+        //        if (!string.IsNullOrEmpty(solutionDir))
+        //        {
+        //            // Look for .editorconfig in the solution directory
+        //            var editorConfigPath = System.IO.Path.Combine(solutionDir, ".editorconfig");
+        //            if (System.IO.File.Exists(editorConfigPath))
+        //            {
+        //                // Read the .editorconfig file
+        //                var lines = System.IO.File.ReadAllLines(editorConfigPath);
+        //                // Check for a specific value, e.g., "my_setting = true"
+        //                hasCodeDocumentorInEditorConfig = lines.Any(line => line.Trim().StartsWith("codedocumentor_", StringComparison.OrdinalIgnoreCase));
 
-                    }
-                }
-            }
+        //            }
+        //        }
+        //    }
 
-            return hasCodeDocumentorInEditorConfig;
-        }
+        //    return hasCodeDocumentorInEditorConfig;
+        //}
 
         #endregion
     }

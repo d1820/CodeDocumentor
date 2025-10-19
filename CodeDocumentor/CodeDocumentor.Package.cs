@@ -43,7 +43,7 @@ namespace CodeDocumentor.Vsix2022
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
     //[ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
-    [ComVisible(true)]
+    //[ComVisible(true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
         #region Package Members

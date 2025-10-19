@@ -8,6 +8,7 @@ using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -15,7 +16,6 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeDocumentor
 {
-
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
@@ -32,7 +32,7 @@ namespace CodeDocumentor
 
         protected static ISettings StaticSettings =>
                 //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-                _settings?.Clone();
+                _settings?.Clone() ?? Settings.BuildDefaults();
 
         /// <summary>
         ///  The title.
@@ -42,7 +42,7 @@ namespace CodeDocumentor
         /// <summary>
         ///  Gets the fixable diagnostic ids.
         /// </summary>
-        protected ImmutableArray<string> FileFixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
             ClassAnalyzerSettings.DiagnosticId,
             PropertyAnalyzerSettings.DiagnosticId,
             ConstructorAnalyzerSettings.DiagnosticId,
@@ -50,7 +50,8 @@ namespace CodeDocumentor
             InterfaceAnalyzerSettings.DiagnosticId,
             MethodAnalyzerSettings.DiagnosticId,
             FieldAnalyzerSettings.DiagnosticId,
-            RecordAnalyzerSettings.DiagnosticId
+            RecordAnalyzerSettings.DiagnosticId,
+            //FileAnalyzerSettings.DiagnosticId,
         });
 
         public override FixAllProvider GetFixAllProvider()
@@ -65,10 +66,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-#if DEBUG
-            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            return;
-#endif
+//#if DEBUG
+//            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+//            return;
+//#endif
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);

@@ -24,41 +24,36 @@ namespace CodeDocumentor
         /// </summary>
         private const string Title = "Code Documentor this whole file";
 
-        /// <summary>
-        ///   Gets the fixable diagnostic ids.
-        /// </summary>
-        public override sealed ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
-            ClassAnalyzerSettings.DiagnosticId,
-            PropertyAnalyzerSettings.DiagnosticId,
-            ConstructorAnalyzerSettings.DiagnosticId,
-            EnumAnalyzerSettings.DiagnosticId,
-            InterfaceAnalyzerSettings.DiagnosticId,
-            MethodAnalyzerSettings.DiagnosticId,
-            FieldAnalyzerSettings.DiagnosticId,
-            RecordAnalyzerSettings.DiagnosticId,
+
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
+            //ClassAnalyzerSettings.DiagnosticId,
+            //PropertyAnalyzerSettings.DiagnosticId,
+            //ConstructorAnalyzerSettings.DiagnosticId,
+            //EnumAnalyzerSettings.DiagnosticId,
+            //InterfaceAnalyzerSettings.DiagnosticId,
+            //MethodAnalyzerSettings.DiagnosticId,
+            //FieldAnalyzerSettings.DiagnosticId,
+            //RecordAnalyzerSettings.DiagnosticId,
             FileAnalyzerSettings.DiagnosticId,
         });
 
-        /// <summary>
-        ///   Gets fix all provider.
-        /// </summary>
-        /// <returns> A FixAllProvider. </returns>
-        public override sealed FixAllProvider GetFixAllProvider()
+        public override FixAllProvider GetFixAllProvider()
         {
             return null;
         }
+
 
         /// <summary>
         ///   Registers code fixes async.
         /// </summary>
         /// <param name="context"> The context. </param>
         /// <returns> A Task. </returns>
-        public override sealed async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-#if DEBUG
-            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            return;
-#endif
+//#if DEBUG
+//            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+//            return;
+//#endif
             Diagnostic diagnostic = context.Diagnostics.First();
             var settings = await context.BuildSettingsAsync(StaticSettings);
             //build it up, but check for counts if anything actually needs to be shown

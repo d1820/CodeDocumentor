@@ -19,9 +19,7 @@ namespace CodeDocumentor.Analyzers.Files
         {
             get
             {
-                return ImmutableArray.CreateRange(new List<DiagnosticDescriptor> {
-                    FileAnalyzerSettings.GetRule() }
-                );
+                return ImmutableArray.Create(FileAnalyzerSettings.GetRule());
             }
         }
 

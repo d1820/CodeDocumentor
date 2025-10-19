@@ -88,9 +88,34 @@ namespace CodeDocumentor.Common.Models
         /// </remarks>
         public bool UseEditorConfigForSettings { get; set; }
 
+        public static ISettings BuildDefaults()
+        {
+            return new Settings
+            {
+                ClassDiagnosticSeverity = DiagnosticSeverity.Warning,
+                ConstructorDiagnosticSeverity = DiagnosticSeverity.Warning,
+                DefaultDiagnosticSeverity = DiagnosticSeverity.Warning,
+                EnumDiagnosticSeverity = DiagnosticSeverity.Warning,
+                ExcludeAsyncSuffix = false,
+                FieldDiagnosticSeverity = DiagnosticSeverity.Warning,
+                IncludeValueNodeInProperties = false,
+                InterfaceDiagnosticSeverity = DiagnosticSeverity.Warning,
+                IsEnabledForNonPublicFields = false,
+                IsEnabledForPublicMembersOnly = false,
+                MethodDiagnosticSeverity = DiagnosticSeverity.Warning,
+                PreserveExistingSummaryText = true,
+                PropertyDiagnosticSeverity = DiagnosticSeverity.Warning,
+                RecordDiagnosticSeverity = DiagnosticSeverity.Warning,
+                TryToIncludeCrefsForReturnTypes = true,
+                UseNaturalLanguageForReturnNode = false,
+                UseToDoCommentsOnSummaryError = true,
+                WordMaps = Constants.DEFAULT_WORD_MAPS
+            };
+        }
+
         public ISettings Clone()
         {
-            var newService = new Settings
+            var newSettings = new Settings
             {
                 ClassDiagnosticSeverity = ClassDiagnosticSeverity,
                 ConstructorDiagnosticSeverity = ConstructorDiagnosticSeverity,
@@ -120,8 +145,8 @@ namespace CodeDocumentor.Common.Models
                     WordEvaluator = item.WordEvaluator
                 });
             }
-            newService.WordMaps = clonedMaps.ToArray();
-            return newService;
+            newSettings.WordMaps = clonedMaps.ToArray();
+            return newSettings;
         }
     }
 }

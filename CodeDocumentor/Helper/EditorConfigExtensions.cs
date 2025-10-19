@@ -9,10 +9,17 @@ namespace CodeDocumentor
     {
         public static async Task<ISettings> BuildSettingsAsync(this CodeFixContext context, ISettings Settings)
         {
-            var tree = await context.Document.GetSyntaxTreeAsync();
-            var opts = context.Document.Project.AnalyzerOptions.AnalyzerConfigOptionsProvider.GetOptions(tree);
-            var svc = ServiceLocator.SettingService;
-            return svc.BuildSettings(opts, Settings);
+            try
+            {
+                var tree = await context.Document.GetSyntaxTreeAsync();
+                var opts = context.Document.Project.AnalyzerOptions.AnalyzerConfigOptionsProvider.GetOptions(tree);
+                var svc = ServiceLocator.SettingService;
+                return svc.BuildSettings(opts, Settings);
+            }
+            catch
+            {
+                return Settings;
+            }
         }
     }
 }

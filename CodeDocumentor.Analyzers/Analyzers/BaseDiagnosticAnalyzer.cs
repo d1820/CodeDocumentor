@@ -1,10 +1,13 @@
 using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CodeDocumentor.Analyzers
 {
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer
     {
         protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
@@ -18,6 +21,6 @@ namespace CodeDocumentor.Analyzers
 
         protected static ISettings StaticSettings =>
               //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-              _settings?.Clone();
+              _settings?.Clone() ?? Settings.BuildDefaults();
     }
 }

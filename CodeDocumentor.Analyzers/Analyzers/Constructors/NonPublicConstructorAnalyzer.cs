@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor.Analyzers.Constructors
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicConstructorAnalyzer : BaseDiagnosticAnalyzer
+    public class NonPublicConstructorAnalyzer : DiagnosticAnalyzer
     {
         private readonly ConstructorAnalyzerSettings _analyzerSettings;
 
@@ -51,12 +51,12 @@ namespace CodeDocumentor.Analyzers.Constructors
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

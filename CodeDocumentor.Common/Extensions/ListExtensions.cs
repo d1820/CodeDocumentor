@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CodeDocumentor.Common;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
@@ -168,7 +167,7 @@ namespace CodeDocumentor.Common.Extensions
             {
                 if (useToDoCommentsOnSummaryError)
                 {
-                    parts = new List<string> { Constants.TODO};
+                    parts = new List<string> { Constants.TODO };
                 }
                 else
                 {
@@ -178,7 +177,8 @@ namespace CodeDocumentor.Common.Extensions
             return parts;
         }
 
-        private static bool IsReturnVoidAndOnePart(List<string> parts, string returnType) {
+        private static bool IsReturnVoidAndOnePart(List<string> parts, string returnType)
+        {
             return returnType == "void" && (parts.Count == 1 || (parts.Count == 2 && parts.Last() == "asynchronously"));
         }
 

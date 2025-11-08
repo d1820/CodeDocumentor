@@ -62,9 +62,8 @@ namespace CodeDocumentor.Test
             CurrentTestName = output.GetTestName();
 
             MockSettings = new TestSettings();
-            BaseCodeFixProvider.SetSettings(MockSettings);
-            BaseDiagnosticAnalyzer.SetSettings(MockSettings);
             ServiceLocator.SettingService = new SettingService();
+            ServiceLocator.SettingService.StaticSettings = MockSettings;
             ServiceLocator.Logger = new Logger();
         }
 

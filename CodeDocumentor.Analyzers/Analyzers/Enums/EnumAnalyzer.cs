@@ -12,7 +12,7 @@ namespace CodeDocumentor.Analyzers.Enums
     ///  The enum analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class EnumAnalyzer : BaseDiagnosticAnalyzer
+    public class EnumAnalyzer : DiagnosticAnalyzer
     {
         private readonly EnumAnalyzerSettings _analyzerSettings;
 
@@ -46,12 +46,12 @@ namespace CodeDocumentor.Analyzers.Enums
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }

@@ -13,7 +13,7 @@ namespace CodeDocumentor.Analyzers.Methods
     ///  The method analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MethodAnalyzer : BaseDiagnosticAnalyzer
+    public class MethodAnalyzer : DiagnosticAnalyzer
     {
         private readonly MethodAnalyzerSettings _analyzerSettings;
 
@@ -61,12 +61,12 @@ namespace CodeDocumentor.Analyzers.Methods
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }

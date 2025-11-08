@@ -13,7 +13,7 @@ namespace CodeDocumentor.Analyzers.Records
     ///  The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RecordAnalyzer : BaseDiagnosticAnalyzer
+    public class RecordAnalyzer : DiagnosticAnalyzer
     {
         private readonly RecordAnalyzerSettings _analyzerSettings;
 
@@ -57,12 +57,12 @@ namespace CodeDocumentor.Analyzers.Records
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }

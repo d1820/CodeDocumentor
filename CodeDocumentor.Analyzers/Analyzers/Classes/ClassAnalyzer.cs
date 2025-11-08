@@ -13,15 +13,8 @@ namespace CodeDocumentor.Analyzers.Classes
     ///  The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ClassAnalyzer : BaseDiagnosticAnalyzer
+    public class ClassAnalyzer : DiagnosticAnalyzer
     {
-        private readonly ClassAnalyzerSettings _analyzerSettings;
-
-        public ClassAnalyzer()
-        {
-            _analyzerSettings = new ClassAnalyzerSettings();
-        }
-
         /// <summary>
         ///  Gets the supported diagnostics.
         /// </summary>
@@ -29,6 +22,7 @@ namespace CodeDocumentor.Analyzers.Classes
         {
             get
             {
+                var _analyzerSettings = new ClassAnalyzerSettings();
                 return ImmutableArray.Create(_analyzerSettings.GetSupportedDiagnosticRule());
             }
         }
@@ -48,7 +42,7 @@ namespace CodeDocumentor.Analyzers.Classes
         ///  Analyzes node.
         /// </summary>
         /// <param name="context"> The context. </param>
-        public void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is ClassDeclarationSyntax node))
             {
@@ -58,13 +52,13 @@ namespace CodeDocumentor.Analyzers.Classes
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
-
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
+            var _analyzerSettings = new ClassAnalyzerSettings();
             context.BuildDiagnostic(node, node.Identifier, (alreadyHasComment) => _analyzerSettings.GetRule(alreadyHasComment, settings));
         }
     }

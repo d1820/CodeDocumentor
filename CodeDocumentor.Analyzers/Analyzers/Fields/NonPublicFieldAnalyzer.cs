@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor.Analyzers.Fields
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicFieldAnalyzer : BaseDiagnosticAnalyzer
+    public class NonPublicFieldAnalyzer : DiagnosticAnalyzer
     {
         private readonly FieldAnalyzerSettings _analyzerSettings;
 
@@ -58,12 +58,12 @@ namespace CodeDocumentor.Analyzers.Fields
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

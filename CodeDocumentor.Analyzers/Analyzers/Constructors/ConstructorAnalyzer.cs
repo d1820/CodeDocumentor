@@ -13,7 +13,7 @@ namespace CodeDocumentor.Analyzers.Constructors
     ///  The constructor analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ConstructorAnalyzer : BaseDiagnosticAnalyzer
+    public class ConstructorAnalyzer : DiagnosticAnalyzer
     {
         private readonly ConstructorAnalyzerSettings _analyzerSettings;
 
@@ -57,12 +57,12 @@ namespace CodeDocumentor.Analyzers.Constructors
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

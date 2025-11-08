@@ -14,7 +14,7 @@ namespace CodeDocumentor.Analyzers.Fields
     ///  The field analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class FieldAnalyzer : BaseDiagnosticAnalyzer
+    public class FieldAnalyzer : DiagnosticAnalyzer
     {
         private readonly FieldAnalyzerSettings _analyzerSettings;
 
@@ -54,7 +54,7 @@ namespace CodeDocumentor.Analyzers.Fields
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             if (!settings.IsEnabledForNonPublicFields && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
@@ -65,7 +65,7 @@ namespace CodeDocumentor.Analyzers.Fields
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

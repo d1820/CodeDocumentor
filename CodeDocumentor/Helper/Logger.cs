@@ -29,6 +29,20 @@ namespace CodeDocumentor
             }
         }
 
+        public void LogDebug(string category, string message)
+        {
+#if DEBUG
+            if (!string.IsNullOrEmpty(category))
+            {
+                Debug.WriteLine($"[{category.ToUpper()}]: {message}");
+            }
+            else
+            {
+                Debug.WriteLine(message);
+            }
+#endif
+        }
+
         public void LogInfo(string message, int eventId, short category, string diagnosticId)
         {
             try

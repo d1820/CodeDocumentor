@@ -95,7 +95,8 @@ namespace CodeDocumentor.Test.Records
         {
             var fix = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
             var test = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
-            var clone = new TestSettings {
+            var clone = new TestSettings
+            {
                 IsEnabledForPublicMembersOnly = true
             };
             _fixture.MockSettings.SetClone(clone);

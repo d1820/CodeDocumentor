@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
@@ -266,9 +267,7 @@ namespace CodeDocumentor.Vsix2022
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
-
-            BaseCodeFixProvider.SetSettings(settings);
-            BaseDiagnosticAnalyzer.SetSettings(settings);
+            ServiceLocator.SettingService.StaticSettings = settings;
         }
 
         public ISettings Clone()

@@ -70,9 +70,10 @@ namespace CodeDocumentor.Test.Methods
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
-            _fixture.MockSettings.SetClone(new TestSettings {
-                 UseNaturalLanguageForReturnNode = false,
-                 TryToIncludeCrefsForReturnTypes = false
+            _fixture.MockSettings.SetClone(new TestSettings
+            {
+                UseNaturalLanguageForReturnNode = false,
+                TryToIncludeCrefsForReturnTypes = false
             });
             var expected = new DiagnosticResult
             {

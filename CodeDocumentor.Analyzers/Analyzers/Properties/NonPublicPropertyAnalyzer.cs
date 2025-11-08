@@ -13,7 +13,7 @@ namespace CodeDocumentor.Analyzers.Properties
     ///  The property analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicPropertyAnalyzer : BaseDiagnosticAnalyzer
+    public class NonPublicPropertyAnalyzer : DiagnosticAnalyzer
     {
         private readonly PropertyAnalyzerSettings _analyzerSettings;
 
@@ -58,12 +58,12 @@ namespace CodeDocumentor.Analyzers.Properties
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

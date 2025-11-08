@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeDocumentor.Analyzers.Methods
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicMethodAnalyzer : BaseDiagnosticAnalyzer
+    public class NonPublicMethodAnalyzer : DiagnosticAnalyzer
     {
         private readonly MethodAnalyzerSettings _analyzerSettings;
 
@@ -52,13 +52,13 @@ namespace CodeDocumentor.Analyzers.Methods
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
             if (!node.IsOwnedByInterface() && settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

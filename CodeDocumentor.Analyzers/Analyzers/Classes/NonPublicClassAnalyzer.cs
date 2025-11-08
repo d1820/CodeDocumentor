@@ -13,7 +13,7 @@ namespace CodeDocumentor.Analyzers.Classes
     ///  The class analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NonPublicClassAnalyzer : BaseDiagnosticAnalyzer
+    public class NonPublicClassAnalyzer : DiagnosticAnalyzer
     {
         private readonly ClassAnalyzerSettings _analyzerSettings;
 
@@ -54,13 +54,13 @@ namespace CodeDocumentor.Analyzers.Classes
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
 
             if (settings.IsEnabledForPublicMembersOnly)
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Analyzers.Helper;
+using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -8,7 +9,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 using Xunit.Abstractions;
-using CodeDocumentor.Common.Extensions;
 
 namespace CodeDocumentor.Test.Helper
 {
@@ -110,7 +110,8 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenReturnIsTask_ActionResult_CustomType()
         {
-            var clone = new TestSettings {
+            var clone = new TestSettings
+            {
                 ExcludeAsyncSuffix = false,
                 UseToDoCommentsOnSummaryError = false,
                 TryToIncludeCrefsForReturnTypes = false

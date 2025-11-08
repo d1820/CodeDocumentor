@@ -58,7 +58,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = await context.BuildSettingsAsync(StaticSettings);
+            var settings = await context.BuildSettingsAsync();
             var displayTitle = declaration.HasSummary() ? TitleRebuild : Title;
             context.RegisterCodeFix(
                 CodeAction.Create(

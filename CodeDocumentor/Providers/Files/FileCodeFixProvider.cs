@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeDocumentor.Analyzers;
@@ -26,14 +25,14 @@ namespace CodeDocumentor
 
 
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(new List<string> {
-            //ClassAnalyzerSettings.DiagnosticId,
-            //PropertyAnalyzerSettings.DiagnosticId,
-            //ConstructorAnalyzerSettings.DiagnosticId,
-            //EnumAnalyzerSettings.DiagnosticId,
-            //InterfaceAnalyzerSettings.DiagnosticId,
-            //MethodAnalyzerSettings.DiagnosticId,
-            //FieldAnalyzerSettings.DiagnosticId,
-            //RecordAnalyzerSettings.DiagnosticId,
+            ClassAnalyzerSettings.DiagnosticId,
+            PropertyAnalyzerSettings.DiagnosticId,
+            ConstructorAnalyzerSettings.DiagnosticId,
+            EnumAnalyzerSettings.DiagnosticId,
+            InterfaceAnalyzerSettings.DiagnosticId,
+            MethodAnalyzerSettings.DiagnosticId,
+            FieldAnalyzerSettings.DiagnosticId,
+            RecordAnalyzerSettings.DiagnosticId,
             FileAnalyzerSettings.DiagnosticId,
         });
 
@@ -50,12 +49,12 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-//#if DEBUG
-//            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-//            return;
-//#endif
+            //#if DEBUG
+            //            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            //            return;
+            //#endif
             Diagnostic diagnostic = context.Diagnostics.First();
-            var settings = await context.BuildSettingsAsync(StaticSettings);
+            var settings = await context.BuildSettingsAsync();
             //build it up, but check for counts if anything actually needs to be shown
             var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             Document tempDoc = context.Document;

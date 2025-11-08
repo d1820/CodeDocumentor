@@ -59,7 +59,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = await context.BuildSettingsAsync(StaticSettings);
+            var settings = await context.BuildSettingsAsync();
             if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declaration))
             {
                 return;

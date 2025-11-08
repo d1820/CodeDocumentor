@@ -82,8 +82,7 @@ namespace CodeDocumentor.Vsix2022
             var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
             var settings = new Settings();
             settings.SetFromOptionsGrid(options);
-            BaseCodeFixProvider.SetSettings(settings);
-            BaseDiagnosticAnalyzer.SetSettings(settings);
+            ServiceLocator.SettingService.StaticSettings = settings;
         }
 
         //private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)

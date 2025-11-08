@@ -59,7 +59,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = await context.BuildSettingsAsync(StaticSettings);
+            var settings = await context.BuildSettingsAsync();
             if (
                 //NOTE: Since interfaces declarations do not have accessors, we allow documenting all the time.
                 !declaration.IsOwnedByInterface() &&

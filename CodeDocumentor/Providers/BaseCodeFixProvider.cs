@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using CodeDocumentor.Analyzers;
 using CodeDocumentor.Analyzers.Helper;
@@ -21,18 +20,6 @@ namespace CodeDocumentor
         protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
 
         protected static IEventLogger EventLogger = ServiceLocator.Logger;
-
-        //expose this for some of the static helpers for producing ALl File comments
-        private static ISettings _settings;
-
-        public static void SetSettings(ISettings settings)
-        {
-            _settings = settings;
-        }
-
-        protected static ISettings StaticSettings =>
-                //we serve up a fresh new instance from the static, and use that instead, keeps everything testable and decoupled from the static
-                _settings?.Clone() ?? Settings.BuildDefaults();
 
         /// <summary>
         ///  The title.
@@ -66,10 +53,11 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-//#if DEBUG
-//            Debug.WriteLine("!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-//            return;
-//#endif
+            //#if DEBUG
+            //            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            //            return;
+            //#endif
+            return;
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
@@ -77,7 +65,7 @@ namespace CodeDocumentor
             {
                 return;
             }
-            var settings = await context.BuildSettingsAsync(StaticSettings);
+            var settings = await context.BuildSettingsAsync();
             TryHelper.Try(() =>
             {
                 var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();

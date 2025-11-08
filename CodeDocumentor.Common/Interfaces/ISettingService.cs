@@ -4,7 +4,9 @@ namespace CodeDocumentor.Common.Interfaces
 {
     public interface ISettingService
     {
-        ISettings BuildSettings(AnalyzerConfigOptions options, ISettings Settings);
-        ISettings BuildSettings(SyntaxNodeAnalysisContext context, ISettings Settings);
+        ISettings StaticSettings { get; set; }
+
+        ISettings BuildSettings(AnalyzerConfigOptions options);
+        ISettings BuildSettings(SyntaxNodeAnalysisContext context);
     }
 }

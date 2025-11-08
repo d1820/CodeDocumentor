@@ -13,7 +13,7 @@ namespace CodeDocumentor.Analyzers.Interfaces
     ///  The interface analyzer.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class InterfaceAnalyzer : BaseDiagnosticAnalyzer
+    public class InterfaceAnalyzer : DiagnosticAnalyzer
     {
         private readonly InterfaceAnalyzerSettings _analyzerSettings;
 
@@ -47,12 +47,12 @@ namespace CodeDocumentor.Analyzers.Interfaces
             {
                 return;
             }
-            var settings = ServiceLocator.SettingService.BuildSettings(context, StaticSettings);
+            var settings = ServiceLocator.SettingService.BuildSettings(context);
             if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(node))
             {
                 return;
             }
-            var excludeAnanlyzer = DocumentationHeaderHelper.HasAnalyzerExclusion(node);
+            var excludeAnanlyzer = ServiceLocator.DocumentationHeaderHelper.HasAnalyzerExclusion(node);
             if (excludeAnanlyzer)
             {
                 return;

@@ -5,6 +5,7 @@ namespace CodeDocumentor.Common.Interfaces
 {
     public interface IEventLogger
     {
+        void LogDebug(string category, string message);
         void LogError(string message, int eventId, short category, string diagnosticId);
         void LogInfo(string message, int eventId, short category, string diagnosticId);
     }

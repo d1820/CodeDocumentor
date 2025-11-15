@@ -15,6 +15,8 @@ In the age of copilots this extension is still valuable when working on projects
 
 Download and install the VSIX from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=DanTurco.CodeDocumentor)
 
+**IMPORTANT!!** This extension is NOT compatible with Visual Studio 2026! While Microsoft claims backward compatibility, they have removed all support for analyzers being able to run in the foreground. Due to this this can no longer use Visual Studio Options Settings or load anything properly.
+**IMPORTANT!!** A new version will be coming soon for Visual Studio 2026, that will run in the foreground, but no longer as an analyzer.
 ## Table of Contents
 
 <!-- toc -->

@@ -94,7 +94,7 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenOneWordMethodAndLayeredList()
         {
-            TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
+            var typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
 
             _fixture.MockSettings.ExcludeAsyncSuffix = false;
             _fixture.MockSettings.UseToDoCommentsOnSummaryError = false;
@@ -118,7 +118,7 @@ namespace CodeDocumentor.Test.Helper
             };
             _fixture.MockSettings.SetClone(clone);
 
-            TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
+            var typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
             var commentHelper = new CommentHelper();
             var comment = commentHelper.CreateMethodComment("CreateAsync", typeSyntax,
                 _fixture.MockSettings.UseToDoCommentsOnSummaryError,

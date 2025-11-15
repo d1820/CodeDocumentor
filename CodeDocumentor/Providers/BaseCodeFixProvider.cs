@@ -2,12 +2,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using CodeDocumentor.Analyzers;
-using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
-using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -17,8 +15,6 @@ namespace CodeDocumentor
 {
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
-        protected DocumentationHeaderHelper DocumentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
-
         protected static IEventLogger EventLogger = ServiceLocator.Logger;
 
         /// <summary>
@@ -38,7 +34,7 @@ namespace CodeDocumentor
             MethodAnalyzerSettings.DiagnosticId,
             FieldAnalyzerSettings.DiagnosticId,
             RecordAnalyzerSettings.DiagnosticId,
-            //FileAnalyzerSettings.DiagnosticId,
+            FileAnalyzerSettings.DiagnosticId,
         });
 
         public override FixAllProvider GetFixAllProvider()
@@ -53,11 +49,10 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-            //#if DEBUG
-            //            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            //            return;
-            //#endif
+#if DEBUG
+            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
             return;
+#endif
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);

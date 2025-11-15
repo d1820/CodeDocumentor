@@ -114,7 +114,7 @@ namespace CodeDocumentor.Analyzers.Constructors
         private string GenerateGeneralComment(ReadOnlySpan<char> returnType, ReturnTypeBuilderOptions options)
         {
             var rt = returnType.ToString().Trim();
-            string startWord = "";
+            var startWord = "";
             if (options.IncludeStartingWordInText)
             {
                 startWord = DocumentationHeaderHelper.DetermineStartingWord(rt.AsSpan(), options.UseProperCasing);

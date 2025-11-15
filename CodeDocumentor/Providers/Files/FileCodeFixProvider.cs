@@ -49,16 +49,16 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            //#if DEBUG
-            //            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
-            //            return;
-            //#endif
-            Diagnostic diagnostic = context.Diagnostics.First();
+#if DEBUG
+            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
+            return;
+#endif
+            var diagnostic = context.Diagnostics.First();
             var settings = await context.BuildSettingsAsync();
             //build it up, but check for counts if anything actually needs to be shown
             var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
-            Document tempDoc = context.Document;
-            SyntaxNode root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
+            var tempDoc = context.Document;
+            var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
             //Order Matters
             var neededCommentCount = 0;
             neededCommentCount += PropertyCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);

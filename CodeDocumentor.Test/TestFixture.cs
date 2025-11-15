@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CodeDocumentor.Analyzers;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;

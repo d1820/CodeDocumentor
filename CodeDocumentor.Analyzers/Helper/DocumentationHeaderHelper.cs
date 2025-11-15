@@ -213,7 +213,7 @@ namespace CodeDocumentor.Analyzers.Helper
                 return Enumerable.Empty<string>();
             }
 
-            List<string> exceptions = new List<string>();
+            var exceptions = new List<string>();
 
             TryHelper.Try(() =>
             {

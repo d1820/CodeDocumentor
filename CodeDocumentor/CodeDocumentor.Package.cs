@@ -2,7 +2,6 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CodeDocumentor.Analyzers;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Models;

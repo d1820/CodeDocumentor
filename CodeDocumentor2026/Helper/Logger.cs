@@ -18,7 +18,7 @@ namespace CodeDocumentor
             {
 #if DEBUG
                 // In debug mode, use Debug.WriteLine to avoid permission issues with Event Log
-                Debug.WriteLine($"[ERROR] CodeDocumentor2026 - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
+                Debug.WriteLine($"[CodeDocumentor2026] ERROR - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
 #else
                 // In release mode, try to write to Event Log but don't fail if we can't
                 try
@@ -30,7 +30,7 @@ namespace CodeDocumentor
                 catch
                 {
                     // Fallback to Debug output if Event Log fails
-                    Debug.WriteLine($"[ERROR] CodeDocumentor2026 - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
+                    Debug.WriteLine($"[CodeDocumentor2026] ERROR - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
                 }
 #endif
             }
@@ -67,7 +67,7 @@ namespace CodeDocumentor
             {
 #if DEBUG
                 // In debug mode, use Debug.WriteLine to avoid permission issues
-                Debug.WriteLine($"[INFO] CodeDocumentor2026 - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
+                Debug.WriteLine($"[CodeDocumentor2026] INFO - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
 #else
                 // In release mode, try to write to Event Log but don't fail if we can't
                 try
@@ -79,7 +79,7 @@ namespace CodeDocumentor
                 catch
                 {
                     // Fallback to Debug output if Event Log fails
-                    Debug.WriteLine($"[INFO] CodeDocumentor2026 - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
+                    Debug.WriteLine($"[CodeDocumentor2026] INFO - DiagnosticId: {diagnosticId}, EventId: {eventId}, Category: {category}, Message: {message ?? "null"}");
                 }
 #endif
             }

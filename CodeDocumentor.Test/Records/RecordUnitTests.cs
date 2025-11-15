@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Records;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -93,7 +95,8 @@ namespace CodeDocumentor.Test.Records
         {
             var fix = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
             var test = _fixture.LoadTestFile("./Records/TestFiles/RecordTester.cs");
-            var clone = new TestSettings {
+            var clone = new TestSettings
+            {
                 IsEnabledForPublicMembersOnly = true
             };
             _fixture.MockSettings.SetClone(clone);

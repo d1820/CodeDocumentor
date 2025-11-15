@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using CodeDocumentor.Analyzers.Constructors;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Constructors;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;

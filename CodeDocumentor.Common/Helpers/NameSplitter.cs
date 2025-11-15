@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace CodeDocumentor.Common
+namespace CodeDocumentor.Common.Helpers
 {
     /// <summary>
     ///  The name splitter.

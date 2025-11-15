@@ -1,8 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Builders;
-using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Analyzers.Builders;
 using FluentAssertions;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 

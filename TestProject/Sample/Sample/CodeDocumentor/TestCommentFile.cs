@@ -106,7 +106,7 @@ namespace Sample.CodeDocumentor
 
     public void Publish()
     {
-      
+
     }
     public string PublishAsync()
     {

@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Methods;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -68,9 +70,10 @@ namespace CodeDocumentor.Test.Methods
         {
             var fix = _fixture.LoadTestFile($"./Methods/TestFiles/{fixCode}.cs");
             var test = _fixture.LoadTestFile($"./Methods/TestFiles/{testCode}.cs");
-            _fixture.MockSettings.SetClone(new TestSettings {
-                 UseNaturalLanguageForReturnNode = false,
-                 TryToIncludeCrefsForReturnTypes = false
+            _fixture.MockSettings.SetClone(new TestSettings
+            {
+                UseNaturalLanguageForReturnNode = false,
+                TryToIncludeCrefsForReturnTypes = false
             });
             var expected = new DiagnosticResult
             {

@@ -1,7 +1,7 @@
 using System;
 using CodeDocumentor.Common.Interfaces;
 
-namespace CodeDocumentor.Common
+namespace CodeDocumentor.Common.Helpers
 {
     public static class TryHelper
     {

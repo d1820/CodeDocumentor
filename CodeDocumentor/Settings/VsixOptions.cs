@@ -10,6 +10,6 @@ namespace CodeDocumentor
         /// <summary>
         ///  The version. This needs to be kept in sync with Manifest version
         /// </summary>
-        public const string Version = "3.0.0.0";
+        public const string Version = "4.0.0.0";
     }
 }

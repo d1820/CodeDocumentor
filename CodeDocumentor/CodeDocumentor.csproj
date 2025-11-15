@@ -53,63 +53,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Analyzers\BaseAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\BaseCodeFixProvider.cs" />
-    <Compile Include="Analyzers\BaseDiagnosticAnalyzer.cs" />
-    <Compile Include="Analyzers\Files\FileAnalyzer.cs" />
-    <Compile Include="Analyzers\Files\FileAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Files\FileCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Records\RecordAnalyzer.cs" />
-    <Compile Include="Analyzers\Records\RecordAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Records\RecordCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Records\NonPublicRecordAnalyzer.cs" />
-    <Compile Include="Analyzers\Classes\ClassAnalyzer.cs" />
-    <Compile Include="Analyzers\Classes\ClassAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Classes\ClassCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Constructors\ConstructorAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Constructors\NonPublicConstructorAnalyzer.cs" />
-    <Compile Include="Analyzers\Enums\EnumAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Interfaces\InterfaceAnalyzerSettings.cs" />
-    <Compile Include="CodeDocumentor.Package.cs" />
-    <Compile Include="Analyzers\Fields\FieldAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Methods\MethodAnalyzerSettings.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Builders\DiagnosticBuilder.cs" />
-    <Compile Include="Builders\DocumentationBuilder.cs" />
     <Compile Include="Helper\EditorConfigExtensions.cs" />
-    <Compile Include="Helper\ListExtensions.cs" />
     <Compile Include="Helper\Logger.cs" />
-    <Compile Include="Helper\SyntaxExtensions.cs" />
-    <Compile Include="Locators\ServiceLocator.cs" />
-    <Compile Include="Managers\GenericCommentManager.cs" />
-    <Compile Include="Helper\WordExtensions.cs" />
-    <Compile Include="Analyzers\Constructors\ConstructorAnalyzer.cs" />
-    <Compile Include="Analyzers\Constructors\ConstructorCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Enums\EnumAnalyzer.cs" />
-    <Compile Include="Analyzers\Enums\EnumCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Fields\FieldAnalyzer.cs" />
-    <Compile Include="Analyzers\Fields\FieldCodeFixProvider.cs" />
-    <Compile Include="Constructors\BaseReturnTypeCommentConstruction.cs" />
-    <Compile Include="Helper\CommentHelper.cs" />
-    <Compile Include="Helper\DocumentationHeaderHelper.cs" />
-    <Compile Include="Helper\PrivateMemberVerifier.cs" />
-    <Compile Include="Constructors\ReturnCommentConstruction.cs" />
-    <Compile Include="Constructors\SingleWordCommentSummaryConstruction.cs" />
-    <Compile Include="Analyzers\Interfaces\InterfaceAnalyzer.cs" />
-    <Compile Include="Analyzers\Interfaces\InterfaceCodeFixProvider.cs" />
-    <Compile Include="Analyzers\Methods\MethodAnalyzer.cs" />
-    <Compile Include="Analyzers\Methods\MethodCodeFixProvider.cs" />
+    <Compile Include="Providers\BaseCodeFixProvider.cs" />
+    <Compile Include="Providers\Classes\ClassCodeFixProvider.cs" />
+    <Compile Include="Providers\Constructors\ConstructorCodeFixProvider.cs" />
+    <Compile Include="Providers\Enums\EnumCodeFixProvider.cs" />
+    <Compile Include="Providers\Fields\FieldCodeFixProvider.cs" />
+    <Compile Include="Providers\Files\FileCodeFixProvider.cs" />
+    <Compile Include="Providers\Interfaces\InterfaceCodeFixProvider.cs" />
+    <Compile Include="Providers\Methods\MethodCodeFixProvider.cs" />
+    <Compile Include="Providers\Properties\PropertyCodeFixProvider.cs" />
+    <Compile Include="Providers\Records\RecordCodeFixProvider.cs" />
+    <Compile Include="CodeDocumentor.Package.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\OptionPageGrid.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Analyzers\Fields\NonPublicFieldAnalyzer.cs" />
-    <Compile Include="Analyzers\Classes\NonPublicClassAnalyzer.cs" />
-    <Compile Include="Analyzers\Methods\NonPublicMethodAnalyzer.cs" />
-    <Compile Include="Analyzers\Properties\NonPublicPropertyAnalyzer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Analyzers\Properties\PropertyAnalyzer.cs" />
-    <Compile Include="Analyzers\Properties\PropertyAnalyzerSettings.cs" />
-    <Compile Include="Analyzers\Properties\PropertyCodeFixProvider.cs" />
+    <Compile Include="Services\SettingService.cs" />
     <Compile Include="Settings\VsixOptions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -117,22 +79,18 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common">
-      <Version>4.13.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.8.37222">
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.14.40265">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.8.2365">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2120">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Composition">
-      <Version>8.0.0</Version>
+      <Version>9.0.9</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.8.37221" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.14.40264" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
@@ -151,13 +109,17 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\CodeDocumentor.Analyzers\CodeDocumentor.Analyzers.csproj">
+      <Project>{738d16af-93e6-4f9c-9f6a-9283a3e62243}</Project>
+      <Name>CodeDocumentor.Analyzers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CodeDocumentor.Common\CodeDocumentor.Common.csproj">
       <Project>{7cc64cdf-a7ff-463b-8f05-c37a6c0a820c}</Project>
       <Name>CodeDocumentor.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

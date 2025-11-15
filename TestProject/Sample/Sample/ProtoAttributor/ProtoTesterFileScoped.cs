@@ -1,27 +1,27 @@
-﻿using System;
 using ProtoBuf;
+using System;
 namespace Sample;
 
 
 [ProtoContract]
 public class ProtoTesterFileScoped
 {
-    private string _test;
+  private string _test;
 
-    [ProtoMember(1)]
-    public int MyProperty { get; set; }
+  [ProtoMember(1)]
+  public int MyProperty { get; set; }
 
-    [ProtoMember(2)]
-    public int MyProperty1 { get; set; }
+  [ProtoMember(2)]
+  public int MyProperty1 { get; set; }
 
-    public DateTime? NullDateTime { get; set; }
+  public DateTime? NullDateTime { get; set; }
 
-    public int? NullInt { get; set; }
+  public int? NullInt { get; set; }
 
-    public int?[] NullIntArray { get; set; }
+  public int?[] NullIntArray { get; set; }
 
-    public bool ExecuteWelcome() { ManWorker();  return true; }
+  public bool ExecuteWelcome() { ManWorker(); return true; }
 
-    private string ManWorker() { return ""; }
+  private string ManWorker() { return ""; }
 }
 

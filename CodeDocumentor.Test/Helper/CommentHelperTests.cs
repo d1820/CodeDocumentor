@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Helper;
+using CodeDocumentor.Analyzers.Helper;
+using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -93,7 +94,7 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenOneWordMethodAndLayeredList()
         {
-            TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
+            var typeSyntax = SyntaxFactory.ParseTypeName("Task<List<List<string>>>");
 
             _fixture.MockSettings.ExcludeAsyncSuffix = false;
             _fixture.MockSettings.UseToDoCommentsOnSummaryError = false;
@@ -109,14 +110,15 @@ namespace CodeDocumentor.Test.Helper
         [Fact]
         public void CreateMethodComment_ReturnsValidCommentWhenReturnIsTask_ActionResult_CustomType()
         {
-            var clone = new TestSettings {
+            var clone = new TestSettings
+            {
                 ExcludeAsyncSuffix = false,
                 UseToDoCommentsOnSummaryError = false,
                 TryToIncludeCrefsForReturnTypes = false
             };
             _fixture.MockSettings.SetClone(clone);
 
-            TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
+            var typeSyntax = SyntaxFactory.ParseTypeName("Task<ActionResult<ClientDto>>");
             var commentHelper = new CommentHelper();
             var comment = commentHelper.CreateMethodComment("CreateAsync", typeSyntax,
                 _fixture.MockSettings.UseToDoCommentsOnSummaryError,

@@ -41,7 +41,6 @@ namespace CodeDocumentor.Vsix2022
     [Guid(VsixOptions.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", VsixOptions.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideService(typeof(ISettingService), IsAsyncQueryable = true)]
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
     //[ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]

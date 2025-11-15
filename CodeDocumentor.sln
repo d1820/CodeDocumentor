@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		.gitignore = .gitignore
 		LICENSE.txt = LICENSE.txt
 		Readme.md = Readme.md
+		Reset-Exp.ps1 = Reset-Exp.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeDocumentor.Test", "CodeDocumentor.Test\CodeDocumentor.Test.csproj", "{9F806DE0-98F2-4E73-87E5-6F683206E976}"

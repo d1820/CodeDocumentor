@@ -19,7 +19,7 @@ namespace CodeDocumentor.Vsix2022
     ///  The option page grid.
     /// </summary>
     [Guid("BE905985-26BB-492B-9453-743E26F4E8BB")]
-    public class OptionPageGrid : DialogPage, ISettings
+    public class OptionPageGrid : DialogPage, IBaseSettings
     {
         /// <summary>
         ///  The category.
@@ -149,11 +149,11 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
-            var settings = new Settings();
-            var eventLogger = new Logger();
-            settings.Update(this, eventLogger);
-            settings.Save();
-            ServiceLocator.SettingService.StaticSettings = settings;
+            //var settings = new Settings();
+            //var eventLogger = new Logger();
+            //settings.Update(this, eventLogger);
+            //settings.Save();
+            //ServiceLocator.SettingService.StaticSettings = settings;
         }
 
         public ISettings Clone()

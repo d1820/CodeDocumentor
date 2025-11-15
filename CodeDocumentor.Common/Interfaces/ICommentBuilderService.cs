@@ -54,5 +54,6 @@ namespace CodeDocumentor.Common.Interfaces
         int BuildRecordComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
         RecordDeclarationSyntax BuildNewDeclaration(ISettings settings, RecordDeclarationSyntax declarationSyntax);
         RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax);
+        string AddDocumentation(string fileContents);
     }
 }

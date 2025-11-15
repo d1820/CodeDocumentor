@@ -21,7 +21,38 @@ namespace CodeDocumentor.Common.Services
             _eventLogger = eventLogger;
             _settings = settings;
         }
-        
+
+        public string AddDocumentation(string fileContents)
+        {
+            var tree = CSharpSyntaxTree.ParseText(fileContents);
+            var root = tree.GetRoot();
+
+            // Follow the same pattern as RegisterFileCodeFixesAsync in BaseCodeFixProvider
+            var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
+
+            // Order Matters - same order as in BaseCodeFixProvider.RegisterFileCodeFixesAsync
+            var neededCommentCount = 0;
+            neededCommentCount += BuildPropertyComments(_settings, Constants.DiagnosticIds.PROPERTY_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildConstructorComments(_settings, Constants.DiagnosticIds.CONSTRUCTOR_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildEnumComments(_settings, Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildFieldComments(_settings, Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildMethodComments(_settings, Constants.DiagnosticIds.METHOD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            
+            // Replace nodes from first batch
+            root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
+            _nodesTempToReplace.Clear();
+            
+            // Second batch - same order as in BaseCodeFixProvider.RegisterFileCodeFixesAsync
+            neededCommentCount += BuildInterfaceComments(_settings, Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildComments(_settings, Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildRecordComments(_settings, Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            
+            // Final replacement
+            var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
+            
+            return newRoot.GetText().ToString();
+        }
+
         #region Class Methods
         /// <summary>
         ///  Builds the comments. This is only used in the file level fixProvider.

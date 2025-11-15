@@ -5,7 +5,7 @@ namespace CodeDocumentor
         /// <summary>
         ///  CodeDocumentor.Vsix2022Package GUID string.
         /// </summary>
-        public const string PackageGuidString = "88F29096-CA4C-4F88-A260-705D8BBFCF2A";
+        public const string PackageGuidString = "a5288c71-ef2b-4ec2-8f12-97ca3cd58433";
 
         /// <summary>
         ///  The version. This needs to be kept in sync with Manifest version

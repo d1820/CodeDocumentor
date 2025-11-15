@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="CodeDocumentor2026.501f82a4-2acd-446f-be21-aac22e823205" Version="1.0.0.0" Language="en-US" Publisher="Dan Turco" />
-    <DisplayName>CodeDocumentor</DisplayName>
-    <Description xml:space="preserve">An Extension to generate XML documentation automatically using IntelliSense for interface,class,enum, field, constructor, property and method.</Description>
-    <Icon>logo.png</Icon>
-  </Metadata>
-  <Installation>
-
-    <InstallationTarget Version="[18.0,)" Id="Microsoft.VisualStudio.Community">
-      <ProductArchitecture>amd64</ProductArchitecture>
-    </InstallationTarget>
-    <InstallationTarget Version="[18.0,)" Id="Microsoft.VisualStudio.Enterprise">
-      <ProductArchitecture>amd64</ProductArchitecture>
-    </InstallationTarget>
-    <InstallationTarget Version="[18.0,)" Id="Microsoft.VisualStudio.Pro">
-      <ProductArchitecture>amd64</ProductArchitecture>
-    </InstallationTarget>
-    <InstallationTarget Version="[18.0,)" Id="Microsoft.VisualStudio.Community">
-      <ProductArchitecture>arm64</ProductArchitecture>
-    </InstallationTarget>
-    <InstallationTarget Version="[18.0,)" Id="Microsoft.VisualStudio.Enterprise">
-      <ProductArchitecture>arm64</ProductArchitecture>
-    </InstallationTarget>
-    <InstallationTarget Version="[18.0,)" Id="Microsoft.VisualStudio.Pro">
-      <ProductArchitecture>arm64</ProductArchitecture>
-    </InstallationTarget>
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-  </Dependencies>
-  <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[18.0, )" DisplayName="Visual Studio core editor" />
-  </Prerequisites>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-    <Asset Type="Assembly" Path="Newtonsoft.Json.dll" />
-    <Asset Type="Assembly" Path="Pluralize.NET.dll" />
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="CodeDocumentor2026" Path="|CodeDocumentor2026|" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" Path="CodeDocumentor.Common.dll" />
-  </Assets>
+    <Metadata>
+        <Identity Id="CodeDocumentor2026.501f82a4-2acd-446f-be21-aac22e823205" Version="1.0.0.0" Language="en-US" Publisher="Dan Turco" />
+        <DisplayName>CodeDocumentor2026</DisplayName>
+        <Description xml:space="preserve">An Extension to generate XML documentation automatically using IntelliSense for interface,class,enum, field, constructor, property and method.</Description>
+        <Icon>logo.png</Icon>
+        <Tags>documentation;xml;comments;intellisense;code generator</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Community">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Enterprise">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Pro">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Community">
+            <ProductArchitecture>arm64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Enterprise">
+            <ProductArchitecture>arm64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Pro">
+            <ProductArchitecture>arm64</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="CodeDocumentor.Common" Path="|CodeDocumentor.Common|" />
+        <Asset Type="Assembly" d:Source="File" Path="Newtonsoft.Json.dll" />
+        <Asset Type="Assembly" d:Source="File" Path="Pluralize.NET.dll" />
+    </Assets>
 </PackageManifest>

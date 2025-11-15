@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Analyzers.Constructors;
 using CodeDocumentor.Common.Models;
-using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 

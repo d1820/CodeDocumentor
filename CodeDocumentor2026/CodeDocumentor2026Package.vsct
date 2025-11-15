@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!--  This is the file that defines the actual layout and type of the commands.
+        It is divided in different sections (e.g. command definition, command
+        placement, ...), with each defining a specific set of properties.
+        See the comment before each section for more details about how to
+        use it. -->
+
+    <!--  The VSCT compiler (the tool that translates this file into the binary
+        format that VisualStudio will consume) has the ability to run a preprocessor
+        on the vsct file; this preprocessor is (usually) the C++ preprocessor, so
+        it is possible to define includes and macros with the same syntax used
+        in C++ files. Using this ability of the compiler here, we include some files
+        defining some of the constants that we will use inside the file. -->
+
+    <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
+    <Extern href="stdidcmd.h"/>
+
+    <!--This header contains the command ids for the menus provided by the shell. -->
+    <Extern href="vsshlids.h"/>
+
+    <!--The Commands section is where commands, menus, and menu groups are defined.
+      This section uses a Guid to identify the package that provides the command defined inside it. -->
+    <Commands package="guidProtoAttributorPackage">
+
+        <Groups>
+            <!--VS Groups-->
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoMenuGroup" priority="4">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+            </Group>
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenuGroup" priority="6">
+                <Parent  guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+            </Group>
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenuGroup" priority="6">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
+            </Group>
+
+            <!--Menus-->
+            <!--This SubGroup Contains the tool menu items-->
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" priority="1">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu"/>
+            </Group>
+
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuDataAnnoGroup" priority="2">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu"/>
+            </Group>
+
+            <!--This SubGroup Contains the context menu items-->
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" priority="1">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu"/>
+            </Group>
+
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuDataAnnoGroup" priority="2">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu"/>
+            </Group>
+
+        </Groups>
+
+        <Menus>
+            <Menu guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu" priority="0x0100" type="Menu">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenuGroup"/>
+
+                <Strings>
+                    <ButtonText>Proto Attributor</ButtonText>
+                </Strings>
+            </Menu>
+
+            <Menu guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu" priority="0x0100" type="Menu">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenuGroup"/>
+                <!--<CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>-->
+                <Strings>
+                    <ButtonText>Proto Attributor</ButtonText>
+                </Strings>
+            </Menu>
+        </Menus>
+
+        <Buttons>
+            <!--MENU ITEMS-->
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoAddAttrCommandId" priority="1" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Add ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoRenumberAttrCommandId" priority="2" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Reorder ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoRemoveAttrCommandId" priority="3" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Remove ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoAddAttrCommandId" priority="4" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuDataAnnoGroup" />
+                <Strings>
+                    <ButtonText>Add DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoRenumberAttrCommandId" priority="5" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuDataAnnoGroup" />
+                <Strings>
+                    <ButtonText>Reorder DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoRemoveAttrCommandId" priority="6" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuDataAnnoGroup" />
+                <Strings>
+                    <ButtonText>Remove DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+
+            <!--CONTEXT ITEMS-->
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoContextAddAttrCommandId" priority="1" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Add ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoContextRenumberAttrCommandId" priority="2" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Reorder ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoContextRemoveAttrCommandId" priority="3" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Remove ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoContextAddAttrCommandId" priority="4" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuDataAnnoGroup" />
+                <Strings>
+                    <ButtonText>Add DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoContextRenumberAttrCommandId" priority="5" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuDataAnnoGroup" />
+                <Strings>
+                    <ButtonText>Reorder DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoContextRemoveAttrCommandId" priority="6" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuDataAnnoGroup" />
+                <Strings>
+                    <ButtonText>Remove DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+        </Buttons>
+
+        <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
+        <Bitmaps>
+            <!--  The bitmap id is defined in a way that is a little bit different from the others:
+            the declaration starts with a guid for the bitmap strip, then there is the resource id of the
+            bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
+            inside a button definition. An important aspect of this declaration is that the element id
+            must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
+            <Bitmap guid="guidImages" href="Resources\ProtoCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+        </Bitmaps>
+    </Commands>
+    <VisibilityConstraints>
+        <VisibilityItem guid="guidProtoAttributorPackageCmdSet"
+              id="ProtoMenuGroup"
+              context="UICONTEXT_SolutionHasSingleProject" />
+        <VisibilityItem guid="guidProtoAttributorPackageCmdSet"
+              id="ProtoMenuGroup"
+              context="UICONTEXT_SolutionHasMultipleProjects" />
+    </VisibilityConstraints>
+    <Symbols>
+
+        <!-- This is the package guid. -->
+        <GuidSymbol name="guidProtoAttributorPackage" value="{4ae69a22-8f3b-4af7-8478-4029546ad807}" />
+
+        <!-- This is the guid used to group the menu commands together -->
+        <GuidSymbol name="guidProtoAttributorPackageCmdSet" value="{389ac0f4-15c7-4b06-b5be-ab2039d45ef2}">
+            <IDSymbol name="ProtoMenu" value="0x1150"/>
+
+            <IDSymbol name="ProtoMenuGroup" value="169" />
+            <IDSymbol name="ProtoSubMenuGroup" value="170" />
+            <IDSymbol name="ProtoSubMenuDataAnnoGroup" value="171" />
+
+
+            <IDSymbol name="ProtoSubMenuProtoItemsSection" value="172"/>
+            <IDSymbol name="ProtoSubMenuDataAnnoItemsSection" value="173"/>
+
+            <IDSymbol name="ProtoAddAttrCommandId" value="13"/>
+            <IDSymbol name="ProtoRenumberAttrCommandId" value="14"/>
+            <IDSymbol name="DataAnnoAddAttrCommandId" value="15"/>
+            <IDSymbol name="DataAnnoRenumberAttrCommandId" value="16"/>
+            <IDSymbol name="DataAnnoRemoveAttrCommandId" value="17"/>
+            <IDSymbol name="ProtoRemoveAttrCommandId" value="18"/>
+
+            <!--Context Items-->
+            <IDSymbol name="ProtoContextMenu" value="27"/>
+
+            <IDSymbol name="ProtoContextMenuGroup" value="271" />
+            <IDSymbol name="ProtoContextSubMenuGroup" value="270" />
+            <IDSymbol name="ProtoContextSubMenuDataAnnoGroup" value="274" />
+
+
+            <IDSymbol name="ProtoContextSubMenuProtoItemsSection" value="272"/>
+            <IDSymbol name="ProtoContextSubMenuDataAnnoItemsSection" value="273"/>
+
+
+            <IDSymbol name="ProtoContextAddAttrCommandId" value="23"/>
+            <IDSymbol name="ProtoContextRenumberAttrCommandId" value="24"/>
+            <IDSymbol name="DataAnnoContextAddAttrCommandId" value="25"/>
+            <IDSymbol name="DataAnnoContextRenumberAttrCommandId" value="26"/>
+            <IDSymbol name="DataAnnoContextRemoveAttrCommandId" value="28"/>
+            <IDSymbol name="ProtoContextRemoveAttrCommandId" value="29"/>
+        </GuidSymbol>
+
+        <GuidSymbol name="guidImages" value="{63feeb1d-8d78-4121-a5d7-e6d202f357db}" >
+            <IDSymbol name="bmpPic1" value="1" />
+            <IDSymbol name="bmpPic2" value="2" />
+            <IDSymbol name="bmpPicSearch" value="3" />
+            <IDSymbol name="bmpPicX" value="4" />
+            <IDSymbol name="bmpPicArrows" value="5" />
+            <IDSymbol name="bmpPicStrikethrough" value="6" />
+        </GuidSymbol>
+    </Symbols>
+</CommandTable>

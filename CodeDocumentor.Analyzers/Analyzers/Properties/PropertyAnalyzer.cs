@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Properties
+namespace CodeDocumentor.Analyzers.Analyzers.Properties
 {
     /// <summary>
     ///  The property analyzer.

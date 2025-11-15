@@ -1,7 +1,15 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Analyzers.Classes;
+using CodeDocumentor.Analyzers.Analyzers.Constructors;
+using CodeDocumentor.Analyzers.Analyzers.Enums;
+using CodeDocumentor.Analyzers.Analyzers.Fields;
+using CodeDocumentor.Analyzers.Analyzers.Files;
+using CodeDocumentor.Analyzers.Analyzers.Interfaces;
+using CodeDocumentor.Analyzers.Analyzers.Methods;
+using CodeDocumentor.Analyzers.Analyzers.Properties;
+using CodeDocumentor.Analyzers.Analyzers.Records;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Helpers;

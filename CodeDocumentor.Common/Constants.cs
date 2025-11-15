@@ -12,6 +12,8 @@ namespace CodeDocumentor.Common
     {
         public const DiagnosticSeverity DefaultDiagnosticSeverityOnError = DiagnosticSeverity.Info;
 
+        public static readonly Guid CommandSetId = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
+
         public const string TODO = "TODO: Add Summary";
 
         public static class EventIds

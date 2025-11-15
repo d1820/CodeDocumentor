@@ -4,7 +4,7 @@ using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Analyzers
+namespace CodeDocumentor.Analyzers.Analyzers
 {
     public class BaseAnalyzerSettings
     {

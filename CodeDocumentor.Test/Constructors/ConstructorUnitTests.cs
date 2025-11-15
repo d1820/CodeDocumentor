@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers;
-using CodeDocumentor.Analyzers.Constructors;
+using CodeDocumentor.Analyzers.Analyzers.Constructors;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;

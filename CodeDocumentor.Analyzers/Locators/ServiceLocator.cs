@@ -3,7 +3,6 @@ using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Analyzers.Managers;
 using CodeDocumentor.Analyzers.Services;
 using CodeDocumentor.Common.Interfaces;
-using CodeDocumentor.Services;
 
 namespace CodeDocumentor.Analyzers.Locators
 {

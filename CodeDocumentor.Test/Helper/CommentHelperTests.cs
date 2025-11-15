@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Test.TestHelpers;
-using Shouldly;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 

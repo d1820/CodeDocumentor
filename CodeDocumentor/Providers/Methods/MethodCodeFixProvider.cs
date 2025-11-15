@@ -4,7 +4,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Analyzers.Methods;
 using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;

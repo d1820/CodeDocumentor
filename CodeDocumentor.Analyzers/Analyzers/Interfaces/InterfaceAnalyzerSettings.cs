@@ -2,7 +2,7 @@ using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Analyzers
+namespace CodeDocumentor.Analyzers.Analyzers.Interfaces
 {
     public class InterfaceAnalyzerSettings : BaseAnalyzerSettings
     {

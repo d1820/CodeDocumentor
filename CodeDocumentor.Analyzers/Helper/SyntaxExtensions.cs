@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
+using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor
+namespace CodeDocumentor.Analyzers.Helper
 {
     public static class SyntaxExtensions
     {

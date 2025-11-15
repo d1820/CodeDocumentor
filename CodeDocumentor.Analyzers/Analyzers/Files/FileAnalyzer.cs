@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Files
+namespace CodeDocumentor.Analyzers.Analyzers.Files
 {
     /// <summary>
     ///   The class analyzer.

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Fields
+namespace CodeDocumentor.Analyzers.Analyzers.Fields
 {
     /// <summary>
     ///  The field analyzer.

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Constructors
+namespace CodeDocumentor.Analyzers.Analyzers.Constructors
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NonPublicConstructorAnalyzer : DiagnosticAnalyzer

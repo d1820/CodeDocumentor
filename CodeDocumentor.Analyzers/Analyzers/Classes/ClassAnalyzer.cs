@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Classes
+namespace CodeDocumentor.Analyzers.Analyzers.Classes
 {
     /// <summary>
     ///  The class analyzer.

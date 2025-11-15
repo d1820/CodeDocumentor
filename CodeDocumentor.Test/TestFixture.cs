@@ -10,10 +10,10 @@ using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
-using Shouldly;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 

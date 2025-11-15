@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers;
-using CodeDocumentor.Analyzers.Enums;
+using CodeDocumentor.Analyzers.Analyzers.Enums;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;

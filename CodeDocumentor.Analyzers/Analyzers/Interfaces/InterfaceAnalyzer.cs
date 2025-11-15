@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Interfaces
+namespace CodeDocumentor.Analyzers.Analyzers.Interfaces
 {
     /// <summary>
     ///  The interface analyzer.

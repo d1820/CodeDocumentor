@@ -4,8 +4,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
+using CodeDocumentor.Common.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -39,6 +40,7 @@ namespace CodeDocumentor.Vsix2022
     [Guid(VsixOptions.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", VsixOptions.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideService(typeof(ISettingService), IsAsyncQueryable = true)]
     [ProvideOptionPage(typeof(OptionPageGrid), OptionPageGrid.Category, OptionPageGrid.SubCategory, 1000, 1001, true)]
     //[ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
@@ -72,7 +74,7 @@ namespace CodeDocumentor.Vsix2022
         {
             //this needs to be set here due to bootstrapping environment and where EventLog is available
             ServiceLocator.Logger = new Logger();
-            ServiceLocator.SettingService = new SettingService();
+            ServiceLocator.SettingService = new SettingService(new Logger());
 
             //var hasCodeDocumentorInEditorConfig = await SlnHasEditorConfigAsync(hasCodeDocumentorInEditorConfig);
 
@@ -82,6 +84,21 @@ namespace CodeDocumentor.Vsix2022
             var settings = new Settings();
             settings.SetFromOptionsGrid(options);
             ServiceLocator.SettingService.StaticSettings = settings;
+
+
+            var settingServiceCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
+            {
+                if (typeof(ISettingService) == serviceType)
+                {
+                    var svc = new SettingService(new Logger());
+                    svc.StaticSettings = settings;
+                    return svc;
+                }
+                return null;
+            });
+            AddService(typeof(ISettingService), settingServiceCallback, true);
+
+
         }
 
         //private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)

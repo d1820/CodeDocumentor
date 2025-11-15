@@ -4,6 +4,8 @@ using System.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeDocumentor.Analyzers;
+using CodeDocumentor.Analyzers.Locators;
+using CodeDocumentor.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;

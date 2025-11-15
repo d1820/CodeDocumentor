@@ -1,6 +1,6 @@
 using System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-namespace CodeDocumentor.Analyzers.Helper
+namespace CodeDocumentor.Common.Helper
 {
     public static class WordExtensions
     {

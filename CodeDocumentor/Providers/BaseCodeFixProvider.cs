@@ -10,10 +10,10 @@ using CodeDocumentor.Analyzers.Analyzers.Interfaces;
 using CodeDocumentor.Analyzers.Analyzers.Methods;
 using CodeDocumentor.Analyzers.Analyzers.Properties;
 using CodeDocumentor.Analyzers.Analyzers.Records;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -52,7 +52,7 @@ namespace CodeDocumentor
         /// <returns> A Task. </returns>
         protected async Task RegisterFileCodeFixesAsync(CodeFixContext context, Diagnostic diagnostic)
         {
-#if DEBUG
+#if !DEBUG
             ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
             return;
 #else
@@ -64,22 +64,23 @@ namespace CodeDocumentor
                 return;
             }
             var settings = await context.BuildSettingsAsync();
+            var commentService = ServiceLocator.CommentBuilderService;
             TryHelper.Try(() =>
             {
                 var _nodesTempToReplace = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
 
                 //Order Matters
                 var neededCommentCount = 0;
-                neededCommentCount += PropertyCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
-                neededCommentCount += ConstructorCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
-                neededCommentCount += EnumCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
-                neededCommentCount += FieldCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
-                neededCommentCount += MethodCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildPropertyComments(settings, PropertyAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildConstructorComments(settings, ConstructorAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildEnumComments(settings, EnumAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildFieldComments(settings, FieldAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildMethodComments(settings, MethodAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
                 root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
                 _nodesTempToReplace.Clear();
-                neededCommentCount += InterfaceCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
-                neededCommentCount += ClassCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
-                neededCommentCount += RecordCodeFixProvider.BuildComments(settings, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildInterfaceComments(settings, InterfaceAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildComments(settings, ClassAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
+                neededCommentCount += commentService.BuildRecordComments(settings, RecordAnalyzerSettings.DiagnosticId, root, _nodesTempToReplace);
                 var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
                 if (neededCommentCount == 0)
                 {

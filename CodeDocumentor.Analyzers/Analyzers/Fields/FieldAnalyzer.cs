@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Linq;
 using CodeDocumentor.Analyzers.Builders;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
+using CodeDocumentor.Common.Helper;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -2,17 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CodeDocumentor.Analyzers.Locators;
-using CodeDocumentor.Common;
 using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Helper
+namespace CodeDocumentor.Common.Helper
 {
     /// <summary>
     ///  The documentation header helper.

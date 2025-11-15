@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CodeDocumentor.Analyzers.Constructors;
-using CodeDocumentor.Common;
+using CodeDocumentor.Common.Constructors;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Helper
+namespace CodeDocumentor.Common.Helper
 {
     public static class ListExtensions
     {

@@ -1,8 +1,14 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using CodeDocumentor;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Models;
+using CodeDocumentor.Common.Services;
+using CodeDocumentor.Vsix2022;
 using Microsoft.VisualStudio.Shell;
 using Task = System.Threading.Tasks.Task;
+using CodeDocumentor.Common;
 
 namespace CodeDocumentor2026
 {
@@ -45,7 +51,21 @@ namespace CodeDocumentor2026
         {
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
-            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+            var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            var settings = new Settings();
+            settings.SetFromOptionsGrid(options);
+            var settingServiceCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
+            {
+                if (typeof(ICommentBuilderService) == serviceType)
+                {
+                    var svc = new CommentBuilderService(new Logger(), settings);
+                    return svc;
+                }
+                return null;
+            });
+            AddService(typeof(ICommentBuilderService), settingServiceCallback, true);
         }
 
         #endregion

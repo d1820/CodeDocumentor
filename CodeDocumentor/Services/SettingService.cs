@@ -27,12 +27,6 @@ namespace CodeDocumentor.Common.Services
             var opts = context.Options.AnalyzerConfigOptionsProvider.GetOptions(context.Node.SyntaxTree);
             return BuildSettings(opts);
         }
-        [Obsolete("Use BuildSettings with ISettings parameter")]
-        public ISettings BuildSettings(SyntaxNodeAnalysisContext context, ISettings Settings)
-        {
-            var opts = context.Options.AnalyzerConfigOptionsProvider.GetOptions(context.Node.SyntaxTree);
-            return BuildSettings(opts);
-        }
 
         public ISettings BuildSettings(AnalyzerConfigOptions options)
         {

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using CodeDocumentor.Analyzers.Helper;
+using CodeDocumentor.Common.Helper;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;

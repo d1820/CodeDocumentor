@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Helper
+namespace CodeDocumentor.Common.Helper
 {
     /// <summary>
     ///  Verifies whether a member is private.

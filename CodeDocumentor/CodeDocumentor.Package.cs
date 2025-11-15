@@ -2,15 +2,16 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Common.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
+using CodeDocumentor.Analyzers.Services;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 
@@ -47,6 +48,14 @@ namespace CodeDocumentor.Vsix2022
     //[ComVisible(true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
+
+        static CodeDocumentorPackage()
+        {
+            ServiceLocator.Logger = new PreLoadLogger();
+            ServiceLocator.SettingService = new PreLoadSettingService();
+            ServiceLocator.CommentBuilderService = new CommentBuilderService(ServiceLocator.Logger, Settings.BuildDefaults()); ;
+        }
+
         #region Package Members
 
         /// <summary>
@@ -84,21 +93,7 @@ namespace CodeDocumentor.Vsix2022
             var settings = new Settings();
             settings.SetFromOptionsGrid(options);
             ServiceLocator.SettingService.StaticSettings = settings;
-
-
-            var settingServiceCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
-            {
-                if (typeof(ISettingService) == serviceType)
-                {
-                    var svc = new SettingService(new Logger());
-                    svc.StaticSettings = settings;
-                    return svc;
-                }
-                return null;
-            });
-            AddService(typeof(ISettingService), settingServiceCallback, true);
-
-
+            ServiceLocator.CommentBuilderService = new CommentBuilderService(ServiceLocator.Logger, settings);
         }
 
         //private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)

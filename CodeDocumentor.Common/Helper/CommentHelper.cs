@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using CodeDocumentor.Common;
 using CodeDocumentor.Common.Extensions;
+using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 
-namespace CodeDocumentor.Analyzers.Helper
+namespace CodeDocumentor.Common.Helper
 {
     /// <summary>
     ///  The comment helper.

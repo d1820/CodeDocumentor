@@ -2,7 +2,7 @@ using System;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Constructors
+namespace CodeDocumentor.Common.Constructors
 {
     public class SingleWordCommentSummaryConstruction : BaseReturnTypeCommentConstruction
     {

@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Analyzers.Constructors;
+using CodeDocumentor.Common.Constructors;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Shouldly;

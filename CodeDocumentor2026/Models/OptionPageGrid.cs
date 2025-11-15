@@ -32,11 +32,6 @@ namespace CodeDocumentor.Vsix2022
         public const string SubCategory = "General";
 
         /// <summary>
-        ///  The analyzer sub category.
-        /// </summary>
-        private const string AnalyzerSubCategory = "Analyzer Options";
-
-        /// <summary>
         ///  The returns sub category.
         /// </summary>
         private const string ReturnsSubCategory = "Return Options";
@@ -52,38 +47,6 @@ namespace CodeDocumentor.Vsix2022
         private const string TranslationSubCategory = "Translation Options";
 
         /// <summary>
-        ///  Gets or Sets the class diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Class Diagnostic Severity")]
-        [Description("When highlighting missing comments on a class this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? ClassDiagnosticSeverity { get; set; }
-
-        /// <summary>
-        ///  Gets or Sets the constructor diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Constructor Diagnostic Severity")]
-        [Description("When highlighting missing comments on a constructor this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? ConstructorDiagnosticSeverity { get; set; }
-
-        /// <summary>
-        ///  Gets or Sets the default diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Default Diagnostic Severity")]
-        [Description("When highlighting missing comments this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity DefaultDiagnosticSeverity { get; set; } = DiagnosticSeverity.Warning;
-
-        /// <summary>
-        ///  Gets or Sets the enum diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Enum Diagnostic Severity")]
-        [Description("When highlighting missing comments on an enum this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? EnumDiagnosticSeverity { get; set; }
-
-        /// <summary>
         ///  Gets or Sets a value indicating whether exclude asynchronously suffix.
         /// </summary>
         /// <value> A bool. </value>
@@ -93,14 +56,6 @@ namespace CodeDocumentor.Vsix2022
         public bool ExcludeAsyncSuffix { get; set; }
 
         /// <summary>
-        ///  Gets or Sets the field diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Field Diagnostic Severity")]
-        [Description("When highlighting missing comments on a field this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? FieldDiagnosticSeverity { get; set; }
-
-        /// <summary>
         ///  Gets or Sets a value indicating whether include value node in properties.
         /// </summary>
         /// <value> A bool. </value>
@@ -108,14 +63,6 @@ namespace CodeDocumentor.Vsix2022
         [DisplayName("Include <value> node in property comments")]
         [Description("When documenting properties add the value node with the return type")]
         public bool IncludeValueNodeInProperties { get; set; }
-
-        /// <summary>
-        ///  Gets or Sets the interface diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Interface Diagnostic Severity")]
-        [Description("When highlighting missing comments on an interface this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? InterfaceDiagnosticSeverity { get; set; }
 
         /// <summary>
         ///  Gets or Sets a value indicating whether enabled for non public is fields.
@@ -135,36 +82,12 @@ namespace CodeDocumentor.Vsix2022
         public bool IsEnabledForPublicMembersOnly { get; set; }
 
         /// <summary>
-        ///  Gets or Sets the method diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Method Diagnostic Severity")]
-        [Description("When highlighting missing comments on a method this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? MethodDiagnosticSeverity { get; set; }
-
-        /// <summary>
         ///  Gets or Sets a value indicating whether preserve existing summary text.
         /// </summary>
         [Category(SummarySubCategory)]
         [DisplayName("Preserve Existing Summary Text")]
         [Description("When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.")]
         public bool PreserveExistingSummaryText { get; set; } = true;
-
-        /// <summary>
-        ///  Gets or Sets the property diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Property Diagnostic Severity")]
-        [Description("When highlighting missing comments on a property this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? PropertyDiagnosticSeverity { get; set; }
-
-        /// <summary>
-        ///  Gets or Sets the record diagnostic severity.
-        /// </summary>
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Record Diagnostic Severity")]
-        [Description("When highlighting missing comments on a record this is the default severity that gets applied. Visual Studio must be restarted to fully take affect.")]
-        public DiagnosticSeverity? RecordDiagnosticSeverity { get; set; }
 
         /// <summary>
         ///  Gets or Sets a value indicating whether use try and include crefs in method comments.
@@ -203,11 +126,6 @@ namespace CodeDocumentor.Vsix2022
         [Description("When documenting if certain word are matched it will swap out to the translated mapping.")]
         public WordMap[] WordMaps { get; set; }
 
-        [Category(AnalyzerSubCategory)]
-        [DisplayName("Use .editorconfig for extension options")]
-        [Description("This will convert existing extension options to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.")]
-        public bool UseEditorConfigForSettings { get; set; }
-
         /// <summary>
         ///  Load settings from storage.
         /// </summary>
@@ -221,19 +139,9 @@ namespace CodeDocumentor.Vsix2022
             IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
             TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes;
-            WordMaps = settings.WordMaps ?? Constants.DEFAULT_WORD_MAPS; //if we dont have anything need to use defaults
-            DefaultDiagnosticSeverity = settings.DefaultDiagnosticSeverity;
+            WordMaps = settings.WordMaps ?? Constants.DEFAULT_WORD_MAPS; 
             PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
-            ClassDiagnosticSeverity = settings.ClassDiagnosticSeverity;
-            ConstructorDiagnosticSeverity = settings.ConstructorDiagnosticSeverity;
-            EnumDiagnosticSeverity = settings.EnumDiagnosticSeverity;
-            FieldDiagnosticSeverity = settings.FieldDiagnosticSeverity;
-            InterfaceDiagnosticSeverity = settings.InterfaceDiagnosticSeverity;
-            MethodDiagnosticSeverity = settings.MethodDiagnosticSeverity;
-            PropertyDiagnosticSeverity = settings.PropertyDiagnosticSeverity;
-            RecordDiagnosticSeverity = settings.RecordDiagnosticSeverity;
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
-            UseEditorConfigForSettings = settings.UseEditorConfigForSettings;
         }
 
         /// <summary>
@@ -245,27 +153,6 @@ namespace CodeDocumentor.Vsix2022
             var eventLogger = new Logger();
             settings.Update(this, eventLogger);
             settings.Save();
-            var response = DialogResult.No;
-
-            if (settings.UseEditorConfigForSettings)
-            {
-                response = MessageBox.Show(
-                    $"This will copy existing extension options to .editorconfig values. " +
-                    $"This would allow CodeDocumentor to run out of process for this solution. " +
-                    $"Do you want to continue?{Environment.NewLine}" +
-                    $"You will need to paste these options into your solution .editorconfig and restart Visual Studio.",
-                    "CodeDocumentor Options Management",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-            }
-            if (response == DialogResult.Yes)
-            {
-                settings.SaveToEditorConfig(clipboardStr => Clipboard.SetText(clipboardStr));
-                MessageBox.Show("Settings have been copied to the clipboard. Update your solution .editorconfig file with the copied settings. You will need to restart Visual Studio.",
-                    "Settings copied to clipboard",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
             ServiceLocator.SettingService.StaticSettings = settings;
         }
 

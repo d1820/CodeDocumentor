@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
-using CodeDocumentor.Analyzers.Managers;
+using CodeDocumentor.Common.Helper;
+using CodeDocumentor.Common.Locators;
+using CodeDocumentor.Common.Managers;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Constructors
+namespace CodeDocumentor.Common.Constructors
 {
     public abstract class BaseReturnTypeCommentConstruction
     {

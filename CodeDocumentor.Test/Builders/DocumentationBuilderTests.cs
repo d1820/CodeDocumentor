@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Analyzers.Builders;
+using CodeDocumentor.Common.Builders;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;

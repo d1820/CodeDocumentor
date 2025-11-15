@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Common.Extensions;
+using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

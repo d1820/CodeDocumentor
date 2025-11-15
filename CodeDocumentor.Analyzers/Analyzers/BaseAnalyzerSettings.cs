@@ -1,7 +1,7 @@
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 
 namespace CodeDocumentor.Analyzers.Analyzers

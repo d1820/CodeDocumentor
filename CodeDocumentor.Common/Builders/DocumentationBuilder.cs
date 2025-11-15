@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
-using CodeDocumentor.Analyzers.Constructors;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
-using CodeDocumentor.Common;
+using CodeDocumentor.Common.Constructors;
+using CodeDocumentor.Common.Helper;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Builders
+namespace CodeDocumentor.Common.Builders
 {
     public class DocumentationBuilder
     {
         private readonly DocumentationHeaderHelper _documentationHeaderHelper = ServiceLocator.DocumentationHeaderHelper;
-        private XmlElementSyntax _currentElement;
         private readonly List<XmlNodeSyntax> _list = new List<XmlNodeSyntax>();
+        private XmlElementSyntax _currentElement;
 
         public SyntaxList<XmlNodeSyntax> Build()
         {
@@ -246,7 +245,7 @@ namespace CodeDocumentor.Analyzers.Builders
             }
             /*
                 /// <summary>
-                ///  The code fix provider.
+                ///   The code fix provider.
                 /// </summary>
                 /// [0]
             */

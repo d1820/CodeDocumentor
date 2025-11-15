@@ -1,19 +1,17 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDocumentor.Analyzers.Analyzers.Methods;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeDocumentor
@@ -81,86 +79,18 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        ///  Builds the comments. This is only used in the file level fixProvider.
-        /// </summary>
-        /// <param name="root"> The root. </param>
-        /// <param name="nodesToReplace"> The nodes to replace. </param>
-        internal static int BuildComments(ISettings settings, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
-        {
-            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
-            var neededCommentCount = 0;
-            TryHelper.Try(() =>
-            {
-                foreach (var declarationSyntax in declarations)
-                {
-                    if (
-                       !declarationSyntax.IsOwnedByInterface() &&
-                       settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax)
-                    )
-                    {
-                        continue;
-                    }
-                    //if method is already commented dont redo it, user should update methods individually
-                    if (declarationSyntax.HasSummary())
-                    {
-                        continue;
-                    }
-                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
-                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
-                    neededCommentCount++;
-                }
-            }, MethodAnalyzerSettings.DiagnosticId, EventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
-            return neededCommentCount;
-        }
-
-        private static MethodDeclarationSyntax BuildNewDeclaration(ISettings settings, MethodDeclarationSyntax declarationSyntax)
-        {
-            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var commentTrivia = CreateDocumentationCommentTriviaSyntax(settings, declarationSyntax);
-            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
-        }
-
-        /// <summary>
-        ///  Creates documentation comment trivia syntax.
-        /// </summary>
-        /// <param name="declarationSyntax"> The declaration syntax. </param>
-        /// <returns> A DocumentationCommentTriviaSyntax. </returns>
-        private static DocumentationCommentTriviaSyntax CreateDocumentationCommentTriviaSyntax(ISettings settings, MethodDeclarationSyntax declarationSyntax)
-        {
-            var commentHelper = ServiceLocator.CommentHelper;
-            var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
-                                                                declarationSyntax.ReturnType,
-                                                               settings.UseToDoCommentsOnSummaryError,
-                                                               settings.TryToIncludeCrefsForReturnTypes,
-                                                               settings.ExcludeAsyncSuffix,
-                                                               settings.WordMaps);
-            var builder = ServiceLocator.DocumentationBuilder;
-
-            var list = builder.WithSummary(declarationSyntax, summaryText, settings.PreserveExistingSummaryText)
-                        .WithTypeParamters(declarationSyntax)
-                        .WithParameters(declarationSyntax, settings.WordMaps)
-                        .WithExceptionTypes(declarationSyntax)
-                        .WithExisting(declarationSyntax, Constants.REMARKS)
-                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
-                        .WithReturnType(declarationSyntax, settings.UseNaturalLanguageForReturnNode, settings.TryToIncludeCrefsForReturnTypes, settings.WordMaps)
-                        .Build();
-
-            return SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
-        }
-
-        /// <summary>
         ///  Adds documentation header async.
         /// </summary>
         /// <param name="document"> The document. </param>
         /// <param name="root"> The root. </param>
         /// <param name="declarationSyntax"> The declaration syntax. </param>
         /// <param name="cancellationToken"> The cancellation token. </param>
-        /// <returns> A Task. </returns>
+        /// <returns> A Document. </returns>
         private Task<Document> AddDocumentationHeaderAsync(ISettings settings, Document document, SyntaxNode root, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             return Task.Run(() => TryHelper.Try(() =>
             {
-                var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                var newDeclaration = ServiceLocator.CommentBuilderService.BuildNewDeclaration(settings, declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, MethodAnalyzerSettings.DiagnosticId, EventLogger, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);

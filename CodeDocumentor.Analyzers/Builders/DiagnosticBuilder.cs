@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using CodeDocumentor.Analyzers.Locators;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

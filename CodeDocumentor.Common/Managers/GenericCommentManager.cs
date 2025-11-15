@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common.Extensions;
+using CodeDocumentor.Common.Helper;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeDocumentor.Analyzers.Managers
+namespace CodeDocumentor.Common.Managers
 {
     public class GenericCommentManager
     {

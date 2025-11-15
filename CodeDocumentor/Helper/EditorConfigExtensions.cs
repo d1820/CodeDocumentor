@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CodeFixes;
 

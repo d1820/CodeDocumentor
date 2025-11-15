@@ -3,7 +3,7 @@ using System.Linq;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Extensions;
 using CodeDocumentor.Common.Models;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -49,7 +49,7 @@ namespace CodeDocumentor.Test.Helper
             temp.AddRange(Constants.INTERNAL_WORD_MAPS);
             _testFixure.MockSettings.WordMaps = temp.ToArray();
             var translated = input.ApplyUserTranslations(_testFixure.MockSettings.WordMaps);
-            translated.Should().Be(output);
+            translated.ShouldBe(output);
         }
     }
 }

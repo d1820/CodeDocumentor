@@ -10,7 +10,7 @@ using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Services;
 using CodeDocumentor.Test.TestHelpers;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -89,7 +89,7 @@ namespace CodeDocumentor.Test
                              where word.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) > -1
                              select word;
 
-            matchQuery.Count().Should().Be(numOfTimes);
+            matchQuery.Count().ShouldBe(numOfTimes);
         }
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, SyntaxKind innerKindValue)

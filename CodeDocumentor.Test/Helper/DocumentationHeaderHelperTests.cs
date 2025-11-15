@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CodeDocumentor.Analyzers.Helper;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,7 +21,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "A <see cref=\"Task\"/> of type <typeparamref name=\"TResult\"/>";
             const string expected = "<returns>A <see cref=\"Task\"/> of type <typeparamref name=\"TResult\"/></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "A <typeparamref name=\"TResult\"/>";
             const string expected = "<returns>A <typeparamref name=\"TResult\"/></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "Task<int>";
             const string expected = "<returns><![CDATA[Task<int>]]></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "<![CDATA[Task<int>]]>";
             const string expected = "<returns><![CDATA[Task<int>]]></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "<see cref=\"MasterClass\"/>";
             const string expected = "<returns><see cref=\"MasterClass\"/></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
         [Fact]
         public void CreateReturnElementSyntax_ReturnsStringAndCRefOfTypeInReturn()
@@ -65,7 +65,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "Returns a <see cref=\"MasterClass\"/>";
             const string expected = "<returns>Returns a <see cref=\"MasterClass\"/></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "Returns an <see cref=\"IMasterClass\"/>";
             const string expected = "<returns>Returns an <see cref=\"IMasterClass\"/></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace CodeDocumentor.Test.Helper
             const string str = "Returns a <see cref=\"Task\"/> of type <see cref=\"MasterClass\"/>";
             const string expected = "<returns>Returns a <see cref=\"Task\"/> of type <see cref=\"MasterClass\"/></returns>";
             var result = _documentationHeaderHelper.CreateReturnElementSyntax(str);
-            result.ToFullString().Should().Be(expected);
+            result.ToFullString().ShouldBe(expected);
         }
 
         #region GetExceptions

@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using CodeDocumentor.Analyzers.Constructors;
 using CodeDocumentor.Common.Models;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 using Xunit.Abstractions;
@@ -39,7 +39,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildQualifiedNameSyntax("System", "String");
             _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be(startWord + "<see cref=\"System.String\"/>");
+            comment.ShouldBe(startWord + "<see cref=\"System.String\"/>");
         }
 
         [Theory]
@@ -50,7 +50,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildQualifiedNameSyntax("Angler", "IClass");
             _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be(startWord + "<see cref=\"Angler.IClass\"/>");
+            comment.ShouldBe(startWord + "<see cref=\"Angler.IClass\"/>");
         }
         #endregion
 
@@ -64,7 +64,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildArrayTypeSyntax(SyntaxKind.StringKeyword);
             _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("an array of strings");
+            comment.ShouldBe("an array of strings");
         }
         #endregion
 
@@ -77,7 +77,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.StringKeyword);
             _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be(startWord + "<see cref=\"string\"/>");
+            comment.ShouldBe(startWord + "<see cref=\"string\"/>");
         }
 
         [Theory]
@@ -88,7 +88,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildPredefinedTypeSyntax(SyntaxKind.IntKeyword);
             _options.IncludeStartingWordInText = includeStartingWordInText;
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be(startWord + "<see cref=\"int\"/>");
+            comment.ShouldBe(startWord + "<see cref=\"int\"/>");
         }
         #endregion
 
@@ -100,7 +100,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A read only collection of strings.");
+            comment.ShouldBe("A read only collection of strings.");
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace CodeDocumentor.Test.Helper
 
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A read only collection of list of strings.");
+            comment.ShouldBe("A read only collection of list of strings.");
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("IReadOnlyCollection", list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A read only collection of a read only collection of strings.");
+            comment.ShouldBe("A read only collection of a read only collection of strings.");
         }
 
         #endregion
@@ -133,7 +133,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.StringKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of strings.");
+            comment.ShouldBe("A list of strings.");
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace CodeDocumentor.Test.Helper
 
             var roc = TestFixture.BuildGenericNameSyntax("List", list);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of a list of strings.");
+            comment.ShouldBe("A list of a list of strings.");
         }
 
         [Fact]
@@ -155,7 +155,7 @@ namespace CodeDocumentor.Test.Helper
 
             var roc = TestFixture.BuildGenericNameSyntax("List", list2);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of a list of a list of strings.");
+            comment.ShouldBe("A list of a list of a list of strings.");
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of strings.");
+            comment.ShouldBe("A list of strings.");
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of a list of strings.");
+            comment.ShouldBe("A list of a list of strings.");
         }
 
         [Fact]
@@ -180,7 +180,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of integers.");
+            comment.ShouldBe("A list of integers.");
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("List", SyntaxKind.IntKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IList", list);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of a list of integers.");
+            comment.ShouldBe("A list of a list of integers.");
         }
 
         #endregion
@@ -201,7 +201,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of strings.");
+            comment.ShouldBe("A list of strings.");
         }
 
         [Fact]
@@ -210,7 +210,7 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("IEnumerable", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax("IEnumerable", list);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A list of a list of strings.");
+            comment.ShouldBe("A list of a list of strings.");
         }
 
         #endregion
@@ -222,7 +222,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("ICollection", SyntaxKind.StringKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A collection of strings.");
+            comment.ShouldBe("A collection of strings.");
         }
 
         [Fact]
@@ -230,7 +230,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("Collection", SyntaxKind.StringKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A collection of strings.");
+            comment.ShouldBe("A collection of strings.");
         }
 
         #endregion
@@ -242,7 +242,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("IDictionary", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A dictionary with a key of type string and a value of type string.");
+            comment.ShouldBe("A dictionary with a key of type string and a value of type string.");
         }
 
         [Fact]
@@ -250,7 +250,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = TestFixture.BuildGenericNameSyntax("IDictionary", SyntaxKind.IntKeyword, SyntaxKind.IntKeyword);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A dictionary with a key of type integer and a value of type integer.");
+            comment.ShouldBe("A dictionary with a key of type integer and a value of type integer.");
         }
 
         [Fact]
@@ -259,7 +259,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A dictionary with a key of type string and a value of type string.");
+            comment.ShouldBe("A dictionary with a key of type string and a value of type string.");
         }
 
         [Fact]
@@ -269,7 +269,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of strings.");
+            comment.ShouldBe("A dictionary with a key of type string and a value of type list of strings.");
         }
 
         [Fact]
@@ -280,7 +280,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list2);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("A dictionary with a key of type string and a value of type list of a list of strings.");
+            comment.ShouldBe("A dictionary with a key of type string and a value of type list of a list of strings.");
         }
 
         #endregion
@@ -292,7 +292,7 @@ namespace CodeDocumentor.Test.Helper
             var method = TestFixture.BuildMethodDeclarationSyntax("TResult", "Tester");
             _options.IncludeStartingWordInText = true;
             var comment = _returnCommentBuilder.BuildComment(method.ReturnType, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("a <typeparamref name=\"TResult\"/>");
+            comment.ShouldBe("a <typeparamref name=\"TResult\"/>");
         }
 
         #endregion
@@ -309,7 +309,7 @@ namespace CodeDocumentor.Test.Helper
 
             _options.TryToIncludeCrefsForReturnTypes = true;
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"string\"/>" + (hasPeriod ? "." : ""));
+            comment.ShouldBe($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"string\"/>" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
@@ -321,7 +321,7 @@ namespace CodeDocumentor.Test.Helper
             var list = TestFixture.BuildGenericNameSyntax("IList", SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax(type, list);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a list of strings" + (hasPeriod ? "." : ""));
+            comment.ShouldBe($"{prefix} <see cref=\"{type}\"/> of a list of strings" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
@@ -334,7 +334,7 @@ namespace CodeDocumentor.Test.Helper
             var dict = TestFixture.BuildGenericNameSyntax("Dictionary", SyntaxKind.StringKeyword, list);
             var roc = TestFixture.BuildGenericNameSyntax(type, dict);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of a dictionary with a key of type string and a value of type list of strings" + (hasPeriod ? "." : ""));
+            comment.ShouldBe($"{prefix} <see cref=\"{type}\"/> of a dictionary with a key of type string and a value of type list of strings" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
@@ -346,7 +346,7 @@ namespace CodeDocumentor.Test.Helper
             var custom = TestFixture.BuildGenericNameSyntax("CustomDoubleGenericType", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
             var roc = TestFixture.BuildGenericNameSyntax(type, custom);
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type CustomDoubleGenericType" + (hasPeriod ? "." : ""));
+            comment.ShouldBe($"{prefix} <see cref=\"{type}\"/> of type CustomDoubleGenericType" + (hasPeriod ? "." : ""));
         }
 
         [Theory]
@@ -357,7 +357,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var roc = SyntaxFactory.ParseTypeName($"{type}<CustomClass>");
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));
+            comment.ShouldBe($"{prefix} <see cref=\"{type}\"/> of type <see cref=\"CustomClass\"/>" + (hasPeriod ? "." : ""));
         }
 
         #endregion
@@ -377,7 +377,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("Span", SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("Span");
+            comment.ShouldBe("Span");
         }
 
         [Fact]
@@ -386,7 +386,7 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildGenericNameSyntax("CustomClass", SyntaxKind.StringKeyword, SyntaxKind.StringKeyword);
 
             var comment = _returnCommentBuilder.BuildComment(roc, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("CustomClass");
+            comment.ShouldBe("CustomClass");
         }
 
         #endregion
@@ -399,10 +399,10 @@ namespace CodeDocumentor.Test.Helper
             var roc = TestFixture.BuildMethodDeclarationSyntax("CustomClass", "TestMethod");
             var returnType = TestFixture.GetReturnType(roc);
 
-            returnType.Should().NotBeNull();
+            returnType.ShouldNotBeNull();
 
             var comment = _returnCommentBuilder.BuildComment(returnType, _options, _testFixture.MockSettings.WordMaps);
-            comment.Should().Be("a <typeparamref name=\"CustomClass\"/>");
+            comment.ShouldBe("a <typeparamref name=\"CustomClass\"/>");
         }
 
         #endregion

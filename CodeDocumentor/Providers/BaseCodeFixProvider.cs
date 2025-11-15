@@ -45,11 +45,6 @@ namespace CodeDocumentor
             FileAnalyzerSettings.DiagnosticId,
         });
 
-        public override FixAllProvider GetFixAllProvider()
-        {
-            return null;
-        }
-
         /// <summary>
         ///  Registers code fixes async.
         /// </summary>
@@ -60,7 +55,7 @@ namespace CodeDocumentor
 #if DEBUG
             ServiceLocator.Logger.LogDebug(Constants.CATEGORY, "!!!DISABLING FILE CODE FIX. EITHER TESTS ARE RUNNING OR DEBUGGER IS ATTACHED!!!");
             return;
-#endif
+#else
             //build it up, but check for counts if anything actually needs to be shown
             var tempDoc = context.Document;
             var root = await tempDoc.GetSyntaxRootAsync(context.CancellationToken);
@@ -98,6 +93,7 @@ namespace CodeDocumentor
                         equivalenceKey: FILE_FIX_TITLE),
                     diagnostic);
             }, diagnostic.Id, EventLogger, eventId: Constants.EventIds.FILE_FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+#endif
         }
     }
 }

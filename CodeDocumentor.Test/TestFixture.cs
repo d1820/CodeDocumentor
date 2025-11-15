@@ -8,11 +8,12 @@ using System.Reflection;
 using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
+using CodeDocumentor.Common.Services;
 using CodeDocumentor.Test.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Moq;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
@@ -61,7 +62,8 @@ namespace CodeDocumentor.Test
             CurrentTestName = output.GetTestName();
 
             MockSettings = new TestSettings();
-            ServiceLocator.SettingService = new SettingService();
+            var mockLogger = new Mock<IEventLogger>();
+            ServiceLocator.SettingService = new SettingService(mockLogger.Object);
             ServiceLocator.SettingService.StaticSettings = MockSettings;
             ServiceLocator.Logger = new Logger();
         }

@@ -106,7 +106,6 @@ namespace CodeDocumentor2026
                 LogDebug($"Package InitializeAsync - ERROR: {ex}");
                 throw;
             }
-
         }
         private async Task RegisterServicesAsync(CancellationToken cancellationToken, ISettings settings)
         {

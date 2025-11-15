@@ -67,12 +67,12 @@
         </Strings>
       </Menu>
 
-      <Menu guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenu" priority="0x0100" type="Menu">
+      <!--<Menu guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenu" priority="0x0100" type="Menu">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem"/>
         <Strings>
           <ButtonText>Code Documentor</ButtonText>
         </Strings>
-      </Menu>
+      </Menu>-->
     </Menus>
 
     <Buttons>
@@ -85,10 +85,16 @@
       </Button>
 
       <!--CONTEXT ITEMS-->
-      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationCommandId" priority="1" type="Button">
-        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextSubMenuGroup" />
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationFileCommandId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem" />
         <Strings>
-          <ButtonText>Code Documentor this</ButtonText>
+          <ButtonText>Add Code Documentor Comments</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationFolderCommandId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupFolder" />
+        <Strings>
+          <ButtonText>Add Code Documentor Comments</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -123,18 +129,20 @@
       <IDSymbol name="CodeDocumentorSubMenuGroup" value="6002" />
       <IDSymbol name="CodeDocumentorSubMenuCodeDocumentorItemsSection" value="6003"/>
 
-      <IDSymbol name="CodeDocumentorAddDocumentationCommandId" value="6004"/>
-
       <!--Context Items-->
       <IDSymbol name="CodeDocumentorContextMenu" value="6005"/>
 
       <IDSymbol name="CodeDocumentorContextMenuGroupItem" value="6006" />
       <IDSymbol name="CodeDocumentorContextMenuGroupFolder" value="6007" />
       <IDSymbol name="CodeDocumentorContextSubMenuGroup" value="6008" />
-
       <IDSymbol name="CodeDocumentorContextSubMenuCodeDocumentorItemsSection" value="6009"/>
 
-      <IDSymbol name="CodeDocumentorContextAddDocumentationCommandId" value="6010"/>
+      <!--These Execute the documentor-->
+      <!--Menu-->
+      <IDSymbol name="CodeDocumentorAddDocumentationCommandId" value="6010"/>
+      <!--Contetext-->
+      <IDSymbol name="CodeDocumentorContextAddDocumentationFolderCommandId" value="6011"/>
+      <IDSymbol name="CodeDocumentorContextAddDocumentationFileCommandId" value="6012"/>
 
     </GuidSymbol>
 

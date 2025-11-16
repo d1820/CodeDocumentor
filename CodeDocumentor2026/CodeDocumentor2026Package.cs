@@ -154,9 +154,9 @@ namespace CodeDocumentor2026
                 await CodeDocumentorFileMenu.InitializeAsync(this);
                 LogDebug("Package CodeDocumentorFileMenu initialized");
 
-                LogDebug("Package Initializing CodeDocumentorFileCommand...");
-                await CodeDocumentorFileCommand.InitializeAsync(this);
-                LogDebug("Package CodeDocumentorFileCommand initialized");
+                LogDebug("Package Initializing CodeDocumentorContextCommand...");
+                await CodeDocumentorContextCommand.InitializeAsync(this);
+                LogDebug("Package CodeDocumentorContextCommand initialized");
 
                 LogDebug("Package InitializeCommandsAsync - SUCCESS");
             }

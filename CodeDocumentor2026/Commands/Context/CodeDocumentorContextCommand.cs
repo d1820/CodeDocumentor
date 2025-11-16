@@ -11,11 +11,16 @@ using Task = System.Threading.Tasks.Task;
 
 namespace CodeDocumentor2026.Commands.Context
 {
-    /// <summary> Command handler </summary>
-    internal sealed class CodeDocumentorFolderCommand
+    /// <summary> 
+    /// Unified command handler for both file and folder context menu items 
+    /// </summary>
+    internal sealed class CodeDocumentorContextCommand
     {
-        /// <summary> Command ID. </summary>
-        public const int CommandId = 6011;
+        /// <summary> File context command ID. </summary>
+        public const int FileCommandId = 6012;
+        
+        /// <summary> Folder context command ID. </summary>
+        public const int FolderCommandId = 6011;
 
         /// <summary> Command menu group (command set GUID). </summary>
         public static readonly Guid _commandSet = CodeDocumentor.Common.Constants.CommandSetId;
@@ -30,19 +35,18 @@ namespace CodeDocumentor2026.Commands.Context
         private readonly SelectedItemCountExecutor _selectedItemCountExecutor;
         private readonly CommentExecutor _commentExecutor;
 
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CodeDocumentorFolderCommand" /> class. Adds our command handlers
-        ///     for menu (commands must exist in the command table file)
+        /// Initializes a new instance of the <see cref="CodeDocumentorContextCommand" /> class.
+        /// Adds command handlers for both file and folder context menus.
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private CodeDocumentorFolderCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
+        private CodeDocumentorContextCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
             ICommentBuilderService commentBuilderService, TextSelectionExecutor textSelectionExecutor,
             IVsThreadedWaitDialogFactory dialogFactory, SelectedItemCountExecutor selectedItemCountExecutor,
             CommentExecutor commentExecutor)
         {
-            LogDebug("FolderCommand Constructor - START");
+            LogDebug("ContextCommand Constructor - START");
             
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -52,17 +56,24 @@ namespace CodeDocumentor2026.Commands.Context
             _dialogFactory = dialogFactory;
             _selectedItemCountExecutor = selectedItemCountExecutor;
             _commentExecutor = commentExecutor;
-            var menuCommandID = new CommandID(_commandSet, CommandId);
             
-            LogDebug($"FolderCommand Creating MenuCommand with GUID: {_commandSet}, ID: {CommandId}");
-            var menuItem = new MenuCommand(Execute, menuCommandID);
-            commandService.AddCommand(menuItem);
+            // Register both file and folder commands with the same handler
+            var fileCommandID = new CommandID(_commandSet, FileCommandId);
+            var folderCommandID = new CommandID(_commandSet, FolderCommandId);
             
-            LogDebug("FolderCommand Constructor - SUCCESS");
+            LogDebug($"ContextCommand Creating File MenuCommand with GUID: {_commandSet}, ID: {FileCommandId}");
+            var fileMenuItem = new MenuCommand(Execute, fileCommandID);
+            commandService.AddCommand(fileMenuItem);
+            
+            LogDebug($"ContextCommand Creating Folder MenuCommand with GUID: {_commandSet}, ID: {FolderCommandId}");
+            var folderMenuItem = new MenuCommand(Execute, folderCommandID);
+            commandService.AddCommand(folderMenuItem);
+            
+            LogDebug("ContextCommand Constructor - SUCCESS");
         }
 
         /// <summary> Gets the instance of the command. </summary>
-        public static CodeDocumentorFolderCommand Instance
+        public static CodeDocumentorContextCommand Instance
         {
             get;
             private set;
@@ -83,63 +94,62 @@ namespace CodeDocumentor2026.Commands.Context
         {
             try
             {
-                LogDebug("FolderCommand InitializeAsync - START");
+                LogDebug("ContextCommand InitializeAsync - START");
                 
-                // Switch to the main thread - the call to AddCommand in ProtoCommand's constructor requires the UI thread.
+                // Switch to the main thread - the call to AddCommand requires the UI thread.
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-                LogDebug("FolderCommand Switched to main thread");
+                LogDebug("ContextCommand Switched to main thread");
 
-                LogDebug("FolderCommand Getting IMenuCommandService...");
+                LogDebug("ContextCommand Getting IMenuCommandService...");
                 var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-                LogDebug($"FolderCommand IMenuCommandService result: {(commandService != null ? "SUCCESS" : "NULL")}");
+                LogDebug($"ContextCommand IMenuCommandService result: {(commandService != null ? "SUCCESS" : "NULL")}");
                 
-                LogDebug("FolderCommand Getting ICommentBuilderService...");
+                LogDebug("ContextCommand Getting ICommentBuilderService...");
                 var attributeService = await package.GetServiceAsync(typeof(ICommentBuilderService)) as ICommentBuilderService;
-                LogDebug($"FolderCommand ICommentBuilderService result: {(attributeService != null ? "SUCCESS" : "NULL")}");
+                LogDebug($"ContextCommand ICommentBuilderService result: {(attributeService != null ? "SUCCESS" : "NULL")}");
                 
-                LogDebug("FolderCommand Getting SVsThreadedWaitDialogFactory...");
+                LogDebug("ContextCommand Getting SVsThreadedWaitDialogFactory...");
                 var dialogFactory = await package.GetServiceAsync(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
-                LogDebug($"FolderCommand SVsThreadedWaitDialogFactory result: {(dialogFactory != null ? "SUCCESS" : "NULL")}");
+                LogDebug($"ContextCommand SVsThreadedWaitDialogFactory result: {(dialogFactory != null ? "SUCCESS" : "NULL")}");
                 
-                LogDebug("FolderCommand Getting SDTE service...");
+                LogDebug("ContextCommand Getting SDTE service...");
                 var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
-                LogDebug($"FolderCommand SDTE service result: {(SDTE != null ? "SUCCESS" : "NULL")}");
+                LogDebug($"ContextCommand SDTE service result: {(SDTE != null ? "SUCCESS" : "NULL")}");
                 
-                LogDebug("FolderCommand Creating executor objects...");
+                LogDebug("ContextCommand Creating executor objects...");
                 var textSelectionExecutor = new TextSelectionExecutor();
                 var selectedItemCountExecutor = new SelectedItemCountExecutor();
                 var commentExecutor = new CommentExecutor();
-                LogDebug("FolderCommand Executor objects created");
+                LogDebug("ContextCommand Executor objects created");
                 
                 // Only create instance if required services are available
                 if (commandService != null && attributeService != null && SDTE != null)
                 {
-                    LogDebug("FolderCommand All required services available - creating instance");
-                    Instance = new CodeDocumentorFolderCommand(package, commandService, SDTE, attributeService, textSelectionExecutor,
+                    LogDebug("ContextCommand All required services available - creating instance");
+                    Instance = new CodeDocumentorContextCommand(package, commandService, SDTE, attributeService, textSelectionExecutor,
                         dialogFactory, selectedItemCountExecutor, commentExecutor);
-                    LogDebug("FolderCommand InitializeAsync - SUCCESS");
+                    LogDebug("ContextCommand InitializeAsync - SUCCESS");
                 }
                 else
                 {
-                    var errorMsg = "FolderCommand: Failed to get required services - " +
+                    var errorMsg = "ContextCommand: Failed to get required services - " +
                         $"CommandService: {commandService != null}, CommentService: {attributeService != null}, SDTE: {SDTE != null}";
-                    LogDebug($"FolderCommand InitializeAsync - FAILED: {errorMsg}");
+                    LogDebug($"ContextCommand InitializeAsync - FAILED: {errorMsg}");
                     System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] {errorMsg}");
                 }
             }
             catch (Exception ex)
             {
-                var errorMsg = $"FolderCommand initialization error: {ex}";
-                LogDebug($"FolderCommand InitializeAsync - ERROR: {errorMsg}");
+                var errorMsg = $"ContextCommand initialization error: {ex}";
+                LogDebug($"ContextCommand InitializeAsync - ERROR: {errorMsg}");
                 System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] {errorMsg}");
                 throw;
             }
         }
 
         /// <summary>
-        ///     This function is the callback used to execute the command when the menu item is clicked. See the
-        ///     constructor to see how the menu item is associated with this function using OleMenuCommandService
-        ///     service and MenuCommand class.
+        /// This function is the callback used to execute the command when either context menu item is clicked.
+        /// Handles both file and folder context menu items with the same logic.
         /// </summary>
         /// <param name="sender"> Event sender. </param>
         /// <param name="e"> Event args. </param>
@@ -147,36 +157,36 @@ namespace CodeDocumentor2026.Commands.Context
         {
             try
             {
-                LogDebug("FolderCommand Execute - START");
+                LogDebug("ContextCommand Execute - START");
                 ThreadHelper.ThrowIfNotOnUIThread();
                 
                 if (_sdteService == null || _commentBuilderService == null)
                 {
-                    var errorMsg = "FolderCommand.Execute: Required services not available - " +
+                    var errorMsg = "ContextCommand.Execute: Required services not available - " +
                         $"SDTE: {_sdteService != null}, CommentService: {_commentBuilderService != null}";
-                    LogDebug($"FolderCommand Execute - FAILED: {errorMsg}");
+                    LogDebug($"ContextCommand Execute - FAILED: {errorMsg}");
                     System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] {errorMsg}");
                     return;
                 }
 
-                LogDebug("FolderCommand Getting DTE from SDTE service...");
+                LogDebug("ContextCommand Getting DTE from SDTE service...");
                 var dte = _sdteService as DTE;
-                LogDebug($"FolderCommand DTE result: {(dte != null ? "SUCCESS" : "NULL")}");
+                LogDebug($"ContextCommand DTE result: {(dte != null ? "SUCCESS" : "NULL")}");
 
                 if (dte?.SelectedItems == null || dte.SelectedItems.Count <= 0)
                 {
-                    LogDebug("FolderCommand Execute - No selected items");
+                    LogDebug("ContextCommand Execute - No selected items");
                     return;
                 }
 
-                LogDebug($"FolderCommand Selected items count: {dte.SelectedItems.Count}");
+                LogDebug($"ContextCommand Selected items count: {dte.SelectedItems.Count}");
                 var totalCount = _selectedItemCountExecutor.Execute(dte.SelectedItems);
-                LogDebug($"FolderCommand Total count from executor: {totalCount}");
+                LogDebug($"ContextCommand Total count from executor: {totalCount}");
 
                 IVsThreadedWaitDialog2 dialog = null;
                 if (totalCount > 1 && _dialogFactory != null)
                 {
-                    LogDebug("FolderCommand Creating progress dialog...");
+                    LogDebug("ContextCommand Creating progress dialog...");
                     //https://www.visualstudiogeeks.com/extensions/visualstudio/using-progress-dialog-in-visual-studio-extensions
                     _dialogFactory.CreateInstance(out dialog);
                 }
@@ -188,39 +198,39 @@ namespace CodeDocumentor2026.Commands.Context
                      null, Constants.DIALOG_ACTION, true, 0, totalCount, 0) != VSConstants.S_OK)
                 {
                     dialog = null;
-                    LogDebug("FolderCommand Progress dialog not available or failed to start");
+                    LogDebug("ContextCommand Progress dialog not available or failed to start");
                 }
                 else
                 {
-                    LogDebug("FolderCommand Progress dialog started successfully");
+                    LogDebug("ContextCommand Progress dialog started successfully");
                 }
 
                 try
                 {
-                    LogDebug("FolderCommand Starting comment executor...");
+                    LogDebug("ContextCommand Starting comment executor...");
                     _commentExecutor.Execute(dte.SelectedItems, cts, dialog, totalCount, _textSelectionExecutor,
                        (content) => {
-                           LogDebug($"FolderCommand Processing content length: {content?.Length ?? 0}");
+                           LogDebug($"ContextCommand Processing content length: {content?.Length ?? 0}");
                            var result = _commentBuilderService.AddDocumentation(content);
-                           LogDebug($"FolderCommand Result content length: {result?.Length ?? 0}");
+                           LogDebug($"ContextCommand Result content length: {result?.Length ?? 0}");
                            return result;
                        });
-                    LogDebug("FolderCommand Comment executor completed");
+                    LogDebug("ContextCommand Comment executor completed");
                 }
                 finally
                 {
-                    LogDebug("FolderCommand Ending progress dialog...");
+                    LogDebug("ContextCommand Ending progress dialog...");
                     var usercancel = 0;
                     dialog?.EndWaitDialog(out usercancel);
-                    LogDebug($"FolderCommand Progress dialog ended, user canceled: {usercancel}");
+                    LogDebug($"ContextCommand Progress dialog ended, user canceled: {usercancel}");
                 }
                 
-                LogDebug("FolderCommand Execute - SUCCESS");
+                LogDebug("ContextCommand Execute - SUCCESS");
             }
             catch (Exception ex)
             {
-                var errorMsg = $"FolderCommand.Execute error: {ex}";
-                LogDebug($"FolderCommand Execute - ERROR: {errorMsg}");
+                var errorMsg = $"ContextCommand.Execute error: {ex}";
+                LogDebug($"ContextCommand Execute - ERROR: {errorMsg}");
                 System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] {errorMsg}");
                 // Don't re-throw to prevent VS crashes - just log the error
             }

@@ -85,48 +85,14 @@ namespace CodeDocumentor2026.Commands.Context
         {
             try
             {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-                // Get DTE service
-                var dte = await _package.GetServiceAsync(typeof(SDTE)) as DTE;
-                if (dte?.ActiveDocument == null)
+                var documentInfo = await GetCurrentDocumentInfoAsync();
+                if (documentInfo == null)
                 {
                     return null;
                 }
-
-                // Check if it's a C# file
-                var activeDocument = dte.ActiveDocument;
-                if (!activeDocument.Name.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
-                {
-                    return null;
-                }
-
-                // Get text selection to find cursor position
-                var textSelection = activeDocument.Selection as TextSelection;
-                if (textSelection == null)
-                {
-                    return null;
-                }
-
-                // Get cursor position (convert from 1-based to 0-based)
-                var cursorPosition = textSelection.ActivePoint.AbsoluteCharOffset - 1;
-
-                // Get the document text
-                var textDocument = activeDocument.Object("TextDocument") as EnvDTE.TextDocument;
-                if (textDocument == null)
-                {
-                    return null;
-                }
-
-                var startPoint = textDocument.StartPoint.CreateEditPoint();
-                var documentText = startPoint.GetText(textDocument.EndPoint);
-
-                // Parse with Roslyn
-                var syntaxTree = CSharpSyntaxTree.ParseText(documentText);
-                var root = syntaxTree.GetRoot();
 
                 // Find documentable node at cursor position
-                return FindDocumentableNode(root, cursorPosition);
+                return FindDocumentableNode(documentInfo.Root, documentInfo.CursorPosition);
             }
             catch (Exception ex)
             {
@@ -143,7 +109,10 @@ namespace CodeDocumentor2026.Commands.Context
 #pragma warning restore IDE1006 // Naming Styles
         {
             var command = sender as OleMenuCommand;
-            if (command == null) return;
+            if (command == null)
+            {
+                return;
+            }
 
             try
             {
@@ -171,55 +140,35 @@ namespace CodeDocumentor2026.Commands.Context
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 
-                // Get DTE service to get document text
-                var dte = await _package.GetServiceAsync(typeof(SDTE)) as DTE;
-                var activeDocument = dte?.ActiveDocument;
-                if (activeDocument == null) return;
-
-                var textDocument = activeDocument.Object("TextDocument") as EnvDTE.TextDocument;
-                if (textDocument == null) return;
-
-                var startPoint = textDocument.StartPoint.CreateEditPoint();
-                var documentText = startPoint.GetText(textDocument.EndPoint);
-
-                // Parse to get root
-                var syntaxTree = CSharpSyntaxTree.ParseText(documentText);
-                var root = syntaxTree.GetRoot();
-
-                // Get text selection to find cursor position
-                var textSelection = activeDocument.Selection as TextSelection;
-                if (textSelection == null) return;
-
-                // Capture original cursor position
-                var originalLine = textSelection.ActivePoint.Line;
-                var originalColumn = textSelection.ActivePoint.LineCharOffset;
-
-                // Get cursor position (convert from 1-based to 0-based)
-                var cursorPosition = textSelection.ActivePoint.AbsoluteCharOffset - 1;
+                var documentInfo = await GetCurrentDocumentInfoAsync();
+                if (documentInfo == null)
+                {
+                    return;
+                }
 
                 // Find documentable node at cursor position in THIS syntax tree
-                var targetNode = FindDocumentableNode(root, cursorPosition);
-                if (targetNode == null) return;
-
-                // Check if already has documentation
-                if (targetNode is CSharpSyntaxNode csNode && csNode.HasSummary())
+                var targetNode = FindDocumentableNode(documentInfo.Root, documentInfo.CursorPosition);
+                if (targetNode == null)
                 {
                     return;
                 }
 
                 // Build new declaration and replace node
-                var newDeclaration = BuildNewDocumentationNode(targetNode);
-                if (newDeclaration == null) return;
+                var newDeclaration = _commentBuilderService.BuildNewDocumentationNode(targetNode);
+                if (newDeclaration == null)
+                {
+                    return;
+                }
 
-                var newRoot = root.ReplaceNode(targetNode, newDeclaration);
+                var newRoot = documentInfo.Root.ReplaceNode(targetNode, newDeclaration);
                 var updatedText = newRoot.ToFullString();
 
                 // Update document
-                if (updatedText != documentText)
+                if (updatedText != documentInfo.DocumentText)
                 {
-                    var editPoint = textDocument.StartPoint.CreateEditPoint();
+                    var editPoint = documentInfo.TextDocument.StartPoint.CreateEditPoint();
                     editPoint.ReplaceText(
-                        textDocument.EndPoint,
+                        documentInfo.TextDocument.EndPoint,
                         updatedText,
                         (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat
                     );
@@ -227,28 +176,119 @@ namespace CodeDocumentor2026.Commands.Context
                     // Try to format the document after insertion
                     try
                     {
-                        editPoint.SmartFormat(startPoint);
+                        editPoint.SmartFormat(documentInfo.TextDocument.StartPoint.CreateEditPoint());
                     }
                     catch
                     {
                         // If SmartFormat fails, continue without formatting
                     }
 
-                    // Restore cursor position
+                    // Restore cursor position using the updated syntax tree
                     try
                     {
-                        textSelection.MoveToLineAndOffset(originalLine, originalColumn);
+                        // Find the documented node in the new syntax tree
+                        var updatedTargetNode = newRoot.DescendantNodes()
+                            .FirstOrDefault(n => n.GetType() == targetNode.GetType() && 
+                                                n.ToString().Trim() == newDeclaration.ToString().Trim());
+                        
+                        if (updatedTargetNode != null)
+                        {
+                            // Position cursor at the beginning of the documented node
+                            var nodeStart = updatedTargetNode.GetLocation().SourceSpan.Start;
+                            documentInfo.TextSelection.MoveToAbsoluteOffset(nodeStart + 1); // +1 for DTE 1-based indexing
+                        }
+                        else
+                        {
+                            // Fallback to original position calculation
+                            documentInfo.TextSelection.MoveToLineAndOffset(documentInfo.OriginalLine, documentInfo.OriginalColumn);
+                        }
                     }
                     catch
                     {
                         // If position restoration fails, just collapse at current position
-                        textSelection.Collapse();
+                        documentInfo.TextSelection.Collapse();
                     }
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] EditorCommand.Execute error: {ex}");
+            }
+        }
+
+        /// <summary>
+        /// Helper class to hold document information
+        /// </summary>
+        private class DocumentInfo
+        {
+            public SyntaxNode Root { get; set; }
+            public int CursorPosition { get; set; }
+            public string DocumentText { get; set; }
+            public EnvDTE.TextDocument TextDocument { get; set; }
+            public TextSelection TextSelection { get; set; }
+            public int OriginalLine { get; set; }
+            public int OriginalColumn { get; set; }
+        }
+
+        /// <summary>
+        /// Gets current document information including syntax tree, cursor position, etc.
+        /// </summary>
+        private async Task<DocumentInfo> GetCurrentDocumentInfoAsync()
+        {
+            try
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                // Get DTE service
+                var dte = await _package.GetServiceAsync(typeof(SDTE)) as DTE;
+                if (dte?.ActiveDocument == null)
+                {
+                    return null;
+                }
+
+                // Check if it's a C# file
+                var activeDocument = dte.ActiveDocument;
+                if (!activeDocument.Name.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+
+                // Get text selection to find cursor position
+                var textSelection = activeDocument.Selection as TextSelection;
+                if (textSelection == null)
+                {
+                    return null;
+                }
+
+                // Get the document text
+                var textDocument = activeDocument.Object("TextDocument") as EnvDTE.TextDocument;
+                if (textDocument == null)
+                {
+                    return null;
+                }
+
+                var startPoint = textDocument.StartPoint.CreateEditPoint();
+                var documentText = startPoint.GetText(textDocument.EndPoint);
+
+                // Parse with Roslyn
+                var syntaxTree = CSharpSyntaxTree.ParseText(documentText);
+                var root = syntaxTree.GetRoot();
+
+                return new DocumentInfo
+                {
+                    Root = root,
+                    CursorPosition = textSelection.ActivePoint.AbsoluteCharOffset - 1, // Convert from 1-based to 0-based
+                    DocumentText = documentText,
+                    TextDocument = textDocument,
+                    TextSelection = textSelection,
+                    OriginalLine = textSelection.ActivePoint.Line,
+                    OriginalColumn = textSelection.ActivePoint.LineCharOffset
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] GetCurrentDocumentInfoAsync error: {ex}");
+                return null;
             }
         }
 
@@ -261,63 +301,13 @@ namespace CodeDocumentor2026.Commands.Context
             // Find the node at the exact cursor position
             var nodeAtPosition = root.FindNode(Microsoft.CodeAnalysis.Text.TextSpan.FromBounds(position, position));
             
-            // Only return the node if it's directly documentable - don't traverse up
-            if (IsDocumentableNode(nodeAtPosition))
+            // Use the service to determine if it's documentable - don't traverse up
+            if (_commentBuilderService.IsDocumentableNode(nodeAtPosition))
             {
                 return nodeAtPosition;
             }
             
             return null;
-        }
-
-        /// <summary>
-        /// Determines if a syntax node is documentable (can have XML documentation comments)
-        /// </summary>
-        private bool IsDocumentableNode(SyntaxNode node)
-        {
-            switch (node)
-            {
-                case ClassDeclarationSyntax _:
-                case InterfaceDeclarationSyntax _:
-                case RecordDeclarationSyntax _:
-                case EnumDeclarationSyntax _:
-                case MethodDeclarationSyntax _:
-                case PropertyDeclarationSyntax _:
-                case ConstructorDeclarationSyntax _:
-                case FieldDeclarationSyntax _:
-
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Applies documentation to a single specific syntax node using the same pattern as CodeFixProvider
-        /// </summary>
-        private SyntaxNode BuildNewDocumentationNode(SyntaxNode node)
-        {
-            switch (node)
-            {
-                case ClassDeclarationSyntax classNode:
-                    return _commentBuilderService.BuildNewDeclaration(classNode);
-                case InterfaceDeclarationSyntax interfaceNode:
-                    return _commentBuilderService.BuildNewDeclaration(interfaceNode);
-                case RecordDeclarationSyntax recordNode:
-                    return _commentBuilderService.BuildNewDeclaration(recordNode);
-                case EnumDeclarationSyntax enumNode:
-                    return _commentBuilderService.BuildNewDeclaration(enumNode);
-                case MethodDeclarationSyntax methodNode:
-                    return _commentBuilderService.BuildNewDeclaration(methodNode);
-                case PropertyDeclarationSyntax propertyNode:
-                    return _commentBuilderService.BuildNewDeclaration(propertyNode);
-                case ConstructorDeclarationSyntax constructorNode:
-                    return _commentBuilderService.BuildNewDeclaration(constructorNode);
-                case FieldDeclarationSyntax fieldNode:
-                    return _commentBuilderService.BuildNewDeclaration(fieldNode);
-                default:
-                    return null;
-            }
         }
     }
 }

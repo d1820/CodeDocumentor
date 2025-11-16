@@ -13,7 +13,7 @@ namespace CodeDocumentor2026.Commands.Menu
     internal sealed class CodeDocumentorFileMenu
     {
         /// <summary> Command ID. </summary>
-        public const int CommandId = 6010;
+        public const int CommandId = 6011;
 
         /// <summary> Command menu group (command set GUID). </summary>
         public static readonly Guid _commandSet = CodeDocumentor.Common.Constants.CommandSetId;

@@ -54,6 +54,18 @@ namespace CodeDocumentor.Common.Interfaces
         int BuildRecordComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
         RecordDeclarationSyntax BuildNewDeclaration(ISettings settings, RecordDeclarationSyntax declarationSyntax);
         RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax);
+
+        // Utility methods
         string AddDocumentation(string fileContents);
+
+        /// <summary>
+        /// Determines if a syntax node is documentable (can have XML documentation comments)
+        /// </summary>
+        bool IsDocumentableNode(SyntaxNode node);
+
+        /// <summary>
+        /// Builds documentation for any supported syntax node type
+        /// </summary>
+        SyntaxNode BuildNewDocumentationNode(SyntaxNode node);
     }
 }

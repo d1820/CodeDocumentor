@@ -517,5 +517,56 @@ namespace CodeDocumentor.Common.Services
             return BuildNewDeclaration(_settings, declarationSyntax);
         }
         #endregion
+
+        #region Utility Methods
+        /// <summary>
+        /// Determines if a syntax node is documentable (can have XML documentation comments)
+        /// </summary>
+        public bool IsDocumentableNode(SyntaxNode node)
+        {
+            switch (node)
+            {
+                case ClassDeclarationSyntax _:
+                case InterfaceDeclarationSyntax _:
+                case RecordDeclarationSyntax _:
+                case EnumDeclarationSyntax _:
+                case MethodDeclarationSyntax _:
+                case PropertyDeclarationSyntax _:
+                case ConstructorDeclarationSyntax _:
+                case FieldDeclarationSyntax _:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Builds documentation for any supported syntax node type
+        /// </summary>
+        public SyntaxNode BuildNewDocumentationNode(SyntaxNode node)
+        {
+            switch (node)
+            {
+                case ClassDeclarationSyntax classNode:
+                    return BuildNewDeclaration(classNode);
+                case InterfaceDeclarationSyntax interfaceNode:
+                    return BuildNewDeclaration(interfaceNode);
+                case RecordDeclarationSyntax recordNode:
+                    return BuildNewDeclaration(recordNode);
+                case EnumDeclarationSyntax enumNode:
+                    return BuildNewDeclaration(enumNode);
+                case MethodDeclarationSyntax methodNode:
+                    return BuildNewDeclaration(methodNode);
+                case PropertyDeclarationSyntax propertyNode:
+                    return BuildNewDeclaration(propertyNode);
+                case ConstructorDeclarationSyntax constructorNode:
+                    return BuildNewDeclaration(constructorNode);
+                case FieldDeclarationSyntax fieldNode:
+                    return BuildNewDeclaration(fieldNode);
+                default:
+                    return null;
+            }
+        }
+        #endregion
     }
 }

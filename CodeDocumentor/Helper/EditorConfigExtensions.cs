@@ -17,7 +17,7 @@ namespace CodeDocumentor
                 var tree = await context.Document.GetSyntaxTreeAsync();
                 var opts = context.Document.Project.AnalyzerOptions.AnalyzerConfigOptionsProvider.GetOptions(tree);
                 var svc = ServiceLocator.SettingService;
-                return svc.BuildSettings(opts);
+                return svc?.BuildSettings(opts) ?? Settings.BuildDefaults();
             }
             catch (Exception ex)
             {

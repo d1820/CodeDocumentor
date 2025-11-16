@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.Shell;
 using EnvDTE;
 using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Shell.Interop;
+using System.Linq;
 
 namespace CodeDocumentor2026.Commands.Context
 {
@@ -168,6 +169,12 @@ namespace CodeDocumentor2026.Commands.Context
                 var targetNode = FindDocumentableNode(root, cursorPosition);
                 if (targetNode == null) return;
 
+                // Check if already has documentation
+                if (targetNode is CSharpSyntaxNode csNode && csNode.HasSummary())
+                {
+                    return;
+                }
+
                 // Build new declaration and replace node
                 var newDeclaration = BuildNewDocumentationNode(targetNode);
                 if (newDeclaration == null) return;
@@ -179,8 +186,21 @@ namespace CodeDocumentor2026.Commands.Context
                 if (updatedText != documentText)
                 {
                     var editPoint = textDocument.StartPoint.CreateEditPoint();
-                    editPoint.Delete(textDocument.EndPoint);
-                    editPoint.Insert(updatedText);
+                    editPoint.ReplaceText(
+                        textDocument.EndPoint,
+                        updatedText,
+                        (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat
+                    );
+                    
+                    // Try to format the document after insertion
+                    try
+                    {
+                        editPoint.SmartFormat(startPoint);
+                    }
+                    catch
+                    {
+                        // If SmartFormat fails, continue without formatting
+                    }
                 }
             }
             catch (Exception ex)

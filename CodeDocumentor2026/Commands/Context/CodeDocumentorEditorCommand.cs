@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.Design;
 using System.Threading.Tasks;
+using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -132,8 +133,6 @@ namespace CodeDocumentor2026.Commands.Context
             }
         }
 
-       
-
         /// <summary>
         /// Executes the command when the editor context menu item is clicked
         /// </summary>
@@ -143,7 +142,46 @@ namespace CodeDocumentor2026.Commands.Context
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 
-                
+                // Get DTE service to get document text
+                var dte = await _package.GetServiceAsync(typeof(SDTE)) as DTE;
+                var activeDocument = dte?.ActiveDocument;
+                if (activeDocument == null) return;
+
+                var textDocument = activeDocument.Object("TextDocument") as EnvDTE.TextDocument;
+                if (textDocument == null) return;
+
+                var startPoint = textDocument.StartPoint.CreateEditPoint();
+                var documentText = startPoint.GetText(textDocument.EndPoint);
+
+                // Parse to get root
+                var syntaxTree = CSharpSyntaxTree.ParseText(documentText);
+                var root = syntaxTree.GetRoot();
+
+                // Get text selection to find cursor position
+                var textSelection = activeDocument.Selection as TextSelection;
+                if (textSelection == null) return;
+
+                // Get cursor position (convert from 1-based to 0-based)
+                var cursorPosition = textSelection.ActivePoint.AbsoluteCharOffset - 1;
+
+                // Find documentable node at cursor position in THIS syntax tree
+                var targetNode = FindDocumentableNode(root, cursorPosition);
+                if (targetNode == null) return;
+
+                // Build new declaration and replace node
+                var newDeclaration = BuildNewDocumentationNode(targetNode);
+                if (newDeclaration == null) return;
+
+                var newRoot = root.ReplaceNode(targetNode, newDeclaration);
+                var updatedText = newRoot.ToFullString();
+
+                // Update document
+                if (updatedText != documentText)
+                {
+                    var editPoint = textDocument.StartPoint.CreateEditPoint();
+                    editPoint.Delete(textDocument.EndPoint);
+                    editPoint.Insert(updatedText);
+                }
             }
             catch (Exception ex)
             {

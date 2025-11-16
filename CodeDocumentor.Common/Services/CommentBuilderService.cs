@@ -255,6 +255,10 @@ namespace CodeDocumentor.Common.Services
             {
                 foreach (var declarationSyntax in declarations)
                 {
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
                     if (declarationSyntax.HasSummary())
                     {
                         continue;

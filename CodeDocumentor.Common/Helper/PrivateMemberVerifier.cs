@@ -20,6 +20,16 @@ namespace CodeDocumentor.Common.Helper
         }
 
         /// <summary>
+        /// Determines whether the specified enum declaration represents a private member.
+        /// </summary>
+        /// <param name="node">The enum declaration syntax node to evaluate for access modifiers.</param>
+        /// <returns>true if the enum declaration does not have a public modifier; otherwise, false.</returns>
+        public static bool IsPrivateMember(EnumDeclarationSyntax node)
+        {
+            return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
+        }
+
+        /// <summary>
         ///  Is private member.
         /// </summary>
         /// <param name="node"> The node. </param>

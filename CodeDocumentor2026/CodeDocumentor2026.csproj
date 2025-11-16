@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="CodeDocumentor2026Package.cs" />
     <Compile Include="Commands\Context\CodeDocumentorContextCommand.cs" />
+    <Compile Include="Commands\Context\CodeDocumentorEditorCommand.cs" />
     <Compile Include="Commands\Menu\CodeDocumentorFileMenu.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Executors\CommentExecutor.cs" />

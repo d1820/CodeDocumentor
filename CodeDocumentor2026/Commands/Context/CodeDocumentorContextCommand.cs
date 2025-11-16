@@ -17,10 +17,10 @@ namespace CodeDocumentor2026.Commands.Context
     internal sealed class CodeDocumentorContextCommand
     {
         /// <summary> File context command ID. </summary>
-        public const int FileCommandId = 6012;
+        public const int FileCommandId = 6013;
         
         /// <summary> Folder context command ID. </summary>
-        public const int FolderCommandId = 6011;
+        public const int FolderCommandId = 6012;
 
         /// <summary> Command menu group (command set GUID). </summary>
         public static readonly Guid _commandSet = CodeDocumentor.Common.Constants.CommandSetId;
@@ -195,7 +195,7 @@ namespace CodeDocumentor2026.Commands.Context
 
                 if (dialog == null ||
                     dialog.StartWaitDialogWithPercentageProgress("CodeDocumentor: Documenting Progress", "", $"0 of {totalCount} Processed",
-                     null, Constants.DIALOG_ACTION, true, 0, totalCount, 0) != VSConstants.S_OK)
+                     null, CodeDocumentor2026.Constants.DIALOG_ACTION, true, 0, totalCount, 0) != VSConstants.S_OK)
                 {
                     dialog = null;
                     LogDebug("ContextCommand Progress dialog not available or failed to start");
@@ -214,7 +214,7 @@ namespace CodeDocumentor2026.Commands.Context
                            var result = _commentBuilderService.AddDocumentation(content);
                            LogDebug($"ContextCommand Result content length: {result?.Length ?? 0}");
                            return result;
-                       });
+                       }, CodeDocumentor2026.Constants.DIALOG_ACTION);
                     LogDebug("ContextCommand Comment executor completed");
                 }
                 finally

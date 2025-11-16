@@ -158,6 +158,10 @@ namespace CodeDocumentor2026
                 await CodeDocumentorContextCommand.InitializeAsync(this);
                 LogDebug("Package CodeDocumentorContextCommand initialized");
 
+                LogDebug("Package Initializing CodeDocumentorEditorCommand...");
+                await CodeDocumentorEditorCommand.InitializeAsync(this);
+                LogDebug("Package CodeDocumentorEditorCommand initialized");
+
                 LogDebug("Package InitializeCommandsAsync - SUCCESS");
             }
             catch (Exception ex)

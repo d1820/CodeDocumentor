@@ -66,6 +66,8 @@
     <Compile Include="Executors\CommentExecutor.cs" />
     <Compile Include="Executors\SelectedItemCountExecutor.cs" />
     <Compile Include="Executors\TextSelectionExecutor.cs" />
+    <Compile Include="Extensions\TextSelectionExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\Logger.cs" />
     <Compile Include="Models\OptionPageGrid.cs">
       <SubType>Component</SubType>

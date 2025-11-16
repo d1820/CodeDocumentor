@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodeDocumentor.Common.Helper;
@@ -37,19 +38,19 @@ namespace CodeDocumentor.Common.Services
             neededCommentCount += BuildEnumComments(_settings, Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildFieldComments(_settings, Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildMethodComments(_settings, Constants.DiagnosticIds.METHOD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
-            
+
             // Replace nodes from first batch
             root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
             _nodesTempToReplace.Clear();
-            
+
             // Second batch - same order as in BaseCodeFixProvider.RegisterFileCodeFixesAsync
             neededCommentCount += BuildInterfaceComments(_settings, Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildComments(_settings, Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildRecordComments(_settings, Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
-            
+
             // Final replacement
             var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
-            
+
             return newRoot.GetText().ToString();
         }
 
@@ -538,6 +539,23 @@ namespace CodeDocumentor.Common.Services
                 default:
                     return false;
             }
+        }
+        /// <summary>
+        /// Calculates the number of non-empty lines in the XML documentation comments that precede the specified syntax
+        /// node.
+        /// </summary>
+        /// <remarks>Only lines within single-line or multi-line XML documentation comments are counted.
+        /// Blank or whitespace-only lines are excluded from the count.</remarks>
+        /// <param name="node">The syntax node whose leading XML documentation comment lines are to be counted.</param>
+        /// <returns>The number of non-empty lines found in the single-line or multi-line XML documentation comments immediately
+        /// preceding the specified node.</returns>
+        public int GetDocumentationLineCount(SyntaxNode node)
+        {
+            return node.GetLeadingTrivia()
+                .Where(t => t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
+                .SelectMany(t => t.ToFullString().Split(new[] { '\n' }, StringSplitOptions.None).Select(line => line.Trim()))
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Count();
         }
 
         /// <summary>

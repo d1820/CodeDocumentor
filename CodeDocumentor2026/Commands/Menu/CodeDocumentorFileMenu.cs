@@ -150,7 +150,6 @@ namespace CodeDocumentor2026.Commands.Menu
                 {
                     LogDebug($"FileMenu Active document: {dte.ActiveDocument.Name}");
                     LogDebug("FileMenu Executing text selection processor...");
-                    
                     _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, 
                         (contents) => {
                             LogDebug($"FileMenu Processing content length: {contents?.Length ?? 0}");

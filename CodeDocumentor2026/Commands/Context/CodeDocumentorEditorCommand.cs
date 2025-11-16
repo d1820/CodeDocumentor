@@ -1,16 +1,17 @@
 using System;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Threading.Tasks;
 using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor2026.Extensions;
+using EnvDTE;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.Shell;
-using EnvDTE;
-using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Shell.Interop;
-using System.Linq;
+using Task = System.Threading.Tasks.Task;
 
 namespace CodeDocumentor2026.Commands.Context
 {
@@ -21,6 +22,8 @@ namespace CodeDocumentor2026.Commands.Context
     {
         /// <summary> Editor context command ID. </summary>
         public const int EditorCommandId = 6014;
+
+        public const int EditorWholeFileCommandId = 6015;
 
         /// <summary> Command menu group (command set GUID). </summary>
         public static readonly Guid _commandSet = CodeDocumentor.Common.Constants.CommandSetId;
@@ -46,6 +49,10 @@ namespace CodeDocumentor2026.Commands.Context
             var editorMenuItem = new OleMenuCommand(ExecuteAsync, editorCommandID);
             editorMenuItem.BeforeQueryStatus += OnBeforeQueryStatus;
             commandService.AddCommand(editorMenuItem);
+
+            var editorCommandWholeFileID = new CommandID(_commandSet, EditorWholeFileCommandId);
+            var editorWholeFileMenuItem = new OleMenuCommand(ExecuteAsync, editorCommandWholeFileID);
+            commandService.AddCommand(editorWholeFileMenuItem);
         }
 
         /// <summary> Gets the instance of the command. </summary>
@@ -92,7 +99,7 @@ namespace CodeDocumentor2026.Commands.Context
                 }
 
                 // Find documentable node at cursor position
-                return FindDocumentableNode(documentInfo.Root, documentInfo.CursorPosition);
+                return FindDocumentableNode(documentInfo.Root, documentInfo.OriginalLine, documentInfo.OriginalColumn);
             }
             catch (Exception ex)
             {
@@ -104,9 +111,7 @@ namespace CodeDocumentor2026.Commands.Context
         /// <summary>
         /// Called before the command is displayed to determine if it should be visible/enabled
         /// </summary>
-#pragma warning disable IDE1006 // Naming Styles
         private async void OnBeforeQueryStatus(object sender, EventArgs e)
-#pragma warning restore IDE1006 // Naming Styles
         {
             var command = sender as OleMenuCommand;
             if (command == null)
@@ -118,7 +123,7 @@ namespace CodeDocumentor2026.Commands.Context
             {
                 // Check if we can find a documentable node at the cursor position
                 var targetNode = await GetSyntaxNodeAtCursorAsync();
-                
+
                 // Only show the menu item if we found a valid documentable node
                 command.Visible = targetNode != null;
                 command.Enabled = targetNode != null;
@@ -136,18 +141,27 @@ namespace CodeDocumentor2026.Commands.Context
         /// </summary>
         private async void ExecuteAsync(object sender, EventArgs e)
         {
+            var command = sender as OleMenuCommand;
             try
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                
+
                 var documentInfo = await GetCurrentDocumentInfoAsync();
                 if (documentInfo == null)
                 {
                     return;
                 }
 
+                if (command.CommandID.ID == EditorWholeFileCommandId)
+                {
+                    var documentedFile = _commentBuilderService.AddDocumentation(documentInfo.DocumentText);
+                    UpdateDocumentAndFormat(documentInfo, documentedFile);
+                    return;
+                }
+
+
                 // Find documentable node at cursor position in THIS syntax tree
-                var targetNode = FindDocumentableNode(documentInfo.Root, documentInfo.CursorPosition);
+                var targetNode = FindDocumentableNode(documentInfo.Root, documentInfo.OriginalLine, documentInfo.OriginalColumn);
                 if (targetNode == null)
                 {
                     return;
@@ -160,59 +174,42 @@ namespace CodeDocumentor2026.Commands.Context
                     return;
                 }
 
+                var commentLineCount = _commentBuilderService.GetDocumentationLineCount(newDeclaration);
+
                 var newRoot = documentInfo.Root.ReplaceNode(targetNode, newDeclaration);
                 var updatedText = newRoot.ToFullString();
 
                 // Update document
                 if (updatedText != documentInfo.DocumentText)
                 {
-                    var editPoint = documentInfo.TextDocument.StartPoint.CreateEditPoint();
-                    editPoint.ReplaceText(
-                        documentInfo.TextDocument.EndPoint,
-                        updatedText,
-                        (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat
-                    );
-                    
-                    // Try to format the document after insertion
-                    try
-                    {
-                        editPoint.SmartFormat(documentInfo.TextDocument.StartPoint.CreateEditPoint());
-                    }
-                    catch
-                    {
-                        // If SmartFormat fails, continue without formatting
-                    }
+                    UpdateDocumentAndFormat(documentInfo, updatedText);
 
-                    // Restore cursor position using the updated syntax tree
-                    try
-                    {
-                        // Find the documented node in the new syntax tree
-                        var updatedTargetNode = newRoot.DescendantNodes()
-                            .FirstOrDefault(n => n.GetType() == targetNode.GetType() && 
-                                                n.ToString().Trim() == newDeclaration.ToString().Trim());
-                        
-                        if (updatedTargetNode != null)
-                        {
-                            // Position cursor at the beginning of the documented node
-                            var nodeStart = updatedTargetNode.GetLocation().SourceSpan.Start;
-                            documentInfo.TextSelection.MoveToAbsoluteOffset(nodeStart + 1); // +1 for DTE 1-based indexing
-                        }
-                        else
-                        {
-                            // Fallback to original position calculation
-                            documentInfo.TextSelection.MoveToLineAndOffset(documentInfo.OriginalLine, documentInfo.OriginalColumn);
-                        }
-                    }
-                    catch
-                    {
-                        // If position restoration fails, just collapse at current position
-                        documentInfo.TextSelection.Collapse();
-                    }
+                    documentInfo.TextSelection.SetCursorToLine(documentInfo.OriginalLine + commentLineCount, documentInfo.OriginalColumn);
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] EditorCommand.Execute error: {ex}");
+            }
+        }
+
+        private static void UpdateDocumentAndFormat(DocumentInfo documentInfo, string updatedText)
+        {
+            var editPoint = documentInfo.TextDocument.StartPoint.CreateEditPoint();
+            editPoint.ReplaceText(
+                documentInfo.TextDocument.EndPoint,
+                updatedText,
+                (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat
+            );
+
+            // Try to format the document after insertion
+            try
+            {
+                editPoint.SmartFormat(documentInfo.TextDocument.StartPoint.CreateEditPoint());
+            }
+            catch
+            {
+                // If SmartFormat fails, continue without formatting
             }
         }
 
@@ -222,7 +219,6 @@ namespace CodeDocumentor2026.Commands.Context
         private class DocumentInfo
         {
             public SyntaxNode Root { get; set; }
-            public int CursorPosition { get; set; }
             public string DocumentText { get; set; }
             public EnvDTE.TextDocument TextDocument { get; set; }
             public TextSelection TextSelection { get; set; }
@@ -277,7 +273,6 @@ namespace CodeDocumentor2026.Commands.Context
                 return new DocumentInfo
                 {
                     Root = root,
-                    CursorPosition = textSelection.ActivePoint.AbsoluteCharOffset - 1, // Convert from 1-based to 0-based
                     DocumentText = documentText,
                     TextDocument = textDocument,
                     TextSelection = textSelection,
@@ -296,18 +291,36 @@ namespace CodeDocumentor2026.Commands.Context
         /// Finds a documentable syntax node at the specified position.
         /// Only returns a node if the cursor is directly on a documentable node - does not traverse up the tree.
         /// </summary>
-        private SyntaxNode FindDocumentableNode(SyntaxNode root, int position)
+        private SyntaxNode FindDocumentableNode(SyntaxNode root, int line, int column)
         {
-            // Find the node at the exact cursor position
-            var nodeAtPosition = root.FindNode(Microsoft.CodeAnalysis.Text.TextSpan.FromBounds(position, position));
-            
-            // Use the service to determine if it's documentable - don't traverse up
-            if (_commentBuilderService.IsDocumentableNode(nodeAtPosition))
+            try
             {
-                return nodeAtPosition;
+                // Convert line/column to absolute position
+                var sourceText = root.SyntaxTree.GetText();
+                var position = sourceText.Lines[line - 1].Start + (column - 1); // Convert from 1-based to 0-based
+
+                // Ensure position is within bounds
+                if (position < 0 || position >= sourceText.Length)
+                {
+                    return null;
+                }
+
+                // Find the node at the exact cursor position
+                var nodeAtPosition = root.FindNode(Microsoft.CodeAnalysis.Text.TextSpan.FromBounds(position, position));
+
+                // Use the service to determine if it's documentable - don't traverse up
+                if (_commentBuilderService.IsDocumentableNode(nodeAtPosition))
+                {
+                    return nodeAtPosition;
+                }
+
+                return null;
             }
-            
-            return null;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[CodeDocumentor2026] FindDocumentableNode error: {ex}");
+                return null;
+            }
         }
     }
 }

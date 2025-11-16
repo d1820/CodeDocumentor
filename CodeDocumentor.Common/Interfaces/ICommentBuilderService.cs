@@ -67,5 +67,16 @@ namespace CodeDocumentor.Common.Interfaces
         /// Builds documentation for any supported syntax node type
         /// </summary>
         SyntaxNode BuildNewDocumentationNode(SyntaxNode node);
+
+        /// <summary>
+        /// Calculates the number of non-empty lines in the XML documentation comments that precede the specified syntax
+        /// node.
+        /// </summary>
+        /// <remarks>Only lines within single-line or multi-line XML documentation comments are counted.
+        /// Blank or whitespace-only lines are excluded from the count.</remarks>
+        /// <param name="node">The syntax node whose leading XML documentation comment lines are to be counted.</param>
+        /// <returns>The number of non-empty lines found in the single-line or multi-line XML documentation comments immediately
+        /// preceding the specified node.</returns>
+        int GetDocumentationLineCount(SyntaxNode node);
     }
 }

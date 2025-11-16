@@ -52,7 +52,7 @@
 
       <!--Menus-->
       <!--This SubGroup Contains the tool menu items-->
-      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorSubMenuGroup" priority="1">
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorSubMenuGroup" priority="4">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenu"/>
       </Group>
 
@@ -63,19 +63,12 @@
     </Groups>
 
     <Menus>
-      <Menu guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenu" priority="0x0100" type="Menu">
+      <Menu guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenu" priority="4" type="Menu">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenuGroup"/>
         <Strings>
           <ButtonText>Code Documentor</ButtonText>
         </Strings>
       </Menu>
-
-      <!--<Menu guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenu" priority="0x0100" type="Menu">
-        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem"/>
-        <Strings>
-          <ButtonText>Code Documentor</ButtonText>
-        </Strings>
-      </Menu>-->
     </Menus>
 
     <Buttons>
@@ -83,7 +76,7 @@
       <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorAddDocumentationCommandId" priority="1" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorSubMenuGroup" />
         <Strings>
-          <ButtonText>Add Documentation</ButtonText>
+          <ButtonText>Document Current File</ButtonText>
         </Strings>
       </Button>
 
@@ -91,19 +84,25 @@
       <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationFileCommandId" priority="1" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem" />
         <Strings>
-          <ButtonText>Add Code Documentor Comments</ButtonText>
+          <ButtonText>Code Documentor File</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationFolderCommandId" priority="1" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupFolder" />
         <Strings>
-          <ButtonText>Add Code Documentor Comments</ButtonText>
+          <ButtonText>Code Documentor All Files</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandId" priority="1" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
         <Strings>
-          <ButtonText>Add Code Documentor Comments</ButtonText>
+          <ButtonText>Code Documentor This</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
+        <Strings>
+          <ButtonText>Code Documentor File</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -154,6 +153,7 @@
       <IDSymbol name="CodeDocumentorContextAddDocumentationFolderCommandId" value="6012"/>
       <IDSymbol name="CodeDocumentorContextAddDocumentationFileCommandId" value="6013"/>
       <IDSymbol name="CodeDocumentorContextAddDocumentationEditorCommandId" value="6014"/>
+      <IDSymbol name="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" value="6015"/>
 
     </GuidSymbol>
 

@@ -44,6 +44,7 @@ namespace CodeDocumentor2026.Commands.Context
             _commentBuilderService = commentBuilderService;
             var editorCommandID = new CommandID(_commandSet, EditorCommandId);
             var editorMenuItem = new OleMenuCommand(ExecuteAsync, editorCommandID);
+            editorMenuItem.BeforeQueryStatus += OnBeforeQueryStatus;
             commandService.AddCommand(editorMenuItem);
         }
 
@@ -135,6 +136,33 @@ namespace CodeDocumentor2026.Commands.Context
         }
 
         /// <summary>
+        /// Called before the command is displayed to determine if it should be visible/enabled
+        /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
+        private async void OnBeforeQueryStatus(object sender, EventArgs e)
+#pragma warning restore IDE1006 // Naming Styles
+        {
+            var command = sender as OleMenuCommand;
+            if (command == null) return;
+
+            try
+            {
+                // Check if we can find a documentable node at the cursor position
+                var targetNode = await GetSyntaxNodeAtCursorAsync();
+                
+                // Only show the menu item if we found a valid documentable node
+                command.Visible = targetNode != null;
+                command.Enabled = targetNode != null;
+            }
+            catch (Exception)
+            {
+                // If anything fails, hide the menu item
+                command.Visible = false;
+                command.Enabled = false;
+            }
+        }
+
+        /// <summary>
         /// Executes the command when the editor context menu item is clicked
         /// </summary>
         private async void ExecuteAsync(object sender, EventArgs e)
@@ -161,6 +189,10 @@ namespace CodeDocumentor2026.Commands.Context
                 // Get text selection to find cursor position
                 var textSelection = activeDocument.Selection as TextSelection;
                 if (textSelection == null) return;
+
+                // Capture original cursor position
+                var originalLine = textSelection.ActivePoint.Line;
+                var originalColumn = textSelection.ActivePoint.LineCharOffset;
 
                 // Get cursor position (convert from 1-based to 0-based)
                 var cursorPosition = textSelection.ActivePoint.AbsoluteCharOffset - 1;
@@ -201,6 +233,17 @@ namespace CodeDocumentor2026.Commands.Context
                     {
                         // If SmartFormat fails, continue without formatting
                     }
+
+                    // Restore cursor position
+                    try
+                    {
+                        textSelection.MoveToLineAndOffset(originalLine, originalColumn);
+                    }
+                    catch
+                    {
+                        // If position restoration fails, just collapse at current position
+                        textSelection.Collapse();
+                    }
                 }
             }
             catch (Exception ex)
@@ -210,24 +253,18 @@ namespace CodeDocumentor2026.Commands.Context
         }
 
         /// <summary>
-        /// Finds a documentable syntax node at or containing the specified position.
-        /// Traverses up the syntax tree to find the first documentable node.
+        /// Finds a documentable syntax node at the specified position.
+        /// Only returns a node if the cursor is directly on a documentable node - does not traverse up the tree.
         /// </summary>
         private SyntaxNode FindDocumentableNode(SyntaxNode root, int position)
         {
             // Find the node at the exact cursor position
             var nodeAtPosition = root.FindNode(Microsoft.CodeAnalysis.Text.TextSpan.FromBounds(position, position));
             
-            // Traverse up the syntax tree to find a documentable node
-            var currentNode = nodeAtPosition;
-            while (currentNode != null)
+            // Only return the node if it's directly documentable - don't traverse up
+            if (IsDocumentableNode(nodeAtPosition))
             {
-                if (IsDocumentableNode(currentNode))
-                {
-                    return currentNode;
-                }
-                
-                currentNode = currentNode.Parent;
+                return nodeAtPosition;
             }
             
             return null;

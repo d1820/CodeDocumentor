@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		.gitignore = .gitignore
 		LICENSE.txt = LICENSE.txt
 		Readme.md = Readme.md
+		Readme2022.md = Readme2022.md
 		Reset-Exp.ps1 = Reset-Exp.ps1
 	EndProjectSection
 EndProject
@@ -40,6 +41,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDocumentor.Analyzers", "CodeDocumentor.Analyzers\CodeDocumentor.Analyzers.csproj", "{738D16AF-93E6-4F9C-9F6A-9283A3E62243}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDocumentor2026", "CodeDocumentor2026\CodeDocumentor2026.csproj", "{FE2D9454-9027-44A1-83B3-A4B0350EC8A0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2026", "2026", "{916832B5-AA2A-401F-A29B-A85E0AD7FE9D}"
+	ProjectSection(SolutionItems) = preProject
+		GifInstruction\2026\CodeDocumentor2026Demo.gif = GifInstruction\2026\CodeDocumentor2026Demo.gif
+		GifInstruction\2026\DocumentThisKeyboard.png = GifInstruction\2026\DocumentThisKeyboard.png
+		GifInstruction\2026\FileKeyboard.png = GifInstruction\2026\FileKeyboard.png
+		GifInstruction\2026\KeyboardSearch.png = GifInstruction\2026\KeyboardSearch.png
+		GifInstruction\2026\RightContext.png = GifInstruction\2026\RightContext.png
+		GifInstruction\2026\SolutionFile.png = GifInstruction\2026\SolutionFile.png
+		GifInstruction\2026\SolutionFolder.png = GifInstruction\2026\SolutionFolder.png
+		GifInstruction\2026\ToolsMenu.png = GifInstruction\2026\ToolsMenu.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -114,6 +127,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{916832B5-AA2A-401F-A29B-A85E0AD7FE9D} = {71CE4E03-2814-4AC9-88D4-968D55686C30}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1C24040-E2CB-4A07-9065-4F50A8208F89}

@@ -25,6 +25,10 @@ namespace CodeDocumentor2026.Commands.Context
 
         public const int EditorWholeFileCommandId = 6015;
 
+        public const int QuickActionCommandId = 6017;
+
+        public const int QuickActionWholeFileCommandId = 6018;
+
         /// <summary> Command menu group (command set GUID). </summary>
         public static readonly Guid _commandSet = CodeDocumentor.Common.Constants.CommandSetId;
 
@@ -53,6 +57,16 @@ namespace CodeDocumentor2026.Commands.Context
             var editorCommandWholeFileID = new CommandID(_commandSet, EditorWholeFileCommandId);
             var editorWholeFileMenuItem = new OleMenuCommand(ExecuteAsync, editorCommandWholeFileID);
             commandService.AddCommand(editorWholeFileMenuItem);
+
+            // New Quick Actions menu commands
+            var quickActionCommandID = new CommandID(_commandSet, QuickActionCommandId);
+            var quickActionMenuItem = new OleMenuCommand(ExecuteAsync, quickActionCommandID);
+            quickActionMenuItem.BeforeQueryStatus += OnBeforeQueryStatus;
+            commandService.AddCommand(quickActionMenuItem);
+
+            var quickActionWholeFileCommandID = new CommandID(_commandSet, QuickActionWholeFileCommandId);
+            var quickActionWholeFileMenuItem = new OleMenuCommand(ExecuteAsync, quickActionWholeFileCommandID);
+            commandService.AddCommand(quickActionWholeFileMenuItem);
         }
 
         /// <summary> Gets the instance of the command. </summary>
@@ -152,7 +166,8 @@ namespace CodeDocumentor2026.Commands.Context
                     return;
                 }
 
-                if (command.CommandID.ID == EditorWholeFileCommandId)
+                if (command.CommandID.ID == EditorWholeFileCommandId ||
+                    command.CommandID.ID == QuickActionWholeFileCommandId)
                 {
                     var documentedFile = _commentBuilderService.AddDocumentation(documentInfo.DocumentText);
                     UpdateDocumentAndFormat(documentInfo, documentedFile);

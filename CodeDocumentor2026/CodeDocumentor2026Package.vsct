@@ -40,15 +40,21 @@
       <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenuGroup" priority="4">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
       </Group>
-      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem" priority="6">
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem" priority="0x0100">
         <Parent  guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
       </Group>
-      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupFolder" priority="6">
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupFolder" priority="0x0100">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
       </Group>
-      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" priority="6">
+      <!--THis places it right above CodeMaid-->
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" priority="0x0100">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
       </Group>
+
+      <!-- Add group for Quick Actions and Refactorings menu -->
+      <!--<Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionsGroup" priority="6">
+        <Parent guid="IDG_VS_CONTEXT_MENU_EDIT" id="IDC_EDITCONTEXTMENU" />
+      </Group>-->
 
       <!--Menus-->
       <!--This SubGroup Contains the tool menu items-->
@@ -93,18 +99,32 @@
           <ButtonText>Code Documentor All Files</ButtonText>
         </Strings>
       </Button>
+      <!--Context Items for Editor-->
       <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandId" priority="1" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
         <Strings>
           <ButtonText>Code Documentor This</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" priority="1" type="Button">
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" priority="2" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
         <Strings>
           <ButtonText>Code Documentor File</ButtonText>
         </Strings>
       </Button>
+      <!-- Add buttons for Quick Actions and Refactorings menu -->
+      <!--<Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionAddDocumentationCommandId" priority="6" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionsGroup" />
+        <Strings>
+          <ButtonText>Add XML documentation</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionAddDocumentationWholeFileCommandId" priority="7" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionsGroup" />
+        <Strings>
+          <ButtonText>Document entire file</ButtonText>
+        </Strings>
+      </Button>-->
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -149,11 +169,16 @@
       <!--These Execute the documentor-->
       <!--Menu-->
       <IDSymbol name="CodeDocumentorAddDocumentationCommandId" value="6011"/>
-      <!--Contetext-->
+      <!--Context solution-->
       <IDSymbol name="CodeDocumentorContextAddDocumentationFolderCommandId" value="6012"/>
       <IDSymbol name="CodeDocumentorContextAddDocumentationFileCommandId" value="6013"/>
+      <!-- Context for Editor-->
       <IDSymbol name="CodeDocumentorContextAddDocumentationEditorCommandId" value="6014"/>
       <IDSymbol name="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" value="6015"/>
+      <!--Quick Actions Commands-->
+      <!--<IDSymbol name="CodeDocumentorQuickActionAddDocumentationCommandId" value="6017"/>
+      <IDSymbol name="CodeDocumentorQuickActionAddDocumentationWholeFileCommandId" value="6018"/>
+      <IDSymbol name="CodeDocumentorQuickActionsGroup" value="6020" />-->
 
     </GuidSymbol>
 

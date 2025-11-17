@@ -16,13 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeDocumentor.Test", "Code
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDocumentor", "CodeDocumentor\CodeDocumentor.csproj", "{0D6E3633-F45F-4883-AC62-DEC9F714AA9B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifests", "Manifests", "{7D0C4464-A2B6-445E-A5B3-65B56D486D5D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vs2022", "vs2022", "{F2631D48-BF7F-4DF2-B9BC-6F698DF98F3F}"
-	ProjectSection(SolutionItems) = preProject
-		Manifests\vs2022\source.extension.vsixmanifest = Manifests\vs2022\source.extension.vsixmanifest
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GifInstruction", "GifInstruction", "{71CE4E03-2814-4AC9-88D4-968D55686C30}"
 	ProjectSection(SolutionItems) = preProject
 		GifInstruction\outOfProcess.png = GifInstruction\outOfProcess.png
@@ -121,9 +114,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{F2631D48-BF7F-4DF2-B9BC-6F698DF98F3F} = {7D0C4464-A2B6-445E-A5B3-65B56D486D5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1C24040-E2CB-4A07-9065-4F50A8208F89}

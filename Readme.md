@@ -24,36 +24,44 @@ Download and install the CodeDocumentor2026 VSIX from the [VS Marketplace](https
 
 <!-- toc -->
 
-- [Compatibility](#compatibility)
-- [4 Ways to Invoke CodeDocumentor](#4-ways-to-invoke-codedocumentor)
-  - [From the Tools menu](#from-the-tools-menu)
-  - [From the Solution Explorer context menu on a project or solution](#from-the-solution-explorer-context-menu-on-a-project-or-solution)
-  - [From the Solution Explorer context menu on a code file](#from-the-solution-explorer-context-menu-on-a-code-file)
-  - [From the right click context menu in the code editor on a supported type](#from-the-right-click-context-menu-in-the-code-editor-on-a-supported-type)
-- [Comment Ordering](#comment-ordering)
-- [Supported Comment Refactorings](#supported-comment-refactorings)
-- [Settings](#settings)
-  - [Word Translations](#word-translations)
-  - [Recommended Settings](#recommended-settings)
-- [Also Supports](#also-supports)
-  - [One Word Methods](#one-word-methods)
-    - [Example](#example)
-  - [Supported Members](#supported-members)
-- [Keyboard Shortcuts](#keyboard-shortcuts)
-- [Usage Demo](#usage-demo)
-  - [Example Cref Support](#example-cref-support)
-- [Errors and Crashes](#errors-and-crashes)
-- [Changelog](#changelog)
-- [Special Thanks](#special-thanks)
+- [CodeDocumentor](#codedocumentor)
+  - [Installation](#installation)
+  - [Table of Contents](#table-of-contents)
+  - [Known Issues](#known-issues)
+  - [Compatibility](#compatibility)
+  - [4 Ways to Invoke CodeDocumentor](#4-ways-to-invoke-codedocumentor)
+    - [From the Tools menu](#from-the-tools-menu)
+    - [From the Solution Explorer context menu on a project or solution](#from-the-solution-explorer-context-menu-on-a-project-or-solution)
+    - [From the Solution Explorer context menu on a code file](#from-the-solution-explorer-context-menu-on-a-code-file)
+    - [From the right click context menu in the code editor on a supported type](#from-the-right-click-context-menu-in-the-code-editor-on-a-supported-type)
+  - [Comment Ordering](#comment-ordering)
+  - [Supported Comment Refactorings](#supported-comment-refactorings)
+  - [Settings](#settings)
+    - [Word Translations](#word-translations)
+    - [Recommended Settings](#recommended-settings)
+  - [Also Supports](#also-supports)
+    - [One Word Methods](#one-word-methods)
+      - [Example](#example)
+    - [Supported Members](#supported-members)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
+  - [Usage Demo](#usage-demo)
+    - [Example Cref Support](#example-cref-support)
+  - [Errors and Crashes](#errors-and-crashes)
+  - [Porting over CodeDocumentor 2022 Settings](#porting-over-codedocumentor-2022-settings)
+  - [Changelog](#changelog)
+  - [Special Thanks](#special-thanks)
 
 <!-- tocstop -->
+
+## Known Issues
+VS2026 seems to get corrupted when VS2022 extensions are installed and roaming is enabled. I have had my entire VS2026 crash and be unable to start unless I perform a `Repair` from the VS Installer. Im not shocked by this, as Microsoft always releases buggy things to mean deadlines.
 
 ## Compatibility
 ---
 
-The new CodeDocumentor2026 extension is compatible with Visual Studio 2022 and Visual Studio 2026. This is the new preferred version of CodeDocumentor moving forward. 
+The new CodeDocumentor2026 extension is compatible with Visual Studio 2022 and Visual Studio 2026. This is the new preferred version of CodeDocumentor moving forward.
 This does not use Analyzers and Fix Providers anymore so there is no longer a dependency on Roslyn Analyzers.
-The XML documentation is now created in the editor foreground directly. No more cluttering the error list with messages. 
+The XML documentation is now created in the editor foreground directly. No more cluttering the error list with messages.
 This gives the developer control on creating XML documentation when they want it.
 
 ## 4 Ways to Invoke CodeDocumentor
@@ -74,7 +82,7 @@ This gives the developer control on creating XML documentation when they want it
 
 Withing the editor for a given C# file you have 2 options from the right context menu
 1. Add documentation to the given type the cursor is on. Note the cursor must be on the line of a supported XML documentation member. If the cursor is not on a supported member line you will not see the `Code Documentor This` menu item. See `Supported Members` below.
-1. Add documentation to the whole file. 
+1. Add documentation to the whole file.
 
 ![Editor Right Context Menu](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/RightContext.png?raw=true)
 
@@ -147,7 +155,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 
 ### One Word Methods
 
-In an attempt to create valid summary statements when a method is only 1 word (plus Async suffix) we will read the return type of the method. If the method is a generic type an attempt will be 
+In an attempt to create valid summary statements when a method is only 1 word (plus Async suffix) we will read the return type of the method. If the method is a generic type an attempt will be
 made to create text representing that string. In the example below in the summary line CodeDocumentor added ```and return a <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/>```
 This is leveraging the new setting **Try to include return types in documentation** to generate those ```<see cref=""/>``` elements.
 
@@ -232,6 +240,12 @@ All errors are written to the EventLog in windows. Check there for causes, and u
 
 ![Event Log](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/EventLog.png?raw=true)
 
+
+## Porting over CodeDocumentor 2022 Settings
+1. Uninstall the existing CodeDocumentor 2022 extension
+2. In Explorer navigate to `C:\Users\<USER>\AppData\Roaming\CodeDocumentor`
+3. Copy `codedocumentor.json` and rename to `codedocumentor2026.json`
+4. That is it! Start VS2026 and the settings that apply still will be loaded.
 
 
 ## Changelog

@@ -102,6 +102,8 @@
       <!--Context Items for Editor-->
       <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandId" priority="1" type="Button">
         <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <ButtonText>Code Documentor This</ButtonText>
         </Strings>

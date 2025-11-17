@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms.Design;
 using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor2026.Extensions;
@@ -128,8 +129,11 @@ namespace CodeDocumentor2026.Commands.Context
         private async void OnBeforeQueryStatus(object sender, EventArgs e)
         {
             var command = sender as OleMenuCommand;
+            command.Visible = false;
+            command.Enabled = false;
             if (command == null)
             {
+              
                 return;
             }
 
@@ -137,16 +141,18 @@ namespace CodeDocumentor2026.Commands.Context
             {
                 // Check if we can find a documentable node at the cursor position
                 var targetNode = await GetSyntaxNodeAtCursorAsync();
+                if( targetNode == null)
+                {
+                    return;
+                }
 
                 // Only show the menu item if we found a valid documentable node
-                command.Visible = targetNode != null;
-                command.Enabled = targetNode != null;
+                command.Visible = true;
+                command.Enabled = true;
             }
-            catch (Exception)
+            catch
             {
-                // If anything fails, hide the menu item
-                command.Visible = false;
-                command.Enabled = false;
+                //NO OPT
             }
         }
 

@@ -12,7 +12,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace CodeDocumentor2026.Commands.Context
 {
-    /// <summary> 
+    /// <summary>
     /// Command handler for editor context menu to add documentation at cursor position
     /// </summary>
     internal sealed class CodeDocumentorEditorCommand
@@ -184,7 +184,8 @@ namespace CodeDocumentor2026.Commands.Context
                     return;
                 }
 
-                // Build new declaration and replace node
+                // We need this incase its re-creating existing documentation
+                var originalCommentLineCount = _commentBuilderService.GetDocumentationLineCount(targetNode);
                 var newDeclaration = _commentBuilderService.BuildNewDocumentationNode(targetNode);
                 if (newDeclaration == null)
                 {
@@ -201,7 +202,7 @@ namespace CodeDocumentor2026.Commands.Context
                 {
                     UpdateDocumentAndFormat(documentInfo, updatedText);
 
-                    documentInfo.TextSelection.SetCursorToLine(documentInfo.OriginalLine + commentLineCount, documentInfo.OriginalColumn);
+                    documentInfo.TextSelection.SetCursorToLine(documentInfo.OriginalLine + (commentLineCount - originalCommentLineCount), documentInfo.OriginalColumn);
                 }
             }
             catch (Exception ex)

@@ -1,15 +1,11 @@
 using System;
 using System.ComponentModel.Design;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms.Design;
-using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor2026.Extensions;
 using EnvDTE;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
@@ -51,22 +47,22 @@ namespace CodeDocumentor2026.Commands.Context
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
             _commentBuilderService = commentBuilderService;
             var editorCommandID = new CommandID(_commandSet, EditorCommandId);
-            var editorMenuItem = new OleMenuCommand(ExecuteAsync, editorCommandID);
+            var editorMenuItem = new OleMenuCommand(Execute, editorCommandID);
             editorMenuItem.BeforeQueryStatus += OnBeforeQueryStatus;
             commandService.AddCommand(editorMenuItem);
 
             var editorCommandWholeFileID = new CommandID(_commandSet, EditorWholeFileCommandId);
-            var editorWholeFileMenuItem = new OleMenuCommand(ExecuteAsync, editorCommandWholeFileID);
+            var editorWholeFileMenuItem = new OleMenuCommand(Execute, editorCommandWholeFileID);
             commandService.AddCommand(editorWholeFileMenuItem);
 
             // New Quick Actions menu commands
             var quickActionCommandID = new CommandID(_commandSet, QuickActionCommandId);
-            var quickActionMenuItem = new OleMenuCommand(ExecuteAsync, quickActionCommandID);
+            var quickActionMenuItem = new OleMenuCommand(Execute, quickActionCommandID);
             quickActionMenuItem.BeforeQueryStatus += OnBeforeQueryStatus;
             commandService.AddCommand(quickActionMenuItem);
 
             var quickActionWholeFileCommandID = new CommandID(_commandSet, QuickActionWholeFileCommandId);
-            var quickActionWholeFileMenuItem = new OleMenuCommand(ExecuteAsync, quickActionWholeFileCommandID);
+            var quickActionWholeFileMenuItem = new OleMenuCommand(Execute, quickActionWholeFileCommandID);
             commandService.AddCommand(quickActionWholeFileMenuItem);
         }
 
@@ -133,7 +129,7 @@ namespace CodeDocumentor2026.Commands.Context
             command.Enabled = false;
             if (command == null)
             {
-              
+
                 return;
             }
 
@@ -141,7 +137,7 @@ namespace CodeDocumentor2026.Commands.Context
             {
                 // Check if we can find a documentable node at the cursor position
                 var targetNode = await GetSyntaxNodeAtCursorAsync();
-                if( targetNode == null)
+                if (targetNode == null)
                 {
                     return;
                 }
@@ -159,7 +155,7 @@ namespace CodeDocumentor2026.Commands.Context
         /// <summary>
         /// Executes the command when the editor context menu item is clicked
         /// </summary>
-        private async void ExecuteAsync(object sender, EventArgs e)
+        private async void Execute(object sender, EventArgs e)
         {
             var command = sender as OleMenuCommand;
             try
@@ -216,6 +212,7 @@ namespace CodeDocumentor2026.Commands.Context
 
         private static void UpdateDocumentAndFormat(DocumentInfo documentInfo, string updatedText)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var editPoint = documentInfo.TextDocument.StartPoint.CreateEditPoint();
             editPoint.ReplaceText(
                 documentInfo.TextDocument.EndPoint,
@@ -289,7 +286,7 @@ namespace CodeDocumentor2026.Commands.Context
 
                 // Parse with Roslyn
                 var syntaxTree = CSharpSyntaxTree.ParseText(documentText);
-                var root = syntaxTree.GetRoot();
+                var root = await syntaxTree.GetRootAsync();
 
                 return new DocumentInfo
                 {

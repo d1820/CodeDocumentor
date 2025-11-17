@@ -10,7 +10,7 @@ namespace CodeDocumentor2026.Executors
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if(selectedItems == null)
+            if (selectedItems == null)
             {
                 return 0;
             }

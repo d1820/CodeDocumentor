@@ -18,7 +18,7 @@ namespace CodeDocumentor2026.Executors
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if(selectedItems == null)
+            if (selectedItems == null)
             {
                 return;
             }
@@ -38,7 +38,8 @@ namespace CodeDocumentor2026.Executors
                 {
                     continue;
                 }
-                Action<string> projectItemAttributingComplete = (fileName) => {
+                Action<string> projectItemAttributingComplete = (fileName) =>
+                {
                     ThreadHelper.ThrowIfNotOnUIThread();
                     currentCount++;
                     dialog?.UpdateProgress($"{dialogAction}: {fileName}", $"{currentCount} of {totalCount} Processed", dialogAction, currentCount, totalCount, false, out cancelProcessing);
@@ -48,7 +49,8 @@ namespace CodeDocumentor2026.Executors
                     }
                 };
 
-                Action<string> projectItemAttributingStarted = (fileName) => {
+                Action<string> projectItemAttributingStarted = (fileName) =>
+                {
                     ThreadHelper.ThrowIfNotOnUIThread();
                     dialog?.UpdateProgress($"{dialogAction}: {fileName}", $"{currentCount} of {totalCount} Processed", dialogAction, currentCount, totalCount, false, out cancelProcessing);
                     if (cancelProcessing)

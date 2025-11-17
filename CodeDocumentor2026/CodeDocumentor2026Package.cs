@@ -2,14 +2,13 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CodeDocumentor;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using CodeDocumentor.Common.Services;
-using CodeDocumentor.Vsix2022;
 using CodeDocumentor2026.Commands.Context;
 using CodeDocumentor2026.Commands.Menu;
+using CodeDocumentor2026.Models;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
@@ -81,7 +80,7 @@ namespace CodeDocumentor2026
                 var options = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 LogDebug("Package Got options page");
 
-                var settings = new Settings();
+                var settings = new Settings2026();
                 settings.SetFromOptionsGrid(options);
                 LogDebug("Package Created settings from options");
 
@@ -107,7 +106,7 @@ namespace CodeDocumentor2026
                 throw;
             }
         }
-        private async Task RegisterServicesAsync(CancellationToken cancellationToken, ISettings settings)
+        private async Task RegisterServicesAsync(CancellationToken cancellationToken, IBaseSettings settings)
         {
             try
             {

@@ -29,7 +29,7 @@ namespace CodeDocumentor.Common
             }
 
             Directory.CreateDirectory(_programDataFolder);
-            var json = File.ReadAllText(GetSettingsFilePath());
+            var json = File.ReadAllText(GetSettingsFilePath("2022"));
             settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings>(json);
             return settings;
         }
@@ -42,7 +42,7 @@ namespace CodeDocumentor.Common
             }
 
             Directory.CreateDirectory(_programDataFolder);
-            settings.SaveToFile(GetSettingsFilePath());
+            settings.SaveToFile(GetSettingsFilePath("2022"));
         }
 
         public static void SaveToEditorConfig(this ISettings settings, Action<string> setToClipboardAction)
@@ -178,12 +178,12 @@ namespace CodeDocumentor.Common
         {
             if (Runtime.RunningUnitTests)
             {
-                return new Settings();
+                return new Settings2026();
             }
 
             Directory.CreateDirectory(_programDataFolder);
-            var json = File.ReadAllText(GetSettingsFilePath("2026"));
-            settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings>(json);
+            var json = File.ReadAllText(GetSettingsFilePath("2026","2026"));
+            settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings2026>(json);
             return settings;
         }
 
@@ -195,20 +195,25 @@ namespace CodeDocumentor.Common
             }
 
             Directory.CreateDirectory(_programDataFolder);
-            settings.SaveToFile(GetSettingsFilePath("2026"));
+            settings.SaveToFile(GetSettingsFilePath("2026", "2026"));
         }
 
         /// <summary>
         ///  Gets the settings file path.
         /// </summary>
         /// <returns> A string. </returns>
-        private static string GetSettingsFilePath(string suffix = "")
+        private static string GetSettingsFilePath(string type, string suffix = "")
         {
             string name = string.Format("codedocumentor{0}.json", suffix);
             var settingsPath = Path.Combine(_programDataFolder, name);
 
             if (!File.Exists(settingsPath))
             {
+                if (type == "2026")
+                {
+                    new Settings2026().SaveToFile(settingsPath);
+                    return settingsPath;
+                }
                 new Settings().SaveToFile(settingsPath);
             }
 

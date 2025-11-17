@@ -9,50 +9,50 @@ namespace CodeDocumentor.Common.Interfaces
     {
         // Class methods (existing)
         int BuildComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        ClassDeclarationSyntax BuildNewDeclaration(ISettings settings, ClassDeclarationSyntax declarationSyntax);
+        int BuildComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        ClassDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, ClassDeclarationSyntax declarationSyntax);
         ClassDeclarationSyntax BuildNewDeclaration(ClassDeclarationSyntax declarationSyntax);
 
         // Property methods
         int BuildPropertyComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildPropertyComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        PropertyDeclarationSyntax BuildNewDeclaration(ISettings settings, PropertyDeclarationSyntax declarationSyntax);
+        int BuildPropertyComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        PropertyDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, PropertyDeclarationSyntax declarationSyntax);
         PropertyDeclarationSyntax BuildNewDeclaration(PropertyDeclarationSyntax declarationSyntax);
 
         // Constructor methods
         int BuildConstructorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildConstructorComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        ConstructorDeclarationSyntax BuildNewDeclaration(ISettings settings, ConstructorDeclarationSyntax declarationSyntax);
+        int BuildConstructorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        ConstructorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, ConstructorDeclarationSyntax declarationSyntax);
         ConstructorDeclarationSyntax BuildNewDeclaration(ConstructorDeclarationSyntax declarationSyntax);
 
         // Enum methods
         int BuildEnumComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildEnumComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        EnumDeclarationSyntax BuildNewDeclaration(ISettings settings, EnumDeclarationSyntax declarationSyntax);
+        int BuildEnumComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        EnumDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, EnumDeclarationSyntax declarationSyntax);
         EnumDeclarationSyntax BuildNewDeclaration(EnumDeclarationSyntax declarationSyntax);
 
         // Field methods
         int BuildFieldComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildFieldComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        FieldDeclarationSyntax BuildNewDeclaration(ISettings settings, FieldDeclarationSyntax declarationSyntax);
+        int BuildFieldComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        FieldDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, FieldDeclarationSyntax declarationSyntax);
         FieldDeclarationSyntax BuildNewDeclaration(FieldDeclarationSyntax declarationSyntax);
 
         // Method methods
         int BuildMethodComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildMethodComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        MethodDeclarationSyntax BuildNewDeclaration(ISettings settings, MethodDeclarationSyntax declarationSyntax);
+        int BuildMethodComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        MethodDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, MethodDeclarationSyntax declarationSyntax);
         MethodDeclarationSyntax BuildNewDeclaration(MethodDeclarationSyntax declarationSyntax);
 
         // Interface methods
         int BuildInterfaceComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildInterfaceComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        InterfaceDeclarationSyntax BuildNewDeclaration(ISettings settings, InterfaceDeclarationSyntax declarationSyntax);
+        int BuildInterfaceComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        InterfaceDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, InterfaceDeclarationSyntax declarationSyntax);
         InterfaceDeclarationSyntax BuildNewDeclaration(InterfaceDeclarationSyntax declarationSyntax);
 
         // Record methods
         int BuildRecordComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        int BuildRecordComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
-        RecordDeclarationSyntax BuildNewDeclaration(ISettings settings, RecordDeclarationSyntax declarationSyntax);
+        int BuildRecordComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        RecordDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, RecordDeclarationSyntax declarationSyntax);
         RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax);
 
         // Utility methods

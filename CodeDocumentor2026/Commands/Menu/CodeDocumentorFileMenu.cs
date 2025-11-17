@@ -35,7 +35,7 @@ namespace CodeDocumentor2026.Commands.Menu
             SDTE SDTEService, ICommentBuilderService commentBuilderService, TextSelectionExecutor textSelectionExecutor)
         {
             LogDebug("FileMenu Constructor - START");
-            
+
             _package = package ?? throw new ArgumentNullException(nameof(package));
             _sdteService = SDTEService;
             _commentBuilderService = commentBuilderService;
@@ -44,10 +44,10 @@ namespace CodeDocumentor2026.Commands.Menu
 
             var menuCommandID = new CommandID(_commandSet, CommandId);
             LogDebug($"FileMenu Creating MenuCommand with GUID: {_commandSet}, ID: {CommandId}");
-            
+
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
-            
+
             LogDebug("FileMenu Constructor - SUCCESS");
         }
 
@@ -74,7 +74,7 @@ namespace CodeDocumentor2026.Commands.Menu
             try
             {
                 LogDebug("FileMenu InitializeAsync - START");
-                
+
                 // Switch to the main thread - the call to AddCommand in ProtoCommand's constructor requires the UI thread.
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
                 LogDebug("FileMenu Switched to main thread");
@@ -82,19 +82,19 @@ namespace CodeDocumentor2026.Commands.Menu
                 LogDebug("FileMenu Getting IMenuCommandService...");
                 var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
                 LogDebug($"FileMenu IMenuCommandService result: {(commandService != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("FileMenu Getting ICommentBuilderService...");
                 var commentService = await package.GetServiceAsync(typeof(ICommentBuilderService)) as ICommentBuilderService;
                 LogDebug($"FileMenu ICommentBuilderService result: {(commentService != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("FileMenu Getting SDTE service...");
                 var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
                 LogDebug($"FileMenu SDTE service result: {(SDTE != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("FileMenu Creating TextSelectionExecutor...");
                 var textSelectionExecutor = new TextSelectionExecutor();
                 LogDebug("FileMenu TextSelectionExecutor created");
-                
+
                 // Only create instance if all services are available
                 if (commandService != null && commentService != null && SDTE != null)
                 {
@@ -132,7 +132,7 @@ namespace CodeDocumentor2026.Commands.Menu
             {
                 LogDebug("FileMenu Execute - START");
                 ThreadHelper.ThrowIfNotOnUIThread();
-                
+
                 if (_sdteService == null || _commentBuilderService == null || _textSelectionExecutor == null)
                 {
                     var errorMsg = "FileMenu.Execute: Required services not available - " +
@@ -145,19 +145,20 @@ namespace CodeDocumentor2026.Commands.Menu
                 LogDebug("FileMenu Getting DTE from SDTE service...");
                 var dte = _sdteService as DTE;
                 LogDebug($"FileMenu DTE result: {(dte != null ? "SUCCESS" : "NULL")}");
-                
+
                 if (dte?.ActiveDocument != null)
                 {
                     LogDebug($"FileMenu Active document: {dte.ActiveDocument.Name}");
                     LogDebug("FileMenu Executing text selection processor...");
-                    _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, 
-                        (contents) => {
+                    _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection,
+                        (contents) =>
+                        {
                             LogDebug($"FileMenu Processing content length: {contents?.Length ?? 0}");
                             var result = _commentBuilderService.AddDocumentation(contents);
                             LogDebug($"FileMenu Result content length: {result?.Length ?? 0}");
                             return result;
                         });
-                    
+
                     LogDebug("FileMenu Execute - SUCCESS");
                 }
                 else
@@ -173,7 +174,7 @@ namespace CodeDocumentor2026.Commands.Menu
                 // Don't re-throw to prevent VS crashes - just log the error
             }
         }
-        
+
         private static void LogDebug(string message)
         {
             try

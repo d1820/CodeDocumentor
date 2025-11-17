@@ -1,3 +1,4 @@
+using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 
 // For definitions of XML nodes see:

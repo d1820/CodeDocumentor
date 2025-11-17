@@ -18,7 +18,7 @@ namespace CodeDocumentor2026.Commands.Context
     {
         /// <summary> File context command ID. </summary>
         public const int FileCommandId = 6013;
-        
+
         /// <summary> Folder context command ID. </summary>
         public const int FolderCommandId = 6012;
 
@@ -47,7 +47,7 @@ namespace CodeDocumentor2026.Commands.Context
             CommentExecutor commentExecutor)
         {
             LogDebug("ContextCommand Constructor - START");
-            
+
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
             _sdteService = SDTEService;
@@ -56,19 +56,19 @@ namespace CodeDocumentor2026.Commands.Context
             _dialogFactory = dialogFactory;
             _selectedItemCountExecutor = selectedItemCountExecutor;
             _commentExecutor = commentExecutor;
-            
+
             // Register both file and folder commands with the same handler
             var fileCommandID = new CommandID(_commandSet, FileCommandId);
             var folderCommandID = new CommandID(_commandSet, FolderCommandId);
-            
+
             LogDebug($"ContextCommand Creating File MenuCommand with GUID: {_commandSet}, ID: {FileCommandId}");
             var fileMenuItem = new MenuCommand(Execute, fileCommandID);
             commandService.AddCommand(fileMenuItem);
-            
+
             LogDebug($"ContextCommand Creating Folder MenuCommand with GUID: {_commandSet}, ID: {FolderCommandId}");
             var folderMenuItem = new MenuCommand(Execute, folderCommandID);
             commandService.AddCommand(folderMenuItem);
-            
+
             LogDebug("ContextCommand Constructor - SUCCESS");
         }
 
@@ -95,7 +95,7 @@ namespace CodeDocumentor2026.Commands.Context
             try
             {
                 LogDebug("ContextCommand InitializeAsync - START");
-                
+
                 // Switch to the main thread - the call to AddCommand requires the UI thread.
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
                 LogDebug("ContextCommand Switched to main thread");
@@ -103,25 +103,25 @@ namespace CodeDocumentor2026.Commands.Context
                 LogDebug("ContextCommand Getting IMenuCommandService...");
                 var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
                 LogDebug($"ContextCommand IMenuCommandService result: {(commandService != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("ContextCommand Getting ICommentBuilderService...");
                 var attributeService = await package.GetServiceAsync(typeof(ICommentBuilderService)) as ICommentBuilderService;
                 LogDebug($"ContextCommand ICommentBuilderService result: {(attributeService != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("ContextCommand Getting SVsThreadedWaitDialogFactory...");
                 var dialogFactory = await package.GetServiceAsync(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
                 LogDebug($"ContextCommand SVsThreadedWaitDialogFactory result: {(dialogFactory != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("ContextCommand Getting SDTE service...");
                 var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
                 LogDebug($"ContextCommand SDTE service result: {(SDTE != null ? "SUCCESS" : "NULL")}");
-                
+
                 LogDebug("ContextCommand Creating executor objects...");
                 var textSelectionExecutor = new TextSelectionExecutor();
                 var selectedItemCountExecutor = new SelectedItemCountExecutor();
                 var commentExecutor = new CommentExecutor();
                 LogDebug("ContextCommand Executor objects created");
-                
+
                 // Only create instance if required services are available
                 if (commandService != null && attributeService != null && SDTE != null)
                 {
@@ -159,7 +159,7 @@ namespace CodeDocumentor2026.Commands.Context
             {
                 LogDebug("ContextCommand Execute - START");
                 ThreadHelper.ThrowIfNotOnUIThread();
-                
+
                 if (_sdteService == null || _commentBuilderService == null)
                 {
                     var errorMsg = "ContextCommand.Execute: Required services not available - " +
@@ -209,7 +209,8 @@ namespace CodeDocumentor2026.Commands.Context
                 {
                     LogDebug("ContextCommand Starting comment executor...");
                     _commentExecutor.Execute(dte.SelectedItems, cts, dialog, totalCount, _textSelectionExecutor,
-                       (content) => {
+                       (content) =>
+                       {
                            LogDebug($"ContextCommand Processing content length: {content?.Length ?? 0}");
                            var result = _commentBuilderService.AddDocumentation(content);
                            LogDebug($"ContextCommand Result content length: {result?.Length ?? 0}");
@@ -224,7 +225,7 @@ namespace CodeDocumentor2026.Commands.Context
                     dialog?.EndWaitDialog(out usercancel);
                     LogDebug($"ContextCommand Progress dialog ended, user canceled: {usercancel}");
                 }
-                
+
                 LogDebug("ContextCommand Execute - SUCCESS");
             }
             catch (Exception ex)
@@ -235,7 +236,7 @@ namespace CodeDocumentor2026.Commands.Context
                 // Don't re-throw to prevent VS crashes - just log the error
             }
         }
-        
+
         private static void LogDebug(string message)
         {
             try

@@ -4,7 +4,7 @@
 using System.Diagnostics;
 using CodeDocumentor.Common.Interfaces;
 
-namespace CodeDocumentor
+namespace CodeDocumentor2026
 {
     public class Logger : IEventLogger
     {

@@ -1,30 +1,27 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
-using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
-using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 
 // For definitions of XML nodes see:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments see
 // also https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags
-namespace CodeDocumentor.Vsix2022
+namespace CodeDocumentor2026.Models
 {
     //This has to live in this project so context thread is valid
     /// <summary>
     ///  The option page grid.
     /// </summary>
-    [Guid("BE905985-26BB-492B-9453-743E26F4E8BB")]
+    [Guid("93DFF1A0-6A9F-42C6-9845-7F1E56105AE3")]
     public class OptionPageGrid : DialogPage, IBaseSettings
     {
         /// <summary>
         ///  The category.
         /// </summary>
-        public const string Category = "CodeDocumentor";
+        public const string Category = "CodeDocumentor2026";
 
         /// <summary>
         ///  The sub category.
@@ -131,7 +128,7 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void LoadSettingsFromStorage()
         {
-            ISettings settings = new Settings();
+            IBaseSettings settings = new Settings2026();
             settings = settings.Load();
             IsEnabledForPublicMembersOnly = settings.IsEnabledForPublicMembersOnly;
             UseNaturalLanguageForReturnNode = settings.UseNaturalLanguageForReturnNode;
@@ -139,7 +136,7 @@ namespace CodeDocumentor.Vsix2022
             IncludeValueNodeInProperties = settings.IncludeValueNodeInProperties;
             UseToDoCommentsOnSummaryError = settings.UseToDoCommentsOnSummaryError;
             TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes;
-            WordMaps = settings.WordMaps ?? Constants.DEFAULT_WORD_MAPS; 
+            WordMaps = settings.WordMaps ?? CodeDocumentor.Common.Constants.DEFAULT_WORD_MAPS;
             PreserveExistingSummaryText = settings.PreserveExistingSummaryText;
             IsEnabledForNonPublicFields = settings.IsEnabledForNonPublicFields;
         }
@@ -149,11 +146,10 @@ namespace CodeDocumentor.Vsix2022
         /// </summary>
         public override void SaveSettingsToStorage()
         {
-            //var settings = new Settings();
-            //var eventLogger = new Logger();
-            //settings.Update(this, eventLogger);
-            //settings.Save();
-            //ServiceLocator.SettingService.StaticSettings = settings;
+            var settings = new Settings2026();
+            var eventLogger = new Logger();
+            settings.Update(this, eventLogger);
+            settings.Save();
         }
 
         public ISettings Clone()

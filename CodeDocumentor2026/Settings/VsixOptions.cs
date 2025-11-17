@@ -1,4 +1,4 @@
-namespace CodeDocumentor
+namespace CodeDocumentor2026
 {
     public static class VsixOptions
     {

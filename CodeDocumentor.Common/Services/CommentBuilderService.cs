@@ -15,9 +15,9 @@ namespace CodeDocumentor.Common.Services
     public class CommentBuilderService : ICommentBuilderService
     {
         private readonly IEventLogger _eventLogger;
-        private readonly ISettings _settings;
+        private readonly IBaseSettings _settings;
 
-        public CommentBuilderService(IEventLogger eventLogger, ISettings settings)
+        public CommentBuilderService(IEventLogger eventLogger, IBaseSettings settings)
         {
             _eventLogger = eventLogger;
             _settings = settings;
@@ -65,7 +65,7 @@ namespace CodeDocumentor.Common.Services
             return BuildComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ClassDeclaration)).OfType<ClassDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -90,7 +90,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public ClassDeclarationSyntax BuildNewDeclaration(ISettings settings, ClassDeclarationSyntax declarationSyntax)
+        public ClassDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, ClassDeclarationSyntax declarationSyntax)
         {
             var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateClassComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
@@ -123,7 +123,7 @@ namespace CodeDocumentor.Common.Services
             return BuildPropertyComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildPropertyComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildPropertyComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.PropertyDeclaration)).OfType<PropertyDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -147,7 +147,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public PropertyDeclarationSyntax BuildNewDeclaration(ISettings settings, PropertyDeclarationSyntax declarationSyntax)
+        public PropertyDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, PropertyDeclarationSyntax declarationSyntax)
         {
             var isBoolean = declarationSyntax.IsPropertyReturnTypeBool();
             var hasSetter = declarationSyntax.PropertyHasSetter();
@@ -190,7 +190,7 @@ namespace CodeDocumentor.Common.Services
             return BuildConstructorComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildConstructorComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildConstructorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ConstructorDeclaration)).OfType<ConstructorDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -214,7 +214,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public ConstructorDeclarationSyntax BuildNewDeclaration(ISettings settings, ConstructorDeclarationSyntax declarationSyntax)
+        public ConstructorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, ConstructorDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var commentTrivia = CreateConstructorDocumentationCommentTrivia(settings, declarationSyntax);
@@ -222,7 +222,7 @@ namespace CodeDocumentor.Common.Services
             return newDeclaration;
         }
 
-        private DocumentationCommentTriviaSyntax CreateConstructorDocumentationCommentTrivia(ISettings settings, ConstructorDeclarationSyntax declarationSyntax)
+        private DocumentationCommentTriviaSyntax CreateConstructorDocumentationCommentTrivia(IBaseSettings settings, ConstructorDeclarationSyntax declarationSyntax)
         {
             var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateConstructorComment(declarationSyntax.Identifier.ValueText, declarationSyntax.IsPrivate(), settings.WordMaps);
@@ -248,7 +248,7 @@ namespace CodeDocumentor.Common.Services
             return BuildEnumComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildEnumComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildEnumComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.EnumDeclaration)).OfType<EnumDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -272,7 +272,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public EnumDeclarationSyntax BuildNewDeclaration(ISettings settings, EnumDeclarationSyntax declarationSyntax)
+        public EnumDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, EnumDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var commentHelper = ServiceLocator.CommentHelper;
@@ -298,7 +298,7 @@ namespace CodeDocumentor.Common.Services
             return BuildFieldComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildFieldComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildFieldComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.FieldDeclaration)).OfType<FieldDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -322,7 +322,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public FieldDeclarationSyntax BuildNewDeclaration(ISettings settings, FieldDeclarationSyntax declarationSyntax)
+        public FieldDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, FieldDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
@@ -349,7 +349,7 @@ namespace CodeDocumentor.Common.Services
             return BuildMethodComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildMethodComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildMethodComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.MethodDeclaration)).OfType<MethodDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -377,7 +377,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public MethodDeclarationSyntax BuildNewDeclaration(ISettings settings, MethodDeclarationSyntax declarationSyntax)
+        public MethodDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, MethodDeclarationSyntax declarationSyntax)
         {
             var leadingTrivia = declarationSyntax.GetLeadingTrivia();
             var commentTrivia = CreateMethodDocumentationCommentTrivia(settings, declarationSyntax);
@@ -389,7 +389,7 @@ namespace CodeDocumentor.Common.Services
             return BuildNewDeclaration(_settings, declarationSyntax);
         }
 
-        private DocumentationCommentTriviaSyntax CreateMethodDocumentationCommentTrivia(ISettings settings, MethodDeclarationSyntax declarationSyntax)
+        private DocumentationCommentTriviaSyntax CreateMethodDocumentationCommentTrivia(IBaseSettings settings, MethodDeclarationSyntax declarationSyntax)
         {
             var commentHelper = ServiceLocator.CommentHelper;
             var summaryText = commentHelper.CreateMethodComment(declarationSyntax.Identifier.ValueText,
@@ -419,7 +419,7 @@ namespace CodeDocumentor.Common.Services
             return BuildInterfaceComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildInterfaceComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildInterfaceComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.InterfaceDeclaration)).OfType<InterfaceDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -439,7 +439,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public InterfaceDeclarationSyntax BuildNewDeclaration(ISettings settings, InterfaceDeclarationSyntax declarationSyntax)
+        public InterfaceDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, InterfaceDeclarationSyntax declarationSyntax)
         {
             var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateInterfaceComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
@@ -467,7 +467,7 @@ namespace CodeDocumentor.Common.Services
             return BuildRecordComments(_settings, diagnosticId, root, nodesToReplace);
         }
 
-        public int BuildRecordComments(ISettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        public int BuildRecordComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
         {
             var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.RecordDeclaration)).OfType<RecordDeclarationSyntax>().ToArray();
             var neededCommentCount = 0;
@@ -492,7 +492,7 @@ namespace CodeDocumentor.Common.Services
             return neededCommentCount;
         }
 
-        public RecordDeclarationSyntax BuildNewDeclaration(ISettings settings, RecordDeclarationSyntax declarationSyntax)
+        public RecordDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, RecordDeclarationSyntax declarationSyntax)
         {
             var commentHelper = ServiceLocator.CommentHelper;
             var comment = commentHelper.CreateRecordComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);

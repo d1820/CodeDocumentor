@@ -54,7 +54,9 @@ Download and install the CodeDocumentor2026 VSIX from the [VS Marketplace](https
 <!-- tocstop -->
 
 ## Known Issues
-VS2026 seems to get corrupted when VS2022 extensions are installed and roaming is enabled. I have had my entire VS2026 crash and be unable to start unless I perform a `Repair` from the VS Installer. Im not shocked by this, as Microsoft always releases buggy things to mean deadlines.
+VS2026 seems to get corrupted when VS2022 extensions are installed and roaming is enabled. 
+I have had my entire VS2026 crash and be unable to start unless I perform a `Repair` from the VS Installer. Im not shocked by this, as Microsoft always releases buggy things to mean deadlines.
+Only install into 1 instance of Visual Studio at a time. Start with VS2022, then do VS2026
 
 ## Compatibility
 ---

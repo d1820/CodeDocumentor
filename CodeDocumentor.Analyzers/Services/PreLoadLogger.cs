@@ -3,7 +3,7 @@ using CodeDocumentor.Common.Interfaces;
 
 namespace CodeDocumentor.Analyzers.Services
 {
-    internal class PreLoadLogger : IEventLogger
+    public class PreLoadLogger : IEventLogger
     {
         public void LogDebug(string category, string message)
         {

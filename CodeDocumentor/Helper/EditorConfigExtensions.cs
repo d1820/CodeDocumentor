@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.CodeFixes;
 
@@ -17,7 +17,7 @@ namespace CodeDocumentor
                 var tree = await context.Document.GetSyntaxTreeAsync();
                 var opts = context.Document.Project.AnalyzerOptions.AnalyzerConfigOptionsProvider.GetOptions(tree);
                 var svc = ServiceLocator.SettingService;
-                return svc.BuildSettings(opts);
+                return svc?.BuildSettings(opts) ?? Settings.BuildDefaults();
             }
             catch (Exception ex)
             {

@@ -12,6 +12,9 @@ namespace CodeDocumentor.Common
     {
         public const DiagnosticSeverity DefaultDiagnosticSeverityOnError = DiagnosticSeverity.Info;
 
+        //This MUST match the Guid in the vsct file
+        public static readonly Guid CommandSetId = new Guid("d209d6a5-c17c-4c6f-b14c-c8992ef8471d");
+
         public const string TODO = "TODO: Add Summary";
 
         public static class EventIds

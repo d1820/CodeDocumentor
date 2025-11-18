@@ -1,7 +1,7 @@
 using CodeDocumentor.Common;
 using Microsoft.CodeAnalysis;
 
-namespace CodeDocumentor.Analyzers
+namespace CodeDocumentor.Analyzers.Analyzers.Files
 {
     public class FileAnalyzerSettings : BaseAnalyzerSettings
     {

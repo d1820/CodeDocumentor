@@ -2,14 +2,16 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
+using CodeDocumentor.Common.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
+using CodeDocumentor.Analyzers.Services;
 
 [assembly: InternalsVisibleTo("CodeDocumentor.Test")]
 
@@ -45,6 +47,14 @@ namespace CodeDocumentor.Vsix2022
     //[ComVisible(true)]
     public sealed class CodeDocumentorPackage : AsyncPackage
     {
+
+        static CodeDocumentorPackage()
+        {
+            ServiceLocator.Logger = new PreLoadLogger();
+            ServiceLocator.SettingService = new PreLoadSettingService();
+            ServiceLocator.CommentBuilderService = new CommentBuilderService(ServiceLocator.Logger, Settings.BuildDefaults()); ;
+        }
+
         #region Package Members
 
         /// <summary>
@@ -72,7 +82,7 @@ namespace CodeDocumentor.Vsix2022
         {
             //this needs to be set here due to bootstrapping environment and where EventLog is available
             ServiceLocator.Logger = new Logger();
-            ServiceLocator.SettingService = new SettingService();
+            ServiceLocator.SettingService = new SettingService(new Logger());
 
             //var hasCodeDocumentorInEditorConfig = await SlnHasEditorConfigAsync(hasCodeDocumentorInEditorConfig);
 
@@ -82,6 +92,7 @@ namespace CodeDocumentor.Vsix2022
             var settings = new Settings();
             settings.SetFromOptionsGrid(options);
             ServiceLocator.SettingService.StaticSettings = settings;
+            ServiceLocator.CommentBuilderService = new CommentBuilderService(ServiceLocator.Logger, settings);
         }
 
         //private async System.Threading.Tasks.Task<bool> SlnHasEditorConfigAsync(bool hasCodeDocumentorInEditorConfig)

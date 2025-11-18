@@ -1,5 +1,4 @@
 using ProtoBuf;
-
 namespace Sample.Other
 {
   [ProtoContract]

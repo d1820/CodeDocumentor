@@ -6,68 +6,87 @@
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.CodeDocumentor)
 
 
-A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method. While VS2022 provides basic documentation capabilities this fills the gap in trying to populate the summary and return nodes. This also gives control over how the summaries are translated.
+A Visual Studio Extension to generate XML documentation automatically for c# code using IntelliSense for interface,class,enum, field, constructor, property and method. While VS2022/VS2026 provides basic documentation capabilities this fills the gap in trying to populate the summary and return nodes. This also gives control over how the summaries are translated.
 
 In the age of copilots this extension is still valuable when working on projects where sending code to the cloud is not possible. This creates the documentation locally on your machine. Nothing is ever sent to the cloud. No Internet connection is required for this to work.
+
+**Looking for the Original Analyzer Based Version?**
+Review the [CodeDocumentor Analyzer Readme.md](https://github.com/d1820/CodeDocumentor/blob/main/Readme2022.md)
 
 ## Installation
 ---
 
-Download and install the VSIX from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=DanTurco.CodeDocumentor)
+Download and install the CodeDocumentor2026 VSIX from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=DanTurco.CodeDocumentor2026)
 
-**IMPORTANT!!** This extension is NOT compatible with Visual Studio 2026! While Microsoft claims backward compatibility, they have removed all support for analyzers being able to run in the foreground. Due to this this can no longer use Visual Studio Options Settings or load anything properly. A new version will be coming soon for Visual Studio 2026, that will run in the foreground, but no longer as an analyzer.
+**IMPORTANT!!** This extension no longer uses analyzers to perform the documentation generation. If you have any previous versions of CodeDocumentor installed please uninstall them first.
+
 ## Table of Contents
 
 <!-- toc -->
 
-- [Instruction](#instruction)
-- [Known Issues](#known-issues)
-- [Comment Ordering](#comment-ordering)
-- [Supported Comment Refactorings](#supported-comment-refactorings)
-- [Settings](#settings)
-  - [Word Translations](#word-translations)
-  - [Recommended Settings](#recommended-settings)
-- [Also Supports](#also-supports)
-  - [One Word Methods](#one-word-methods)
-    - [Example](#example)
-- [Excluding ErrorList Messages](#excluding-errorlist-messages)
-  - [Available DiagnosticId Codes](#available-diagnosticid-codes)
-  - [Supported Members](#supported-members)
-  - [Attribute](#attribute)
-  - [Example](#example-1)
-- [Usage Examples](#usage-examples)
-  - [Example Cref Support](#example-cref-support)
-- [Errors and Crashes](#errors-and-crashes)
-- [Using .editorconfig for settings](#using-editorconfig-for-settings)
-- [Changelog](#changelog)
-- [Special Thanks](#special-thanks)
+- [CodeDocumentor](#codedocumentor)
+  - [Installation](#installation)
+  - [Table of Contents](#table-of-contents)
+  - [Known Issues](#known-issues)
+  - [Compatibility](#compatibility)
+  - [4 Ways to Invoke CodeDocumentor](#4-ways-to-invoke-codedocumentor)
+    - [From the Tools menu](#from-the-tools-menu)
+    - [From the Solution Explorer context menu on a project or solution](#from-the-solution-explorer-context-menu-on-a-project-or-solution)
+    - [From the Solution Explorer context menu on a code file](#from-the-solution-explorer-context-menu-on-a-code-file)
+    - [From the right click context menu in the code editor on a supported type](#from-the-right-click-context-menu-in-the-code-editor-on-a-supported-type)
+  - [Comment Ordering](#comment-ordering)
+  - [Supported Comment Refactorings](#supported-comment-refactorings)
+  - [Settings](#settings)
+    - [Word Translations](#word-translations)
+    - [Recommended Settings](#recommended-settings)
+  - [Also Supports](#also-supports)
+    - [One Word Methods](#one-word-methods)
+      - [Example](#example)
+    - [Supported Members](#supported-members)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
+  - [Usage Demo](#usage-demo)
+    - [Example Cref Support](#example-cref-support)
+  - [Errors and Crashes](#errors-and-crashes)
+  - [Porting over CodeDocumentor 2022 Settings](#porting-over-codedocumentor-2022-settings)
+  - [Changelog](#changelog)
+  - [Special Thanks](#special-thanks)
 
 <!-- tocstop -->
 
-## Instruction
+## Known Issues
+VS2026 seems to get corrupted when VS2022 extensions are installed and roaming is enabled. 
+I have had my entire VS2026 crash and be unable to start unless I perform a `Repair` from the VS Installer. Im not shocked by this, as Microsoft always releases buggy things to mean deadlines.
+Only install into 1 instance of Visual Studio at a time. Start with VS2022, then do VS2026
+
+## Compatibility
 ---
 
-1. When you installed it successful to your Visual Studio. You can see the warning wave line below the members which don't have documentation on it.
-2. Then you can click the bulb to see the fix option. When you click the option, the documentation will be added.
-3. You can use shortcut(Alt+Enter or Ctrl+.) to quickly add the documentation. Documentation fixes can be implemented at the member, document, project, and solution levels.
+The new CodeDocumentor2026 extension is compatible with Visual Studio 2022 and Visual Studio 2026. This is the new preferred version of CodeDocumentor moving forward.
+This does not use Analyzers and Fix Providers anymore so there is no longer a dependency on Roslyn Analyzers.
+The XML documentation is now created in the editor foreground directly. No more cluttering the error list with messages.
+This gives the developer control on creating XML documentation when they want it.
 
-## Known Issues
+## 4 Ways to Invoke CodeDocumentor
 
-Microsoft is not going to make any changes to truly allow analyzers to run out of process. Even with .editorconfig support, it will not work if you want to have any user level settings collection from Visual Studio > Options.
+### From the Tools menu
 
-- As of VS2022 version 17.6.x there is some bug that makes extension analyzers not able to work properly if you have *Run code analysis in separate process*
+![Solution Explorer Document Folder](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/ToolsMenu.png?raw=true)
 
-  ![Out of process](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/outOfProcess.png?raw=true)
+### From the Solution Explorer context menu on a project or solution
 
-  **Please disable this setting to allow CodeDocumentor to work correctly.**
+![Solution Explorer Document Folder](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/SolutionFolder.png?raw=true)
 
-- As of VS2022 Version 17.8.6. Out of process works but ONLY if you deselect *_Run code analysis on latest .NET_*.
+### From the Solution Explorer context menu on a code file
 
-   ![Out Of Process Latest](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/OutOfProessLatest.png?raw=true)
+![Solution Explorer Document File](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/SolutionFile.png?raw=true)
 
-- As of VS2022 Version 17.14.13. Out of process does not work AGAIN. you need to deselect *_Run code analysis in separate process*.
-  ![Out Of Process 17.14.13](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/OutOfProcess_v17.14.13.png?raw=true)
-  **Please disable this setting to allow CodeDocumentor to work correctly.**
+### From the right click context menu in the code editor on a supported type
+
+Withing the editor for a given C# file you have 2 options from the right context menu
+1. Add documentation to the given type the cursor is on. Note the cursor must be on the line of a supported XML documentation member. If the cursor is not on a supported member line you will not see the `Code Documentor This` menu item. See `Supported Members` below.
+1. Add documentation to the whole file.
+
+![Editor Right Context Menu](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/RightContext.png?raw=true)
 
 
 ## Comment Ordering
@@ -85,7 +104,7 @@ Comments are structured in the following order
 
 ## Supported Comment Refactorings
 
-Code Documentor supports creating, updating, and recreating on a given type. There is also an avaialble fix at eny level to comment the whole file.
+Code Documentor supports creating, updating, and recreating XML documentation on a given member.
 
 ## Settings
 ---
@@ -103,17 +122,6 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 | Try to include return types in documentation        | When documenting methods and properties (and Use natural language for return comments is enabled) try to include <cref/> in the return element. In methods that are named 2 words or less try and generate ```<cref/>``` elements for those types in the method comment                                |
 | Word mappings for creating comments                 | When documenting if certain word are matched it will swap out to the translated mapping.                                                                                                                                                                                                               |
 | Preserve Existing Summary Text                      | When updating a comment or documenting the whole file if this is true; the summary text will not be regenerated. Defaults to true.                                                                                                                                                                     |
-| Default Diagnostics                                 | Allows setting a new default diagnostic level for evaluation. Default is Warning. A restart of Visual Studio is required on change.                                                                                                                                                                    |
-| Class Diagnostics                                   | Allows setting a new default diagnostic level for evaluation for classes. A restart of Visual Studio is required on change.                                                                                                                                                                            |
-| Constructor Diagnostics                             | Allows setting a new default diagnostic level for evaluation for constructors. A restart of Visual Studio is required on change.                                                                                                                                                                       |
-| Enum Diagnostics                                    | Allows setting a new default diagnostic level for evaluation for enums. A restart of Visual Studio is required on change.                                                                                                                                                                              |
-| Field Diagnostics                                   | Allows setting a new default diagnostic level for evaluation for fields. A restart of Visual Studio is required on change.                                                                                                                                                                             |
-| Interface Diagnostics                               | Allows setting a new default diagnostic level for evaluation for interfaces. A restart of Visual Studio is required on change.                                                                                                                                                                         |
-| Method Diagnostics                                  | Allows setting a new default diagnostic level for evaluation for methods. A restart of Visual Studio is required on change.                                                                                                                                                                            |
-| Property Diagnostics                                | Allows setting a new default diagnostic level for evaluation for properties. A restart of Visual Studio is required on change.                                                                                                                                                                         |
-| Record Diagnostics                                  | Allows setting a new default diagnostic level for evaluation for records. A restart of Visual Studio is required on change.                                                                                                                                                                            |
-| Use .editorconfig for settings options              | This will convert existing extension options to .editorconfig values stored in %USERPROFILE%. This allows CodeDocumentor to run out of process.|
-
 
 
 ### Word Translations
@@ -134,7 +142,6 @@ These are the recommended settings that create the best output experience
 | Use TODO comment when summary can not be determined | True        |
 | Try to include return types in documentation        | True        |
 | Preserve Existing Summary Text                      | True        |
-| Default Diagnostics                                 | Warning     |
 
 
 
@@ -150,7 +157,7 @@ To adjust these defaults go to Tools > Options > CodeDocumentor
 
 ### One Word Methods
 
-In an attempt to create valid summary statements when a method is only 1 word (plus Async suffix) we will read the return type of the method. If the method is a generic type an attempt will be 
+In an attempt to create valid summary statements when a method is only 1 word (plus Async suffix) we will read the return type of the method. If the method is a generic type an attempt will be
 made to create text representing that string. In the example below in the summary line CodeDocumentor added ```and return a <see cref="Task"/> of type <see cref="ActionResult"/> of type <see cref="ClientDto"/>```
 This is leveraging the new setting **Try to include return types in documentation** to generate those ```<see cref=""/>``` elements.
 
@@ -181,26 +188,6 @@ internal Task<ActionResult<ClientDto>> CreateAsync()
 ```
 
 
-
-## Excluding ErrorList Messages
----
-
-There are 2 ways to exclude analyzer messaging. Defauly level is set to **Warning**
-
-1. Add the _SuppressMessage_ attribute to any member.
-2. Add DiagnosticId exclusions to the editorconfig
-
-### Available DiagnosticId Codes
-
-- CD1600: Class
-- CD1601: Constructor
-- CD1602: Enum
-- CD1603: Field
-- CD1604: Interface
-- CD1605: Method
-- CD1606: Property
-- CD1608: Record
-
 ### Supported Members
 
 - Class
@@ -212,56 +199,22 @@ There are 2 ways to exclude analyzer messaging. Defauly level is set to **Warnin
 - Enum
 - Record
 
-### Attribute
+## Keyboard Shortcuts
+A power developer setup involves setting up Keyboard shortcuts to invoke the CodeDocumentor in the editor.
 
-```csharp
-[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
-```
+- Open `Tools > Options`
+- Search for Keyboard
+- Open the Keyboard dialog if in VS2026)
+- Search for CodeDocumentor
+  ![Documentor keyboard Search](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/KeyboardSearch.png?raw=true)
+- For the File Action, set a keyboard shortcut assignment. I use Cntrl+D Cntrl+F
+  ![Documentor Keyboard Action File](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/FileKeyboard.png?raw=true)
+- For the This Action, set a keyboard shortcut assignment. I use Cntrl+D Cntrl+D
+  ![Documentor Keyboard Action File](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/DocumentThisKeyboard.png?raw=true)
 
-### Example
+## Usage Demo
+![CodeDocumentor 2026 Demo](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/2026/CodeDocumentor2026Demo.gif?raw=true)
 
-```csharp
-//This will remove the analyzer messaging for entire class and all child members
-[System.Diagnostics.CodeAnalysis.SuppressMessage("XMLDocumentation", "")]
-public class Test<T>
-{
-	public string GetAsync(string name)
-    {
-		return name;
-    }
-    public TResult Tester<TResult>()
-    {
-		throw new ArgumentNullException(nameof(Tester));
-		return default;
-    }
-}
-```
-
-
-## Usage Examples
-
-Inline code notification
-
-![Wavy line](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/warning%20wave%20line.gif?raw=true)
-
-Add comments to a single type
-![Single type add](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeAddComments.gif?raw=true)
-
-Update comments to a single type
-![Single type update](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeUpdateComments.gif?raw=true)
-
-Update comments to a single type when preserving the summary setting is true
-![Single type preserve comment](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeUpdatePreserveComments.gif?raw=true)
-
-Update comments to a single type when preserving the summary setting is false
-![Single type preserve comment disabled](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/SingleTypeUpdatePreserveCommentsDisabled.gif?raw=true)
-
-Update the whole file at once
-![Update whole file](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/UpdateWholeFile.gif?raw=true)
-
-How fast comments can be added
-
-![Quick add](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/short%20cut%20to%20quick%20add.gif?raw=true)
 
 ### Example Cref Support
 
@@ -285,30 +238,23 @@ All errors are written to the EventLog in windows. Check there for causes, and u
 
 **Source**: "Visual Studio"
 
-**Message Prefix**: "CodeDocumentor: "
+**Message Prefix**: "CodeDocumentor2026: "
 
 ![Event Log](https://github.com/d1820/CodeDocumentor/blob/main/GifInstruction/EventLog.png?raw=true)
 
 
-## Using .editorconfig for settings
-
-To convert existing settings to .editorconfig go to Tools > Options > CodeDocumentor and select **Use .editorconfig for settings options**. 
-This will convert the existing Visual Studio Option Settings to editor config format and copy them to your clipboard. 
-Paste this into a new or existing .editorconfig file in your solution.
-
-**NOTE**: Even with using .editorconfig as your settings, Out of Process still can not be used, because the extension needs to support backward compatibility of using the Visual Studio Options.
+## Porting over CodeDocumentor 2022 Settings
+1. Uninstall the existing CodeDocumentor 2022 extension
+2. In Explorer navigate to `C:\Users\<USER>\AppData\Roaming\CodeDocumentor`
+3. Copy `codedocumentor.json` and rename to `codedocumentor2026.json`
+4. That is it! Start VS2026 and the settings that apply still will be loaded.
 
 
 ## Changelog
 
 | Date       | Change                                                                  | Version |
 | ---------- | ----------------------------------------------------------------------- | ------- |
-| 02/13/2024 | Rewrote document generator to builder pattern                           | 2.1.0.X |
-|            | Increased code coverage for tests                                       |         |
-|            | Added support for ```<see cref=""/>``` tags in summary and return nodes |         |
-|            | Bug fixes                                                               |         |
-| 02/1/2024  | Added support for ArgumentNullException.ThrowIf statements              | 2.0.1.1 |
-| 09/01/2025 | Added support for storing settings in a solution level .editorconfig    | 3.0.0.0 |
+| 11/17/2025 | New version created. Non-Analyzer version.                              | 1.0.0.0 |
 
 
 ## Special Thanks

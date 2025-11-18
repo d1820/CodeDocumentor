@@ -1,5 +1,5 @@
 using System;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace CodeDocumentor.Test.Helper
@@ -13,7 +13,7 @@ namespace CodeDocumentor.Test.Helper
         public void IsVerbCombo_HandlesWordCorrectly(string first, string second, bool result)
         {
             var isVerb = first.IsVerbCombo(second);
-            isVerb.Should().Be(result);
+            isVerb.ShouldBe(result);
         }
     }
 }

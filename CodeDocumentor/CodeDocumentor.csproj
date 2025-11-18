@@ -23,7 +23,7 @@
     <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
     <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
     <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
-    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
     <!--<VSSDKTargetPlatformRegRootSuffix>Roslyn</VSSDKTargetPlatformRegRootSuffix>-->
     <StartAction>Program</StartAction>
     <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
@@ -95,8 +95,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.MD" />
-    <None Include="tools\install.ps1" />
-    <None Include="tools\uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Manifests\vs2022\source.extension.vsixmanifest">

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!--  This is the file that defines the actual layout and type of the commands.
+        It is divided in different sections (e.g. command definition, command
+        placement, ...), with each defining a specific set of properties.
+        See the comment before each section for more details about how to
+        use it. -->
+
+  <!--  The VSCT compiler (the tool that translates this file into the binary
+        format that VisualStudio will consume) has the ability to run a preprocessor
+        on the vsct file; this preprocessor is (usually) the C++ preprocessor, so
+        it is possible to define includes and macros with the same syntax used
+        in C++ files. Using this ability of the compiler here, we include some files
+        defining some of the constants that we will use inside the file. -->
+
+  <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
+  <Extern href="stdidcmd.h"/>
+
+  <!--This header contains the command ids for the menus provided by the shell. -->
+  <Extern href="vsshlids.h"/>
+
+  <!--The Commands section is where commands, menus, and menu groups are defined.
+      This section uses a Guid to identify the package that provides the command defined inside it. -->
+  <Commands package="guidCodeDocumentor2026Package">
+    <!-- Inside this section we have different sub-sections: one for the menus, another
+    for the menu groups, one for the buttons (the actual commands), one for the combos
+    and the last one for the bitmaps used. Each element is identified by a command id that
+    is a unique pair of guid and numeric identifier; the guid part of the identifier is usually
+    called "command set" and is used to group different command inside a logically related
+    group; your package should define its own command set in order to avoid collisions
+    with command ids defined by other packages. -->
+
+    <!-- In this section you can define new menu groups. A menu group is a container for
+         other menus or buttons (commands); from a visual point of view you can see the
+         group as the part of a menu contained between two lines. The parent of a group
+         must be a menu. -->
+    <Groups>
+      <!--VS Groups-->
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenuGroup" priority="4">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem" priority="0x0100">
+        <Parent  guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+      </Group>
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupFolder" priority="0x0100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
+      </Group>
+      <!--THis places it right above CodeMaid-->
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" priority="0x0100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>
+
+      <!-- Add group for Quick Actions and Refactorings menu -->
+      <!--<Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionsGroup" priority="6">
+        <Parent guid="IDG_VS_CONTEXT_MENU_EDIT" id="IDC_EDITCONTEXTMENU" />
+      </Group>-->
+
+      <!--Menus-->
+      <!--This SubGroup Contains the tool menu items-->
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorSubMenuGroup" priority="4">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenu"/>
+      </Group>
+
+      <!--This SubGroup Contains the context menu items-->
+      <Group guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextSubMenuGroup" priority="1">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenu"/>
+      </Group>
+    </Groups>
+
+    <Menus>
+      <Menu guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenu" priority="4" type="Menu">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorMenuGroup"/>
+        <Strings>
+          <ButtonText>Code Documentor</ButtonText>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <Buttons>
+      <!--MENU ITEMS-->
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorAddDocumentationCommandId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorSubMenuGroup" />
+        <Strings>
+          <ButtonText>Document Current File</ButtonText>
+        </Strings>
+      </Button>
+
+      <!--CONTEXT ITEMS-->
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationFileCommandId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupItem" />
+        <Strings>
+          <ButtonText>Code Documentor File</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationFolderCommandId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupFolder" />
+        <Strings>
+          <ButtonText>Code Documentor All Files</ButtonText>
+        </Strings>
+      </Button>
+      <!--Context Items for Editor-->
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandId" priority="1" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Code Documentor This</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" priority="2" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorContextMenuGroupEditor" />
+        <Strings>
+          <ButtonText>Code Documentor File</ButtonText>
+        </Strings>
+      </Button>
+      <!-- Add buttons for Quick Actions and Refactorings menu -->
+      <!--<Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionAddDocumentationCommandId" priority="6" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionsGroup" />
+        <Strings>
+          <ButtonText>Add XML documentation</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionAddDocumentationWholeFileCommandId" priority="7" type="Button">
+        <Parent guid="guidCodeDocumentor2026PackageCmdSet" id="CodeDocumentorQuickActionsGroup" />
+        <Strings>
+          <ButtonText>Document entire file</ButtonText>
+        </Strings>
+      </Button>-->
+    </Buttons>
+
+    <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
+    <Bitmaps>
+      <!--  The bitmap id is defined in a way that is a little bit different from the others:
+            the declaration starts with a guid for the bitmap strip, then there is the resource id of the
+            bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
+            inside a button definition. An important aspect of this declaration is that the element id
+            must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
+      <Bitmap guid="guidImages" href="Resources\CodeDocumentorCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+    </Bitmaps>
+  </Commands>
+  <VisibilityConstraints>
+    <VisibilityItem guid="guidCodeDocumentor2026PackageCmdSet"
+          id="CodeDocumentorMenuGroup"
+          context="UICONTEXT_SolutionHasSingleProject" />
+    <VisibilityItem guid="guidCodeDocumentor2026PackageCmdSet"
+          id="CodeDocumentorMenuGroup"
+          context="UICONTEXT_SolutionHasMultipleProjects" />
+  </VisibilityConstraints>
+
+  <Symbols>
+    <!-- This is the package guid. -->
+    <GuidSymbol name="guidCodeDocumentor2026Package" value="{238cdf3a-397e-4b27-ac5f-d4bb1888cade}" />
+
+    <!-- This is the guid used to group the menu commands together -->
+    <GuidSymbol name="guidCodeDocumentor2026PackageCmdSet" value="{d209d6a5-c17c-4c6f-b14c-c8992ef8471d}">
+      <IDSymbol name="CodeDocumentorMenu" value="6000"/>
+      <IDSymbol name="CodeDocumentorMenuGroup" value="6001" />
+      <IDSymbol name="CodeDocumentorSubMenuGroup" value="6002" />
+      <IDSymbol name="CodeDocumentorSubMenuCodeDocumentorItemsSection" value="6003"/>
+
+      <!--Context Items-->
+      <IDSymbol name="CodeDocumentorContextMenu" value="6005"/>
+
+      <IDSymbol name="CodeDocumentorContextMenuGroupItem" value="6006" />
+      <IDSymbol name="CodeDocumentorContextMenuGroupFolder" value="6007" />
+      <IDSymbol name="CodeDocumentorContextMenuGroupEditor" value="6008" />
+      <IDSymbol name="CodeDocumentorContextSubMenuGroup" value="6009" />
+      <IDSymbol name="CodeDocumentorContextSubMenuCodeDocumentorItemsSection" value="6010"/>
+
+      <!--These Execute the documentor-->
+      <!--Menu-->
+      <IDSymbol name="CodeDocumentorAddDocumentationCommandId" value="6011"/>
+      <!--Context solution-->
+      <IDSymbol name="CodeDocumentorContextAddDocumentationFolderCommandId" value="6012"/>
+      <IDSymbol name="CodeDocumentorContextAddDocumentationFileCommandId" value="6013"/>
+      <!-- Context for Editor-->
+      <IDSymbol name="CodeDocumentorContextAddDocumentationEditorCommandId" value="6014"/>
+      <IDSymbol name="CodeDocumentorContextAddDocumentationEditorCommandWholeFileId" value="6015"/>
+      <!--Quick Actions Commands-->
+      <!--<IDSymbol name="CodeDocumentorQuickActionAddDocumentationCommandId" value="6017"/>
+      <IDSymbol name="CodeDocumentorQuickActionAddDocumentationWholeFileCommandId" value="6018"/>
+      <IDSymbol name="CodeDocumentorQuickActionsGroup" value="6020" />-->
+
+    </GuidSymbol>
+
+    <GuidSymbol name="guidImages" value="{9903009f-7a3d-4269-85b5-7c8b5edc4e46}" >
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>

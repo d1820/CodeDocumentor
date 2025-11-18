@@ -2,7 +2,7 @@ using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Services
+namespace CodeDocumentor.Analyzers.Services
 {
     public class PreLoadSettingService : ISettingService
     {

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Analyzers.Helper;
 using CodeDocumentor.Common.Extensions;
+using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Test.TestHelpers;
-using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,7 +36,7 @@ namespace CodeDocumentor.Test.Helper
         {
 
             var comment = _commentHelper.CreateFieldComment(name, _fixture.MockSettings.ExcludeAsyncSuffix, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -88,7 +88,7 @@ namespace CodeDocumentor.Test.Helper
                  _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
                  _fixture.MockSettings.ExcludeAsyncSuffix,
                  _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace CodeDocumentor.Test.Helper
                  _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
                  _fixture.MockSettings.ExcludeAsyncSuffix,
                  _fixture.MockSettings.WordMaps);
-            comment.Should().Be("Work and return a <see cref=\"Task\"/> of a list of a list of strings.");
+            comment.ShouldBe("Work and return a <see cref=\"Task\"/> of a list of a list of strings.");
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace CodeDocumentor.Test.Helper
                  _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
                  _fixture.MockSettings.ExcludeAsyncSuffix,
                  _fixture.MockSettings.WordMaps);
-            comment.Should().Be("Creates and return a task of type actionresult of type clientdto asynchronously.");
+            comment.ShouldBe("Creates and return a task of type actionresult of type clientdto asynchronously.");
         }
 
         [Theory]
@@ -159,7 +159,7 @@ namespace CodeDocumentor.Test.Helper
                  _fixture.MockSettings.TryToIncludeCrefsForReturnTypes,
                  _fixture.MockSettings.ExcludeAsyncSuffix,
                  _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -169,7 +169,7 @@ namespace CodeDocumentor.Test.Helper
         public void CreateInterfaceComment_ReturnsValidName(string name, string expected)
         {
             var comment = _commentHelper.CreateInterfaceComment(name, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -181,7 +181,7 @@ namespace CodeDocumentor.Test.Helper
         public void CreateClassComment_ReturnsValidName(string name, string expected)
         {
             var comment = _commentHelper.CreateClassComment(name, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -190,7 +190,7 @@ namespace CodeDocumentor.Test.Helper
         public void CreateRecordComment_ReturnsValidName(string name, string expected)
         {
             var comment = _commentHelper.CreateRecordComment(name, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -200,7 +200,7 @@ namespace CodeDocumentor.Test.Helper
         public void CreatePropertyComment_ReturnsValidName(string name, string expected, bool isBool, bool hasSetter)
         {
             var comment = _commentHelper.CreatePropertyComment(name, isBool, hasSetter, _fixture.MockSettings.ExcludeAsyncSuffix, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -210,7 +210,7 @@ namespace CodeDocumentor.Test.Helper
         public void CreateEnumComment_ReturnsValidName(string name, string expected)
         {
             var comment = _commentHelper.CreateEnumComment(name, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -235,7 +235,7 @@ namespace CodeDocumentor.Test.Helper
 
             var parameter = SyntaxFactory.Parameter(attributeLists, modifiers, typeSyntax, SyntaxFactory.Identifier(name), null);
             var comment = _commentHelper.CreateParameterComment(parameter, _fixture.MockSettings.WordMaps);
-            comment.Should().Be(expected);
+            comment.ShouldBe(expected);
         }
 
         [Theory]
@@ -248,7 +248,7 @@ namespace CodeDocumentor.Test.Helper
         {
             var list = new List<string> { word };
             var result = list.TranslateParts(_fixture.MockSettings.WordMaps);
-            result.Should().Contain(converted);
+            result.ShouldContain(converted);
         }
     }
 }

@@ -1,29 +1,28 @@
 using System;
 using System.Linq;
-using CodeDocumentor.Analyzers.Locators;
-using CodeDocumentor.Common;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor.Common.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Services
+namespace CodeDocumentor.Common.Services
 {
     public class SettingService : ISettingService
     {
+        private readonly IEventLogger _eventLogger;
         private ISettings _staticSettings = Settings.BuildDefaults();
 
-        public ISettings StaticSettings {
+        public SettingService(IEventLogger eventLogger)
+        {
+            _eventLogger = eventLogger;
+        }
+
+        public ISettings StaticSettings
+        {
             get => _staticSettings.Clone();
             set => _staticSettings = value;
         }
         public ISettings BuildSettings(SyntaxNodeAnalysisContext context)
-        {
-            var opts = context.Options.AnalyzerConfigOptionsProvider.GetOptions(context.Node.SyntaxTree);
-            return BuildSettings(opts);
-        }
-        [Obsolete("Use BuildSettings with ISettings parameter")]
-        public ISettings BuildSettings(SyntaxNodeAnalysisContext context, ISettings Settings)
         {
             var opts = context.Options.AnalyzerConfigOptionsProvider.GetOptions(context.Node.SyntaxTree);
             return BuildSettings(opts);
@@ -35,11 +34,11 @@ namespace CodeDocumentor.Services
             var defaultSev = DiagnosticSeverity.Warning;
             if (!CanReadEditorConfig(options))
             {
-                ServiceLocator.Logger.LogDebug(Constants.CATEGORY, $"{nameof(BuildSettings)}: CanReadEditorConfig == false");
+                _eventLogger.LogDebug(Constants.CATEGORY, $"{nameof(BuildSettings)}: CanReadEditorConfig == false");
                 //no editorconfig, return the  settings we have
                 return StaticSettings;
             }
-            ServiceLocator.Logger.LogDebug(Constants.CATEGORY, $"{nameof(BuildSettings)}: CanReadEditorConfig == true");
+            _eventLogger.LogDebug(Constants.CATEGORY, $"{nameof(BuildSettings)}: CanReadEditorConfig == true");
             settings.ClassDiagnosticSeverity = ConvertToDiagnosticSeverity(options, "codedocumentor_class_diagram_severity", defaultSev);
             settings.ConstructorDiagnosticSeverity = ConvertToDiagnosticSeverity(options, "codedocumentor_constructor_diagram_severity", defaultSev);
             settings.DefaultDiagnosticSeverity = ConvertToDiagnosticSeverity(options, "codedocumentor_default_diagram_severity", defaultSev);

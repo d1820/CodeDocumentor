@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
 using CodeDocumentor.Analyzers.Builders;
-using CodeDocumentor.Analyzers.Locators;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Enums
+namespace CodeDocumentor.Analyzers.Analyzers.Enums
 {
     /// <summary>
     ///  The enum analyzer.

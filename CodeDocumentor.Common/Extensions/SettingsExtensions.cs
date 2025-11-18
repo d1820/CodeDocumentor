@@ -29,7 +29,7 @@ namespace CodeDocumentor.Common
             }
 
             Directory.CreateDirectory(_programDataFolder);
-            var json = File.ReadAllText(GetSettingsFilePath());
+            var json = File.ReadAllText(GetSettingsFilePath("2022"));
             settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings>(json);
             return settings;
         }
@@ -42,7 +42,7 @@ namespace CodeDocumentor.Common
             }
 
             Directory.CreateDirectory(_programDataFolder);
-            settings.SaveToFile(GetSettingsFilePath());
+            settings.SaveToFile(GetSettingsFilePath("2022"));
         }
 
         public static void SaveToEditorConfig(this ISettings settings, Action<string> setToClipboardAction)
@@ -140,17 +140,80 @@ namespace CodeDocumentor.Common
             return settings;
         }
 
+        public static IBaseSettings Update(this IBaseSettings settings, IBaseSettings newSettings, IEventLogger logger)
+        {
+            settings.IsEnabledForPublicMembersOnly = newSettings.IsEnabledForPublicMembersOnly;
+            settings.UseNaturalLanguageForReturnNode = newSettings.UseNaturalLanguageForReturnNode;
+            settings.ExcludeAsyncSuffix = newSettings.ExcludeAsyncSuffix;
+            settings.IncludeValueNodeInProperties = newSettings.IncludeValueNodeInProperties;
+            settings.UseToDoCommentsOnSummaryError = newSettings.UseToDoCommentsOnSummaryError;
+            settings.WordMaps = newSettings.WordMaps;            
+            settings.PreserveExistingSummaryText = newSettings.PreserveExistingSummaryText;
+            settings.IsEnabledForNonPublicFields = newSettings.IsEnabledForNonPublicFields;
+            settings.TryToIncludeCrefsForReturnTypes = newSettings.TryToIncludeCrefsForReturnTypes;
+
+            logger.LogInfo(JsonConvert.SerializeObject(settings), 200, 0, "Options updated");
+            return settings;
+        }
+
+        public static void SetFromOptionsGrid(this IBaseSettings settings, IBaseSettings optionsGrid)
+        {
+            settings.ExcludeAsyncSuffix = optionsGrid?.ExcludeAsyncSuffix ?? false;
+            settings.IncludeValueNodeInProperties = optionsGrid?.IncludeValueNodeInProperties ?? false;
+            settings.IsEnabledForPublicMembersOnly = optionsGrid?.IsEnabledForPublicMembersOnly ?? false;
+            settings.IsEnabledForNonPublicFields = optionsGrid?.IsEnabledForNonPublicFields ?? false;
+            settings.PreserveExistingSummaryText = optionsGrid?.PreserveExistingSummaryText ?? true;
+            settings.UseNaturalLanguageForReturnNode = optionsGrid?.UseNaturalLanguageForReturnNode ?? false;
+            settings.UseToDoCommentsOnSummaryError = optionsGrid?.UseToDoCommentsOnSummaryError ?? false;
+            settings.TryToIncludeCrefsForReturnTypes = optionsGrid?.TryToIncludeCrefsForReturnTypes ?? false;
+            settings.WordMaps = optionsGrid?.WordMaps ?? Constants.DEFAULT_WORD_MAPS;
+        }
+
+        public static void SaveToFile(this IBaseSettings settings, string path)
+        {
+            File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(settings));
+        }
+
+        public static IBaseSettings Load(this IBaseSettings settings)
+        {
+            if (Runtime.RunningUnitTests)
+            {
+                return new Settings2026();
+            }
+
+            Directory.CreateDirectory(_programDataFolder);
+            var json = File.ReadAllText(GetSettingsFilePath("2026","2026"));
+            settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings2026>(json);
+            return settings;
+        }
+
+        public static void Save(this IBaseSettings settings)
+        {
+            if (Runtime.RunningUnitTests)
+            {
+                return;
+            }
+
+            Directory.CreateDirectory(_programDataFolder);
+            settings.SaveToFile(GetSettingsFilePath("2026", "2026"));
+        }
+
         /// <summary>
         ///  Gets the settings file path.
         /// </summary>
         /// <returns> A string. </returns>
-        private static string GetSettingsFilePath()
+        private static string GetSettingsFilePath(string type, string suffix = "")
         {
-            const string name = "codedocumentor.json";
+            string name = string.Format("codedocumentor{0}.json", suffix);
             var settingsPath = Path.Combine(_programDataFolder, name);
 
             if (!File.Exists(settingsPath))
             {
+                if (type == "2026")
+                {
+                    new Settings2026().SaveToFile(settingsPath);
+                    return settingsPath;
+                }
                 new Settings().SaveToFile(settingsPath);
             }
 

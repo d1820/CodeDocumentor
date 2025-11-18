@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using CodeDocumentor.Analyzers.Builders;
-using FluentAssertions;
+using CodeDocumentor.Common.Builders;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,8 +28,8 @@ namespace CodeDocumentor.Test.Builders
             _fixture.MockSettings.UseNaturalLanguageForReturnNode = true;
             _fixture.MockSettings.TryToIncludeCrefsForReturnTypes = false;
             var comment = _builder.WithReturnType(method, _fixture.MockSettings.UseNaturalLanguageForReturnNode, _fixture.MockSettings.TryToIncludeCrefsForReturnTypes, _fixture.MockSettings.WordMaps).Build();
-            comment.Count.Should().Be(3);
-            comment[1].ToFullString().Should().Be(@"<returns>A <typeparamref name=""TResult""/></returns>");
+            comment.Count.ShouldBe(3);
+            comment[1].ToFullString().ShouldBe(@"<returns>A <typeparamref name=""TResult""/></returns>");
         }
     }
 }

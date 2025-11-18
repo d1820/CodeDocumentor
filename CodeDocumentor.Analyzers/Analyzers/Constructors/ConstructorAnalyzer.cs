@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using CodeDocumentor.Analyzers.Builders;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
+using CodeDocumentor.Common.Helper;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CodeDocumentor.Analyzers.Constructors
+namespace CodeDocumentor.Analyzers.Analyzers.Constructors
 {
     /// <summary>
     ///  The constructor analyzer.

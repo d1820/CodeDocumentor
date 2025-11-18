@@ -5,15 +5,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CodeDocumentor.Analyzers.Locators;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using CodeDocumentor.Common.Models;
-using CodeDocumentor.Services;
+using CodeDocumentor.Common.Services;
 using CodeDocumentor.Test.TestHelpers;
-using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Moq;
+using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -61,9 +62,11 @@ namespace CodeDocumentor.Test
             CurrentTestName = output.GetTestName();
 
             MockSettings = new TestSettings();
-            ServiceLocator.SettingService = new SettingService();
+            var mockLogger = new Mock<IEventLogger>();
+            ServiceLocator.SettingService = new SettingService(mockLogger.Object);
             ServiceLocator.SettingService.StaticSettings = MockSettings;
-            ServiceLocator.Logger = new Logger();
+            ServiceLocator.Logger = mockLogger.Object;
+            ServiceLocator.CommentBuilderService = new CommentBuilderService(mockLogger.Object, MockSettings);
         }
 
         public void SetPublicProcessingOption(ISettings o, string diagType)
@@ -89,7 +92,7 @@ namespace CodeDocumentor.Test
                              where word.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) > -1
                              select word;
 
-            matchQuery.Count().Should().Be(numOfTimes);
+            matchQuery.Count().ShouldBe(numOfTimes);
         }
 
         public static GenericNameSyntax BuildGenericNameSyntax(string listType, SyntaxKind innerKindKey, SyntaxKind innerKindValue)

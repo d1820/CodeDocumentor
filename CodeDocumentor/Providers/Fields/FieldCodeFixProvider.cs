@@ -1,20 +1,19 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeDocumentor.Analyzers;
-using CodeDocumentor.Analyzers.Helper;
-using CodeDocumentor.Analyzers.Locators;
+using CodeDocumentor.Analyzers.Analyzers.Fields;
 using CodeDocumentor.Common;
+using CodeDocumentor.Common.Helper;
 using CodeDocumentor.Common.Helpers;
 using CodeDocumentor.Common.Interfaces;
+using CodeDocumentor.Common.Locators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SyntaxNode = Microsoft.CodeAnalysis.SyntaxNode;
 
 namespace CodeDocumentor
 {
@@ -76,50 +75,6 @@ namespace CodeDocumentor
         }
 
         /// <summary>
-        ///  Builds the comments. This is only used in the file level fixProvider.
-        /// </summary>
-        /// <param name="root"> The root. </param>
-        /// <param name="nodesToReplace"> The nodes to replace. </param>
-        internal static int BuildComments(ISettings settings, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
-        {
-            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.FieldDeclaration)).OfType<FieldDeclarationSyntax>().ToArray();
-            var neededCommentCount = 0;
-            TryHelper.Try(() =>
-            {
-                foreach (var declarationSyntax in declarations)
-                {
-                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
-                    {
-                        continue;
-                    }
-                    if (declarationSyntax.HasSummary())
-                    {
-                        continue;
-                    }
-                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
-                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
-                    neededCommentCount++;
-                }
-            }, FieldAnalyzerSettings.DiagnosticId, EventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
-            return neededCommentCount;
-        }
-
-        private static FieldDeclarationSyntax BuildNewDeclaration(ISettings settings, FieldDeclarationSyntax declarationSyntax)
-        {
-            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
-            var field = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-            var commentHelper = ServiceLocator.CommentHelper;
-            var comment = commentHelper.CreateFieldComment(field?.Identifier.ValueText, settings.ExcludeAsyncSuffix, settings.WordMaps);
-
-            var builder = ServiceLocator.DocumentationBuilder;
-
-            var summaryNodes = builder.WithSummary(comment).Build();
-            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
-            var newDeclaration = declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
-            return newDeclaration;
-        }
-
-        /// <summary>
         ///  Adds documentation header async.
         /// </summary>
         /// <param name="document"> The document. </param>
@@ -131,7 +86,7 @@ namespace CodeDocumentor
         {
             return Task.Run(() => TryHelper.Try(() =>
             {
-                var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                var newDeclaration = ServiceLocator.CommentBuilderService.BuildNewDeclaration(settings, declarationSyntax);
                 var newRoot = root.ReplaceNode(declarationSyntax, newDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, FieldAnalyzerSettings.DiagnosticId, EventLogger, (_) => document, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.ADD_DOCUMENTATION_HEADER), cancellationToken);

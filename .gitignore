@@ -218,3 +218,4 @@ Settings.StyleCop
 # Special Folders/Files that have to be in the repository
 # ==============================================================
 !protobuf/protobuf/*.user
+/bash.exe.stackdump

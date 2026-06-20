@@ -38,6 +38,13 @@ namespace CodeDocumentor.Common.Services
             neededCommentCount += BuildEnumComments(_settings, Constants.DiagnosticIds.ENUM_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildFieldComments(_settings, Constants.DiagnosticIds.FIELD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildMethodComments(_settings, Constants.DiagnosticIds.METHOD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildEventFieldComments(_settings, Constants.DiagnosticIds.EVENT_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildEventComments(_settings, Constants.DiagnosticIds.EVENT_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildDelegateComments(_settings, Constants.DiagnosticIds.DELEGATE_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildIndexerComments(_settings, Constants.DiagnosticIds.INDEXER_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildDestructorComments(_settings, Constants.DiagnosticIds.DESTRUCTOR_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildOperatorComments(_settings, Constants.DiagnosticIds.OPERATOR_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildConversionOperatorComments(_settings, Constants.DiagnosticIds.CONVERSION_OPERATOR_DIAGNOSTIC_ID, root, _nodesTempToReplace);
 
             // Replace nodes from first batch
             root = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
@@ -47,6 +54,7 @@ namespace CodeDocumentor.Common.Services
             neededCommentCount += BuildInterfaceComments(_settings, Constants.DiagnosticIds.INTERFACE_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildComments(_settings, Constants.DiagnosticIds.CLASS_DIAGNOSTIC_ID, root, _nodesTempToReplace);
             neededCommentCount += BuildRecordComments(_settings, Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID, root, _nodesTempToReplace);
+            neededCommentCount += BuildStructComments(_settings, Constants.DiagnosticIds.STRUCT_DIAGNOSTIC_ID, root, _nodesTempToReplace);
 
             // Final replacement
             var newRoot = root.ReplaceNodes(_nodesTempToReplace.Keys, (n1, n2) => _nodesTempToReplace[n1]);
@@ -519,6 +527,395 @@ namespace CodeDocumentor.Common.Services
         }
         #endregion
 
+        #region Event Field Methods
+        public int BuildEventFieldComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildEventFieldComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildEventFieldComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.EventFieldDeclaration)).OfType<EventFieldDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public EventFieldDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, EventFieldDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var variable = declarationSyntax.DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
+            var comment = ServiceLocator.CommentHelper.CreateEventComment(variable?.Identifier.ValueText, settings.WordMaps);
+            var summaryNodes = ServiceLocator.DocumentationBuilder.WithSummary(comment).Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public EventFieldDeclarationSyntax BuildNewDeclaration(EventFieldDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Event (explicit) Methods
+        public int BuildEventComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildEventComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildEventComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.EventDeclaration)).OfType<EventDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public EventDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, EventDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var comment = ServiceLocator.CommentHelper.CreateEventComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
+            var summaryNodes = ServiceLocator.DocumentationBuilder.WithSummary(comment).Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public EventDeclarationSyntax BuildNewDeclaration(EventDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Delegate Methods
+        public int BuildDelegateComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildDelegateComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildDelegateComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.DelegateDeclaration)).OfType<DelegateDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public DelegateDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, DelegateDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var comment = ServiceLocator.CommentHelper.CreateDelegateComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
+                        .WithParameters(declarationSyntax, settings.WordMaps)
+                        .WithReturnType(declarationSyntax, settings.UseNaturalLanguageForReturnNode, settings.TryToIncludeCrefsForReturnTypes, settings.WordMaps)
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public DelegateDeclarationSyntax BuildNewDeclaration(DelegateDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Struct Methods
+        public int BuildStructComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildStructComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildStructComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.StructDeclaration)).OfType<StructDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public StructDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, StructDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var comment = ServiceLocator.CommentHelper.CreateStructComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
+                        .WithTypeParamters(declarationSyntax)
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public StructDeclarationSyntax BuildNewDeclaration(StructDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Indexer Methods
+        public int BuildIndexerComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildIndexerComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildIndexerComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.IndexerDeclaration)).OfType<IndexerDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public IndexerDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, IndexerDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var hasSetter = declarationSyntax.AccessorList?.Accessors.Any(a => a.IsKind(SyntaxKind.SetAccessorDeclaration) || a.IsKind(SyntaxKind.InitAccessorDeclaration)) == true;
+            var comment = ServiceLocator.CommentHelper.CreateIndexerComment(hasSetter, settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
+
+            var returnOptions = new ReturnTypeBuilderOptions
+            {
+                TryToIncludeCrefsForReturnTypes = settings.TryToIncludeCrefsForReturnTypes,
+                GenerateReturnStatement = settings.IncludeValueNodeInProperties,
+                ReturnGenericTypeAsFullString = false,
+                IncludeStartingWordInText = true,
+                UseProperCasing = true
+            };
+
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
+                        .WithParameters(declarationSyntax, settings.WordMaps)
+                        .WithPropertyValueTypes(declarationSyntax, returnOptions, settings.WordMaps)
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public IndexerDeclarationSyntax BuildNewDeclaration(IndexerDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Destructor Methods
+        public int BuildDestructorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildDestructorComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildDestructorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.DestructorDeclaration)).OfType<DestructorDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public DestructorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, DestructorDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var comment = ServiceLocator.CommentHelper.CreateDestructorComment(declarationSyntax.Identifier.ValueText, settings.WordMaps);
+            var summaryNodes = ServiceLocator.DocumentationBuilder.WithSummary(comment).Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, summaryNodes);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public DestructorDeclarationSyntax BuildNewDeclaration(DestructorDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Operator Methods
+        public int BuildOperatorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildOperatorComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildOperatorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.OperatorDeclaration)).OfType<OperatorDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public OperatorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, OperatorDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var comment = ServiceLocator.CommentHelper.CreateOperatorComment(declarationSyntax.OperatorToken.ValueText, settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
+                        .WithParameters(declarationSyntax, settings.WordMaps)
+                        .WithReturnType(declarationSyntax, settings.UseNaturalLanguageForReturnNode, settings.TryToIncludeCrefsForReturnTypes, settings.WordMaps)
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public OperatorDeclarationSyntax BuildNewDeclaration(OperatorDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
+        #region Conversion Operator Methods
+        public int BuildConversionOperatorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            return BuildConversionOperatorComments(_settings, diagnosticId, root, nodesToReplace);
+        }
+
+        public int BuildConversionOperatorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace)
+        {
+            var declarations = root.DescendantNodes().Where(w => w.IsKind(SyntaxKind.ConversionOperatorDeclaration)).OfType<ConversionOperatorDeclarationSyntax>().ToArray();
+            var neededCommentCount = 0;
+            TryHelper.Try(() =>
+            {
+                foreach (var declarationSyntax in declarations)
+                {
+                    if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
+                    nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
+                    neededCommentCount++;
+                }
+            }, diagnosticId, _eventLogger, eventId: Constants.EventIds.FIXER, category: Constants.EventIds.Categories.BUILD_COMMENTS);
+            return neededCommentCount;
+        }
+
+        public ConversionOperatorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, ConversionOperatorDeclarationSyntax declarationSyntax)
+        {
+            var leadingTrivia = declarationSyntax.GetLeadingTrivia();
+            var isImplicit = declarationSyntax.ImplicitOrExplicitKeyword.IsKind(SyntaxKind.ImplicitKeyword);
+            var comment = ServiceLocator.CommentHelper.CreateConversionOperatorComment(isImplicit, declarationSyntax.Type.ToString(), settings.WordMaps);
+            var builder = ServiceLocator.DocumentationBuilder;
+            var list = builder.WithSummary(declarationSyntax, comment, settings.PreserveExistingSummaryText)
+                        .WithParameters(declarationSyntax, settings.WordMaps)
+                        .WithExisting(declarationSyntax, Constants.REMARKS)
+                        .WithExisting(declarationSyntax, Constants.EXAMPLE)
+                        .Build();
+            var commentTrivia = SyntaxFactory.DocumentationCommentTrivia(SyntaxKind.SingleLineDocumentationCommentTrivia, list);
+            return declarationSyntax.WithLeadingTrivia(leadingTrivia.UpsertLeadingTrivia(commentTrivia));
+        }
+
+        public ConversionOperatorDeclarationSyntax BuildNewDeclaration(ConversionOperatorDeclarationSyntax declarationSyntax)
+        {
+            return BuildNewDeclaration(_settings, declarationSyntax);
+        }
+        #endregion
+
         #region Utility Methods
         /// <summary>
         /// Determines if a syntax node is documentable (can have XML documentation comments)
@@ -530,11 +927,19 @@ namespace CodeDocumentor.Common.Services
                 case ClassDeclarationSyntax _:
                 case InterfaceDeclarationSyntax _:
                 case RecordDeclarationSyntax _:
+                case StructDeclarationSyntax _:
                 case EnumDeclarationSyntax _:
                 case MethodDeclarationSyntax _:
                 case PropertyDeclarationSyntax _:
                 case ConstructorDeclarationSyntax _:
                 case FieldDeclarationSyntax _:
+                case EventFieldDeclarationSyntax _:
+                case EventDeclarationSyntax _:
+                case DelegateDeclarationSyntax _:
+                case IndexerDeclarationSyntax _:
+                case DestructorDeclarationSyntax _:
+                case OperatorDeclarationSyntax _:
+                case ConversionOperatorDeclarationSyntax _:
                     return true;
                 default:
                     return false;
@@ -581,6 +986,22 @@ namespace CodeDocumentor.Common.Services
                     return BuildNewDeclaration(constructorNode);
                 case FieldDeclarationSyntax fieldNode:
                     return BuildNewDeclaration(fieldNode);
+                case StructDeclarationSyntax structNode:
+                    return BuildNewDeclaration(structNode);
+                case EventFieldDeclarationSyntax eventFieldNode:
+                    return BuildNewDeclaration(eventFieldNode);
+                case EventDeclarationSyntax eventNode:
+                    return BuildNewDeclaration(eventNode);
+                case DelegateDeclarationSyntax delegateNode:
+                    return BuildNewDeclaration(delegateNode);
+                case IndexerDeclarationSyntax indexerNode:
+                    return BuildNewDeclaration(indexerNode);
+                case DestructorDeclarationSyntax destructorNode:
+                    return BuildNewDeclaration(destructorNode);
+                case OperatorDeclarationSyntax operatorNode:
+                    return BuildNewDeclaration(operatorNode);
+                case ConversionOperatorDeclarationSyntax conversionNode:
+                    return BuildNewDeclaration(conversionNode);
                 default:
                     return null;
             }

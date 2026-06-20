@@ -55,6 +55,54 @@ namespace CodeDocumentor.Common.Interfaces
         RecordDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, RecordDeclarationSyntax declarationSyntax);
         RecordDeclarationSyntax BuildNewDeclaration(RecordDeclarationSyntax declarationSyntax);
 
+        // Event field methods
+        int BuildEventFieldComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildEventFieldComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        EventFieldDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, EventFieldDeclarationSyntax declarationSyntax);
+        EventFieldDeclarationSyntax BuildNewDeclaration(EventFieldDeclarationSyntax declarationSyntax);
+
+        // Event (explicit) methods
+        int BuildEventComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildEventComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        EventDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, EventDeclarationSyntax declarationSyntax);
+        EventDeclarationSyntax BuildNewDeclaration(EventDeclarationSyntax declarationSyntax);
+
+        // Delegate methods
+        int BuildDelegateComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildDelegateComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        DelegateDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, DelegateDeclarationSyntax declarationSyntax);
+        DelegateDeclarationSyntax BuildNewDeclaration(DelegateDeclarationSyntax declarationSyntax);
+
+        // Struct methods
+        int BuildStructComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildStructComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        StructDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, StructDeclarationSyntax declarationSyntax);
+        StructDeclarationSyntax BuildNewDeclaration(StructDeclarationSyntax declarationSyntax);
+
+        // Indexer methods
+        int BuildIndexerComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildIndexerComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        IndexerDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, IndexerDeclarationSyntax declarationSyntax);
+        IndexerDeclarationSyntax BuildNewDeclaration(IndexerDeclarationSyntax declarationSyntax);
+
+        // Destructor methods
+        int BuildDestructorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildDestructorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        DestructorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, DestructorDeclarationSyntax declarationSyntax);
+        DestructorDeclarationSyntax BuildNewDeclaration(DestructorDeclarationSyntax declarationSyntax);
+
+        // Operator methods
+        int BuildOperatorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildOperatorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        OperatorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, OperatorDeclarationSyntax declarationSyntax);
+        OperatorDeclarationSyntax BuildNewDeclaration(OperatorDeclarationSyntax declarationSyntax);
+
+        // Conversion operator methods
+        int BuildConversionOperatorComments(string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        int BuildConversionOperatorComments(IBaseSettings settings, string diagnosticId, SyntaxNode root, Dictionary<CSharpSyntaxNode, CSharpSyntaxNode> nodesToReplace);
+        ConversionOperatorDeclarationSyntax BuildNewDeclaration(IBaseSettings settings, ConversionOperatorDeclarationSyntax declarationSyntax);
+        ConversionOperatorDeclarationSyntax BuildNewDeclaration(ConversionOperatorDeclarationSyntax declarationSyntax);
+
         // Utility methods
         string AddDocumentation(string fileContents);
 

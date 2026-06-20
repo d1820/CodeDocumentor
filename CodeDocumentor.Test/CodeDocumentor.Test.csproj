@@ -127,6 +127,22 @@
     <Compile Remove="Records\TestFiles\RecordTester.cs" />
     <Compile Remove="Records\TestFiles\RecordTesterFix.cs" />
     <Compile Remove="Records\TestFiles\RecordTesterInheritDoc.cs" />
+    <Compile Remove="Events\TestFiles\EventFieldTestCode.cs" />
+    <Compile Remove="Events\TestFiles\EventFieldTestFixCode.cs" />
+    <Compile Remove="Events\TestFiles\ExplicitEventTestCode.cs" />
+    <Compile Remove="Events\TestFiles\ExplicitEventTestFixCode.cs" />
+    <Compile Remove="Delegates\TestFiles\TestCode.cs" />
+    <Compile Remove="Delegates\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Structs\TestFiles\TestCode.cs" />
+    <Compile Remove="Structs\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Indexers\TestFiles\TestCode.cs" />
+    <Compile Remove="Indexers\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Destructors\TestFiles\TestCode.cs" />
+    <Compile Remove="Destructors\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Operators\TestFiles\TestCode.cs" />
+    <Compile Remove="Operators\TestFiles\TestFixCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\TestCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\TestFixCode.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -482,6 +498,54 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Classes\TestFiles\PublicClassTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\EventFieldTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\EventFieldTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\ExplicitEventTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\ExplicitEventTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Structs\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Structs\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Destructors\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Destructors\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Operators\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Operators\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\TestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

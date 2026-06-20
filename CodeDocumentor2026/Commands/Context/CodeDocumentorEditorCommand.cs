@@ -122,7 +122,9 @@ namespace CodeDocumentor2026.Commands.Context
         /// <summary>
         /// Called before the command is displayed to determine if it should be visible/enabled
         /// </summary>
+#pragma warning disable VSTHRD100 // Avoid async void methods
         private async void OnBeforeQueryStatus(object sender, EventArgs e)
+#pragma warning restore VSTHRD100 // Avoid async void methods
         {
             var command = sender as OleMenuCommand;
             command.Visible = false;
@@ -155,7 +157,9 @@ namespace CodeDocumentor2026.Commands.Context
         /// <summary>
         /// Executes the command when the editor context menu item is clicked
         /// </summary>
+#pragma warning disable VSTHRD100 // Avoid async void methods
         private async void Execute(object sender, EventArgs e)
+#pragma warning restore VSTHRD100 // Avoid async void methods
         {
             var command = sender as OleMenuCommand;
             try

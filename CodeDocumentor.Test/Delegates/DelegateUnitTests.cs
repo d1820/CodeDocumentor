@@ -28,6 +28,7 @@ namespace CodeDocumentor.Test.Delegates
 
         [Theory]
         [InlineData("TestCode.cs", "TestFixCode.cs", 7, 26)]
+        [InlineData("WithParamsTestCode.cs", "WithParamsTestFixCode.cs", 7, 28)]
         public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Delegates/TestFiles/{fixCode}");

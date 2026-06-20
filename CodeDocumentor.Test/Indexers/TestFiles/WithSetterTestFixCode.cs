@@ -6,13 +6,15 @@ namespace Test
 {
     public class IndexerTester
     {
+        private int[] _data = new int[10];
         /// <summary>
-        /// Gets the element.
+        /// Gets or sets the element.
         /// </summary>
         /// <param name="index">The index.</param>
         public int this[int index]
         {
-            get { return 0; }
+            get { return _data[index]; }
+            set { _data[index] = value; }
         }
     }
 }

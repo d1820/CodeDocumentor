@@ -179,5 +179,40 @@ namespace CodeDocumentor.Common.Helper
             }
             return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
         }
+
+        public static bool IsPrivateMember(DestructorDeclarationSyntax node)
+        {
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return false;
+        }
+
+        public static bool IsPrivateMember(OperatorDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return false;
+        }
+
+        public static bool IsPrivateMember(ConversionOperatorDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return false;
+        }
     }
 }

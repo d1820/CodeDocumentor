@@ -7,5 +7,7 @@ namespace Test
     /// <summary>
     /// The my struct.
     /// </summary>
-    public struct MyStruct { }
+    public struct MyStruct
+    {
+    }
 }

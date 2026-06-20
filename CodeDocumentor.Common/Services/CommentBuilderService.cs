@@ -799,6 +799,10 @@ namespace CodeDocumentor.Common.Services
                     {
                         continue;
                     }
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
+                    {
+                        continue;
+                    }
                     var newDeclaration = BuildNewDeclaration(settings, declarationSyntax);
                     nodesToReplace.TryAdd(declarationSyntax, newDeclaration);
                     neededCommentCount++;
@@ -837,6 +841,10 @@ namespace CodeDocumentor.Common.Services
                 foreach (var declarationSyntax in declarations)
                 {
                     if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                     {
                         continue;
                     }
@@ -884,6 +892,10 @@ namespace CodeDocumentor.Common.Services
                 foreach (var declarationSyntax in declarations)
                 {
                     if (declarationSyntax.HasSummary())
+                    {
+                        continue;
+                    }
+                    if (settings.IsEnabledForPublicMembersOnly && PrivateMemberVerifier.IsPrivateMember(declarationSyntax))
                     {
                         continue;
                     }

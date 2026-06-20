@@ -143,6 +143,12 @@
     <Compile Remove="Operators\TestFiles\TestFixCode.cs" />
     <Compile Remove="ConversionOperators\TestFiles\TestCode.cs" />
     <Compile Remove="ConversionOperators\TestFiles\TestFixCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\ExplicitTestCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\ExplicitTestFixCode.cs" />
+    <Compile Remove="Indexers\TestFiles\WithSetterTestCode.cs" />
+    <Compile Remove="Indexers\TestFiles\WithSetterTestFixCode.cs" />
+    <Compile Remove="Delegates\TestFiles\WithParamsTestCode.cs" />
+    <Compile Remove="Delegates\TestFiles\WithParamsTestFixCode.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -546,6 +552,24 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ConversionOperators\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\ExplicitTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\ExplicitTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\WithSetterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\WithSetterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\WithParamsTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\WithParamsTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -28,6 +28,7 @@ namespace CodeDocumentor.Test.ConversionOperators
 
         [Theory]
         [InlineData("TestCode.cs", "TestFixCode.cs", 9, 23)]
+        [InlineData("ExplicitTestCode.cs", "ExplicitTestFixCode.cs", 9, 23)]
         public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./ConversionOperators/TestFiles/{fixCode}");

@@ -28,6 +28,7 @@ namespace CodeDocumentor.Test.Indexers
 
         [Theory]
         [InlineData("TestCode.cs", "TestFixCode.cs", 9, 20)]
+        [InlineData("WithSetterTestCode.cs", "WithSetterTestFixCode.cs", 10, 20)]
         public async Task ShowDiagnosticAndFix(string testCode, string fixCode, int line, int column)
         {
             var fix = _fixture.LoadTestFile($"./Indexers/TestFiles/{fixCode}");

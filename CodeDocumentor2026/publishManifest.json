@@ -1,12 +1,12 @@
 {
   "$schema": "http://json.schemastore.org/vsix-publish",
-  "categories": [ "Coding" ],
+  "categories": [ "coding" ],
   "identity": {
-    "internalName": "CodeDocumentor2026"
+    "internalName": "CodeDocumentor2026",
+    "tags": [ "documentation", "xml", "comments", "intellisense", "code generator" ]
   },
-  "overview": "README.md",
+  "overview": "../README.md",
   "publisher": "DanTurco",
-  "pricing": "Free",
-  "qna": true,
-  "tags": [ "documentation", "xml", "comments", "intellisense", "code generator" ]
+  "priceCategory": "free",
+  "qna": true
 }

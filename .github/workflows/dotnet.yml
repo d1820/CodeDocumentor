@@ -59,17 +59,11 @@ jobs:
       # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
       uses: NuGet/setup-nuget@v2.0.0
 
-    - name: Update Visual Studio Extension version
+    - name: Update Visual Studio Extension version (vs2026)
       uses: cezarypiatek/VsixVersionAction@1.2
       with:
         version: ${{ env.Version }}
-        vsix-manifest-file: 'Manifests\vs2022\source.extension.vsixmanifest'
-
-    - name: Update assembly version
-      run: |
-        (Get-Content -Path CodeDocumentor\Settings\VsixOptions.cs) |
-          ForEach-Object {$_ -Replace '${{ env.BaseVersion }}', '${{ env.Version }}'} |
-            Set-Content -Path CodeDocumentor\Settings\VsixOptions.cs
+        vsix-manifest-file: 'CodeDocumentor2026\source.extension.vsixmanifest'
 
     - name: Restore dependencies
       run: nuget restore CodeDocumentor.sln
@@ -81,28 +75,28 @@ jobs:
       run: vstest.console.exe CodeDocumentor.Test\bin\Release\net48\CodeDocumentor.Test.dll
 
     - uses: actions/upload-artifact@v4.3.1
-      name: "Pack"
+      name: "Pack vs2026"
       with:
-        name: "CodeDocumentor.vsix"
-        path: CodeDocumentor\bin\Release\CodeDocumentor.vsix
+        name: "CodeDocumentor2026.vsix"
+        path: CodeDocumentor2026\bin\Release\CodeDocumentor2026.vsix
 
-  # This is not enabled because it needs a publish manifest which is the form when you upload a VSIX
-  # deploy:
-  #   # Publish only when creating a GitHub Release
-  #   # https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
-  #   # You can update this logic if you want to manage releases differently
-  #   if: github.event_name == 'release' || github.event.inputs.is_release == true
-  #   runs-on: [windows-latest]
-  #   needs: [ build ]
-  #   steps:
-  #     # Download the NuGet package created in the previous job
-  #     - uses: actions/download-artifact@v4.1.2
-  #       with:
-  #         name: "CodeDocumentor.vsix"
+  deploy:
+    # Publish only when creating a GitHub Release
+    # https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+    if: github.event_name == 'release' || github.event.inputs.is_release == true
+    runs-on: [windows-latest]
+    needs: [ build ]
+    steps:
+      - uses: actions/checkout@v4.1.1
 
-  #     - name: Publish extension to Marketplace
-  #       uses: cezarypiatek/VsixPublisherAction@1.1
-  #       with:
-  #         extension-file: 'CodeDocumentor.vsix'
-  #         publish-manifest-file: 'CodeDocumentor\CodeDocumentor.vsix\manifest.json'
-  #         personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}
+      - uses: actions/download-artifact@v4.1.2
+        with:
+          name: "CodeDocumentor2026.vsix"
+          path: '.'
+
+      - name: Publish extension to Marketplace
+        uses: cezarypiatek/VsixPublisherAction@1.1
+        with:
+          extension-file: 'CodeDocumentor2026.vsix'
+          publish-manifest-file: 'CodeDocumentor2026\publishManifest.json'
+          personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}

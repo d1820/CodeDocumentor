@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## HARD RULE: Git Merge Direction — ZERO EXCEPTIONS
+
+**"Merge in main" ALWAYS means merge main INTO the current branch. Never the reverse.**
+
+- `git fetch origin main && git merge origin/main` -- that's it
+- NEVER merge the current branch INTO main directly
+- NEVER push to main directly; main requires a PR
+- No exceptions. No interpretation. Current branch receives main, always.
+
 ## Build and Test
 
 ```

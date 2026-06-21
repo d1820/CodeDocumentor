@@ -857,6 +857,13 @@ namespace CodeDocumentor.Common
             public const string METHOD_DIAGNOSTIC_ID = "CD1605";
             public const string PROPERTY_DIAGNOSTIC_ID = "CD1606";
             public const string RECORD_DIAGNOSTIC_ID = "CD1608";
+            public const string STRUCT_DIAGNOSTIC_ID = "CD1609";
+            public const string EVENT_DIAGNOSTIC_ID = "CD1610";
+            public const string DELEGATE_DIAGNOSTIC_ID = "CD1611";
+            public const string INDEXER_DIAGNOSTIC_ID = "CD1612";
+            public const string DESTRUCTOR_DIAGNOSTIC_ID = "CD1613";
+            public const string OPERATOR_DIAGNOSTIC_ID = "CD1614";
+            public const string CONVERSION_OPERATOR_DIAGNOSTIC_ID = "CD1615";
         }
     }
 }

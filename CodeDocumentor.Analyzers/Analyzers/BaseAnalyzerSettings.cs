@@ -41,8 +41,9 @@ namespace CodeDocumentor.Analyzers.Analyzers
                         return settings.PropertyDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
                     case Constants.DiagnosticIds.RECORD_DIAGNOSTIC_ID:
                         return settings.RecordDiagnosticSeverity ?? settings.DefaultDiagnosticSeverity;
+                    default:
+                        return settings.DefaultDiagnosticSeverity;
                 }
-                return Constants.DefaultDiagnosticSeverityOnError;
             }, diagnosticId, EventLogger, (_) => Constants.DefaultDiagnosticSeverityOnError, eventId: Constants.EventIds.ANALYZER);
         }
     }

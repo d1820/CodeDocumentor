@@ -77,6 +77,10 @@ namespace CodeDocumentor.Common.Constructors
             {
                 returnComment = GenerateGenericTypeComment(gst, options, wordMaps);
             }
+            else if (returnType is NullableTypeSyntax nts)
+            {
+                returnComment = BuildComment(nts.ElementType, options, wordMaps);
+            }
             else if (returnType is ArrayTypeSyntax ast)
             {
                 var comment = string.Format(ArrayCommentTemplate, DocumentationHeaderHelper.DetermineSpecificObjectName(ast.ElementType, wordMaps, options.TryToIncludeCrefsForReturnTypes));

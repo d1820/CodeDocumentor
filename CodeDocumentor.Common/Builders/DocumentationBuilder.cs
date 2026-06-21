@@ -132,6 +132,70 @@ namespace CodeDocumentor.Common.Builders
             return this;
         }
 
+        public DocumentationBuilder WithParameters(DelegateDeclarationSyntax declarationSyntax, WordMap[] wordMaps)
+        {
+            if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
+            {
+                var commentHelper = ServiceLocator.CommentHelper;
+                foreach (var parameter in declarationSyntax.ParameterList.Parameters)
+                {
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, wordMaps);
+                    var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
+                    Reset().WithTripleSlashSpace()
+                                .WithElement(parameterElement)
+                                .WithLineEndTextSyntax();
+                }
+            }
+            return this;
+        }
+
+        public DocumentationBuilder WithParameters(IndexerDeclarationSyntax declarationSyntax, WordMap[] wordMaps)
+        {
+            if (declarationSyntax?.ParameterList?.Parameters.Any() == true)
+            {
+                var commentHelper = ServiceLocator.CommentHelper;
+                foreach (var parameter in declarationSyntax.ParameterList.Parameters)
+                {
+                    var parameterComment = commentHelper.CreateParameterComment(parameter, wordMaps);
+                    var parameterElement = _documentationHeaderHelper.CreateParameterElementSyntax(parameter.Identifier.ValueText, parameterComment);
+                    Reset().WithTripleSlashSpace()
+                                .WithElement(parameterElement)
+                                .WithLineEndTextSyntax();
+                }
+            }
+            return this;
+        }
+
+        public DocumentationBuilder WithReturnType(OperatorDeclarationSyntax declarationSyntax, bool useNaturalLanguageForReturnNode, bool tryToIncludeCrefsForReturnTypes, WordMap[] wordMaps)
+        {
+            var returnType = declarationSyntax.ReturnType.ToString().Replace("?", string.Empty);
+            if (returnType != "void")
+            {
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType, useNaturalLanguageForReturnNode, tryToIncludeCrefsForReturnTypes, wordMaps);
+                var returnComment = commentConstructor.Comment;
+                var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment);
+                Reset().WithTripleSlashSpace()
+                            .WithElement(returnElement)
+                            .WithLineEndTextSyntax();
+            }
+            return this;
+        }
+
+        public DocumentationBuilder WithReturnType(DelegateDeclarationSyntax declarationSyntax, bool useNaturalLanguageForReturnNode, bool tryToIncludeCrefsForReturnTypes, WordMap[] wordMaps)
+        {
+            var returnType = declarationSyntax.ReturnType.ToString().Replace("?", string.Empty);
+            if (returnType != "void")
+            {
+                var commentConstructor = new ReturnCommentConstruction(declarationSyntax.ReturnType, useNaturalLanguageForReturnNode, tryToIncludeCrefsForReturnTypes, wordMaps);
+                var returnComment = commentConstructor.Comment;
+                var returnElement = _documentationHeaderHelper.CreateReturnElementSyntax(returnComment);
+                Reset().WithTripleSlashSpace()
+                            .WithElement(returnElement)
+                            .WithLineEndTextSyntax();
+            }
+            return this;
+        }
+
         public DocumentationBuilder WithSummary(CSharpSyntaxNode declarationSyntax, string content, bool preserveExistingSummaryText)
         {
             if (preserveExistingSummaryText)

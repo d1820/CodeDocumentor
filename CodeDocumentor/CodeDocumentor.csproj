@@ -65,6 +65,13 @@
     <Compile Include="Providers\Methods\MethodCodeFixProvider.cs" />
     <Compile Include="Providers\Properties\PropertyCodeFixProvider.cs" />
     <Compile Include="Providers\Records\RecordCodeFixProvider.cs" />
+    <Compile Include="Providers\Events\EventCodeFixProvider.cs" />
+    <Compile Include="Providers\Delegates\DelegateCodeFixProvider.cs" />
+    <Compile Include="Providers\Structs\StructCodeFixProvider.cs" />
+    <Compile Include="Providers\Indexers\IndexerCodeFixProvider.cs" />
+    <Compile Include="Providers\Destructors\DestructorCodeFixProvider.cs" />
+    <Compile Include="Providers\Operators\OperatorCodeFixProvider.cs" />
+    <Compile Include="Providers\ConversionOperators\ConversionOperatorCodeFixProvider.cs" />
     <Compile Include="CodeDocumentor.Package.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\OptionPageGrid.cs">

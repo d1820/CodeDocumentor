@@ -335,6 +335,47 @@ namespace CodeDocumentor.Common.Helper
             return comment;
         }
 
+        public string CreateEventComment(string name, WordMap[] wordMaps)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+            var nameParts = NameSplitter.Split(name).ToLowerParts(forceFirstCharToLower: true).JoinToString();
+            return $"Occurs when {nameParts}".ApplyUserTranslations(wordMaps).WithPeriod();
+        }
+
+        public string CreateDelegateComment(string name, WordMap[] wordMaps)
+        {
+            return CreateClassComment(name, wordMaps);
+        }
+
+        public string CreateStructComment(string name, WordMap[] wordMaps)
+        {
+            return CreateClassComment(name, wordMaps);
+        }
+
+        public string CreateIndexerComment(bool hasSetter, WordMap[] wordMaps)
+        {
+            return hasSetter ? "Gets or sets the element." : "Gets the element.";
+        }
+
+        public string CreateDestructorComment(string className, WordMap[] wordMaps)
+        {
+            return $"Finalizes an instance of the <see cref=\"{className}\"/> class".ApplyUserTranslations(wordMaps).WithPeriod();
+        }
+
+        public string CreateOperatorComment(string operatorToken, WordMap[] wordMaps)
+        {
+            return $"Implements the {operatorToken} operator".ApplyUserTranslations(wordMaps).WithPeriod();
+        }
+
+        public string CreateConversionOperatorComment(bool isImplicit, string targetType, WordMap[] wordMaps)
+        {
+            var kind = isImplicit ? "implicit" : "explicit";
+            return $"Performs an {kind} conversion to <see cref=\"{targetType}\"/>".ApplyUserTranslations(wordMaps).WithPeriod();
+        }
+
         /// <summary>
         ///  Has comment.
         /// </summary>

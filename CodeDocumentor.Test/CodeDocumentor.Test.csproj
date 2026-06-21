@@ -79,6 +79,8 @@
     <Compile Remove="Methods\TestFiles\MethodWithMIxedExceptionTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithNullableStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithNullableStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithParameterTestCode.cs" />
@@ -127,6 +129,28 @@
     <Compile Remove="Records\TestFiles\RecordTester.cs" />
     <Compile Remove="Records\TestFiles\RecordTesterFix.cs" />
     <Compile Remove="Records\TestFiles\RecordTesterInheritDoc.cs" />
+    <Compile Remove="Events\TestFiles\EventFieldTestCode.cs" />
+    <Compile Remove="Events\TestFiles\EventFieldTestFixCode.cs" />
+    <Compile Remove="Events\TestFiles\ExplicitEventTestCode.cs" />
+    <Compile Remove="Events\TestFiles\ExplicitEventTestFixCode.cs" />
+    <Compile Remove="Delegates\TestFiles\TestCode.cs" />
+    <Compile Remove="Delegates\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Structs\TestFiles\TestCode.cs" />
+    <Compile Remove="Structs\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Indexers\TestFiles\TestCode.cs" />
+    <Compile Remove="Indexers\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Destructors\TestFiles\TestCode.cs" />
+    <Compile Remove="Destructors\TestFiles\TestFixCode.cs" />
+    <Compile Remove="Operators\TestFiles\TestCode.cs" />
+    <Compile Remove="Operators\TestFiles\TestFixCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\TestCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\TestFixCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\ExplicitTestCode.cs" />
+    <Compile Remove="ConversionOperators\TestFiles\ExplicitTestFixCode.cs" />
+    <Compile Remove="Indexers\TestFiles\WithSetterTestCode.cs" />
+    <Compile Remove="Indexers\TestFiles\WithSetterTestFixCode.cs" />
+    <Compile Remove="Delegates\TestFiles\WithParamsTestCode.cs" />
+    <Compile Remove="Delegates\TestFiles\WithParamsTestFixCode.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -424,6 +448,12 @@
     <Content Include="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Methods\TestFiles\MethodWithNullableStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithNullableStringReturnTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Methods\TestFiles\MethodWithObjectReturnTestCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -482,6 +512,72 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Classes\TestFiles\PublicClassTesterFix.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\EventFieldTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\EventFieldTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\ExplicitEventTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Events\TestFiles\ExplicitEventTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Structs\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Structs\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Destructors\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Destructors\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Operators\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Operators\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\TestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\TestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\ExplicitTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConversionOperators\TestFiles\ExplicitTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\WithSetterTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Indexers\TestFiles\WithSetterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\WithParamsTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Delegates\TestFiles\WithParamsTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

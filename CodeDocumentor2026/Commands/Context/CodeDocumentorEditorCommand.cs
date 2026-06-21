@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Threading.Tasks;
 using CodeDocumentor.Common.Interfaces;
 using CodeDocumentor2026.Extensions;
@@ -122,7 +124,9 @@ namespace CodeDocumentor2026.Commands.Context
         /// <summary>
         /// Called before the command is displayed to determine if it should be visible/enabled
         /// </summary>
+#pragma warning disable VSTHRD100 // Avoid async void methods
         private async void OnBeforeQueryStatus(object sender, EventArgs e)
+#pragma warning restore VSTHRD100 // Avoid async void methods
         {
             var command = sender as OleMenuCommand;
             command.Visible = false;
@@ -155,7 +159,9 @@ namespace CodeDocumentor2026.Commands.Context
         /// <summary>
         /// Executes the command when the editor context menu item is clicked
         /// </summary>
+#pragma warning disable VSTHRD100 // Avoid async void methods
         private async void Execute(object sender, EventArgs e)
+#pragma warning restore VSTHRD100 // Avoid async void methods
         {
             var command = sender as OleMenuCommand;
             try
@@ -327,13 +333,11 @@ namespace CodeDocumentor2026.Commands.Context
                 // Find the node at the exact cursor position
                 var nodeAtPosition = root.FindNode(Microsoft.CodeAnalysis.Text.TextSpan.FromBounds(position, position));
 
-                // Use the service to determine if it's documentable - don't traverse up
-                if (_commentBuilderService.IsDocumentableNode(nodeAtPosition))
-                {
-                    return nodeAtPosition;
-                }
-
-                return null;
+                // Walk up from the found node to find the nearest documentable ancestor.
+                // AncestorsAndSelf() checks the node itself first, so existing behavior is preserved
+                // for types where FindNode already returns the declaration node directly.
+                return nodeAtPosition.AncestorsAndSelf()
+                    .FirstOrDefault(n => _commentBuilderService.IsDocumentableNode(n));
             }
             catch (Exception ex)
             {

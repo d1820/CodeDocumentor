@@ -56,7 +56,7 @@ namespace CodeDocumentor.Common.Extensions
 
             parts.SwapXmlTokens((part) =>
             {
-                if (!part.All(a => char.IsUpper(a)))
+                if (!part.All(a => char.IsUpper(a)) || part.Length == 1)
                 {
                     part = part.ToLower();
                 }

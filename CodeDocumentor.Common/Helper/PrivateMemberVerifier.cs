@@ -124,13 +124,95 @@ namespace CodeDocumentor.Common.Helper
                 return true;
             }
 
-            // If the member is public, we still need to verify whether its parent class is a private class. Since we
-            // don't want show warnings for public members within a private class.
             if (node.Parent is ClassDeclarationSyntax cds)
             {
                 return IsPrivateMember(cds);
             }
             return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
+        }
+
+        public static bool IsPrivateMember(EventFieldDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
+        }
+
+        public static bool IsPrivateMember(EventDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
+        }
+
+        public static bool IsPrivateMember(DelegateDeclarationSyntax node)
+        {
+            return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
+        }
+
+        public static bool IsPrivateMember(StructDeclarationSyntax node)
+        {
+            return !node.Modifiers.Any(SyntaxKind.PublicKeyword);
+        }
+
+        public static bool IsPrivateMember(IndexerDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return node.Parent is InterfaceDeclarationSyntax ids ? IsPrivateMember(ids) : false;
+        }
+
+        public static bool IsPrivateMember(DestructorDeclarationSyntax node)
+        {
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return false;
+        }
+
+        public static bool IsPrivateMember(OperatorDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return false;
+        }
+
+        public static bool IsPrivateMember(ConversionOperatorDeclarationSyntax node)
+        {
+            if (!node.Modifiers.Any(SyntaxKind.PublicKeyword))
+            {
+                return true;
+            }
+            if (node.Parent is ClassDeclarationSyntax cds)
+            {
+                return IsPrivateMember(cds);
+            }
+            return false;
         }
     }
 }

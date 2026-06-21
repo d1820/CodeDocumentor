@@ -55,6 +55,7 @@ namespace CodeDocumentor.Test.Methods
         [InlineData("MethodWithNullableStructParameterTestCode", "MethodWithNullableStructParameterTestFixCode", 9, 21)]
         [InlineData("MethodWithReturnTestCode", "MethodWithReturnTestFixCode", 9, 29)]
         [InlineData("MethodWithStringReturnTestCode", "MethodWithStringReturnTestFixCode", 9, 23)]
+        [InlineData("MethodWithNullableStringReturnTestCode", "MethodWithNullableStringReturnTestFixCode", 9, 24)]
         [InlineData("MethodWithObjectReturnTestCode", "MethodWithObjectReturnTestFixCode", 9, 23)]
         [InlineData("MethodWithIntReturnTestCode", "MethodWithIntReturnTestFixCode", 9, 20)]
         [InlineData("MethodWithListIntReturnTestCode", "MethodWithListIntReturnTestFixCode", 9, 26)]

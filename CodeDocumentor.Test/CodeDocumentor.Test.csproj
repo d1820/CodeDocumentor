@@ -79,6 +79,8 @@
     <Compile Remove="Methods\TestFiles\MethodWithMIxedExceptionTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithNullableStringReturnTestCode.cs" />
+    <Compile Remove="Methods\TestFiles\MethodWithNullableStringReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithObjectReturnTestFixCode.cs" />
     <Compile Remove="Methods\TestFiles\MethodWithParameterTestCode.cs" />
@@ -444,6 +446,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithNullableStructParameterTestFixCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithNullableStringReturnTestCode.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Methods\TestFiles\MethodWithNullableStringReturnTestFixCode.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Methods\TestFiles\MethodWithObjectReturnTestCode.cs">

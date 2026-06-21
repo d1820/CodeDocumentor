@@ -6,7 +6,7 @@ namespace ConsoleApp40
 {
     public class MethodTester
     {
-        public string? ShowMethodWithStringReturnTester()
+        public string? ShowMethodWithNullableStringReturnTester()
         {
             return null;
         }
